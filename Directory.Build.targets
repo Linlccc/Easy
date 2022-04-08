@@ -1,0 +1,10 @@
+<Project>
+  <PropertyGroup>
+    <!--如果是 NETFramework 版本，移除空警告-->
+    <NoWarn Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'">$(NoWarn);nullable</NoWarn>
+    <!--如果是 NETStandard 版本，移除空警告-->
+    <NoWarn Condition="'$(TargetFrameworkIdentifier)' == '.NETStandard'">$(NoWarn);nullable</NoWarn>
+    <!--如果 NETCoreApp 版本小于 3.0，移除空警告-->
+    <NoWarn Condition="'$(TargetFrameworkIdentifier)' == '.NETCoreApp' and $([MSBuild]::VersionLessThan($(TargetFrameworkVersion), '3.0'))">$(NoWarn);nullable</NoWarn>
+  </PropertyGroup>
+</Project>

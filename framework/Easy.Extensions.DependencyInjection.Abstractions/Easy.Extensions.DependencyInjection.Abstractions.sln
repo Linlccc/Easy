@@ -1,0 +1,30 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.1.32210.238
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{32BB6947-68AB-4DDE-B0DD-6AF9BB1732EC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Easy.Extensions.DependencyInjection.Abstractions", "src\Easy.Extensions.DependencyInjection.Abstractions\Easy.Extensions.DependencyInjection.Abstractions.csproj", "{5CC20F89-3357-4840-BF2D-E4FE22E44BFB}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5CC20F89-3357-4840-BF2D-E4FE22E44BFB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5CC20F89-3357-4840-BF2D-E4FE22E44BFB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5CC20F89-3357-4840-BF2D-E4FE22E44BFB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5CC20F89-3357-4840-BF2D-E4FE22E44BFB}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{5CC20F89-3357-4840-BF2D-E4FE22E44BFB} = {32BB6947-68AB-4DDE-B0DD-6AF9BB1732EC}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {F1FC6452-2471-418E-8B96-F7D5C908119C}
+	EndGlobalSection
+EndGlobal
