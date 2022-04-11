@@ -1,0 +1,21 @@
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace System.Collections.Generic;
+
+/// <summary>
+/// <see cref="IEnumerable{T}"/> 拓展
+/// </summary>
+public static class IEnumerableExtensions
+{
+    /// <summary>
+    /// 是空
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="collection">集合</param>
+    /// <returns>null or 空集合 返回true,否者false</returns>
+    public static bool IsNullOrEmpty<T>(
+#if !(NET462 || NETSTANDARD2_0)
+        [NotNullWhen(false)]
+#endif
+    this IEnumerable<T>? collection) => collection is null || !collection.Any();
+}
