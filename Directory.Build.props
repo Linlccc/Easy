@@ -38,42 +38,55 @@
   </PropertyGroup>
 
   <PropertyGroup Label="要构建和测试的框架">
-    <Net7>net7.0</Net7>
-    <Net6>net6.0</Net6>
-    <Net5>net5.0</Net5>
-    
-    <NetCore3_1>netcoreapp3.1</NetCore3_1>
-    <NetCore3>netcoreapp3.0</NetCore3>
-    <NetCore2_2>netcoreapp2.2</NetCore2_2>
-    <NetCore2_1>netcoreapp2.1</NetCore2_1>
-    <NetCore2>netcoreapp2.0</NetCore2>
-    <NetCore1_1>netcoreapp1.1</NetCore1_1>
-    <NetCore1>netcoreapp1.0</NetCore1>
-    
+    <!--.NET Framework-->
+    <NetFramework452>net452</NetFramework452>
 
-    <NetStandard2_1>netstandard2.1</NetStandard2_1>
-    <NetStandard2>netstandard2.0</NetStandard2>
-    
-    <NetFramework472>net472</NetFramework472>
+    <NetFramework461>net461</NetFramework461>
     <NetFramework462>net462</NetFramework462>
 
+    <NetFramework47>net47</NetFramework47>
+    <NetFramework471>net471</NetFramework471>
+    <NetFramework472>net472</NetFramework472>
+
+    <NetFramework48>net48</NetFramework48>
+
+    <!--.Net Standard-->
+    <NetStandard2>netstandard2.0</NetStandard2>
+    <NetStandard2_1>netstandard2.1</NetStandard2_1>
+
+    <!--.Net Core-->
+    <NetCore1>netcoreapp1.0</NetCore1>
+    <NetCore1_1>netcoreapp1.1</NetCore1_1>
+
+    <NetCore2>netcoreapp2.0</NetCore2>
+    <NetCore2_1>netcoreapp2.1</NetCore2_1>
+    <NetCore2_2>netcoreapp2.2</NetCore2_2>
+
+    <NetCore3>netcoreapp3.0</NetCore3>
+    <NetCore3_1>netcoreapp3.1</NetCore3_1>
+
+    <!--.Net-->
+    <Net5>net5.0</Net5>
+    <Net6>net6.0</Net6>
+    <Net7>net7.0</Net7>
+    <!--目标框架-->
     <TargetFrameworks>$(Net6);$(Net5);$(NetCore3_1);$(NetStandard2_1);$(NetStandard2);$(NetFramework462);</TargetFrameworks>
   </PropertyGroup>
-  
+
   <PropertyGroup Label="msbuild自动导入属性和处理文件">
     <!--自动导入处理文件的文件夹-->
     <AutoImport>$(MSBuildThisFileDirectory)autoImport\</AutoImport>
-    
+
     <!--将在 Microsoft.Common.props 之前处理其属性-->
     <CustomBeforeMicrosoftCommonProps>$(AutoImport)Custom.Before.Microsoft.Common.props</CustomBeforeMicrosoftCommonProps>
     <!--将在 Microsoft.Common.targets 之前处理其属性-->
     <CustomBeforeMicrosoftCommonTargets>$(AutoImport)Custom.Before.Microsoft.Common.targets</CustomBeforeMicrosoftCommonTargets>
-    
+
     <!--将在 Microsoft.Common.props 之后处理其属性-->
     <CustomAfterMicrosoftCommonProps>$(AutoImport)Custom.After.Microsoft.Common.props</CustomAfterMicrosoftCommonProps>
     <!--将在 Microsoft.Common.targets 之后处理其属性-->
     <CustomAfterMicrosoftCommonTargets>$(AutoImport)Custom.After.Microsoft.Common.targets</CustomAfterMicrosoftCommonTargets>
-    
+
     <!--将在 Microsoft.CSharp.targets 之前处理-->
     <CustomBeforeMicrosoftCSharpTargets>$(AutoImport)Custom.Before.Microsoft.CSharp.targets</CustomBeforeMicrosoftCSharpTargets>
     <!--将在 Microsoft.CSharp.targets 之后处理-->
@@ -95,14 +108,9 @@
     7.CustomAfterMicrosoftCSharpTargets	(msbuild自动导入该属性文件)
     -->
   </PropertyGroup>
-  
-  <!--如果是 NETFramework 框架默认引入包-->
-  <ItemGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'">
-    <PackageReference Include="System.Net.Http" Version="4.3.4" />
-  </ItemGroup>
-  
 
-<!--项目的一些默认配置，有不同的可在项目的proj中修改-->
+
+  <!--项目的一些默认配置，有不同的可在项目的proj中修改-->
   <PropertyGroup Label="语言配置">
     <!--禁用警告（runtime中默认禁用的警告这个沿用）-->
     <NoWarn>$(NoWarn);1701;1702;1705;1591</NoWarn>
@@ -112,10 +120,10 @@
 
     <!-- 默认允许所有语言功能（可在低版本中使用高版本语法） -->
     <LangVersion>preview</LangVersion>
-    
+
     <!--检查空-->
     <Nullable>enable</Nullable>
-    
+
     <!--将警告视为错误-->
     <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
   </PropertyGroup>
@@ -131,5 +139,9 @@
     <BaseIntermediateOutputPath>$([System.IO.Path]::GetFullPath('$(GenerateObjDir)$(MsBuildProjectName)\'))</BaseIntermediateOutputPath>
   </PropertyGroup>
 
-  
+  <!--如果是 NETFramework 框架默认引入包-->
+  <ItemGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'">
+    <PackageReference Include="System.Net.Http" Version="4.3.4" />
+  </ItemGroup>
+
 </Project>

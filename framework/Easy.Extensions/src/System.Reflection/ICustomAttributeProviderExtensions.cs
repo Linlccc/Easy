@@ -38,11 +38,11 @@ public static class ICustomAttributeProviderExtensions
     /// <param name="inherit">是否从继承链上获取</param>
     /// <param name="attribute">如果特性存在，获取一个该特性对象</param>
     /// <returns>如果存在 <typeparamref name="TAttribute"/> 类型特性返回 true，否者 false</returns>
-    public static bool IsExistAttribute<TAttribute>(this ICustomAttributeProvider customAttributeProvider, bool inherit,
-#if !(NET462 || NETSTANDARD2_0)
-        [NotNullWhen(true)]
+#if NET462 || NETSTANDARD2_0
+    public static bool IsExistAttribute<TAttribute>(this ICustomAttributeProvider customAttributeProvider, bool inherit, out TAttribute? attribute) where TAttribute : Attribute
+#else
+    public static bool IsExistAttribute<TAttribute>(this ICustomAttributeProvider customAttributeProvider, bool inherit, [NotNullWhen(true)] out TAttribute? attribute) where TAttribute : Attribute
 #endif
-    out TAttribute? attribute) where TAttribute : Attribute
     {
         attribute = customAttributeProvider.GetCustomAttributes(typeof(TAttribute), inherit).FirstOrDefault() as TAttribute;
         return attribute is not null;
