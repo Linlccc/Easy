@@ -7,6 +7,7 @@
 public class InjectAttribute : Attribute
 {
     public InjectAttribute() { }
+    public InjectAttribute(string? key) => Key = key;
 
     /// <summary>
     /// 要求

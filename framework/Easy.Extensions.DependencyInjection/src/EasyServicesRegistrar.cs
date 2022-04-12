@@ -152,17 +152,26 @@ internal sealed class EasyServicesRegistrar
                 if (serviceType == typeof(object)) serviceType = implementationType;
                 // 如果是开放泛型获取类型定义
                 if (serviceType.IsOpenGeneric()) serviceType = serviceType.GetTypeDefinition();
-                services.Add(ServiceDescriptor.Describe(serviceType, implementationFactory, serviceLifetime));
+                services.Add(ServiceDescriptor.Describe(serviceType, useEasyimplementationFactory, serviceLifetime));
 
                 // 得到服务Key
                 string serviceKeyMethodName = $"{factoryInterfaceFullName}.{universalServiceKeyMethodName}";
                 MethodInfo? serviceKeyMethod = implementationTypeInfo.GetDeclaredMethods(serviceKeyMethodName).FirstOrDefault(dm => dm.GetParameters().Length == 0);
                 if (serviceKeyMethod is null) continue;
-                string? serviceKey = serviceKeyMethod.Invoke(Convert.ChangeType(default, implementationType),null) as string;
+#if NET5_0 || NET6_0
+                string? serviceKey = serviceKeyMethod.CreateDelegate<Func<string>>(Convert.ChangeType(default, implementationType))();
+#else
+                string? serviceKey = ((Func<string>)serviceKeyMethod.CreateDelegate(typeof(Func<string>), Convert.ChangeType(default, implementationType)))();
+#endif
+
                 // 使用key注册服务
-                if (!serviceKey.IsNullOrEmpty()) services.Add(ServiceDescriptor.Describe(serviceType.Proxy(serviceKey), implementationFactory, serviceLifetime));
+                if (!serviceKey.IsNullOrEmpty()) services.Add(ServiceDescriptor.Describe(serviceType.Proxy(serviceKey), useEasyimplementationFactory, serviceLifetime));
+
+
+                // 使用Easy的服务提供商
+                object useEasyimplementationFactory(IServiceProvider serviceProvider) => implementationFactory(serviceProvider.GetRequiredService<IServiceProvider>());
             }
         });
     }
-#endregion
+    #endregion
 }

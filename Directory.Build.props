@@ -69,8 +69,11 @@
     <Net5>net5.0</Net5>
     <Net6>net6.0</Net6>
     <Net7>net7.0</Net7>
+    
     <!--目标框架-->
     <TargetFrameworks>$(Net6);$(Net5);$(NetCore3_1);$(NetStandard2_1);$(NetStandard2);$(NetFramework462);</TargetFrameworks>
+    <!--测试项目-->
+    <TargetFrameworks Condition="$(MSBuildProjectName.EndsWith('.Test'))">$(Net6);$(NetCore3_1);$(NetFramework462);</TargetFrameworks>
   </PropertyGroup>
 
   <PropertyGroup Label="msbuild自动导入属性和处理文件">
@@ -126,6 +129,8 @@
 
     <!--将警告视为错误-->
     <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
+    <!--测试项目-->
+    <TreatWarningsAsErrors  Condition="$(MSBuildProjectName.EndsWith('.Test'))">False</TreatWarningsAsErrors>
   </PropertyGroup>
 
   <PropertyGroup>
