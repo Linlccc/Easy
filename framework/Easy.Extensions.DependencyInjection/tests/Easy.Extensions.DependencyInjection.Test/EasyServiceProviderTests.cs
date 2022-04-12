@@ -57,9 +57,8 @@ public class EasyServiceProviderTests
     {
         EasyServiceProvider service1 = GetEasyServiceProvider();
 
-        IServiceScopeFactory rootFastssf = service1.GetRequiredService<IServiceScopeFactory>();
         // 通过反射得到 服务提供商字典
-        System.Collections.ICollection servicProviderDictionary = (rootFastssf.GetType().GetField("_serviceProviders", System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic)!.GetValue(null) as System.Collections.ICollection)!;
+        System.Collections.ICollection servicProviderDictionary = (service1.GetType().GetField("_serviceProviders", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)!.GetValue(service1) as System.Collections.ICollection)!;
         Assert.Equal(1, servicProviderDictionary.Count);
 
         IServiceProvider scopeFastSp1 = service1.CreateScope().ServiceProvider;

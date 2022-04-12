@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System.Collections.Concurrent;
+using System.Reflection;
 using Easy.Extensions.DependencyInjection.Abstractions;
 using Easy.Extensions.DependencyInjection.Abstractions.Extensions;
 using Microsoft.Extensions.DependencyInjection;
@@ -25,6 +26,11 @@ public sealed class EasyServiceProvider : IServiceProvider, ISupportRequiredServ
     /// </summary>
     private readonly Type _serviceProviderEngineScopeType;
 
+    /// <summary>
+    /// 服务提供商字典
+    /// </summary>
+    internal readonly ConcurrentDictionary<IServiceProvider, EasyServiceProviderScope> _serviceProviders = new();
+
     private bool _disposed;
 
     /// <summary>
@@ -37,7 +43,7 @@ public sealed class EasyServiceProvider : IServiceProvider, ISupportRequiredServ
     internal EasyServiceProvider(IServiceCollection serviceDescriptors, ServiceProviderOptions? serviceProviderOptions, bool holdDefaultServiceProvider)
     {
         // 注册默认 IServiceProvider
-        serviceDescriptors.AddScoped<IServiceProvider>(service => EasyServiceProviderScope.GetOrCreate(this, service, false));
+        serviceDescriptors.AddScoped<IServiceProvider>(service => GetOrCreate( service, false));
 #if DEBUG
         // 如果不添加，获取默认的服务商会被 IsService 筛掉(只针对测试环境)
         serviceDescriptors.AddScoped(typeof(IServiceProvider).DefaultProxy(), service => string.Empty);
@@ -48,7 +54,7 @@ public sealed class EasyServiceProvider : IServiceProvider, ISupportRequiredServ
 
         // 设置服务提供商范围
         if (typeof(ServiceProvider).GetProperty("Root", BindingFlags.Instance | BindingFlags.NonPublic)?.GetValue(_realServiceProvider) is not IServiceProvider realServiceProviderScope) throw new InvalidOperationException($"{nameof(realServiceProviderScope)} 永远不应为空");
-        _rootServiceProvider = EasyServiceProviderScope.GetOrCreate(this, realServiceProviderScope, true);
+        _rootServiceProvider = GetOrCreate( realServiceProviderScope, true);
         _serviceProviderEngineScopeType = realServiceProviderScope.GetType();
 
         // 替换默认服务提供商
@@ -73,7 +79,7 @@ public sealed class EasyServiceProvider : IServiceProvider, ISupportRequiredServ
     /// 创建范围
     /// </summary>
     /// <returns></returns>
-    internal IServiceScope CreateScope() => EasyServiceProviderScope.GetOrCreate(this, (IServiceProvider)Activator.CreateInstance(_serviceProviderEngineScopeType, _realServiceProvider, false)!, false);
+    internal IServiceScope CreateScope() => GetOrCreate((IServiceProvider)Activator.CreateInstance(_serviceProviderEngineScopeType, _realServiceProvider, false)!, false);
 
     public void Dispose()
     {
@@ -227,5 +233,14 @@ public sealed class EasyServiceProvider : IServiceProvider, ISupportRequiredServ
             add.Invoke(callSiteCashe, new object[] { microsoftIServiceScopeFactoryKey, microsoftIServiceScopeFactoryVal });
         }
     }
+
+    /// <summary>
+    /// 获取或创建服务提供商范围容器
+    /// </summary>
+    /// <param name="fastServiceProvider">原始服务提供商容器</param>
+    /// <param name="realServiceProvider">真实服务提供商范围</param>
+    /// <param name="isRoot">是否是root</param>
+    /// <returns></returns>
+    private EasyServiceProviderScope GetOrCreate(IServiceProvider realServiceProvider, bool isRoot) => _serviceProviders.GetOrAdd(realServiceProvider, rsp => new EasyServiceProviderScope(this, rsp, isRoot));
     #endregion
 }

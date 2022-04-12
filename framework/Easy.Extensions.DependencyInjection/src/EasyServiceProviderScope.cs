@@ -12,25 +12,20 @@ internal class EasyServiceProviderScope : IServiceScopeFactory, IServiceScope, I
     /// <summary>
     /// 根服务提供商
     /// </summary>
-    readonly EasyServiceProvider _rootServiceProvider;
+    private readonly EasyServiceProvider _rootServiceProvider;
 
     /// <summary>
     /// 真实服务提供商
     /// 存放 <c>ServiceProviderEngineScope</c> 类型对象
     /// </summary>
-    internal readonly IServiceProvider _realServiceProvider;
+    private readonly IServiceProvider _realServiceProvider;
 
     /// <summary>
     /// 是否是根服务提供商
     /// </summary>
-    readonly bool _isRoot;
+    private readonly bool _isRoot;
 
-    /// <summary>
-    /// 服务提供商字典
-    /// </summary>
-    static readonly ConcurrentDictionary<IServiceProvider, EasyServiceProviderScope> _serviceProviders = new();
-
-    bool _disposed;
+    private bool _disposed;
 
     /// <summary>
     /// 创建服务提供商范围容器
@@ -38,21 +33,12 @@ internal class EasyServiceProviderScope : IServiceScopeFactory, IServiceScope, I
     /// <param name="fastServiceProvider">原始服务提供商容器</param>
     /// <param name="realServiceProvider">真实服务提供商范围</param>
     /// <param name="isRoot">是否是root</param>
-    EasyServiceProviderScope(EasyServiceProvider fastServiceProvider, IServiceProvider realServiceProvider, bool isRoot)
+    internal EasyServiceProviderScope(EasyServiceProvider fastServiceProvider, IServiceProvider realServiceProvider, bool isRoot)
     {
         _rootServiceProvider = fastServiceProvider;
         _realServiceProvider = realServiceProvider;
         _isRoot = isRoot;
     }
-
-    /// <summary>
-    /// 获取或创建服务提供商范围容器
-    /// </summary>
-    /// <param name="fastServiceProvider">原始服务提供商容器</param>
-    /// <param name="realServiceProvider">真实服务提供商范围</param>
-    /// <param name="isRoot">是否是root</param>
-    /// <returns></returns>
-    public static EasyServiceProviderScope GetOrCreate(EasyServiceProvider fastServiceProvider, IServiceProvider realServiceProvider, bool isRoot) => _serviceProviders.GetOrAdd(realServiceProvider, rsp => new EasyServiceProviderScope(fastServiceProvider, rsp, isRoot));
 
     public IServiceProvider ServiceProvider => this;
 
@@ -67,7 +53,7 @@ internal class EasyServiceProviderScope : IServiceScopeFactory, IServiceScope, I
     {
         if (_disposed) return;
         _disposed = true;
-        _serviceProviders.TryRemove(_realServiceProvider, out _);
+        _rootServiceProvider._serviceProviders.TryRemove(_realServiceProvider, out _);
         (_realServiceProvider as IDisposable)!.Dispose();
     }
 
@@ -75,7 +61,7 @@ internal class EasyServiceProviderScope : IServiceScopeFactory, IServiceScope, I
     {
         if (_disposed) return default;
         _disposed = true;
-        _serviceProviders.TryRemove(_realServiceProvider, out _);
+        _rootServiceProvider._serviceProviders.TryRemove(_realServiceProvider, out _);
         return (_realServiceProvider as IAsyncDisposable)!.DisposeAsync();
     }
 }
