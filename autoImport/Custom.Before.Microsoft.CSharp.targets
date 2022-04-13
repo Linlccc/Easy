@@ -4,5 +4,8 @@
     <OutputPath>$([MSBuild]::NormalizeDirectory('$(BaseOutputPath)', '$(TargetFramework)-$(Configuration)'))</OutputPath>
     <!--项目生成期间的中间输出(零时文件)路径-->
     <IntermediateOutputPath>$([MSBuild]::NormalizeDirectory('$(BaseIntermediateOutputPath)', '$(TargetFramework)-$(Configuration)'))</IntermediateOutputPath>
+    
+    <!--文档生成文件-->
+    <DocumentationFile>$([MSBuild]::NormalizeDirectory('$(BaseIntermediateOutputPath)', '$(TargetFramework)-$(Configuration)'))$(MsBuildProjectName).xml</DocumentationFile>
   </PropertyGroup>
 </Project>

@@ -144,6 +144,18 @@ public class TypeR8<T1, T2> : ITypeR8<T1, T2> { }
 
 public interface ITypeR8<T1, T2> { }
 #endregion
+#region 9
+/// <summary>
+/// 以 ITypeR9<> 作为服务类型注册
+/// 但是只有 ITypeR9<string> 可以正常获取，其他的都会报错
+/// </summary>
+[Register(typeof(ITypeR9<>))]
+public class TypeR9<T> : ITypeR9<string>
+{
+}
+
+public interface ITypeR9<T> { }
+#endregion
 #endregion
 
 #region 工厂注册

@@ -5,6 +5,12 @@
     <ImportDirectoryBuildProps>false</ImportDirectoryBuildProps>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <!--是否是测试项目-->
+    <IsTestProject>False</IsTestProject>
+    <IsTestProject Condition="$(MSBuildProjectName.EndsWith('.Test')) or $(MSBuildProjectName.EndsWith('.NuGetTest'))">True</IsTestProject>
+  </PropertyGroup>
+
   <PropertyGroup Label="计算操作系统">
     <_hostOS>Linux</_hostOS>
     <_hostOS Condition="$([MsBuild]::IsOsPlatform('OSX'))">OSX</_hostOS>
@@ -72,8 +78,6 @@
     
     <!--目标框架-->
     <TargetFrameworks>$(Net6);$(Net5);$(NetCore3_1);$(NetStandard2_1);$(NetStandard2);$(NetFramework462);</TargetFrameworks>
-    <!--测试项目-->
-    <TargetFrameworks Condition="$(MSBuildProjectName.EndsWith('.Test'))">$(Net6);$(NetCore3_1);$(NetFramework462);</TargetFrameworks>
   </PropertyGroup>
 
   <PropertyGroup Label="msbuild自动导入属性和处理文件">
@@ -129,8 +133,12 @@
 
     <!--将警告视为错误-->
     <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
-    <!--测试项目-->
-    <TreatWarningsAsErrors  Condition="$(MSBuildProjectName.EndsWith('.Test'))">False</TreatWarningsAsErrors>
+
+    <!--生成引用程序集-->
+    <ProduceReferenceAssembly>False</ProduceReferenceAssembly>
+
+    <!--生成XML文档-->
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -148,5 +156,50 @@
   <ItemGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'">
     <PackageReference Include="System.Net.Http" Version="4.3.4" />
   </ItemGroup>
+
+  <!--非测试单元-->
+  <PropertyGroup Label="构建NuGet" Condition="!$(IsTestProject)">
+    <!--主版本-->
+    <MajorVersion>1</MajorVersion>
+    <!--次版本-->
+    <MinorVersion>0</MinorVersion>
+    <!--补丁版本-->
+    <PatchVersion>0</PatchVersion>
+    
+    <!--构建包-->
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <!--包ID-->
+    <PackageId>$(AssemblyName)</PackageId>
+    <!--包版本-->
+    <Version>$(MajorVersion).$(MinorVersion).$(PatchVersion)</Version>
+    <!--作者-->
+    <Authors>Linlccc</Authors>
+    <!--公司-->
+    <Company>$(Authors)</Company>
+    <!--版权信息-->
+    <Copyright>@ Linlccc All rights reserved.</Copyright>
+    <!--项目链接-->
+    <PackageProjectUrl>https://github.com/Linlccc/Easy</PackageProjectUrl>
+    <!--源代码储存库链接-->
+    <RepositoryUrl>https://github.com/Linlccc/Easy</RepositoryUrl>
+    <!--储存库类型-->
+    <RepositoryType>git</RepositoryType>
+    <!--许可证-->
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <!--描述包的标记和关键字的空格或分号分隔列表,搜索包时使用标记-->
+    <PackageTags>.net</PackageTags>
+  </PropertyGroup>
+
+  <!--测试单元配置-->
+  <PropertyGroup Label="测试单元配置" Condition="$(IsTestProject)">
+    <!--将警告视为错误-->
+    <TreatWarningsAsErrors>False</TreatWarningsAsErrors>
+    <!--目标框架-->
+    <TargetFrameworks>$(Net6);$(NetCore3_1);$(NetFramework462);</TargetFrameworks>
+    <!--生成XML文档-->
+    <GenerateDocumentationFile>False</GenerateDocumentationFile>
+    <!--默认解决方案名-->
+    <RootNamespace>$(MSBuildProjectName.Replace(" ", "_").Replace("NuGetTest","Test"))</RootNamespace>
+  </PropertyGroup>
 
 </Project>

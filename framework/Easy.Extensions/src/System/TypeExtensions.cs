@@ -6,13 +6,13 @@
 public static class TypeExtensions
 {
     /// <summary>
-    /// 判断 <paramref name="genericTypeDefinition"/> 泛型类型接口是否被 <paramref name="type"/> 类型实现
-    /// <br>如果还要判断父类的话请使用 <see cref="IsInheritFrom(Type, Type)"/> 方法</br>
+    /// 判断 <paramref name="type"/> 的接口定义是否包含 <paramref name="baseType"/> 的定义
+    /// <br>如果还要判断父类的话请使用 <see cref="IsInheritFrom"/> 方法</br>
     /// </summary>
-    /// <param name="genericTypeDefinition">泛型类型定义</param>
-    /// <param name="type">类型</param>
-    /// <returns></returns>
-    public static bool IsGenericInterfaceAssignableFrom(this Type genericTypeDefinition, Type type)=> type.GetInterfaces().Any(t => t.IsGenericType && t.GetGenericTypeDefinition() == genericTypeDefinition);
+    /// <param name="type">要判断的类型</param>
+    /// <param name="baseType">是否实现的接口</param>
+    /// <returns>实现返回true，否者false</returns>
+    public static bool IsInterfaceDefinitionInclude(this Type type, Type baseType) => type.GetInterfaces().Any(t => t.GetTypeDefinition() == baseType.GetTypeDefinition());
 
     /// <summary>
     /// 判断 <paramref name="type"/> 类型是否继承自 <paramref name="baseType"/> 类型
@@ -20,7 +20,6 @@ public static class TypeExtensions
     /// </summary>
     /// <param name="type">当前类型</param>
     /// <param name="baseType">判断是否是基类的类型</param>
-    /// <param name="inherited">是否从继承链上查找</param>
     /// <returns></returns>
     public static bool IsInheritFrom(this Type type, Type baseType)
     {

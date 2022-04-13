@@ -22,10 +22,6 @@ public static class ServiceTypeProxyExtensions
     /// 创建默认代理类型
     /// </summary>
     /// <typeparam name="T">要代理的类型</typeparam>
-    /// <param name="key">
-    ///     自定义key
-    ///     <br>参与 <see cref="HashCode"/> 计算</br>
-    /// </param>
     /// <returns>代理后的类型</returns>
     public static Type CreateDefaultProxyType<T>() => new ServiceTypeProxy(typeof(T), DafeultProxyKey);
     #endregion

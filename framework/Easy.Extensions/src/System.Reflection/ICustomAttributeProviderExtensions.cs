@@ -53,7 +53,7 @@ public static class ICustomAttributeProviderExtensions
     /// <summary>
     /// 设置属性值
     /// </summary>
-    /// <param name="customAttributeProvider">属性信息</param>
+    /// <param name="propertyInfo">属性信息</param>
     /// <param name="obj">设置值得实例</param>
     /// <param name="value">要设置的值</param>
     public static void SetPropertyValue(this PropertyInfo propertyInfo, object? obj, object? value)

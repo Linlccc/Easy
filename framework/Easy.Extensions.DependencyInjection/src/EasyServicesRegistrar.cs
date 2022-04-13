@@ -109,7 +109,7 @@ internal sealed class EasyServicesRegistrar
         // 得到要使用工厂注册的类型
         Type iRegisterFactoryType = typeof(IRegisterFactory<,>);
         IEnumerable<Type> factoryRegisterTypes = _dIAssemblies.Values.SelectMany(assembly => assembly.ExportedTypes
-            .Where(type => type.IsClass && !type.IsAbstract && iRegisterFactoryType.IsGenericInterfaceAssignableFrom(type)));
+            .Where(type => type.IsClass && !type.IsAbstract && type.IsInterfaceDefinitionInclude(iRegisterFactoryType)));
 
         TypeInfo iRegisterFactoryTypeInfo = iRegisterFactoryType.GetTypeInfo();
         // 得到通用实例工厂方法名

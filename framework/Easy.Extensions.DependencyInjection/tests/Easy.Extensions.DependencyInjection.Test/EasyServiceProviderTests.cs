@@ -52,7 +52,7 @@ public class EasyServiceProviderTests
     /// <summary>
     /// 测试服务提供商处理
     /// </summary>
-    [Fact(DisplayName = "测试服务提供商处理(单独运行)")]
+    [Fact(DisplayName = "测试服务提供商处理")]
     public void ServiceProviderDictionary()
     {
         EasyServiceProvider service1 = GetEasyServiceProvider();
@@ -90,7 +90,7 @@ public class EasyServiceProviderTests
     {
         IServiceCollection services = new ServiceCollection();
         EasyServiceProvider service = GetEasyServiceProvider(services);
-        Assert.Equal(20, services.Count);
+        Assert.Equal(21, services.Count);
 
         // 类型注册
         // 1
@@ -130,6 +130,12 @@ public class EasyServiceProviderTests
         List<ITypeR8<string, int>> typeR8s_string_int = service.GetServices<ITypeR8<string, int>>().ToList();
         Assert.Equal(1, typeR8s_string_int.Count);
         Assert.Equal(typeof(TypeR8<string, int>), typeR8s_string_int[0].GetType());
+        // 1
+        List<ITypeR9<string>> typeR9s_string = service.GetServices<ITypeR9<string>>().ToList();
+        Assert.Equal(1, typeR9s_string.Count);
+        Assert.Equal(typeof(TypeR9<string>), typeR9s_string[0].GetType());
+        // 报错
+        Assert.Throws<ArgumentException>(service.GetServices<ITypeR9<int>>);
 
         // 工厂注册
         // 1

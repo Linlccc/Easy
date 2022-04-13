@@ -237,7 +237,6 @@ public sealed class EasyServiceProvider : IServiceProvider, ISupportRequiredServ
     /// <summary>
     /// 获取或创建服务提供商范围容器
     /// </summary>
-    /// <param name="fastServiceProvider">原始服务提供商容器</param>
     /// <param name="realServiceProvider">真实服务提供商范围</param>
     /// <param name="isRoot">是否是root</param>
     /// <returns></returns>
