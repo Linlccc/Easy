@@ -27,4 +27,25 @@
     <!--项目生成期间的中间输出(零时文件)基路径-->
     <BaseIntermediateOutputPath>$([System.IO.Path]::GetFullPath('$(GenerateObjDir)$(MsBuildProjectName)\'))</BaseIntermediateOutputPath>
   </PropertyGroup>
+
+  <!-- 版本管理 -->
+  <PropertyGroup>
+    <!--主版本-->
+    <MajorVersion>1</MajorVersion>
+    <!--次版本-->
+    <MinorVersion>0</MinorVersion>
+    <!--补丁版本-->
+    <PatchVersion>0</PatchVersion>
+    <!--试验品-->
+    <AlphaSuffix>-alpha</AlphaSuffix>
+    <!--下一完整版本，可能存在已知bug-->
+    <BetaSuffix>-beta</BetaSuffix>
+    <!--预发布版本-->
+    <RcSuffix>-rc</RcSuffix>
+    <!--后缀版本，测试版本号-->
+    <SuffixVersion>2</SuffixVersion>
+    
+    <!--包版本-->
+    <Version>$(MajorVersion).$(MinorVersion).$(PatchVersion)</Version>
+  </PropertyGroup>
 </Project>
