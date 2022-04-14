@@ -1,6 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
-
-namespace System.Reflection;
+﻿namespace System.Reflection;
 
 /// <summary>
 /// <see cref="ICustomAttributeProvider"/>(为支持反射对象的对象提供自定义属性接口) 拓展

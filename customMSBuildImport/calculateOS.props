@@ -1,0 +1,18 @@
+<Project>
+  <PropertyGroup Label="计算操作系统">
+    <_hostOS>Linux</_hostOS>
+    <_hostOS Condition="$([MsBuild]::IsOsPlatform('OSX'))">OSX</_hostOS>
+    <_hostOS Condition="$([MSBuild]::IsOSPlatform('FREEBSD'))">FreeBSD</_hostOS>
+    <_hostOS Condition="$([MSBuild]::IsOSPlatform('NETBSD'))">NetBSD</_hostOS>
+    <_hostOS Condition="$([MSBuild]::IsOSPlatform('ILLUMOS'))">illumos</_hostOS>
+    <_hostOS Condition="$([MSBuild]::IsOSPlatform('SOLARIS'))">Solaris</_hostOS>
+    <_hostOS Condition="$([MSBuild]::IsOSPlatform('WINDOWS'))">windows</_hostOS>
+    <HostOS>$(_hostOS)</HostOS>
+    <_hostOS Condition="'$(TargetOS)' == 'Browser'">Browser</_hostOS>
+    <TargetOS Condition="'$(TargetOS)' == ''">$(_hostOS)</TargetOS>
+    <!--移动端-->
+    <TargetsMobile Condition="'$(TargetOS)' == 'iOS' or '$(TargetOS)' == 'iOSSimulator' or '$(TargetOS)' == 'MacCatalyst' or '$(TargetOS)' == 'tvOS' or '$(TargetOS)' == 'tvOSSimulator' or '$(TargetOS)' == 'Android' or '$(TargetOS)' == 'Browser'">true</TargetsMobile>
+    <!--苹果端-->
+    <TargetsAppleMobile Condition="'$(TargetOS)' == 'iOS' or '$(TargetOS)' == 'iOSSimulator' or '$(TargetOS)' == 'MacCatalyst' or '$(TargetOS)' == 'tvOS' or '$(TargetOS)' == 'tvOSSimulator'">true</TargetsAppleMobile>
+  </PropertyGroup>
+</Project>

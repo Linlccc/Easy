@@ -1,0 +1,30 @@
+<Project>
+  <!--项目的一些默认配置，有不同的可在项目的proj中修改-->
+  <PropertyGroup Label="基础配置">
+    <!--禁用警告（runtime中默认禁用的警告这个沿用）-->
+    <NoWarn>$(NoWarn);1701;1702;1705;1591</NoWarn>
+    <NoWarn>$(NoWarn),CS8969</NoWarn>
+    <!--Disable NuGet Pack warning that the version is SemVer 2.0. SemVer 2.0 is supported by NuGet since 3.0.0 (July 2015) in some capacity, and fully since 3.5.0 (October 2016).-->
+    <NoWarn>$(NoWarn);NU5105</NoWarn>
+
+    <!-- 默认允许所有语言功能（可在低版本中使用高版本语法） -->
+    <LangVersion>preview</LangVersion>
+
+    <!--检查空-->
+    <Nullable>enable</Nullable>
+
+    <!--将警告视为错误-->
+    <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
+
+    <!--生成引用程序集-->
+    <ProduceReferenceAssembly>False</ProduceReferenceAssembly>
+
+    <!--生成XML文档-->
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
+
+    <!--项目生成基路径-->
+    <BaseOutputPath>$([System.IO.Path]::GetFullPath('$(GenerateBinDir)$(MsBuildProjectName)\'))</BaseOutputPath>
+    <!--项目生成期间的中间输出(零时文件)基路径-->
+    <BaseIntermediateOutputPath>$([System.IO.Path]::GetFullPath('$(GenerateObjDir)$(MsBuildProjectName)\'))</BaseIntermediateOutputPath>
+  </PropertyGroup>
+</Project>

@@ -1,0 +1,20 @@
+<Project>
+  <!--测试单元配置-->
+  <PropertyGroup Label="测试单元配置">
+    <!--将警告视为错误-->
+    <TreatWarningsAsErrors>False</TreatWarningsAsErrors>
+    <!--目标框架-->
+    <TargetFrameworks>$(Net6);$(NetCore3_1);$(NetFramework462);</TargetFrameworks>
+    <!-- 测试项目保持预览版状态 -->
+    <Version>$(Version)$(BetaSuffix)$(SuffixVersion)</Version>
+    <!--生成XML文档-->
+    <GenerateDocumentationFile>False</GenerateDocumentationFile>
+    <!--默认解决方案名-->
+    <RootNamespace>$(MSBuildProjectName.Replace(" ", "_").Replace("NuGetTest","Test"))</RootNamespace>
+  </PropertyGroup>
+
+  <!--如果是 NETFramework 框架默认引入包-->
+  <ItemGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'">
+    <PackageReference Include="System.Net.Http" Version="4.3.4" />
+  </ItemGroup>
+</Project>

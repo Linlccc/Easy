@@ -1,0 +1,38 @@
+<Project>
+  <PropertyGroup Label="用作构建的框架">
+    <!--.NET Framework-->
+    <NetFramework452>net452</NetFramework452>
+
+    <NetFramework461>net461</NetFramework461>
+    <NetFramework462>net462</NetFramework462>
+
+    <NetFramework47>net47</NetFramework47>
+    <NetFramework471>net471</NetFramework471>
+    <NetFramework472>net472</NetFramework472>
+
+    <NetFramework48>net48</NetFramework48>
+
+    <!--.Net Standard-->
+    <NetStandard2>netstandard2.0</NetStandard2>
+    <NetStandard2_1>netstandard2.1</NetStandard2_1>
+
+    <!--.Net Core-->
+    <NetCore1>netcoreapp1.0</NetCore1>
+    <NetCore1_1>netcoreapp1.1</NetCore1_1>
+
+    <NetCore2>netcoreapp2.0</NetCore2>
+    <NetCore2_1>netcoreapp2.1</NetCore2_1>
+    <NetCore2_2>netcoreapp2.2</NetCore2_2>
+
+    <NetCore3>netcoreapp3.0</NetCore3>
+    <NetCore3_1>netcoreapp3.1</NetCore3_1>
+
+    <!--.Net-->
+    <Net5>net5.0</Net5>
+    <Net6>net6.0</Net6>
+    <Net7>net7.0</Net7>
+    
+    <!--目标框架-->
+    <TargetFrameworks>$(Net6);$(Net5);$(NetCore3_1);$(NetStandard2_1);$(NetStandard2);$(NetFramework462);</TargetFrameworks>
+  </PropertyGroup>
+</Project>

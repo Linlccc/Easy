@@ -7,7 +7,6 @@
 
   <PropertyGroup>
     <Description>系统类的拓展</Description>
-    <PackageReleaseNotes>测试版</PackageReleaseNotes>
   </PropertyGroup>
 
 </Project>

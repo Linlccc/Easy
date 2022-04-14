@@ -1,0 +1,37 @@
+<Project>
+  <PropertyGroup Label="msbuild自动导入属性和处理文件">
+    <!--自动导入处理文件的文件夹-->
+    <AutoImport>$([MSBuild]::NormalizeDirectory($(MSBuildThisFileDirectory),'autoImport'))</AutoImport>
+
+    <!--将在 Microsoft.Common.props 之前处理其属性-->
+    <CustomBeforeMicrosoftCommonProps>$(AutoImport)Custom.Before.Microsoft.Common.props</CustomBeforeMicrosoftCommonProps>
+    <!--将在 Microsoft.Common.targets 之前处理其属性-->
+    <CustomBeforeMicrosoftCommonTargets>$(AutoImport)Custom.Before.Microsoft.Common.targets</CustomBeforeMicrosoftCommonTargets>
+
+    <!--将在 Microsoft.Common.props 之后处理其属性-->
+    <CustomAfterMicrosoftCommonProps>$(AutoImport)Custom.After.Microsoft.Common.props</CustomAfterMicrosoftCommonProps>
+    <!--将在 Microsoft.Common.targets 之后处理其属性-->
+    <CustomAfterMicrosoftCommonTargets>$(AutoImport)Custom.After.Microsoft.Common.targets</CustomAfterMicrosoftCommonTargets>
+
+    <!--将在 Microsoft.CSharp.targets 之前处理-->
+    <CustomBeforeMicrosoftCSharpTargets>$(AutoImport)Custom.Before.Microsoft.CSharp.targets</CustomBeforeMicrosoftCSharpTargets>
+    <!--将在 Microsoft.CSharp.targets 之后处理-->
+    <CustomAfterMicrosoftCSharpTargets>$(AutoImport)Custom.After.Microsoft.CSharp.targets</CustomAfterMicrosoftCSharpTargets>
+    <!-- props 文件处理顺序
+    1.Directory.Build.props	(自己写)
+    2.CustomBeforeMicrosoftCommonProps	(msbuild自动导入该属性文件)
+    3.Microsoft.Common.props	(msbuild默认)
+    4.CustomAfterMicrosoftCommonProps	(msbuild自动导入该属性文件)
+    5.项目.csproj	(项目生成)
+    -->
+    <!-- targets 文件处理顺序
+    1.CustomBeforeMicrosoftCSharpTargets	(msbuild自动导入该属性文件)
+    2.Microsoft.CSharp.targets	(msbuild默认)
+    3.CustomBeforeMicrosoftCommonTargets	(msbuild自动导入该属性文件)
+    4.Microsoft.Common.targets	(msbuild默认)
+    5.CustomAfterMicrosoftCommonTargets	(msbuild自动导入该属性文件)
+    6.Directory.Build.targets		(自己写)
+    7.CustomAfterMicrosoftCSharpTargets	(msbuild自动导入该属性文件)
+    -->
+  </PropertyGroup>
+</Project>

@@ -8,4 +8,12 @@
     <!--文档生成文件-->
     <DocumentationFile>$([MSBuild]::NormalizeDirectory('$(BaseIntermediateOutputPath)', '$(TargetFramework)-$(Configuration)'))$(MsBuildProjectName).xml</DocumentationFile>
   </PropertyGroup>
+  
+  <PropertyGroup>
+    <!--enable 会自动生成全局usings文件-->
+    <!--disable 不会生成文件，但是全局 using 还是可以用-->
+    <ImplicitUsings>disable</ImplicitUsings>
+    <!--测试项目启动（测试项目有无用的包影响不大）-->
+    <ImplicitUsings Condition="$(IsTestProject)">enable</ImplicitUsings>
+  </PropertyGroup>
 </Project>

@@ -9,156 +9,15 @@
     <!--是否是测试项目-->
     <IsTestProject>False</IsTestProject>
     <IsTestProject Condition="$(MSBuildProjectName.EndsWith('.Test')) or $(MSBuildProjectName.EndsWith('.NuGetTest'))">True</IsTestProject>
-  </PropertyGroup>
-
-  <PropertyGroup Label="计算操作系统">
-    <_hostOS>Linux</_hostOS>
-    <_hostOS Condition="$([MsBuild]::IsOsPlatform('OSX'))">OSX</_hostOS>
-    <_hostOS Condition="$([MSBuild]::IsOSPlatform('FREEBSD'))">FreeBSD</_hostOS>
-    <_hostOS Condition="$([MSBuild]::IsOSPlatform('NETBSD'))">NetBSD</_hostOS>
-    <_hostOS Condition="$([MSBuild]::IsOSPlatform('ILLUMOS'))">illumos</_hostOS>
-    <_hostOS Condition="$([MSBuild]::IsOSPlatform('SOLARIS'))">Solaris</_hostOS>
-    <_hostOS Condition="$([MSBuild]::IsOSPlatform('WINDOWS'))">windows</_hostOS>
-    <HostOS>$(_hostOS)</HostOS>
-    <_hostOS Condition="'$(TargetOS)' == 'Browser'">Browser</_hostOS>
-    <TargetOS Condition="'$(TargetOS)' == ''">$(_hostOS)</TargetOS>
-    <!--移动端-->
-    <TargetsMobile Condition="'$(TargetOS)' == 'iOS' or '$(TargetOS)' == 'iOSSimulator' or '$(TargetOS)' == 'MacCatalyst' or '$(TargetOS)' == 'tvOS' or '$(TargetOS)' == 'tvOSSimulator' or '$(TargetOS)' == 'Android' or '$(TargetOS)' == 'Browser'">true</TargetsMobile>
-    <!--苹果端-->
-    <TargetsAppleMobile Condition="'$(TargetOS)' == 'iOS' or '$(TargetOS)' == 'iOSSimulator' or '$(TargetOS)' == 'MacCatalyst' or '$(TargetOS)' == 'tvOS' or '$(TargetOS)' == 'tvOSSimulator'">true</TargetsAppleMobile>
-  </PropertyGroup>
-
-  <PropertyGroup Label="计算架构">
-    <_hostArch>$([System.Runtime.InteropServices.RuntimeInformation]::ProcessArchitecture.ToString().ToLowerInvariant)</_hostArch>
-    <BuildArchitecture Condition="'$(BuildArchitecture)' == ''">$(_hostArch)</BuildArchitecture>
-    <TargetArchitecture Condition="'$(TargetArchitecture)' == '' and '$(_hostArch)' == 'arm'">arm</TargetArchitecture>
-    <TargetArchitecture Condition="'$(TargetArchitecture)' == '' and '$(_hostArch)' == 'armv6'">armv6</TargetArchitecture>
-    <TargetArchitecture Condition="'$(TargetArchitecture)' == '' and '$(_hostArch)' == 'armel'">armel</TargetArchitecture>
-    <TargetArchitecture Condition="'$(TargetArchitecture)' == '' and '$(_hostArch)' == 'arm64'">arm64</TargetArchitecture>
-    <TargetArchitecture Condition="'$(TargetArchitecture)' == '' and '$(_hostArch)' == 'loongarch64'">loongarch64</TargetArchitecture>
-    <TargetArchitecture Condition="'$(TargetArchitecture)' == '' and '$(_hostArch)' == 's390x'">s390x</TargetArchitecture>
-    <TargetArchitecture Condition="'$(TargetArchitecture)' == '' and '$(TargetOS)' == 'Browser'">wasm</TargetArchitecture>
-    <TargetArchitecture Condition="'$(TargetArchitecture)' == '' and '$(TargetsMobile)' == 'true'">x64</TargetArchitecture>
-    <TargetArchitecture Condition="'$(TargetArchitecture)' == ''">x64</TargetArchitecture>
-    <Platform Condition="'$(Platform)' == '' and '$(InferPlatformFromTargetArchitecture)' == 'true'">$(TargetArchitecture)</Platform>
-  </PropertyGroup>
-
-  <PropertyGroup Label="要构建和测试的框架">
-    <!--.NET Framework-->
-    <NetFramework452>net452</NetFramework452>
-
-    <NetFramework461>net461</NetFramework461>
-    <NetFramework462>net462</NetFramework462>
-
-    <NetFramework47>net47</NetFramework47>
-    <NetFramework471>net471</NetFramework471>
-    <NetFramework472>net472</NetFramework472>
-
-    <NetFramework48>net48</NetFramework48>
-
-    <!--.Net Standard-->
-    <NetStandard2>netstandard2.0</NetStandard2>
-    <NetStandard2_1>netstandard2.1</NetStandard2_1>
-
-    <!--.Net Core-->
-    <NetCore1>netcoreapp1.0</NetCore1>
-    <NetCore1_1>netcoreapp1.1</NetCore1_1>
-
-    <NetCore2>netcoreapp2.0</NetCore2>
-    <NetCore2_1>netcoreapp2.1</NetCore2_1>
-    <NetCore2_2>netcoreapp2.2</NetCore2_2>
-
-    <NetCore3>netcoreapp3.0</NetCore3>
-    <NetCore3_1>netcoreapp3.1</NetCore3_1>
-
-    <!--.Net-->
-    <Net5>net5.0</Net5>
-    <Net6>net6.0</Net6>
-    <Net7>net7.0</Net7>
-    
-    <!--目标框架-->
-    <TargetFrameworks>$(Net6);$(Net5);$(NetCore3_1);$(NetStandard2_1);$(NetStandard2);$(NetFramework462);</TargetFrameworks>
-  </PropertyGroup>
-
-  <PropertyGroup Label="msbuild自动导入属性和处理文件">
-    <!--自动导入处理文件的文件夹-->
-    <AutoImport>$(MSBuildThisFileDirectory)autoImport\</AutoImport>
-
-    <!--将在 Microsoft.Common.props 之前处理其属性-->
-    <CustomBeforeMicrosoftCommonProps>$(AutoImport)Custom.Before.Microsoft.Common.props</CustomBeforeMicrosoftCommonProps>
-    <!--将在 Microsoft.Common.targets 之前处理其属性-->
-    <CustomBeforeMicrosoftCommonTargets>$(AutoImport)Custom.Before.Microsoft.Common.targets</CustomBeforeMicrosoftCommonTargets>
-
-    <!--将在 Microsoft.Common.props 之后处理其属性-->
-    <CustomAfterMicrosoftCommonProps>$(AutoImport)Custom.After.Microsoft.Common.props</CustomAfterMicrosoftCommonProps>
-    <!--将在 Microsoft.Common.targets 之后处理其属性-->
-    <CustomAfterMicrosoftCommonTargets>$(AutoImport)Custom.After.Microsoft.Common.targets</CustomAfterMicrosoftCommonTargets>
-
-    <!--将在 Microsoft.CSharp.targets 之前处理-->
-    <CustomBeforeMicrosoftCSharpTargets>$(AutoImport)Custom.Before.Microsoft.CSharp.targets</CustomBeforeMicrosoftCSharpTargets>
-    <!--将在 Microsoft.CSharp.targets 之后处理-->
-    <CustomAfterMicrosoftCSharpTargets>$(AutoImport)Custom.After.Microsoft.CSharp.targets</CustomAfterMicrosoftCSharpTargets>
-    <!-- props 文件处理顺序
-    1.Directory.Build.props	(自己写)
-    2.CustomBeforeMicrosoftCommonProps	(msbuild自动导入该属性文件)
-    3.Microsoft.Common.props	(msbuild默认)
-    4.CustomAfterMicrosoftCommonProps	(msbuild自动导入该属性文件)
-    5.项目.csproj	(项目生成)
-    -->
-    <!-- targets 文件处理顺序
-    1.CustomBeforeMicrosoftCSharpTargets	(msbuild自动导入该属性文件)
-    2.Microsoft.CSharp.targets	(msbuild默认)
-    3.CustomBeforeMicrosoftCommonTargets	(msbuild自动导入该属性文件)
-    4.Microsoft.Common.targets	(msbuild默认)
-    5.CustomAfterMicrosoftCommonTargets	(msbuild自动导入该属性文件)
-    6.Directory.Build.targets		(自己写)
-    7.CustomAfterMicrosoftCSharpTargets	(msbuild自动导入该属性文件)
-    -->
-  </PropertyGroup>
-
-
-  <!--项目的一些默认配置，有不同的可在项目的proj中修改-->
-  <PropertyGroup Label="语言配置">
-    <!--禁用警告（runtime中默认禁用的警告这个沿用）-->
-    <NoWarn>$(NoWarn);1701;1702;1705;1591</NoWarn>
-    <NoWarn>$(NoWarn),CS8969</NoWarn>
-    <!--Disable NuGet Pack warning that the version is SemVer 2.0. SemVer 2.0 is supported by NuGet since 3.0.0 (July 2015) in some capacity, and fully since 3.5.0 (October 2016).-->
-    <NoWarn>$(NoWarn);NU5105</NoWarn>
-
-    <!-- 默认允许所有语言功能（可在低版本中使用高版本语法） -->
-    <LangVersion>preview</LangVersion>
-
-    <!--检查空-->
-    <Nullable>enable</Nullable>
-
-    <!--将警告视为错误-->
-    <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
-
-    <!--生成引用程序集-->
-    <ProduceReferenceAssembly>False</ProduceReferenceAssembly>
-
-    <!--生成XML文档-->
-    <GenerateDocumentationFile>True</GenerateDocumentationFile>
+    <!--自定义导入文件夹-->
+    <CustomImportFolder>$([MSBuild]::NormalizeDirectory($(MSBuildThisFileDirectory),'customMSBuildImport'))</CustomImportFolder>
+    <!--生成文件目录-->
+    <GenerateDir>$([MSBuild]::NormalizeDirectory($(MSBuildThisFileDirectory),'artifacts'))</GenerateDir>
+    <GenerateBinDir>$([MSBuild]::NormalizeDirectory($(GenerateDir),'bin'))</GenerateBinDir>
+    <GenerateObjDir>$([MSBuild]::NormalizeDirectory($(GenerateDir),'obj'))</GenerateObjDir>
   </PropertyGroup>
 
   <PropertyGroup>
-    <!--生成文件目录-->
-    <GenerateDir>$(MSBuildThisFileDirectory)artifacts\</GenerateDir>
-    <GenerateBinDir>$(GenerateDir)bin\</GenerateBinDir>
-    <GenerateObjDir>$(GenerateDir)obj\</GenerateObjDir>
-    <!--项目生成基路径-->
-    <BaseOutputPath>$([System.IO.Path]::GetFullPath('$(GenerateBinDir)$(MsBuildProjectName)\'))</BaseOutputPath>
-    <!--项目生成期间的中间输出(零时文件)基路径-->
-    <BaseIntermediateOutputPath>$([System.IO.Path]::GetFullPath('$(GenerateObjDir)$(MsBuildProjectName)\'))</BaseIntermediateOutputPath>
-  </PropertyGroup>
-
-  <!--如果是 NETFramework 框架默认引入包-->
-  <ItemGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'">
-    <PackageReference Include="System.Net.Http" Version="4.3.4" />
-  </ItemGroup>
-
-  <!--非测试单元-->
-  <PropertyGroup Label="构建NuGet" Condition="!$(IsTestProject)">
     <!--主版本-->
     <MajorVersion>1</MajorVersion>
     <!--次版本-->
@@ -173,45 +32,23 @@
     <RcSuffix>-rc</RcSuffix>
     <!--后缀版本，测试版本号-->
     <SuffixVersion>2</SuffixVersion>
-    <!--是否要后缀（预览版本）-->
-    <IsSuffix>True</IsSuffix>
     
-    <!--构建包-->
-    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <!--包ID-->
-    <PackageId>$(AssemblyName)</PackageId>
     <!--包版本-->
     <Version>$(MajorVersion).$(MinorVersion).$(PatchVersion)</Version>
-    <!--预览版后缀-->
-    <Version Condition="$(IsSuffix)">$(Version)$(BetaSuffix)$(SuffixVersion)</Version>
-    <!--作者-->
-    <Authors>Linlccc</Authors>
-    <!--公司-->
-    <Company>$(Authors)</Company>
-    <!--版权信息-->
-    <Copyright>@ Linlccc All rights reserved.</Copyright>
-    <!--项目链接-->
-    <PackageProjectUrl>https://github.com/Linlccc/Easy</PackageProjectUrl>
-    <!--源代码储存库链接-->
-    <RepositoryUrl>https://github.com/Linlccc/Easy</RepositoryUrl>
-    <!--储存库类型-->
-    <RepositoryType>git</RepositoryType>
-    <!--许可证-->
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <!--描述包的标记和关键字的空格或分号分隔列表,搜索包时使用标记-->
-    <PackageTags>.net</PackageTags>
   </PropertyGroup>
 
-  <!--测试单元配置-->
-  <PropertyGroup Label="测试单元配置" Condition="$(IsTestProject)">
-    <!--将警告视为错误-->
-    <TreatWarningsAsErrors>False</TreatWarningsAsErrors>
-    <!--目标框架-->
-    <TargetFrameworks>$(Net6);$(NetCore3_1);$(NetFramework462);</TargetFrameworks>
-    <!--生成XML文档-->
-    <GenerateDocumentationFile>False</GenerateDocumentationFile>
-    <!--默认解决方案名-->
-    <RootNamespace>$(MSBuildProjectName.Replace(" ", "_").Replace("NuGetTest","Test"))</RootNamespace>
-  </PropertyGroup>
-
+  <!-- 导入计算操作系统属性 -->
+  <Import Project="$(CustomImportFolder)/calculateOS.props" />
+  <!-- 导入计算架构 -->
+  <Import Project="$(CustomImportFolder)/calculateArch.props" />
+  <!-- 用作构建的框架（必须） -->
+  <Import Project="$(CustomImportFolder)/useFramework.props" />
+  <!-- 导入 自动导入文件属性（必须） -->
+  <Import Project="$(CustomImportFolder)/autoImport.props" />
+  <!-- 项目基础配置（必须） -->
+  <Import Project="$(CustomImportFolder)/baseConfigure.props" />
+  <!-- NuGet 包配置，非测试（必须） -->
+  <Import Project="$(CustomImportFolder)/nuGetConfigure.props"  Condition="!$(IsTestProject)"/>
+  <!-- 测试配置，测试（必须） -->
+  <Import Project="$(CustomImportFolder)/testConfigure.props" Condition="$(IsTestProject)"/>
 </Project>
