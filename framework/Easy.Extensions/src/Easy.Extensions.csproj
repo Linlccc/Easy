@@ -6,7 +6,6 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <PackageVersion>$(MajorVersion).$(MinorVersion).$(PatchVersion)-beta2</PackageVersion>
     <Description>系统类的拓展</Description>
     <PackageReleaseNotes>测试版</PackageReleaseNotes>
   </PropertyGroup>
