@@ -15,8 +15,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{BC1C7346
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Easy.Extensions.DependencyInjection.Test", "tests\Easy.Extensions.DependencyInjection.Test\Easy.Extensions.DependencyInjection.Test.csproj", "{C985C443-A4A1-4318-A434-D7F869B89C18}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Easy.Extensions.DependencyInjection.Abstractions.Test", "..\Easy.Extensions.DependencyInjection.Abstractions\tests\Easy.Extensions.DependencyInjection.Abstractions.Test\Easy.Extensions.DependencyInjection.Abstractions.Test.csproj", "{3E24B484-3AC4-4C3B-9951-69ADF24C3A80}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,10 +37,6 @@ Global
 		{C985C443-A4A1-4318-A434-D7F869B89C18}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C985C443-A4A1-4318-A434-D7F869B89C18}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C985C443-A4A1-4318-A434-D7F869B89C18}.Release|Any CPU.Build.0 = Release|Any CPU
-		{3E24B484-3AC4-4C3B-9951-69ADF24C3A80}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{3E24B484-3AC4-4C3B-9951-69ADF24C3A80}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{3E24B484-3AC4-4C3B-9951-69ADF24C3A80}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{3E24B484-3AC4-4C3B-9951-69ADF24C3A80}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -52,7 +46,6 @@ Global
 		{9E669F9B-FCA6-46B2-BE84-123D667FB7CC} = {78A5632B-2402-4E30-9F1B-DC0223F0EDA0}
 		{C803CEC7-B5F1-428B-A589-1DDEC6020FCF} = {78A5632B-2402-4E30-9F1B-DC0223F0EDA0}
 		{C985C443-A4A1-4318-A434-D7F869B89C18} = {BC1C7346-0D87-4000-9949-16079440BB33}
-		{3E24B484-3AC4-4C3B-9951-69ADF24C3A80} = {BC1C7346-0D87-4000-9949-16079440BB33}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {7758C9C2-7DD2-4DF2-8D26-2570C3DB1DF2}

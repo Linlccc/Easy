@@ -43,7 +43,9 @@
     <!--预发布版本-->
     <RcSuffix>-rc</RcSuffix>
     <!--后缀版本，测试版本号-->
-    <SuffixVersion>2</SuffixVersion>
+    <SuffixVersion>3</SuffixVersion>
+    <!--是否要后缀（预览版本）-->
+    <IsSuffix>true</IsSuffix>
     
     <!--包版本-->
     <Version>$(MajorVersion).$(MinorVersion).$(PatchVersion)</Version>

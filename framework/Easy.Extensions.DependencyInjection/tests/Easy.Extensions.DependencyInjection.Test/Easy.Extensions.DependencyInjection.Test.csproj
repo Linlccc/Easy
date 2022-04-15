@@ -3,6 +3,7 @@
   <PropertyGroup>
     <Nullable>enable</Nullable>
     <IsPackable>false</IsPackable>
+    <IsNuGetTest>false</IsNuGetTest>
   </PropertyGroup>
 
   <ItemGroup>
@@ -18,7 +19,12 @@
     </PackageReference>
   </ItemGroup>
 
-  <ItemGroup>
+  
+  <!--如果是NuGet测试，使用包-->
+  <ItemGroup Condition="$(IsNuGetTest)">
+    <PackageReference Include="Easy.Extensions.DependencyInjection" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="!$(IsNuGetTest)">
     <ProjectReference Include="..\..\src\Easy.Extensions.DependencyInjection.csproj" />
   </ItemGroup>
 

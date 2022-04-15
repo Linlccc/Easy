@@ -10,6 +10,6 @@
     <!--生成XML文档-->
     <GenerateDocumentationFile>False</GenerateDocumentationFile>
     <!--默认解决方案名-->
-    <RootNamespace>$(MSBuildProjectName.Replace(" ", "_").Replace("NuGetTest","Test"))</RootNamespace>
+    <RootNamespace>$(MSBuildProjectName.Replace(" ", "_"))</RootNamespace>
   </PropertyGroup>
 </Project>
