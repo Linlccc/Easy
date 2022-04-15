@@ -33,9 +33,23 @@ public class RegisterAttribute : Attribute
     public IEnumerable<Type> ServiceTypes { get; }
 
     /// <summary>
+    /// 是否使用key注册服务
+    /// </summary>
+    public bool IsUseKey { get; private set; }
+
+    private string? _serviceName;
+    /// <summary>
     /// 同时使用Key注册服务
     /// </summary>
-    public string? ServiceKey { get; set; }
+    public string? ServiceKey
+    {
+        get => _serviceName;
+        set
+        {
+            _serviceName = value;
+            IsUseKey = true;
+        }
+    }
 
     /// <summary>
     /// 注册类型

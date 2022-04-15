@@ -8,16 +8,18 @@ namespace Easy.Extensions.DependencyInjection.Test.Models;
 #region 1
 /// <summary>
 /// 将自己为服务类型注册
+/// 同时使用 null 作为服务key注册
 /// </summary>
-[Register]
+[Register(ServiceKey = null)]
 public class TypeR1 { }
 #endregion
 
 #region 2
 /// <summary>
 /// 将实现的接口作为服务类型注册
+/// 同时使用 "" 作为服务key注册
 /// </summary>
-[Register]
+[Register(ServiceKey = "")]
 public class TypeR2 : ITypeR2 { }
 
 public interface ITypeR2 { }

@@ -16,9 +16,22 @@ public class InjectAttribute : Attribute
     public bool Require { get; set; }
 
     /// <summary>
+    /// 是否使用key注入服务
+    /// </summary>
+    public bool IsUseKey { get; private set; }
+
+    private string? _key;
+    /// <summary>
     /// 服务key
     /// <br>获取服务时，会通过key获取</br>
     /// </summary>
-    public string? Key { get; set; }
+    public string? Key {
+        get => _key;
+        set
+        {
+            _key = value;
+            IsUseKey = true;
+        }
+    }
 }
 

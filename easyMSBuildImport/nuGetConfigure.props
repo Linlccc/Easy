@@ -1,7 +1,7 @@
 <Project>
   <PropertyGroup Label="构建NuGet">
     <!--是否要后缀（预览版本）-->
-    <IsSuffix>True</IsSuffix>
+    <IsSuffix>false</IsSuffix>
     
     <!--构建包-->
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>

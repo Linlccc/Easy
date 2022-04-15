@@ -1,22 +1,19 @@
 <Project>
   <PropertyGroup Label="msbuild自动导入属性和处理文件">
-    <!--自动导入处理文件的文件夹-->
-    <AutoImport>$([MSBuild]::NormalizeDirectory($(MSBuildThisFileDirectory),'autoImport'))</AutoImport>
-
     <!--将在 Microsoft.Common.props 之前处理其属性-->
-    <CustomBeforeMicrosoftCommonProps>$(AutoImport)Custom.Before.Microsoft.Common.props</CustomBeforeMicrosoftCommonProps>
+    <CustomBeforeMicrosoftCommonProps>$(EasyAutoImportDir)Custom.Before.Microsoft.Common.props</CustomBeforeMicrosoftCommonProps>
     <!--将在 Microsoft.Common.targets 之前处理其属性-->
-    <CustomBeforeMicrosoftCommonTargets>$(AutoImport)Custom.Before.Microsoft.Common.targets</CustomBeforeMicrosoftCommonTargets>
+    <CustomBeforeMicrosoftCommonTargets>$(EasyAutoImportDir)Custom.Before.Microsoft.Common.targets</CustomBeforeMicrosoftCommonTargets>
 
     <!--将在 Microsoft.Common.props 之后处理其属性-->
-    <CustomAfterMicrosoftCommonProps>$(AutoImport)Custom.After.Microsoft.Common.props</CustomAfterMicrosoftCommonProps>
+    <CustomAfterMicrosoftCommonProps>$(EasyAutoImportDir)Custom.After.Microsoft.Common.props</CustomAfterMicrosoftCommonProps>
     <!--将在 Microsoft.Common.targets 之后处理其属性-->
-    <CustomAfterMicrosoftCommonTargets>$(AutoImport)Custom.After.Microsoft.Common.targets</CustomAfterMicrosoftCommonTargets>
+    <CustomAfterMicrosoftCommonTargets>$(EasyAutoImportDir)Custom.After.Microsoft.Common.targets</CustomAfterMicrosoftCommonTargets>
 
     <!--将在 Microsoft.CSharp.targets 之前处理-->
-    <CustomBeforeMicrosoftCSharpTargets>$(AutoImport)Custom.Before.Microsoft.CSharp.targets</CustomBeforeMicrosoftCSharpTargets>
+    <CustomBeforeMicrosoftCSharpTargets>$(EasyAutoImportDir)Custom.Before.Microsoft.CSharp.targets</CustomBeforeMicrosoftCSharpTargets>
     <!--将在 Microsoft.CSharp.targets 之后处理-->
-    <CustomAfterMicrosoftCSharpTargets>$(AutoImport)Custom.After.Microsoft.CSharp.targets</CustomAfterMicrosoftCSharpTargets>
+    <CustomAfterMicrosoftCSharpTargets>$(EasyAutoImportDir)Custom.After.Microsoft.CSharp.targets</CustomAfterMicrosoftCSharpTargets>
     <!-- props 文件处理顺序
     1.Directory.Build.props	(自己写)
     2.CustomBeforeMicrosoftCommonProps	(msbuild自动导入该属性文件)

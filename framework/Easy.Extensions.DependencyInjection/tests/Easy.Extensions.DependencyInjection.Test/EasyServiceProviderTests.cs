@@ -90,7 +90,7 @@ public class EasyServiceProviderTests
     {
         IServiceCollection services = new ServiceCollection();
         EasyServiceProvider service = GetEasyServiceProvider(services);
-        Assert.Equal(21, services.Count);
+        Assert.Equal(23, services.Count);
 
         // 类型注册
         // 1
@@ -154,6 +154,14 @@ public class EasyServiceProviderTests
         Assert.Equal(typeof(FacotryR3), ifacotryR2s[1].GetType());
 
         // 更具key获取
+        // 1
+        List<TypeR1> typeR1s_null = service.GetServices<TypeR1>(null).ToList();
+        Assert.Equal(1, typeR1s_null.Count);
+        Assert.Equal(typeof(TypeR1), typeR1s_null[0].GetType());
+        // 2
+        List<ITypeR2> itypeR2s_ = service.GetServices<ITypeR2>("").ToList();
+        Assert.Equal(1, itypeR2s_.Count);
+        Assert.Equal(typeof(TypeR2), itypeR2s_[0].GetType());
         // 1
         List<ITypeR6<string>> typeR6s_string_1 = service.GetServices<ITypeR6<string>>("1").ToList();
         Assert.Equal(1, typeR6s_string_1.Count);

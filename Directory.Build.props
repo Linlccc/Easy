@@ -1,34 +1,55 @@
 <Project>
 
-  <!-- 告诉 Microsoft.Common.props 不要再导入 Directory.Build.props 文件 -->
   <PropertyGroup>
+    <!-- 告诉 Microsoft.Common.props 不要再导入 Directory.Build.props 文件 -->
     <ImportDirectoryBuildProps>false</ImportDirectoryBuildProps>
-  </PropertyGroup>
 
-  <PropertyGroup>
     <!--是否是测试项目-->
     <IsTestProject>False</IsTestProject>
     <IsTestProject Condition="$(MSBuildProjectName.EndsWith('.Test')) or $(MSBuildProjectName.EndsWith('.NuGetTest'))">True</IsTestProject>
-    <!--自定义导入文件夹-->
-    <CustomImportFolder>$([MSBuild]::NormalizeDirectory($(MSBuildThisFileDirectory),'customMSBuildImport'))</CustomImportFolder>
+  </PropertyGroup>
+  
+  <!--计算默认路径(0)-->
+  <PropertyGroup Label="计算基本目录">
+    <!--Easy 根目录-->
+    <EasyRootDir>$(MSBuildThisFileDirectory)</EasyRootDir>
+    
+    <!--Easy 框架目录-->
+    <EasyFramework>$([MSBuild]::NormalizeDirectory($(EasyRootDir),'framework'))</EasyFramework>
+    <!--Easy 公共路径-->
+    <EasyCommonPath>$([MSBuild]::NormalizeDirectory($(EasyFramework),'Easy.Common','src'))</EasyCommonPath>
+    
+    <!--Easy msbuild 导入目录-->
+    <EasyMSBuildImportDir>$([MSBuild]::NormalizeDirectory($(EasyRootDir),'easyMSBuildImport'))</EasyMSBuildImportDir>
+    <!--Easy 自动导入目录(设置成属性后msbuild自动导入)-->
+    <EasyAutoImportDir>$([MSBuild]::NormalizeDirectory($(EasyMSBuildImportDir),'easyAutoImport'))</EasyAutoImportDir>
+    
     <!--生成文件目录-->
-    <GenerateDir>$([MSBuild]::NormalizeDirectory($(MSBuildThisFileDirectory),'artifacts'))</GenerateDir>
+    <GenerateDir>$([MSBuild]::NormalizeDirectory($(EasyRootDir),'artifacts'))</GenerateDir>
+    <!--bin 目录-->
     <GenerateBinDir>$([MSBuild]::NormalizeDirectory($(GenerateDir),'bin'))</GenerateBinDir>
+    <!--obj 目录-->
     <GenerateObjDir>$([MSBuild]::NormalizeDirectory($(GenerateDir),'obj'))</GenerateObjDir>
   </PropertyGroup>
 
-  <!-- 导入计算操作系统属性 -->
-  <Import Project="$(CustomImportFolder)/calculateOS.props" />
-  <!-- 导入计算架构 -->
-  <Import Project="$(CustomImportFolder)/calculateArch.props" />
-  <!-- 用作构建的框架（必须） -->
-  <Import Project="$(CustomImportFolder)/useFramework.props" />
-  <!-- 导入 自动导入文件属性（必须） -->
-  <Import Project="$(CustomImportFolder)/autoImport.props" />
-  <!-- 项目基础配置（必须） -->
-  <Import Project="$(CustomImportFolder)/baseConfigure.props" />
-  <!-- NuGet 包配置，非测试（必须） -->
-  <Import Project="$(CustomImportFolder)/nuGetConfigure.props"  Condition="!$(IsTestProject)"/>
-  <!-- 测试配置，测试（必须） -->
-  <Import Project="$(CustomImportFolder)/testConfigure.props" Condition="$(IsTestProject)"/>
+  <!-- 导入计算操作系统属性(0) -->
+  <Import Project="$(EasyMSBuildImportDir)calculateOS.props" />
+  <!-- 导入计算架构(0) -->
+  <Import Project="$(EasyMSBuildImportDir)calculateArch.props" />
+  <!-- 用作构建的框架（0） -->
+  <Import Project="$(EasyMSBuildImportDir)useFramework.props" />
+  
+  <!-- 项目基础配置（1） -->
+  <Import Project="$(EasyMSBuildImportDir)baseConfigure.props" />
+  <!-- NuGet 包配置，非测试（2） -->
+  <Import Project="$(EasyMSBuildImportDir)nuGetConfigure.props"  Condition="!$(IsTestProject)"/>
+  <!-- 测试配置，测试（2） -->
+  <Import Project="$(EasyMSBuildImportDir)testConfigure.props" Condition="$(IsTestProject)"/>
+  <!-- 导入 自动导入文件属性(3) -->
+  <Import Project="$(EasyMSBuildImportDir)autoImport.props" />
+
+  <ItemGroup Label="引入公共文件">
+    <!--引入全局引用-->
+    <Compile Include="$(EasyCommonPath)GlobalUsings.cs" Link="Common\$(MsBuildProjectName).%(Filename)%(Extension)" />
+  </ItemGroup>
 </Project>
