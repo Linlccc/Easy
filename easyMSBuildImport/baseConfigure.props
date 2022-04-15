@@ -49,5 +49,9 @@
     
     <!--包版本-->
     <Version>$(MajorVersion).$(MinorVersion).$(PatchVersion)</Version>
+    <!--程序集版本-->
+    <AssemblyVersion>$(MajorVersion).$(MinorVersion).$(PatchVersion).$(SuffixVersion)</AssemblyVersion>
+    <!--文件版本-->
+    <FileVersion>$(AssemblyVersion)</FileVersion>
   </PropertyGroup>
 </Project>
