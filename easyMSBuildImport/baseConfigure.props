@@ -43,7 +43,7 @@
     <!--预发布版本-->
     <RcSuffix>-rc</RcSuffix>
     <!--后缀版本，测试版本号-->
-    <SuffixVersion>3</SuffixVersion>
+    <SuffixVersion>4</SuffixVersion>
     <!--是否要后缀（预览版本）-->
     <IsSuffix>true</IsSuffix>
     

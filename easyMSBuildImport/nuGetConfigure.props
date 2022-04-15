@@ -1,4 +1,9 @@
 <Project>
+  <ItemGroup>
+    <!--引入包的自述文件-->
+    <None Include="$(MSBuildProjectName).md" Pack="true" PackagePath="\"/>
+  </ItemGroup>
+    
   <PropertyGroup Label="构建NuGet">
     <!--构建包-->
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
@@ -14,6 +19,8 @@
     <Copyright>@ Linlccc All rights reserved.</Copyright>
     <!--项目链接-->
     <PackageProjectUrl>https://github.com/Linlccc/Easy</PackageProjectUrl>
+    <!--项目自述文件-->
+    <PackageReadmeFile>$(MSBuildProjectName).md</PackageReadmeFile>
     <!--源代码储存库链接-->
     <RepositoryUrl>https://github.com/Linlccc/Easy</RepositoryUrl>
     <!--储存库类型-->
