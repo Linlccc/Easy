@@ -1,0 +1,9 @@
+﻿<Project>
+  <ItemGroup>
+    <!--指定不将当前NuGet包构建到debug-->
+    <PackageReference Update="MSbuildCode" ExcludeAssets="runtime" />
+    <!--默认导入所有json文件-->
+    <JsonFilePaths Include="**\*.json" />
+  </ItemGroup>
+  
+</Project>

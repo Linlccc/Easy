@@ -1,0 +1,10 @@
+﻿<Project>
+  <PropertyGroup>
+    <!--任务程序集-->
+    <TaskAssembly>$(MSBuildThisFileDirectory)..\lib\$(TargetFramework)\Easy.Tool.MergeJson.dll</TaskAssembly>
+    <!--默认参数-->
+  </PropertyGroup>
+  
+  <!--注册任务程序集-->
+  <UsingTask TaskName="Easy.Tool.MergeJson.MergeJson" AssemblyFile="$(TaskAssembly)" />
+</Project>
