@@ -6,7 +6,7 @@
 
     <!--是否是测试项目-->
     <IsTestProject>False</IsTestProject>
-    <IsTestProject Condition="$(MSBuildProjectName.EndsWith('.Test'))">True</IsTestProject>
+    <IsTestProject Condition="$(MSBuildProjectName.EndsWith('.Test')) or $(MSBuildProjectName.EndsWith('.NuGetTest'))">True</IsTestProject>
   </PropertyGroup>
   
   <!--计算默认路径(0)-->

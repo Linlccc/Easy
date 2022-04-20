@@ -1,9 +1,29 @@
 ﻿<Project>
   <ItemGroup>
     <!--指定不将当前NuGet包构建到debug-->
-    <PackageReference Update="MSbuildCode" ExcludeAssets="runtime" />
-    <!--默认导入所有json文件-->
-    <JsonFilePaths Include="**\*.json" />
+    <PackageReference Update="$(MSBuildThisFileName)" ExcludeAssets="runtime" />
+    <!--所有导入的文件不进行复制（这个后面处理一下，只针对合并过的json文件）-->
+    <Content Update="@(JsonFileItems)">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
+  
+  <!--合并json任务，在构建之前执行-->
+  <Target Name="MergeJson" BeforeTargets="Build">
+    <MergeJson MainJsonFiles="$(MainJsonFiles)" JsonFileItems="@(JsonFileItems)" OutputPath="$(OutputPath)">
+      <!--输出变量，确认参与合并的json-->
+      <Output TaskParameter="ParticipateMergeJsonFiles" ItemName="ParticipateMergeJsonFiles" />
+    </MergeJson>
+    <Message Text="%(ParticipateMergeJsonFiles.Identity)"></Message>
+  </Target>
+  
+  <!--清理合并的json，在清理过后执行-->
+  <Target Name="CleanMergeJson" AfterTargets="Clean">
+    <ItemGroup>
+      <!--得到所有要清理的文件-->
+      <DeleteFile Include="$(OutputPath)$(MainJsonFiles)"></DeleteFile>
+    </ItemGroup>
+    <Delete Files="@(DeleteFile)" />
+  </Target>
   
 </Project>
