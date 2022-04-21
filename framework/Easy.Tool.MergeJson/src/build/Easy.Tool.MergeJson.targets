@@ -10,10 +10,17 @@
   
   <!--合并json任务，在构建之前执行-->
   <Target Name="MergeJson" BeforeTargets="Build">
-    <MergeJson MainJsonFiles="$(MainJsonFiles)" JsonFileItems="@(JsonFileItems)" OutputPath="$(OutputPath)">
+    <Message Text="主json文件"></Message>
+    <Message Text="%(MainJsonFiles.Identity)"></Message>
+    <Message Text="所有json文件"></Message>
+    <Message Text="%(JsonFileItems.Identity)"></Message>
+    
+    <MergeJson MainJsonFiles="@(MainJsonFiles)" JsonFileItems="@(JsonFileItems)" OutputPath="$(OutputPath)">
       <!--输出变量，确认参与合并的json-->
       <Output TaskParameter="ParticipateMergeJsonFiles" ItemName="ParticipateMergeJsonFiles" />
     </MergeJson>
+    
+    <Message Text="输出，已经合并的json文件"></Message>
     <Message Text="%(ParticipateMergeJsonFiles.Identity)"></Message>
   </Target>
   

@@ -24,6 +24,7 @@
     <!--本地NuGet服务器路径-->
     <LocalNuGetServicePath>$([MSBuild]::NormalizeDirectory('$([System.Environment]::GetFolderPath(SpecialFolder.MyDocuments))','MyNuGet'))</LocalNuGetServicePath>
   </PropertyGroup>
+  <!--执行复制的任务-->
   <Target Name="CopyNuGetPackageToService" DependsOnTargets="Pack" AfterTargets="Build" Inputs="$(NuGetPackagePath)$(NuGetPackageName)" Outputs="$(LocalNuGetServicePath)$(NuGetPackageName)" Condition="!$(IsTestProject)">
     <Copy SourceFiles="$(NuGetPackagePath)$(NuGetPackageName)" DestinationFolder="$(LocalNuGetServicePath)"></Copy>
   </Target>
