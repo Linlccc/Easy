@@ -1,29 +1,25 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <!--msbuild 值支持 netstandard2.0 版本-->
+    <!--msbuild 只支持 netstandard2.0 版本-->
     <TargetFrameworks>netstandard2.0</TargetFrameworks>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <Description>自动合并json工具;$(PkgFParsec)</Description>
-    <Version>1.0.63</Version>
+    <Description>自动合并json工具</Description>
+    <Version>1.0.105</Version>
+  </PropertyGroup>
 
-    <!--<CopyLocalLockFileAssemblies>false</CopyLocalLockFileAssemblies>-->
+  <PropertyGroup>
+    <!--会自动将需要的依赖项复制到输出路径-->
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+    <!--将指定文件打入包-->
     <TargetsForTfmSpecificBuildOutput>$(TargetsForTfmSpecificBuildOutput);CopyProjectReferencesToPackage</TargetsForTfmSpecificBuildOutput>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|netstandard2.0|AnyCPU'">
-    <NoWarn>$(NoWarn);CS8618</NoWarn>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|netstandard2.0|AnyCPU'">
-    <NoWarn>$(NoWarn);CS8618</NoWarn>
-  </PropertyGroup>
-
   <ItemGroup>
-    <PackageReference Include="Microsoft.Build.Utilities.Core" Version="17.1.0" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="6.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="6.0.0" />
+    <PackageReference Include="Microsoft.Build.Utilities.Core" Version="17.1.0" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="6.0.0" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="6.0.0" PrivateAssets="all" />
   </ItemGroup>
 
   <ItemGroup>
@@ -31,38 +27,11 @@
     <Content Include="build\Easy.Tool.MergeJson.targets" PackagePath="build\" />
   </ItemGroup>
 
+  <!--将项目引用文件复制到包-->
   <Target Name="CopyProjectReferencesToPackage" DependsOnTargets="ResolveReferences">
     <ItemGroup>
-      <!-- The dependencies of your MSBuild task must be packaged inside the package, they cannot be expressed as normal PackageReferences -->
       <!-- 你的 MSBuild 任务的依赖必须打包在包里面，不能用普通的 PackageReferences 表示 -->
-
-      <BuildOutputInPackage Include="C:\Users\safetech3\.nuget\packages\microsoft.extensions.configuration.binder\6.0.0\lib\netstandard2.0\Microsoft.Extensions.Configuration.Binder.dll" />
-      <BuildOutputInPackage Include="C:\Users\safetech3\.nuget\packages\microsoft.extensions.configuration.abstractions\6.0.0\lib\netstandard2.0\Microsoft.Extensions.Configuration.Abstractions.dll" />
-      <BuildOutputInPackage Include="C:\Users\safetech3\.nuget\packages\microsoft.extensions.primitives\6.0.0\lib\netstandard2.0\Microsoft.Extensions.Primitives.dll" />
-      
-      
-      
-      <BuildOutputInPackage Include="C:\Users\safetech3\.nuget\packages\microsoft.extensions.configuration.json\6.0.0\lib\netstandard2.0\Microsoft.Extensions.Configuration.Json.dll" />
-      <BuildOutputInPackage Include="C:\Users\safetech3\.nuget\packages\microsoft.extensions.configuration\6.0.0\lib\netstandard2.0\Microsoft.Extensions.Configuration.dll" />
-      <BuildOutputInPackage Include="C:\Users\safetech3\.nuget\packages\microsoft.extensions.fileproviders.abstractions\6.0.0\lib\netstandard2.0\Microsoft.Extensions.FileProviders.Abstractions.dll" />
-      <BuildOutputInPackage Include="C:\Users\safetech3\.nuget\packages\microsoft.extensions.fileproviders.physical\6.0.0\lib\netstandard2.0\Microsoft.Extensions.FileProviders.Physical.dll" />
-      
-      <BuildOutputInPackage Include="C:\Users\safetech3\.nuget\packages\microsoft.extensions.configuration.fileextensions\6.0.0\lib\netstandard2.0\Microsoft.Extensions.Configuration.FileExtensions.dll" />
-      
-      
-
-      <!--这几个依赖可以不用打包-->
-      <!--<BuildOutputInPackage Include="C:\Users\safetech3\.nuget\packages\system.memory\4.5.4\lib\netstandard2.0\System.Memory.dll" />-->
-      <!--<BuildOutputInPackage Include="C:\Users\safetech3\.nuget\packages\system.buffers\4.5.1\lib\netstandard2.0\System.Buffers.dll" />-->
-      <!--<BuildOutputInPackage Include="C:\Users\safetech3\.nuget\packages\system.numerics.vectors\4.5.0\lib\netstandard2.0\System.Numerics.Vectors.dll" />-->
-      <!--<BuildOutputInPackage Include="C:\Users\safetech3\.nuget\packages\system.runtime.compilerservices.unsafe\6.0.0\lib\netstandard2.0\System.Runtime.CompilerServices.Unsafe.dll" />-->
-      <!--<BuildOutputInPackage Include="C:\Users\safetech3\.nuget\packages\system.text.json\6.0.0\lib\netstandard2.0\System.Text.Json.dll" />-->
-      <!--<BuildOutputInPackage Include="C:\Users\safetech3\.nuget\packages\system.threading.tasks.extensions\4.5.4\lib\netstandard2.0\System.Threading.Tasks.Extensions.dll" />-->
-
-      <!--<BuildOutputInPackage Include="C:\Users\safetech3\.nuget\packages\microsoft.bcl.asyncinterfaces\6.0.0\lib\netstandard2.0\Microsoft.Bcl.AsyncInterfaces.dll" />-->
-      <!--<BuildOutputInPackage Include="C:\Users\safetech3\.nuget\packages\microsoft.extensions.filesystemglobbing\6.0.0\lib\netstandard2.0\Microsoft.Extensions.FileSystemGlobbing.dll" />-->
-
-      <!--example: <BuildOutputInPackage Include="$(PkgFParsec)/lib/netstandard2.0/FParsecCS.dll" />-->
+      <BuildOutputInPackage Include="$(OutputPath)*.dll" Exclude="$(OutputPath)$(MSBuildThisFileName).dll" />
     </ItemGroup>
   </Target>
 

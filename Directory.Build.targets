@@ -7,4 +7,13 @@
     <!--如果 NETCoreApp 版本小于 3.0，移除空警告-->
     <NoWarn Condition="'$(TargetFrameworkIdentifier)' == '.NETCoreApp' and $([MSBuild]::VersionLessThan($(TargetFrameworkVersion), '3.0'))">$(NoWarn);nullable</NoWarn>
   </PropertyGroup>
+
+  <PropertyGroup>
+    <!--enable 会自动生成全局usings文件-->
+    <!--disable 不会生成文件，但是全局 using 还是可以用-->
+    <ImplicitUsings>disable</ImplicitUsings>
+  </PropertyGroup>
+
+  <!--复制NuGet包到本地包服务器-->
+  <Import Project="$(EasyMSBuildImportDir)copyPackageToLocalNuGetService.targets" />
 </Project>

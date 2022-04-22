@@ -45,7 +45,8 @@
   <Import Project="$(EasyMSBuildImportDir)nuGetConfigure.props"  Condition="!$(IsTestProject)"/>
   <!-- 测试配置，测试（2） -->
   <Import Project="$(EasyMSBuildImportDir)testConfigure.props" Condition="$(IsTestProject)"/>
-  <!-- 导入 自动导入文件属性(3) -->
+  
+  <!-- 导入 自动导入文件属性（随意） -->
   <Import Project="$(EasyMSBuildImportDir)autoImport.props" />
 
   <ItemGroup Label="引入公共文件">

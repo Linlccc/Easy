@@ -29,6 +29,7 @@ public class MergeJsonTest
             new TaskItem("appsettings.json"),
             new TaskItem("appsettings.Development.json"),
             new TaskItem("appsettings.1.json"),
+            new TaskItem("CustomConfig\\AppSettings.json"),
         };
         foreach (var item in MainJsonFiles)
         {
@@ -49,7 +50,7 @@ public class MergeJsonTest
     [Fact]
     public void Test1()
     {       
-        MergeJson mergeJson = new() { OutputPath = "TestGenerate\\", MainJsonFiles = MainJsonFiles, JsonFileItems = JsonFileItems };
+        MergeJson mergeJson = new() { OutputPath = "TestGenerate\\", MainJsonFiles = MainJsonFiles, JsonFileItems = JsonFileItems, WorkRootDirectory= Directory.GetCurrentDirectory() };
         mergeJson.BuildEngine = buildEngine.Object;
 
         bool success = mergeJson.Execute();

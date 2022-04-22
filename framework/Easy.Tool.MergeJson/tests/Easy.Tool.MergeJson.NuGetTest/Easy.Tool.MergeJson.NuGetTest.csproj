@@ -8,17 +8,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Easy.Tool.MergeJson" Version="1.0.63" />
+    <PackageReference Include="Easy.Tool.MergeJson" Version="1.0.105" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
   </ItemGroup>
 
   <ItemGroup>
-    <Content Update="appsettings - 复制.Development1.json">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Content>
-    <Content Update="appsettings.Development1.json">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Content>
+    <JsonFileItems Include="E:\jsonTest\*.json" />
+    <MainJsonFiles Include="E:\jsonTest\appset1.json;CustomConfig\AppSettings.json" />
   </ItemGroup>
 
 </Project>

@@ -8,24 +8,4 @@
     <!--文档生成文件-->
     <DocumentationFile>$([MSBuild]::NormalizeDirectory('$(BaseIntermediateOutputPath)', '$(TargetFramework)-$(Configuration)'))$(MsBuildProjectName).xml</DocumentationFile>
   </PropertyGroup>
-  
-  <PropertyGroup>
-    <!--enable 会自动生成全局usings文件-->
-    <!--disable 不会生成文件，但是全局 using 还是可以用-->
-    <ImplicitUsings>disable</ImplicitUsings>
-  </PropertyGroup>
-  
-  <!--复制Nuget包到本地服务器(文档下面的MyNuGet文件夹)-->
-  <PropertyGroup>
-    <!--NuGet包名-->
-    <NuGetPackageName>$(MsBuildProjectName).$(Version).nupkg</NuGetPackageName>
-    <!--生成后的NuGet包路径-->
-    <NuGetPackagePath>$([MSBuild]::NormalizeDirectory('$(BaseOutputPath)','$(Configuration)'))</NuGetPackagePath>
-    <!--本地NuGet服务器路径-->
-    <LocalNuGetServicePath>$([MSBuild]::NormalizeDirectory('$([System.Environment]::GetFolderPath(SpecialFolder.MyDocuments))','MyNuGet'))</LocalNuGetServicePath>
-  </PropertyGroup>
-  <!--执行复制的任务-->
-  <Target Name="CopyNuGetPackageToService" DependsOnTargets="Pack" AfterTargets="Build" Inputs="$(NuGetPackagePath)$(NuGetPackageName)" Outputs="$(LocalNuGetServicePath)$(NuGetPackageName)" Condition="!$(IsTestProject)">
-    <Copy SourceFiles="$(NuGetPackagePath)$(NuGetPackageName)" DestinationFolder="$(LocalNuGetServicePath)"></Copy>
-  </Target>
 </Project>

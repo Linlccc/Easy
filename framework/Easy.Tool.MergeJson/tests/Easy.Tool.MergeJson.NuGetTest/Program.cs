@@ -1,8 +1,14 @@
 ﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Host.ConfigureAppConfiguration(build =>
+{
+    build.AddJsonFile(AppContext.BaseDirectory+"appsettings.json");
+});
 
 // Add services to the container.
 
