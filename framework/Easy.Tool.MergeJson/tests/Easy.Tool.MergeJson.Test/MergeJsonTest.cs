@@ -33,8 +33,8 @@ public class MergeJsonTest
         };
         foreach (var item in MainJsonFiles)
         {
-            item.SetMetadata("SubDirectoryNode", "CustomConfigInfo:ConfigFileFolders");
-            item.SetMetadata("ExcludeSubFilesNode", "CustomConfigInfo:ExcludeSubFiles");
+            item.SetMetadata("SubDirectoryNode", "CustomConfigInfo.ConfigFileFolders");
+            item.SetMetadata("ExcludeSubFilesNode", "CustomConfigInfo.ExcludeSubFiles");
         }
 
         // 得到所有json文件
@@ -49,15 +49,14 @@ public class MergeJsonTest
 
     [Fact]
     public void Test1()
-    {       
-        MergeJson mergeJson = new() { OutputPath = "TestGenerate\\", MainJsonFiles = MainJsonFiles, JsonFileItems = JsonFileItems, WorkRootDirectory= Directory.GetCurrentDirectory() };
+    {
+        MergeJson mergeJson = new() { OutputDirectory = "TestGenerate\\", MainJsonItems = MainJsonFiles, JsonItems = JsonFileItems, WorkDirectory = AppContext.BaseDirectory };
         mergeJson.BuildEngine = buildEngine.Object;
+
 
         bool success = mergeJson.Execute();
 
 
         Assert.True(success);
-
-        Assert.Equal(34, mergeJson.ParticipateMergeJsonFiles.Length);
     }
 }

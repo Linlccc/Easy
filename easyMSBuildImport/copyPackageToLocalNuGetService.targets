@@ -7,9 +7,9 @@
     <NuGetPackagePath>$([MSBuild]::NormalizeDirectory('$(BaseOutputPath)','$(Configuration)'))</NuGetPackagePath>
     <!--本地NuGet服务器路径-->
     <LocalNuGetServicePath>$([MSBuild]::NormalizeDirectory('$([System.Environment]::GetFolderPath(SpecialFolder.MyDocuments))','MyNuGet'))</LocalNuGetServicePath>
-    <!--是否复制包到本地NuGet服务器[构建时生成包 and (当前框架是框架集中最后一个)]-->
+    <!--是否复制包到本地NuGet服务器[构建时生成包 and (当前框架是框架集中最后一个 or 只有一个框架)]-->
     <IsCopyPackageToLocalNuGetService>false</IsCopyPackageToLocalNuGetService>
-    <IsCopyPackageToLocalNuGetService Condition="$(GeneratePackageOnBuild) and ($(TargetFrameworks.EndsWith('$(TargetFramework)')) or $(TargetFrameworks.EndsWith('$(TargetFramework);')))">true</IsCopyPackageToLocalNuGetService>
+    <IsCopyPackageToLocalNuGetService Condition="$(GeneratePackageOnBuild) and ($(TargetFrameworks.Trim().Trim(';').EndsWith('$(TargetFramework)')) or $(TargetFrameworks) == '')">true</IsCopyPackageToLocalNuGetService>
   </PropertyGroup>
   
   <!--执行复制的任务(在构建完成后执行，执行之前要打包)-->

@@ -8,13 +8,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Easy.Tool.MergeJson" Version="1.0.105" />
+    <PackageReference Include="Easy.Tool.MergeJson" Version="1.0.131" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
   </ItemGroup>
 
   <ItemGroup>
-    <JsonFileItems Include="E:\jsonTest\*.json" />
-    <MainJsonFiles Include="E:\jsonTest\appset1.json;CustomConfig\AppSettings.json" />
+    <JsonItems Include="E:\jsonTest\*.json" />
+    <MainJsonItems Include="E:\jsonTest\appset1.json;CustomConfig\AppSettings.json" />
   </ItemGroup>
 
 </Project>
