@@ -1,6 +1,0 @@
-﻿{
-  "EventBus": {
-    "Enabled": false,
-    "SubscriptionClientName": "Blog.Core"
-  }
-}

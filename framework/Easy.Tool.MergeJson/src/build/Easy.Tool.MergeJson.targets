@@ -18,11 +18,7 @@
   
   <!--清理合并的json，在清理过后执行-->
   <Target Name="CleanMergeJson" AfterTargets="Clean">
-    <ItemGroup>
-      <!--得到所有要清理的文件-->
-      <DeleteFile Include="$(OutputPath)%(MainJsonItems.Identity)"></DeleteFile>
-    </ItemGroup>
-    <Delete Files="@(DeleteFile)" />
+    <CleanMergeJson JsonItems="@(JsonItems)" MainJsonItems="@(MainJsonItems)" WorkDirectory="$(MSBuildProjectDirectory)" OutputDirectory="$(OutputPath)" />
   </Target>
   
 </Project>

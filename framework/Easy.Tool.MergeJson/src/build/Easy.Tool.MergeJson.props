@@ -3,8 +3,10 @@
     <!--任务程序集,目前都是使用netstandard2.0版本，其他版本有依赖问题（当前文件位置\..\lib\netstandard2.0\程序集）-->
     <TaskAssembly>$(MSBuildThisFileDirectory)..\lib\netstandard2.0\$(MSBuildThisFileName).dll</TaskAssembly>
   </PropertyGroup>
-  <!--注册任务-->
+  <!--注册合并任务-->
   <UsingTask TaskName="Easy.Tool.MergeJson.MergeJson" AssemblyFile="$(TaskAssembly)" />
+  <!--注册清理任务-->
+  <UsingTask TaskName="Easy.Tool.MergeJson.CleanMergeJson" AssemblyFile="$(TaskAssembly)" />
 
   <!--定义默认元数据-->
   <ItemDefinitionGroup>
@@ -19,7 +21,7 @@
   <!--默认变量-->
   <PropertyGroup>
     <!--保存合并日志-->
-    <SaveMergeLog>true</SaveMergeLog>
+    <SaveMergeLog>false</SaveMergeLog>
   </PropertyGroup>
   <ItemGroup>
     <!--默认导入当前项目所有json文件,排除生成文件夹中的-->

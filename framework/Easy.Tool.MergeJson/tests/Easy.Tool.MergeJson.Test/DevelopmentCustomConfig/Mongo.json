@@ -1,6 +1,0 @@
-﻿{
-  "Mongo": {
-    "ConnectionString": "mongodb://nosql.data",
-    "Database": "BlogCoreDb"
-  }
-}
