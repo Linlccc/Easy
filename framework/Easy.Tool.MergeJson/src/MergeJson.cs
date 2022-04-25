@@ -15,7 +15,7 @@ public class MergeJson : Task
     /// 程序版本信息
     /// </summary>
     private readonly FileVersionInfo _assemblyInfo;
-    private readonly string _mergeLogFile = $"MergLogs-{DateTime.Now:yyyy-MM-dd HH_FF_ss}.log";
+    private readonly string _mergeLogFile = $"MergLogs-{DateTime.Now:yyyy-MM-dd HH_mm_ss}.log";
     private readonly List<ITaskItem> _mergeJsonItems = new();
     #endregion
     public MergeJson() => _assemblyInfo = FileVersionInfo.GetVersionInfo(GetType().Assembly.Location);

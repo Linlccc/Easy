@@ -10,7 +10,7 @@
     <!--包ID-->
     <PackageId>$(AssemblyName)</PackageId>
     <!--预览版后缀-->
-    <Version Condition="$(IsSuffix)">$(Version)$(BetaSuffix)$(SuffixVersion)</Version>
+    <Version Condition="$(IsPreview)">$(Version)$(PreviewInfo)</Version>
     <!--作者-->
     <Authors>Linlccc</Authors>
     <!--公司-->
