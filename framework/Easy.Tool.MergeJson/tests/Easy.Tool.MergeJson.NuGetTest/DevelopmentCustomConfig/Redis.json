@@ -1,5 +1,0 @@
-﻿{
-  "Redis": {
-    "ConnectionString": "127.0.0.1:6319,password=admin"
-  }
-}

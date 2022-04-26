@@ -1,7 +1,6 @@
-﻿using System.Collections.Concurrent;
-using System.Text;
+﻿using System.Diagnostics;
 using Microsoft.Build.Framework;
-using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json.Linq;
 using Task = Microsoft.Build.Utilities.Task;
 
 namespace Easy.Tool.MergeJson;
@@ -11,35 +10,59 @@ namespace Easy.Tool.MergeJson;
 /// </summary>
 public class MergeJson : Task
 {
+    #region 内部字段
     /// <summary>
-    /// 主要json文件
+    /// 程序版本信息
     /// </summary>
-    [Required]
-    public ITaskItem[] MainJsonFiles { get; set; }
+    private readonly FileVersionInfo _assemblyInfo;
+    private readonly string _mergeLogFile = $"MergLogs-{DateTime.Now:yyyy-MM-dd HH_mm_ss}.log";
+    private readonly List<ITaskItem> _mergeJsonItems = new();
+    #endregion
+    public MergeJson() => _assemblyInfo = FileVersionInfo.GetVersionInfo(GetType().Assembly.Location);
 
     /// <summary>
-    /// 需要合并的json文件
+    /// 日志文件夹
+    /// </summary>
+    public string MergeLogDir => Path.Combine(OutputDirectory, "mergeLogs");
+
+    #region 任务变量
+    /// <summary>
+    /// 所有可能要参与合并的Json项
     /// </summary>
     [Required]
-    public ITaskItem[] JsonFileItems { get; set; }
+    public ITaskItem[] JsonItems { get; set; }
 
     /// <summary>
-    /// 工作根目录
+    /// 主Json项
     /// </summary>
     [Required]
-    public string WorkRootDirectory { get; set; }
+    public ITaskItem[] MainJsonItems { get; set; }
 
     /// <summary>
-    /// 合并json输出路径
+    /// 工作目录
     /// </summary>
     [Required]
-    public string OutputPath { get; set; }
+    public string WorkDirectory { get; set; }
 
     /// <summary>
-    /// 【输出】确认参与合并的json文件
+    /// 输出目录
+    /// </summary>
+    [Required]
+    public string OutputDirectory { get; set; }
+
+    /// <summary>
+    /// 保存合并信息
+    /// </summary>
+    [Required]
+    public bool SaveMergeLog { get; set; }
+
+    /// <summary>
+    /// 【输出】合并Json项
     /// </summary>
     [Output]
-    public ITaskItem[] ParticipateMergeJsonFiles { get; set; }
+    public ITaskItem[] MergeJsonItems => _mergeJsonItems.ToArray();
+    #endregion
+
 
     /// <summary>
     /// msbuild 执行方法
@@ -47,78 +70,121 @@ public class MergeJson : Task
     /// <returns>返回true表示任务成功，返回false表示任务失败</returns>
     public override bool Execute()
     {
-        if (!Directory.Exists(OutputPath)) Directory.CreateDirectory(OutputPath);
-        // 确认参与合并的json文件
-        ConcurrentDictionary<string, ITaskItem> participateMergeJsonFiles = new();
+        // 确保工作路径和输出路径以分隔符结尾
+        WorkDirectory = EnsureEndDirectorySeparator(WorkDirectory);
+        OutputDirectory = EnsureEndDirectorySeparator(OutputDirectory);
+        // 确保输出路径存在
+        if (!Directory.Exists(OutputDirectory)) Directory.CreateDirectory(OutputDirectory);
+
         // 得到所有主文件路径
-        List<(string path, ITaskItem item)> mainFiles = MainJsonFiles.Select(m => (m.GetMetadata("FullPath"), m)).ToList();
+        List<(string path, ITaskItem item)> mainJsonItems = MainJsonItems.Select(m => (m.GetMetadata("FullPath"), m)).ToList();
         // 得到所有可能参加合并的文件
-        List<(string path, ITaskItem item)> jsonFiles = JsonFileItems.Select(m => (m.GetMetadata("FullPath"), m)).ToList();
+        List<string> allJsonPaths = JsonItems.Select(m => m.GetMetadata("FullPath")).ToList();
+
         try
         {
-            foreach ((string path, ITaskItem item) in mainFiles)
+            foreach ((string path, ITaskItem item) in mainJsonItems)
             {
                 // 如果没有该文件跳过
-                if (!jsonFiles.Any(j => j.path == path)) continue;
+                if (!allJsonPaths.Any(j => j == path)) continue;
 
-                // 标记当前json已经参与合并
-                participateMergeJsonFiles.TryAdd(path, item);
-
-                // 加载json配置
-                IConfigurationRoot json = new ConfigurationBuilder().AddJsonFile(path).Build();
-
+                JObject jObj = JObject.Parse(File.ReadAllText(path));
                 // 得到要合并json的子目录
-                string[] subDirectorys = json.GetSection(item.GetMetadata("SubDirectoryNode")).Get<string[]>()?.Select(sd => sd.EndsWith("\\") ? sd : sd + "\\").Where(sd => Directory.Exists(sd)).ToArray() ?? Array.Empty<string>();
+                string[] subDirectorys = jObj.SelectToken(item.GetMetadata("SubDirectoryNode"))?.ToArray().Select(jt => EnsureEndDirectorySeparator(jt.ToString())).Where(p => Directory.Exists(p)).ToArray() ?? Array.Empty<string>();
                 // 得到要排除的子文件(文件名)节点
-                string[] excludeSubFiles = json.GetSection(item.GetMetadata("ExcludeSubFilesNode")).Get<string[]>() ?? Array.Empty<string>();
+                string[] excludeSubFiles = jObj.SelectToken(item.GetMetadata("ExcludeSubFilesNode"))?.ToArray().Select(jt => jt.ToString()).ToArray() ?? Array.Empty<string>();
 
                 // 得到所有要合并的文件
-                List<FileInfo> subFiles = new();
-                foreach (string subDir in subDirectorys) subFiles.AddRange(Directory.GetParent(subDir).GetFiles("*.json"));
-                subFiles = subFiles.Where(sf => !excludeSubFiles.Any(esf => esf == sf.Name)).ToList();
-                IEnumerable<(string Path, ITaskItem Item)> mergeJsonFiles = jsonFiles.Where(jf => subFiles.Any(sf => sf.FullName == jf.path));
+                IEnumerable<FileInfo> subFiles = subDirectorys.SelectMany(subDir => Directory.GetParent(subDir).GetFiles("*.json", SearchOption.TopDirectoryOnly)).Where(subf => !excludeSubFiles.Any(esf => esf == subf.Name));
+                List<string> mergeJsonFiles = allJsonPaths.Where(j => subFiles.Any(sf => sf.FullName == j)).ToList();
 
-                // 得到合并json
-                StringBuilder stringBuilder = new("{");
-                stringBuilder.AppendLine(GetSpliceJson(path));
-                foreach ((string mergePath, ITaskItem mergeItem) in mergeJsonFiles)
-                {
-                    stringBuilder.AppendLine(GetSpliceJson(mergePath));
-                    participateMergeJsonFiles.TryAdd(mergePath, mergeItem);
-                }
-                stringBuilder.Append("}");
+                // 合并json
+                foreach (string mergePath in mergeJsonFiles) jObj.Merge(JObject.Parse(File.ReadAllText(mergePath)));
 
-                string fileName = item.GetMetadata("Filename") + item.GetMetadata("Extension");
-                
+                // 得到合并后文件名
+                string fullFileName = GetOutFileName(OutputDirectory, WorkDirectory, path);
 
-                // 如果不是工作目录中的文件写到生成文件根目录，否者写到相对位置
-                if (!path.StartsWith(WorkRootDirectory)) File.WriteAllText(OutputPath + fileName, stringBuilder.ToString());
-                else
-                {
-                    string middlePath = path.Replace(WorkRootDirectory, "").Replace(fileName, "");
-                    string fullPath = Path.Combine(OutputPath, middlePath);
-                    if (!Directory.Exists(fullPath)) Directory.CreateDirectory(fullPath);
-                    File.WriteAllText(fullPath + fileName, stringBuilder.ToString());
-                }
+                // 写入文件
+                File.WriteAllText(fullFileName, jObj.ToString());
+
+                // 合并后的文件名
+                item.SetMetadata("MergeFileFullName", fullFileName);
+                // 合并了那些文件
+                item.SetMetadata("MergeJsonFiles", string.Join("\r\n", mergeJsonFiles));
+                MarkMerge(item);
             }
         }
         catch (Exception ex)
         {
             Log.LogErrorFromException(ex);
         }
-        finally
-        {
-            ParticipateMergeJsonFiles = participateMergeJsonFiles.Values.ToArray();
-        }
         // 有错误自动返回任务失败
         return !Log.HasLoggedErrors;
+    }
 
-        // 获取可拼接json字符串
-        static string GetSpliceJson(string path)
+    /// <summary>
+    /// 标记合并
+    /// </summary>
+    /// <param name="taskItem"></param>
+    private void MarkMerge(ITaskItem taskItem)
+    {
+        // 添加到合并集合
+        _mergeJsonItems.Add(taskItem);
+        // 拼接合并信息
+        string mergeInfo = $@"主文件:
+{taskItem.GetMetadata("FullPath")}
+合并后文件:
+{taskItem.GetMetadata("MergeFileFullName")}
+子文件:
+{taskItem.GetMetadata("MergeJsonFiles")}
+{new string('-', 15)}{_assemblyInfo.ProductVersion}{new string('-', 15)}{_assemblyInfo.FileVersion}{new string('-', 15)}
+" + "\r\n";
+        // 记录msbuild日志
+        Log.LogMessage(mergeInfo);
+        // 添加文本日志
+        if (SaveMergeLog)
         {
-            string jsonText = File.ReadAllText(path).Trim().Trim('{', '}').Trim();
-            if (!jsonText.EndsWith(",")) jsonText += ",";
-            return jsonText;
+            if (!Directory.Exists(MergeLogDir)) Directory.CreateDirectory(MergeLogDir);
+            File.AppendAllText(Path.Combine(MergeLogDir, _mergeLogFile), mergeInfo);
         }
     }
+
+    #region 静态方法
+    /// <summary>
+    /// 取保以目录分隔符结尾
+    /// </summary>
+    /// <param name="path">路径</param>
+    /// <returns>以目录分隔符结尾的路径</returns>
+    public static string EnsureEndDirectorySeparator(string path)
+    {
+        if (string.IsNullOrEmpty(path)) return path;
+        char last = path[path.Length - 1];
+        if (last != Path.DirectorySeparatorChar && last != Path.AltDirectorySeparatorChar) return path += Path.DirectorySeparatorChar;
+        return path;
+    }
+
+    /// <summary>
+    /// 得到输出文件完整路径
+    /// </summary>
+    /// <param name="outputDir">输出目录</param>
+    /// <param name="workDir">工作目录</param>
+    /// <param name="rawPath">原路径</param>
+    /// <param name="isCreateDir">如果路径上的目录不存在是否创建</param>
+    /// <returns></returns>
+    public static string GetOutFileName(string outputDir, string workDir, string rawPath,bool isCreateDir = true)
+    {
+        // 得到文件名
+        string fileName = Path.GetFileName(rawPath);
+        string fullFileName = Path.Combine(outputDir, fileName);
+        // 如果是工作目录中的文件，获取相对路径
+        if (rawPath.StartsWith(workDir))
+        {
+            string middlePath = rawPath.Replace(workDir, "").Replace(fileName, "");
+            string fullPath = Path.Combine(outputDir, middlePath);
+            if (!Directory.Exists(fullPath) && isCreateDir) Directory.CreateDirectory(fullPath);
+            fullFileName = Path.Combine(fullPath, fileName);
+        }
+        return fullFileName;
+    }
+    #endregion
 }

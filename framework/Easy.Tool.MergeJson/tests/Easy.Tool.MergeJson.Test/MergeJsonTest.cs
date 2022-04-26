@@ -27,14 +27,15 @@ public class MergeJsonTest
         MainJsonFiles = new[]
         {
             new TaskItem("appsettings.json"),
-            new TaskItem("appsettings.Development.json"),
-            new TaskItem("appsettings.1.json"),
-            new TaskItem("CustomConfig\\AppSettings.json"),
+            new TaskItem("appsettings.pro.json"),
+            new TaskItem("appsettings.dev.json"),
+            new TaskItem("config\\appsettings.json"),
+            new TaskItem("config\\appsettings.d.json"),
         };
         foreach (var item in MainJsonFiles)
         {
-            item.SetMetadata("SubDirectoryNode", "CustomConfigInfo:ConfigFileFolders");
-            item.SetMetadata("ExcludeSubFilesNode", "CustomConfigInfo:ExcludeSubFiles");
+            item.SetMetadata("SubDirectoryNode", "CustomConfigInfo.ConfigFileFolders");
+            item.SetMetadata("ExcludeSubFilesNode", "CustomConfigInfo.ExcludeSubFiles");
         }
 
         // 得到所有json文件
@@ -46,18 +47,37 @@ public class MergeJsonTest
         JsonFileItems = taskItems.ToArray();
     }
 
-
+    /// <summary>
+    /// 合并测试
+    /// </summary>
     [Fact]
-    public void Test1()
-    {       
-        MergeJson mergeJson = new() { OutputPath = "TestGenerate\\", MainJsonFiles = MainJsonFiles, JsonFileItems = JsonFileItems, WorkRootDirectory= Directory.GetCurrentDirectory() };
+    public void MergeTest()
+    {
+        MergeJson mergeJson = new() { OutputDirectory = "TestGenerate\\", MainJsonItems = MainJsonFiles, JsonItems = JsonFileItems, WorkDirectory = AppContext.BaseDirectory , SaveMergeLog =true};
         mergeJson.BuildEngine = buildEngine.Object;
 
         bool success = mergeJson.Execute();
 
+        Assert.True(success);
+        
+        Assert.True(File.Exists(@"TestGenerate\appsettings.json"));
+    }
+
+    /// <summary>
+    /// 清理合并测试
+    /// </summary>
+    [Fact]
+    public void CleanMergeTest()
+    {
+        CleanMergeJson cleanMergeJson = new() { OutputDirectory = "TestGenerate\\", MainJsonItems = MainJsonFiles, JsonItems = JsonFileItems, WorkDirectory = AppContext.BaseDirectory };
+        cleanMergeJson.BuildEngine = buildEngine.Object;
+
+        bool success = cleanMergeJson.Execute();
 
         Assert.True(success);
-
-        Assert.Equal(34, mergeJson.ParticipateMergeJsonFiles.Length);
+        
+        Assert.False(File.Exists(@"TestGenerate\appsettings.json"));
     }
+
+
 }

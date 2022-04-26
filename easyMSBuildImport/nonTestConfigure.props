@@ -1,0 +1,34 @@
+<Project>
+  <ItemGroup>
+    <!-- 链接包的自述文件，并且会打包到Nuget包的根目录 -->
+    <None Include="$(EasyReadmeDir)$(MSBuildProjectName).md" Link="%(Filename)%(Extension)" Pack="true" PackagePath="\" />
+  </ItemGroup>
+    
+  <!-- UnGet包配置 -->
+  <PropertyGroup Label="构建NuGet">
+    <!--构建包-->
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <!--包ID-->
+    <PackageId>$(AssemblyName)</PackageId>
+    <!--预览版后缀-->
+    <Version Condition="$(IsPreview)">$(Version)$(PreviewInfo)</Version>
+    <!--作者-->
+    <Authors>Linlccc</Authors>
+    <!--公司-->
+    <Company>$(Authors)</Company>
+    <!--版权信息-->
+    <Copyright>@ Linlccc All rights reserved.</Copyright>
+    <!--项目链接-->
+    <PackageProjectUrl>https://github.com/Linlccc/Easy</PackageProjectUrl>
+    <!--项目自述文件-->
+    <PackageReadmeFile>$(MSBuildProjectName).md</PackageReadmeFile>
+    <!--源代码储存库链接-->
+    <RepositoryUrl>https://github.com/Linlccc/Easy</RepositoryUrl>
+    <!--储存库类型-->
+    <RepositoryType>git</RepositoryType>
+    <!--许可证-->
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <!--描述包的标记和关键字的空格或分号分隔列表,搜索包时使用标记-->
+    <PackageTags>.net</PackageTags>
+  </PropertyGroup>
+</Project>

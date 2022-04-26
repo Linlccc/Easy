@@ -1,223 +1,97 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework></TargetFramework>
     <Nullable>enable</Nullable>
 
     <IsPackable>false</IsPackable>
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="appsettings.1.json" />
-    <None Remove="appsettings.Development.json" />
+    <None Remove="appsettings.dev.json" />
     <None Remove="appsettings.json" />
-    <None Remove="CustomConfig\Apollo.json" />
-    <None Remove="CustomConfig\AppSettings.json" />
-    <None Remove="CustomConfig\Audience.json" />
-    <None Remove="CustomConfig\ConsulSetting.json" />
-    <None Remove="CustomConfig\Db.json" />
-    <None Remove="CustomConfig\EventBus.json" />
-    <None Remove="CustomConfig\IpRateLimiting.json" />
-    <None Remove="CustomConfig\Kafka.json" />
-    <None Remove="CustomConfig\LogFiedOutPut.json" />
-    <None Remove="CustomConfig\Middleware.json" />
-    <None Remove="CustomConfig\Mongo.json" />
-    <None Remove="CustomConfig\Nacos.json" />
-    <None Remove="CustomConfig\Pay.json" />
-    <None Remove="CustomConfig\RabbitMQ.json" />
-    <None Remove="CustomConfig\Redis.json" />
-    <None Remove="CustomConfig\Startup.json" />
-    <None Remove="DevelopmentCustomConfig\Apollo.json" />
-    <None Remove="DevelopmentCustomConfig\AppSettings.json" />
-    <None Remove="DevelopmentCustomConfig\Audience.json" />
-    <None Remove="DevelopmentCustomConfig\ConsulSetting.json" />
-    <None Remove="DevelopmentCustomConfig\Db.json" />
-    <None Remove="DevelopmentCustomConfig\EventBus.json" />
-    <None Remove="DevelopmentCustomConfig\IpRateLimiting.json" />
-    <None Remove="DevelopmentCustomConfig\Kafka.json" />
-    <None Remove="DevelopmentCustomConfig\LogFiedOutPut.json" />
-    <None Remove="DevelopmentCustomConfig\Middleware.json" />
-    <None Remove="DevelopmentCustomConfig\Mongo.json" />
-    <None Remove="DevelopmentCustomConfig\Nacos.json" />
-    <None Remove="DevelopmentCustomConfig\Pay.json" />
-    <None Remove="DevelopmentCustomConfig\RabbitMQ.json" />
-    <None Remove="DevelopmentCustomConfig\Redis.json" />
-    <None Remove="DevelopmentCustomConfig\Startup.json" />
+    <None Remove="appsettings.pro.json" />
+    <None Remove="config\appsettings.d.json" />
+    <None Remove="config\appsettings.json" />
+    <None Remove="CustomConfig1\json1.json" />
+    <None Remove="CustomConfig1\json2.json" />
+    <None Remove="CustomConfig1\json3.json" />
+    <None Remove="CustomConfig2\json1.json" />
+    <None Remove="CustomConfig2\json2.json" />
+    <None Remove="CustomConfig2\json3.json" />
+    <None Remove="CustomConfig3\json1.json" />
+    <None Remove="CustomConfig3\json2.json" />
+    <None Remove="CustomConfig3\json3.json" />
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="appsettings.1.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </Content>
-    <Content Include="appsettings.Development.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    <Content Include="appsettings.dev.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>
     <Content Include="appsettings.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>
-    <Content Include="CustomConfig\Apollo.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    <Content Include="appsettings.pro.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>
-    <Content Include="CustomConfig\AppSettings.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    <Content Include="config\appsettings.d.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>
-    <Content Include="CustomConfig\Audience.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    <Content Include="config\appsettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>
-    <Content Include="CustomConfig\ConsulSetting.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    <Content Include="CustomConfig1\json1.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>
-    <Content Include="CustomConfig\Db.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    <Content Include="CustomConfig1\json2.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>
-    <Content Include="CustomConfig\EventBus.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    <Content Include="CustomConfig1\json3.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>
-    <Content Include="CustomConfig\IpRateLimiting.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    <Content Include="CustomConfig2\json1.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>
-    <Content Include="CustomConfig\Kafka.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    <Content Include="CustomConfig2\json2.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>
-    <Content Include="CustomConfig\LogFiedOutPut.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    <Content Include="CustomConfig2\json3.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>
-    <Content Include="CustomConfig\Middleware.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    <Content Include="CustomConfig3\json1.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>
-    <Content Include="CustomConfig\Mongo.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    <Content Include="CustomConfig3\json2.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>
-    <Content Include="CustomConfig\Nacos.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </Content>
-    <Content Include="CustomConfig\Pay.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </Content>
-    <Content Include="CustomConfig\RabbitMQ.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </Content>
-    <Content Include="CustomConfig\Redis.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </Content>
-    <Content Include="CustomConfig\Startup.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </Content>
-    <Content Include="DevelopmentCustomConfig\Apollo.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </Content>
-    <Content Include="DevelopmentCustomConfig\AppSettings.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </Content>
-    <Content Include="DevelopmentCustomConfig\Audience.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </Content>
-    <Content Include="DevelopmentCustomConfig\ConsulSetting.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </Content>
-    <Content Include="DevelopmentCustomConfig\Db.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </Content>
-    <Content Include="DevelopmentCustomConfig\EventBus.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </Content>
-    <Content Include="DevelopmentCustomConfig\IpRateLimiting.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </Content>
-    <Content Include="DevelopmentCustomConfig\Kafka.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </Content>
-    <Content Include="DevelopmentCustomConfig\LogFiedOutPut.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </Content>
-    <Content Include="DevelopmentCustomConfig\Middleware.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </Content>
-    <Content Include="DevelopmentCustomConfig\Mongo.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </Content>
-    <Content Include="DevelopmentCustomConfig\Nacos.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </Content>
-    <Content Include="DevelopmentCustomConfig\Pay.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </Content>
-    <Content Include="DevelopmentCustomConfig\RabbitMQ.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </Content>
-    <Content Include="DevelopmentCustomConfig\Redis.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </Content>
-    <Content Include="DevelopmentCustomConfig\Startup.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    <Content Include="CustomConfig3\json3.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>

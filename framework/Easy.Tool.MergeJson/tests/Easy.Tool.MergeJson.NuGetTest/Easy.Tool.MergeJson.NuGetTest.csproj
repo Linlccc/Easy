@@ -8,13 +8,17 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Easy.Tool.MergeJson" Version="1.0.105" />
+    <PackageReference Include="Easy.Tool.MergeJson" Version="1.0.0-beta6" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
   </ItemGroup>
 
+  <PropertyGroup>
+    <!--保存日志-->
+    <SaveMergeLog>true</SaveMergeLog>
+  </PropertyGroup>
   <ItemGroup>
-    <JsonFileItems Include="E:\jsonTest\*.json" />
-    <MainJsonFiles Include="E:\jsonTest\appset1.json;CustomConfig\AppSettings.json" />
+    <!--主json添加config中的文件-->
+    <MainJsonItems Include="config\*.json" />
   </ItemGroup>
 
 </Project>

@@ -1,11 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework></TargetFramework>
     <Nullable>enable</Nullable>
 
     <IsPackable>false</IsPackable>
-	  <IsNuGetTest>True</IsNuGetTest>
+	  <IsNuGetTest>true</IsNuGetTest>
   </PropertyGroup>
 
   <ItemGroup>

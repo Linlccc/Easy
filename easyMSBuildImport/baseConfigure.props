@@ -36,21 +36,25 @@
     <MinorVersion>0</MinorVersion>
     <!--补丁版本-->
     <PatchVersion>0</PatchVersion>
+    
     <!--试验品-->
     <AlphaSuffix>-alpha</AlphaSuffix>
+    <AlphaVersion>1</AlphaVersion>
     <!--下一完整版本，可能存在已知bug-->
     <BetaSuffix>-beta</BetaSuffix>
+    <BetaVersion>6</BetaVersion>
     <!--预发布版本-->
     <RcSuffix>-rc</RcSuffix>
-    <!--后缀版本，测试版本号-->
-    <SuffixVersion>4</SuffixVersion>
+    <RcVersion>1</RcVersion>
+    
     <!--是否要后缀（预览版本）-->
-    <IsSuffix>true</IsSuffix>
+    <IsPreview>true</IsPreview>
+    <PreviewInfo>$(BetaSuffix)$(BetaVersion)</PreviewInfo>
     
     <!--包版本-->
     <Version>$(MajorVersion).$(MinorVersion).$(PatchVersion)</Version>
     <!--程序集版本-->
-    <AssemblyVersion>$(MajorVersion).$(MinorVersion).$(PatchVersion).$(SuffixVersion)</AssemblyVersion>
+    <AssemblyVersion>$(MajorVersion).$(MinorVersion).$(PatchVersion).0</AssemblyVersion>
     <!--文件版本-->
     <FileVersion>$(AssemblyVersion)</FileVersion>
   </PropertyGroup>
