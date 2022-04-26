@@ -14,10 +14,12 @@
     <!--Easy 根目录-->
     <EasyRootDir>$(MSBuildThisFileDirectory)</EasyRootDir>
     
+    <!-- Readme 文件目录 -->
+    <EasyReadmeDir>$([MSBuild]::NormalizeDirectory($(EasyRootDir),'readmes'))</EasyReadmeDir>
     <!--Easy 框架目录-->
-    <EasyFramework>$([MSBuild]::NormalizeDirectory($(EasyRootDir),'framework'))</EasyFramework>
-    <!--Easy 公共路径-->
-    <EasyCommonPath>$([MSBuild]::NormalizeDirectory($(EasyFramework),'Easy.Common','src'))</EasyCommonPath>
+    <EasyFrameworkDir>$([MSBuild]::NormalizeDirectory($(EasyRootDir),'framework'))</EasyFrameworkDir>
+    <!--Easy 公共目录-->
+    <EasyCommonDir>$([MSBuild]::NormalizeDirectory($(EasyFrameworkDir),'Easy.Common','src'))</EasyCommonDir>
     
     <!--Easy msbuild 导入目录-->
     <EasyMSBuildImportDir>$([MSBuild]::NormalizeDirectory($(EasyRootDir),'easyMSBuildImport'))</EasyMSBuildImportDir>
@@ -33,16 +35,16 @@
   </PropertyGroup>
 
   <!-- 导入计算操作系统属性(0) -->
-  <Import Project="$(EasyMSBuildImportDir)calculateOS.props" />
+  <!-- <Import Project="$(EasyMSBuildImportDir)calculateOS.props" /> -->
   <!-- 导入计算架构(0) -->
-  <Import Project="$(EasyMSBuildImportDir)calculateArch.props" />
+  <!-- <Import Project="$(EasyMSBuildImportDir)calculateArch.props" /> -->
   <!-- 用作构建的框架（0） -->
   <Import Project="$(EasyMSBuildImportDir)useFramework.props" />
   
   <!-- 项目基础配置（1） -->
   <Import Project="$(EasyMSBuildImportDir)baseConfigure.props" />
   <!-- NuGet 包配置，非测试（2） -->
-  <Import Project="$(EasyMSBuildImportDir)nuGetConfigure.props"  Condition="!$(IsTestProject)"/>
+  <Import Project="$(EasyMSBuildImportDir)nonTestConfigure.props"  Condition="!$(IsTestProject)"/>
   <!-- 测试配置，测试（2） -->
   <Import Project="$(EasyMSBuildImportDir)testConfigure.props" Condition="$(IsTestProject)"/>
   
@@ -51,6 +53,6 @@
 
   <ItemGroup Label="引入公共文件">
     <!--引入全局引用-->
-    <Compile Include="$(EasyCommonPath)GlobalUsings.cs" Link="Common\$(MsBuildProjectName).%(Filename)%(Extension)" />
+    <Compile Include="$(EasyCommonDir)GlobalUsings.cs" Link="Common\$(MsBuildProjectName).%(Filename)%(Extension)" />
   </ItemGroup>
 </Project>

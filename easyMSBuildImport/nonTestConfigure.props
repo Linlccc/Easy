@@ -1,9 +1,10 @@
 <Project>
   <ItemGroup>
-    <!--引入包的自述文件-->
-    <None Include="$(MSBuildProjectName).md" Pack="true" PackagePath="\"/>
+    <!-- 链接包的自述文件，并且会打包到Nuget包的根目录 -->
+    <None Include="$(EasyReadmeDir)$(MSBuildProjectName).md" Link="%(Filename)%(Extension)" Pack="true" PackagePath="\" />
   </ItemGroup>
     
+  <!-- UnGet包配置 -->
   <PropertyGroup Label="构建NuGet">
     <!--构建包-->
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
