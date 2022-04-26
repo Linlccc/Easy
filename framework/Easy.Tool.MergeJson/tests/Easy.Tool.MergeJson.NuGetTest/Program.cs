@@ -9,8 +9,6 @@ builder.Host.ConfigureAppConfiguration((context,build) =>
 {
     build.Sources.Clear();
     build.AddJsonFile(AppContext.BaseDirectory+"appsettings.json");
-    build.Sources.Clear();
-    build.AddJsonFile("appsettings.json");
 });
 
 // Add services to the container.
