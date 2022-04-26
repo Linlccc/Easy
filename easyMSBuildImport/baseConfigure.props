@@ -42,7 +42,7 @@
     <AlphaVersion>1</AlphaVersion>
     <!--下一完整版本，可能存在已知bug-->
     <BetaSuffix>-beta</BetaSuffix>
-    <BetaVersion>5</BetaVersion>
+    <BetaVersion>6</BetaVersion>
     <!--预发布版本-->
     <RcSuffix>-rc</RcSuffix>
     <RcVersion>1</RcVersion>
