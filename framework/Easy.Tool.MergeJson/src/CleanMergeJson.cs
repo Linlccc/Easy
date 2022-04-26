@@ -66,7 +66,7 @@ public class CleanMergeJson : Task
                   if (File.Exists(fullFileName)) File.Delete(fullFileName);
                   // 如果目录中没有内容删除
                   DirectoryInfo dir = Directory.GetParent(fullFileName);
-                  if(!dir.GetDirectories().Any() && !dir.GetFiles().Any()) dir.Delete();
+                  if(dir.Exists && !dir.GetDirectories().Any() && !dir.GetFiles().Any()) dir.Delete();
               });
         }
         catch (Exception ex)
