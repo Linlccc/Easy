@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 
-namespace Easy.Extensions.DependencyInjection.Abstractions;
+namespace Easy.Extensions.DependencyInjection;
 
 /// <summary>
 /// 注册类型（不可继承）

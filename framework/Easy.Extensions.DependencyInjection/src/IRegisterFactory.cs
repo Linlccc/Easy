@@ -1,4 +1,6 @@
-﻿namespace Easy.Extensions.DependencyInjection.Abstractions;
+﻿using Easy.Extensions.DependencyInjection.Abstractions;
+
+namespace Easy.Extensions.DependencyInjection;
 
 /// <summary>
 /// 工厂注册接口

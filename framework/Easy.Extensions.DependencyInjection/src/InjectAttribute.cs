@@ -1,4 +1,4 @@
-﻿namespace Easy.Extensions.DependencyInjection.Abstractions;
+﻿namespace Easy.Extensions.DependencyInjection;
 
 /// <summary>
 /// 自动注入
