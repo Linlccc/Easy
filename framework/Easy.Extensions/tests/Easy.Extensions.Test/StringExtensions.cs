@@ -1,5 +1,4 @@
-﻿using System;
-using Xunit;
+﻿using Xunit;
 
 namespace Easy.Extensions.Test;
 
@@ -8,7 +7,7 @@ public class StringExtensions
     [Fact]
     public void IsNullOrEmpty()
     {
-        string str1 = null;
+        string? str1 = null;
         string str2 = string.Empty;
         string str3 = "";
         string str4 = " ";
