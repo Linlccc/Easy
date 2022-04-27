@@ -1,39 +1,37 @@
 ### 依赖注入（抽象）
 
-- [x] 自动注册
-
+- [x] key服务注册
   ~~~
-  在要注册的类上使用 [RegisterAttribute] 特性
-  ~~~
-
-- [x] 工厂注册
-
-  ~~~
-  要以工厂注册的类实现 IRegisterFactory<TService,TServiceLifetime> 接口
-  ~~~
-
-- [x] Key服务注册
-
-  ~~~
+  // 瞬时
   <IServiceCollection>.AddTransient(serviceType,implementationType,key);
+  ...
+  // 范围
+  <IServiceCollection>.AddScoped(serviceType,implementationType,key);
+  ...
+  // 单例
+  <IServiceCollection>.AddSingleton(serviceType,implementationType,key);
+  ...
   ~~~
 
-- [x] Key服务获取对象
-
+- [x] key服务获取
   ~~~
   IServiceProvider.GetService<TService>(key);
+  IServiceProvider.GetRequiredService<TService>(key);
+  IServiceProvider.GetServices<TService>(key);
   ~~~
 
-- [x] 属性注入
-
+- [x] 接口形式的服务生命周期
   ~~~
-  在属性上使用 [InjectAttribute] 特性，获取对象将自动注入
-  ~~~
+  // 瞬时
+  ILifetimeTransient
+  // 范围
+  ILifetimeScoped
+  // 单例
+  ILifetimeSingleton
 
-- [x] 字段注入
+  三个接口都继承自 IServiceLifetime
 
-  ~~~
-  在字段上上使用 [InjectAttribute] 特性，获取对象将自动注入
+  可使用 ServiceLifetimeExtension.GetLifetime(Type); 获取到 ServiceLifetime 类型数据
   ~~~
 
   
