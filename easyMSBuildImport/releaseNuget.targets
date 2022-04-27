@@ -9,7 +9,7 @@
     <LocalNuGetServicePath>$([MSBuild]::NormalizeDirectory('$([System.Environment]::GetFolderPath(SpecialFolder.MyDocuments))','MyNuGet'))</LocalNuGetServicePath>
     <!--是否将包发布到本地[构建时生成包 and (当前框架是框架集中最后一个 or 只有一个框架)]-->
     <IsReleaseToLocal>false</IsReleaseToLocal>
-    <IsReleaseToLocal Condition="$(GeneratePackageOnBuild) and ($(TargetFrameworks.Trim().Trim(';').EndsWith('$(TargetFramework)')) or $(TargetFrameworks) == '')">false</IsReleaseToLocal>
+    <IsReleaseToLocal Condition="$(GeneratePackageOnBuild) and ($(TargetFrameworks.Trim().Trim(';').EndsWith('$(TargetFramework)')) or $(TargetFrameworks) == '')">true</IsReleaseToLocal>
   </PropertyGroup>
   
   <!--发布NuGet包到本地(在构建完成后执行，执行之前要打包)-->
@@ -27,7 +27,7 @@
       <!-- 发布包执行的命令 -->
       <ReleaseNuGetToRemoteCmd>$(NuGetExe) push $(NuGetPackagePath)$(NuGetPackageName) -src https://api.nuget.org/v3/index.json -NonInteractive -SkipDuplicate</ReleaseNuGetToRemoteCmd>
       <!-- 本地测试时命令 -->
-      <ReleaseNuGetToRemoteCmd>$(NuGetExe) push $(NuGetPackagePath)$(NuGetPackageName) -src $(LocalNuGetServicePath) -NonInteractive</ReleaseNuGetToRemoteCmd>
+      <!-- <ReleaseNuGetToRemoteCmd>$(NuGetExe) push $(NuGetPackagePath)$(NuGetPackageName) -src $(LocalNuGetServicePath) -NonInteractive</ReleaseNuGetToRemoteCmd> -->
     </PropertyGroup>
     <!-- 执行包发布 -->
     <Exec ConsoleToMsBuild="true" IgnoreExitCode="true" Command="$(ReleaseNuGetToRemoteCmd)" Condition="$([System.IO.File]::Exists($(NuGetPackagePath)$(NuGetPackageName)))">
