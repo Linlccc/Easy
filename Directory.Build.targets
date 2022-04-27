@@ -14,6 +14,6 @@
     <ImplicitUsings>disable</ImplicitUsings>
   </PropertyGroup>
 
-  <!--复制NuGet包到本地包服务器-->
-  <Import Project="$(EasyMSBuildImportDir)copyPackageToLocalNuGetService.targets" />
+  <!--发布Nuget包-->
+  <Import Project="$(EasyMSBuildImportDir)releaseNuget.targets" />
 </Project>

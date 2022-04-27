@@ -13,6 +13,9 @@
   <PropertyGroup Label="计算基本目录">
     <!--Easy 根目录-->
     <EasyRootDir>$(MSBuildThisFileDirectory)</EasyRootDir>
+
+    <!-- nuget.exe 程序 -->
+    <NuGetExe>$(MSBuildThisFileDirectory)nuget.exe</NuGetExe>
     
     <!-- Readme 文件目录 -->
     <EasyReadmeDir>$([MSBuild]::NormalizeDirectory($(EasyRootDir),'readmes'))</EasyReadmeDir>
@@ -32,6 +35,10 @@
     <GenerateBinDir>$([MSBuild]::NormalizeDirectory($(GenerateDir),'bin'))</GenerateBinDir>
     <!--obj 目录-->
     <GenerateObjDir>$([MSBuild]::NormalizeDirectory($(GenerateDir),'obj'))</GenerateObjDir>
+    <!-- 生成期间日志目录 -->
+    <GenerateLogDir>$([MSBuild]::NormalizeDirectory($(GenerateDir),'logs'))</GenerateLogDir>
+    <!-- NuGet 操作的日志目录 -->
+    <NuGetLogDir>$([MSBuild]::NormalizeDirectory($(GenerateLogDir),'nuGetLogs'))</NuGetLogDir>
   </PropertyGroup>
 
   <!-- 导入计算操作系统属性(0) -->
