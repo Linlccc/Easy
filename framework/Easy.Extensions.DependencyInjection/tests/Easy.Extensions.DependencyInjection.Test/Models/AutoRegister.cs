@@ -1,6 +1,5 @@
 ﻿using Easy.Extensions.DependencyInjection.Abstractions;
 using Microsoft.Extensions.DependencyInjection;
-using System;
 
 namespace Easy.Extensions.DependencyInjection.Test.Models;
 
@@ -57,7 +56,7 @@ public class TypeR5 : TypeR4 { }
 #region 6
 /// <summary>
 /// 将实现的接口作为服务类型注册，同时使用key注册服务
-/// 只会使用 ITypeR6<string> 注册，IDisposable 会被自动排除
+/// 只会使用 ITypeR6&lt; string &gt; 注册，IDisposable 会被自动排除
 /// </summary>
 [Register(ServiceKey = "1")]
 public class TypeR6 : ITypeR6<string>, IDisposable
@@ -81,56 +80,56 @@ public class TypeR7<T> : ITypeR7<T>
     /// not null
     /// </summary>
     [Inject]
-    public readonly TypeR1 TypeR1_1;
+    public readonly TypeR1? TypeR1_1;
 
     /// <summary>
     /// not null
     /// </summary>
     [Inject]
-    public readonly ITypeR2 TypeR2_1;
+    public readonly ITypeR2? TypeR2_1;
 
     /// <summary>
     /// not null
     /// </summary>
     [Inject]
-    public ITypeR3 TypeR3_1;
+    public ITypeR3? TypeR3_1;
 
     /// <summary>
     /// null
     /// </summary>
     [Inject("1")]
-    public ITypeR3 TypeR3_2;
+    public ITypeR3? TypeR3_2;
     #endregion
     #region 属性注入
     /// <summary>
     /// not null
     /// </summary>
     [Inject]
-    public TypeR3 ITypeR4_1 { get; set; }
+    public TypeR3? ITypeR4_1 { get; set; }
 
     /// <summary>
     /// not null
     /// </summary>
     [Inject]
-    public ITypeR4 ITypeR4_2 { get; set; }
+    public ITypeR4? ITypeR4_2 { get; set; }
 
     /// <summary>
     /// not null
     /// </summary>
     [Inject]
-    public TypeR5 TypeR5_1 { get; set; }
+    public TypeR5? TypeR5_1 { get; set; }
 
     /// <summary>
     /// not null
     /// </summary>
     [Inject]
-    public ITypeR6<string> TypeR6_1 { get; set; }
+    public ITypeR6<string>? TypeR6_1 { get; set; }
 
     /// <summary>
     /// not null,not Eqaul TypeR6_1
     /// </summary>
     [Inject("1")]
-    public ITypeR6<string> TypeR6_2 { get; set; }
+    public ITypeR6<string>? TypeR6_2 { get; set; }
     #endregion
 }
 
@@ -148,8 +147,8 @@ public interface ITypeR8<T1, T2> { }
 #endregion
 #region 9
 /// <summary>
-/// 以 ITypeR9<> 作为服务类型注册
-/// 但是只有 ITypeR9<string> 可以正常获取，其他的都会报错
+/// 以 ITypeR9 &lt; &gt; 作为服务类型注册
+/// 但是只有 ITypeR9 &lt; string &gt; 可以正常获取，其他的都会报错
 /// </summary>
 [Register(typeof(ITypeR9<>))]
 public class TypeR9<T> : ITypeR9<string>

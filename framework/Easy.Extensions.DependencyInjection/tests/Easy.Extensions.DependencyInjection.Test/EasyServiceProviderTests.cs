@@ -1,7 +1,4 @@
-﻿using System;
-using Easy.Extensions.DependencyInjection.Test.Models;
-using System.Collections.Generic;
-using System.Linq;
+﻿using Easy.Extensions.DependencyInjection.Test.Models;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 
@@ -180,7 +177,7 @@ public class EasyServiceProviderTests
     {
         EasyServiceProvider service = GetEasyServiceProvider();
 
-        TypeR7<bool> typeR7 = (TypeR7<bool>)service.GetService<ITypeR7<bool>>();
+        TypeR7<bool> typeR7 = (TypeR7<bool>)service.GetService<ITypeR7<bool>>()!;
         Assert.NotNull(typeR7);
         Assert.NotNull(typeR7.TypeR1_1);
         Assert.NotNull(typeR7.TypeR2_1);
