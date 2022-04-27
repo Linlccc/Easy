@@ -4,7 +4,7 @@
     <None Include="$(EasyReadmeDir)$(MSBuildProjectName).md" Link="%(Filename)%(Extension)" Pack="true" PackagePath="\" />
   </ItemGroup>
     
-  <!-- UnGet包配置 -->
+  <!-- NuGet包配置 -->
   <PropertyGroup Label="构建NuGet">
     <!--构建包-->
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
