@@ -3,7 +3,9 @@
 - [x] 添加自动发布包任务
 
   ~~~
-  1.直接使用 msbuild <Project/solution> -t:ReleaseNuGetToRemote 即可自动发布包
+  1.使用 
+    a.任意位置 msbuild <Project/solution> -t:ReleaseNuGetToRemote 即可自动发布包
+    b.在项目目录直接使用 msbuild -t:ReleaseNuGetToRemote
   2.发布过后会将发布日志保存到 \artifacts\logs\nuGetLogs\<NuGetPackageName>.log
 
   注:
