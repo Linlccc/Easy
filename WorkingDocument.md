@@ -17,6 +17,8 @@
 
 #### 0428
   ~~~
+  整理自定义任务
+  当前看到：https://github.com/OmniSharp/omnisharp-vscode/blob/master/debugger-launchjson.md#just-my-code
   ~~~
 
 ---
