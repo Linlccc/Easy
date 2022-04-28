@@ -28,6 +28,18 @@
 - [ ] 处理vscode自动生成的文件
 - [ ] 实现aop
 - [ ] 看是否可以获取项目使用的sdk,根据不同的sdk添加默认全局 using
+  ~~~
+  判断sdk是否引入的属性名
+  UsingILLinkTasksSdk
+  UsingMicrosoftNETSdk
+  UsingMicrosoftNETSdkBlazorWebAssembly
+  UsingMicrosoftNETSdkRazor
+  UsingMicrosoftNETSdkWeb
+  UsingMicrosoftNETSdkWorker
+
+  _MicrosoftWindowsDesktopSdkImported
+  _MicrosoftNETSdkWindowsDesktop
+  ~~~
 - [ ] 看怎么实现自动化命令[脚本]
   ~~~
   1.直接在解决方案上实现包含项目的包发布

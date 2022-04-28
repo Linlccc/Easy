@@ -60,6 +60,6 @@
 
   <ItemGroup Label="引入公共文件">
     <!--引入全局引用-->
-    <Compile Include="$(EasyCommonDir)GlobalUsings.cs" Link="Common\$(MsBuildProjectName).%(Filename)%(Extension)" />
+    <Compile Include="$(EasyCommonDir)GlobalUsings.cs" Link="Common\$(MsBuildProjectName).%(Filename)%(Extension)" Condition="$(UsingMicrosoftNETSdk)=='true'" />
   </ItemGroup>
 </Project>
