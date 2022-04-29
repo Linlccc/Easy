@@ -18,6 +18,7 @@
       "problemMatcher": "$msCompile"
     },
     {
+      // 用于附加的任务
       "label": "Easy.Tool.MergeJson.NuGetTest Watch",
       "type": "process",
       "command": "dotnet",
