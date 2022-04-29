@@ -67,6 +67,10 @@
   ~~~text
   使用 dotnet publish 项目时,发布文件中包含应该被忽略的json,合并的json文件也没有被发布  
   msbuild 项目 -t:publishonly 是安装文件，但是也有上述情况
+
+  解决方案：
+  1.将要合并的json中内容中移除添加到none（不复制）
+  2.发布后将和并的json复制到发布文件
   ~~~
 
 - [ ] 实现aop
