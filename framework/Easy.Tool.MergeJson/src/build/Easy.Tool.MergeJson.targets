@@ -15,6 +15,13 @@
       <!--输出变量，确认参与合并的json-->
       <Output TaskParameter="MergeJsonItems" ItemName="MergeJsonItems" />
     </MergeJson>
+
+    <!--得到合并的json，加入ContentWithTargetPath项-->
+    <AssignTargetPath Files="@(MergeJsonItems->Metadata('MergeFileFullName'))" RootFolder="$(OutputPath)">
+      <Output TaskParameter="AssignedFiles" ItemName="ContentWithTargetPath" />
+    </AssignTargetPath>
+    <!--标记这些json会复制到发布文件夹-->
+    <ItemGroup><ContentWithTargetPath Update="%(MergeJsonItems.MergeFileFullName)" CopyToPublishDirectory="PreserveNewest" /></ItemGroup>
   </Target>
 
   <!--清理合并的json，在清理过后执行-->
