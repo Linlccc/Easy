@@ -63,6 +63,12 @@
 - [x] (不重要)研究一下附加调试
 - [ ] 将包发布添加成任务
 - [ ] 查看 msbuild 的 (发布)PublishOnly 任务
+
+  ~~~text
+  使用 dotnet publish 项目时,发布文件中包含应该被忽略的json,合并的json文件也没有被发布  
+  msbuild 项目 -t:publishonly 是安装文件，但是也有上述情况
+  ~~~
+
 - [ ] 实现aop
 - [ ] 看是否可以获取项目使用的sdk,根据不同的sdk添加默认全局 using
 
