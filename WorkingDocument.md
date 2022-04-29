@@ -54,6 +54,20 @@
   }
   ~~~
 
+解决MergeJson在项目发布时的异常
+
+  ~~~text
+  问题描述
+  1.发布项目中存在 Easy.Tool.MergeJosn.dll
+  2.合并的json文件没有被发布
+  3.原json被发布
+
+  解决方案
+  1.在包引用上添加 ExcludeAssets="runtime" ，标记排除资产
+  2.在合并json后将合并成功的主json添加到 ContentWithTargetPath 项中，publish 任务自动会发布里面的文件
+  3.将原json从内容中移除（或者设置内容的 CopyToPublishDirectory 元数据不等于 PreserveNewest ----该想法待验证）
+  ~~~
+
 ---
 
 ## 计划
@@ -67,10 +81,6 @@
   ~~~text
   使用 dotnet publish 项目时,发布文件中包含应该被忽略的json,合并的json文件也没有被发布  
   msbuild 项目 -t:publishonly 是安装文件，但是也有上述情况
-
-  解决方案：
-  1.将要合并的json中内容中移除添加到none（不复制）
-  2.发布后将和并的json复制到发布文件
   ~~~
 
 - [ ] 实现aop
