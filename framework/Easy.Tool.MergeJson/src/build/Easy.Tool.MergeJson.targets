@@ -2,12 +2,13 @@
   <ItemGroup>
     <!--指定不将当前NuGet包构建到debug-->
     <PackageReference Update="$(MSBuildThisFileName)" ExcludeAssets="runtime" />
-    <!--所有导入的文件不进行复制（这个后面处理一下，只针对合并过的json文件）-->
-    <Content Update="@(JsonItems)">
+    <!--所有导入的文件从内容中移除,添加到什么操作也不做（不复制）-->
+    <Content Remove="@(JsonItems)" />
+    <None Include="@(JsonItems)">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Content>
+    </None>
   </ItemGroup>
-  
+
   <!--合并json任务，在构建之前执行-->
   <Target Name="MergeJson" BeforeTargets="Build">
     <MergeJson JsonItems="@(JsonItems)" MainJsonItems="@(MainJsonItems)" SaveMergeLog="$(SaveMergeLog)" WorkDirectory="$(MSBuildProjectDirectory)" OutputDirectory="$(OutputPath)">
@@ -15,10 +16,10 @@
       <Output TaskParameter="MergeJsonItems" ItemName="MergeJsonItems" />
     </MergeJson>
   </Target>
-  
+
   <!--清理合并的json，在清理过后执行-->
   <Target Name="CleanMergeJson" AfterTargets="Clean">
     <CleanMergeJson JsonItems="@(JsonItems)" MainJsonItems="@(MainJsonItems)" WorkDirectory="$(MSBuildProjectDirectory)" OutputDirectory="$(OutputPath)" />
   </Target>
-  
+
 </Project>
