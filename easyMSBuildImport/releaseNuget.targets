@@ -1,6 +1,9 @@
 <Project>
   <!--复制Nuget包到本地服务器(文档下面的MyNuGet文件夹)-->
   <PropertyGroup>
+    <!-- 测试发布包到远程，如果为true,停止发布到本地,远程链接使用本地地址 -->
+    <TestReleaseNuGetToRemote>false</TestReleaseNuGetToRemote>
+
     <!--NuGet包名-->
     <NuGetPackageName>$(MsBuildProjectName).$(Version).nupkg</NuGetPackageName>
     <!--生成后的NuGet包路径-->
@@ -10,6 +13,7 @@
     <!--是否将包发布到本地[构建时生成包 and (当前框架是框架集中最后一个 or 只有一个框架)]-->
     <IsReleaseToLocal>false</IsReleaseToLocal>
     <IsReleaseToLocal Condition="$(GeneratePackageOnBuild) and ($(TargetFrameworks.Trim().Trim(';').EndsWith('$(TargetFramework)')) or $(TargetFrameworks) == '')">true</IsReleaseToLocal>
+    <IsReleaseToLocal Condition="$(TestReleaseNuGetToRemote)">false</IsReleaseToLocal>
   </PropertyGroup>
   
   <!--发布NuGet包到本地(在构建完成后执行，执行之前要打包)-->
@@ -17,6 +21,8 @@
     <Copy SourceFiles="$(NuGetPackagePath)$(NuGetPackageName)" DestinationFolder="$(LocalNuGetServicePath)" />
     <!-- 也可以使用以下命令以发布的形式发布包，上面是直接将包复制到本地包服务器 -->
     <!-- <Exec Command="$(NuGetExe) push $(NuGetPackagePath)$(NuGetPackageName) -src $(LocalNuGetServicePath) -NonInteractive" /> -->
+    <!-- 提示包以成功发布到本地 -->
+    <Message Importance="high" Text="已成功将包发布到本地NuGet服务器($(LocalNuGetServicePath))" Condition="$([System.IO.File]::Exists($(LocalNuGetServicePath)$(NuGetPackageName)))" />
   </Target>
 
   <!-- 发布NuGet包到远程 -->
@@ -27,7 +33,7 @@
       <!-- 发布包执行的命令 -->
       <ReleaseNuGetToRemoteCmd>$(NuGetExe) push $(NuGetPackagePath)$(NuGetPackageName) -src https://api.nuget.org/v3/index.json -NonInteractive -SkipDuplicate</ReleaseNuGetToRemoteCmd>
       <!-- 本地测试时命令 -->
-      <!-- <ReleaseNuGetToRemoteCmd>$(NuGetExe) push $(NuGetPackagePath)$(NuGetPackageName) -src $(LocalNuGetServicePath) -NonInteractive</ReleaseNuGetToRemoteCmd> -->
+      <ReleaseNuGetToRemoteCmd Condition="$(TestReleaseNuGetToRemote)">$(NuGetExe) push $(NuGetPackagePath)$(NuGetPackageName) -src $(LocalNuGetServicePath) -NonInteractive</ReleaseNuGetToRemoteCmd>
     </PropertyGroup>
     <!-- 执行包发布 -->
     <Exec ConsoleToMsBuild="true" IgnoreExitCode="true" Command="$(ReleaseNuGetToRemoteCmd)" Condition="$([System.IO.File]::Exists($(NuGetPackagePath)$(NuGetPackageName)))">
@@ -39,16 +45,26 @@
     <!-- 日志处理 -->
     <ItemGroup>
       <!-- 如果成功推送添加提示 -->
-      <ReleaseToRemoteOutput Include="你的包被推送了。" Condition="$(ReleaseToRemoteOutputProp.Contains('Your package was pushed.'))" />
+      <ReleaseToRemoteOutput Include="你的包被推送了。" Condition="$(ReleaseToRemoteOutputProp.Contains('Your package was pushed.'))">
+        <Success>true</Success>
+      </ReleaseToRemoteOutput>
       <!-- 如果以存在当前包 -->
-      <ReleaseToRemoteOutput Include="包源以存在 $(NuGetPackageName) ,请修改版本后再上传" Condition="$(ReleaseToRemoteOutputProp.Contains('already exists at feed'))" />
+      <ReleaseToRemoteOutput Include="包源以存在 $(NuGetPackageName) ,请修改版本后再上传" Condition="$(ReleaseToRemoteOutputProp.Contains('already exists at feed'))">
+        <Existed>true</Existed>
+      </ReleaseToRemoteOutput>
       <!-- 如果没有秘钥 -->
       <ReleaseToRemoteOutput Include="没有找到 ApiKey 建议执行以下命名设置秘钥:
-$(NuGetExe) setapikey [key] -src https://api.nuget.org/v3/index.json" Condition="$(ReleaseToRemoteOutputProp.Contains('No API Key was provided'))" />
+$(NuGetExe) setapikey [key] -src https://api.nuget.org/v3/index.json" Condition="$(ReleaseToRemoteOutputProp.Contains('No API Key was provided'))">
+        <NoKey>true</NoKey>
+      </ReleaseToRemoteOutput>
       <ReleaseToRemoteOutput Include="-------------------------------------" />
     </ItemGroup>
 
     <!-- 记录发布日志 -->
     <WriteLinesToFile File="$(NuGetLogDir)$(NuGetPackageName).log" Lines="@(ReleaseToRemoteOutput)" Condition="$([System.IO.File]::Exists($(NuGetPackagePath)$(NuGetPackageName)))" />
+    <!-- 提示包发布到远程状态 -->
+    <Message Importance="high" Text="已成功将包推送到远程NuGet服务器(https://api.nuget.org/v3/index.json)" Condition="%(ReleaseToRemoteOutput.Success) == 'true'" />
+    <Message Importance="high" Text="$(NuGetPackageName) 以发布,请修改版本后再上传" Condition="%(ReleaseToRemoteOutput.Existed) == 'true'" />
+    <Message Importance="high" Text="没有设置秘钥,请查看日志($(NuGetLogDir)$(NuGetPackageName).log)" Condition="%(ReleaseToRemoteOutput.NoKey) == 'true'" />
   </Target>
 </Project>
