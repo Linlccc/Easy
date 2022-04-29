@@ -2,76 +2,13 @@
   /* 文档
   任务文档：https://code.visualstudio.com/docs/editor/tasks
   任务架构：https://code.visualstudio.com/docs/editor/tasks-appendix
-  */ 
-  
+  */
   "version": "2.0.0",
   "tasks": [
-    // {
-    //   // 标签
-    //   "label": "",
-    //   // 任务的类型 shell/processs
-    //   "type":"process",
-    //   // 要执行的命令
-    //   "command":"",
-    //   // 任务所属组
-    //   "group":"none",
-    //   // 定义如何在用户界面中处理任务输出
-    //   "presentation":{
-    //     "echo": true,
-    //     "reveal": "always",
-    //     "focus": false,
-    //     "panel": "shared",
-    //     "showReuseMessage": true,
-    //     "clear": false
-    //   },
-    //   // 覆盖cwd（当前工作目录）、env（环境变量）或shell（默认 shell）的默认值
-    //   "options":{},
-    //   // 定义任务何时以及如何运行
-    //   "runOptions": {},
-
-    // },
     {
-      "label": "build",
-      "command": "dotnet",
-      
+      "label": "Easy.Tool.MergeJson.NuGetTest Build",
       "type": "process",
-      "args": [
-        "build",
-        "${workspaceFolder}/framework/Easy.Extensions/tests/Easy.Extensions.Test/Easy.Extensions.Test.csproj",
-        "/property:GenerateFullPaths=true",
-        "/consoleloggerparameters:NoSummary"
-      ],
-      "problemMatcher": "$msCompile"
-    },
-    {
-      "label": "publish",
       "command": "dotnet",
-      "type": "process",
-      "args": [
-        "publish",
-        "${workspaceFolder}/framework/Easy.Extensions/tests/Easy.Extensions.Test/Easy.Extensions.Test.csproj",
-        "/property:GenerateFullPaths=true",
-        "/consoleloggerparameters:NoSummary"
-      ],
-      "problemMatcher": "$msCompile"
-    },
-    {
-      "label": "watch",
-      "command": "dotnet",
-      "type": "process",
-      "args": [
-        "watch",
-        "run",
-        "--project",
-        "${workspaceFolder}/framework/Easy.Extensions/tests/Easy.Extensions.Test/Easy.Extensions.Test.csproj"
-      ],
-      "problemMatcher": "$msCompile"
-    },
-
-    {
-      "label": "custom1build",
-      "command": "dotnet",
-      "type": "process",
       "args": [
         "build",
         "${workspaceFolder}/framework/Easy.Tool.MergeJson/tests/Easy.Tool.MergeJson.NuGetTest/Easy.Tool.MergeJson.NuGetTest.csproj",
@@ -80,14 +17,17 @@
       ],
       "problemMatcher": "$msCompile"
     },
-
     {
-      "label": "dir",
-      "type": "shell",
-      "command": "dir",
+      "label": "Easy.Tool.MergeJson.NuGetTest Watch",
+      "type": "process",
+      "command": "dotnet",
       "args": [
-        "folder with spaces"
-      ]
-    }
+        "watch",
+        "run",
+        "--project",
+        "${workspaceFolder}/framework/Easy.Tool.MergeJson/tests/Easy.Tool.MergeJson.NuGetTest/Easy.Tool.MergeJson.NuGetTest.csproj",
+      ],
+      "problemMatcher": "$msCompile",
+    },
   ]
 }
