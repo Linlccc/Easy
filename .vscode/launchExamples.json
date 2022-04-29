@@ -1,0 +1,87 @@
+{
+  // https://github.com/OmniSharp/omnisharp-vscode/blob/master/debugger-launchjson.md
+  "name": "",
+  "type": "coreclr",
+  // 启动(launch)/附加(attach)
+  "request": "launch",
+  // 启动前任务,在tasks.json中"label"关联
+  "preLaunchTask": "build",
+  // 调试的可执行程序路径
+  "program": "${workspaceFolder}/bin/Debug/<target-framework>/<project-name.dll>",
+  // 调试程序的工作目录,默认为当前工作区 ${workspaceFolder}
+  "cwd": "${workspaceFolder}",
+  // 传递给程序的命令行参数
+  "args": [],
+  // 是否将调试器停止在程序入口
+  "stopAtEntry": false,
+  /* 在哪里启动调试目标
+  internalConsole     VsCode调试控制台(不支持输入读取如：Console.ReadLine)--默认
+  integratedTerminal  VsCode集成终端
+  externalTerminal    外部终端(启动一个控制台)
+  https://aka.ms/VSCode-CS-LaunchJson-Console
+  */
+  "console": "internalConsole",
+  // 服务器程序准备就绪后
+  "serverReadyAction": {
+    /* 动作
+    debugWithChrome   使用 chrome 调试
+    debugWithEdge     使用 edge 调试
+    openExternally    使用默认程序打开url
+    */
+    "action": "openExternally",
+    // pattern 是捕获程序启动时监听的连接(需要设置 console ,浏览器启动器会抓取目标进程的标准输出)
+    "pattern": "\\bNow listening on:\\s+(https?://\\S+)",
+    // %s：表示上面匹配的字符串
+    "uriFormat": "%s"
+  },
+  // 传递给程序的环境变量
+  "env": {
+    "ASPNETCORE_ENVIRONMENT": "Development"
+  },
+  // 在启动过程中启动浏览器
+  "launchBrowser": {
+    "enabled": false
+  },
+  // 设置项目 launchSettings.json 文件位置,如果未设置默认为:{cwd}/Properties/launchSettings.json
+  "launchSettingsFilePath": "${workspaceFolder}/Properties/launchSettings.json",
+  /* 设置使用 launchSettings.json 文件中哪一个案例
+  1.如果不指定,使用第一个 ["commandName": "Project"] 的案例
+  2.设置为 null/空字符串 忽略launchSettings.json
+
+  注：
+    1.仅支持 ["commandName": "Project"] 属性的案例
+    2.仅支持environmentVariables,applicationUrl和commandLineArgs属性
+    3.launch.json 中的设置将优先于 launchSettings.json 中的设置
+  */
+  "launchSettingsProfile": "<insert-profile-name>",
+  // 日志记录
+  "logging": {
+    // 异常消息记录到输出窗口
+    "exceptions": true,
+    // 使用 `internalConsole`或`integratedTerminal` 时记录程序内的输出
+    "programOutput": true,
+    // 调试进程中有线程退出时记录消息
+    "threadExit": false,
+    // 将模块(dll)加载事件记录到输出窗口
+    "moduleLoad": false,
+    // 诊断引擎日志记录到输出窗口,(不建议，输出很多没用的日志)
+    "engineLogging": false,
+    // 将浏览器的输出记录到输出窗口(没发现作用)
+    "browserStdOut": false,
+    // 记录 `adapterElapsedTime`(适配器) 和 `engineElapsedTime`(引擎) 属性,以指示请求所花费的时间ms(没发现作用)
+    "elapsedTiming": false,
+    // 目标进程退出或调试停止时记录消息,默认true(没发现作用)
+    "processExit": false
+  },
+  // 禁用要求pdb(程序数据库文件)和源代码完全相同
+  "requireExactSource": false,
+  // 下面都是没搞懂的
+  // 传递给调试引擎的可选源文件映射(这个还没搞懂)
+  "sourceFileMap": {
+    "/Views": "${workspaceFolder}/Views"
+  },
+  // 禁用只是我的代码，可以调试非我的代码（测试没用）
+  "justMyCode": false,
+  // 进入属性和操作符,调试器默认会跳过属性和操作符(不清楚作用)
+  "enableStepFiltering": false
+}
