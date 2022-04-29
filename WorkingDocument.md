@@ -1,8 +1,10 @@
-#### 0427
+# 工作文档
+
+## 0427
 
 - [x] 添加自动发布包任务
 
-  ~~~
+ ~~~text
   1.使用 
     a.任意位置 msbuild <Project/solution> -t:ReleaseNuGetToRemote 即可自动发布包
     b.在项目目录直接使用 msbuild -t:ReleaseNuGetToRemote
@@ -15,20 +17,22 @@
 
 ---
 
-#### 0428
-  ~~~
+## 0428
+
+  ~~~text
   整理自定义任务
   当前看到：https://github.com/OmniSharp/omnisharp-vscode/blob/master/debugger-launchjson.md#just-my-code
   ~~~
 
 ---
 
-### 计划
+## 计划
 
 - [ ] 处理vscode自动生成的文件
 - [ ] 实现aop
 - [ ] 看是否可以获取项目使用的sdk,根据不同的sdk添加默认全局 using
-  ~~~
+
+  ~~~text
   判断sdk是否引入的属性名
   UsingILLinkTasksSdk
   UsingMicrosoftNETSdk
@@ -40,8 +44,10 @@
   _MicrosoftWindowsDesktopSdkImported
   _MicrosoftNETSdkWindowsDesktop
   ~~~
+
 - [ ] 看怎么实现自动化命令[脚本]
-  ~~~
+
+  ~~~text
   1.直接在解决方案上实现包含项目的包发布
   2.直接在项目上实现项目的包发布
   3.实现配置apikay脚本
