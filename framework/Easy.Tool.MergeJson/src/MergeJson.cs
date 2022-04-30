@@ -16,9 +16,14 @@ public class MergeJson : Task
     /// </summary>
     private readonly FileVersionInfo _assemblyInfo;
     private readonly string _mergeLogFile = $"MergLogs-{DateTime.Now:yyyy-MM-dd HH_mm_ss}.log";
+    private readonly string _logPartingStr;
     private readonly List<ITaskItem> _mergeJsonItems = new();
     #endregion
-    public MergeJson() => _assemblyInfo = FileVersionInfo.GetVersionInfo(GetType().Assembly.Location);
+    public MergeJson()
+    {
+        _assemblyInfo = FileVersionInfo.GetVersionInfo(GetType().Assembly.Location);
+        _logPartingStr = $"{new string('-', 15)}{_assemblyInfo.ProductVersion}{new string('-', 15)}{_assemblyInfo.FileVersion}{new string('-', 15)}";
+    }
 
     /// <summary>
     /// 日志文件夹
@@ -83,6 +88,12 @@ public class MergeJson : Task
 
         try
         {
+            // 添加日志基本信息
+            if (SaveMergeLog)
+            {
+                if (!Directory.Exists(MergeLogDir)) Directory.CreateDirectory(MergeLogDir);
+                File.AppendAllText(Path.Combine(MergeLogDir, _mergeLogFile), $"工作目录:\t{WorkDirectory}\r\n输出目录:\t{OutputDirectory}\r\n{_logPartingStr}\r\n");
+            }
             foreach ((string path, ITaskItem item) in mainJsonItems)
             {
                 // 如果没有该文件跳过
@@ -137,8 +148,7 @@ public class MergeJson : Task
 {taskItem.GetMetadata("MergeFileFullName")}
 子文件:
 {taskItem.GetMetadata("MergeJsonFiles")}
-{new string('-', 15)}{_assemblyInfo.ProductVersion}{new string('-', 15)}{_assemblyInfo.FileVersion}{new string('-', 15)}
-" + "\r\n";
+{_logPartingStr}" + "\r\n\r\n";
         // 记录msbuild日志
         Log.LogMessage(mergeInfo);
         // 添加文本日志
@@ -177,9 +187,9 @@ public class MergeJson : Task
         string fileName = Path.GetFileName(rawPath);
         string fullFileName = Path.Combine(outputDir, fileName);
         // 如果是工作目录中的文件，获取相对路径
-        if (rawPath.StartsWith(workDir))
+        if (rawPath.StartsWith(workDir,StringComparison.CurrentCultureIgnoreCase))
         {
-            string middlePath = rawPath.Replace(workDir, "").Replace(fileName, "");
+            string middlePath = rawPath.Remove(0,workDir.Length).Replace(fileName, "");
             string fullPath = Path.Combine(outputDir, middlePath);
             if (!Directory.Exists(fullPath) && isCreateDir) Directory.CreateDirectory(fullPath);
             fullFileName = Path.Combine(fullPath, fileName);
