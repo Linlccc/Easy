@@ -63,9 +63,31 @@
   3.原json被发布
 
   解决方案
-  1.在包引用上添加 ExcludeAssets="runtime" ，标记排除资产
+  1.在包引用上添加 ExcludeAssets="runtime" ，标记排除资产(直接使用dotnet build [项目]（会先执行 restore 还原） 时还是会复制到项目)
   2.在合并json后将合并成功的主json添加到 ContentWithTargetPath 项中，publish 任务自动会发布里面的文件
   3.将原json从内容中移除（或者设置内容的 CopyToPublishDirectory 元数据不等于 PreserveNewest ----该想法待验证）
+  ~~~
+
+---
+
+## 0430
+
+解决MergeJson在项目生成时异常
+
+  ~~~text
+  问题描述：
+  1.使用 dotnet build [项目] 时,会将 Easy.Tool.MergeJson.dll 复制到生成文件
+  2.使用 dotnet restore [项目] 还原后,使用msbuild [项目] ,会将 Easy.Tool.MergeJson.dll 复制到生成文件
+  3.但是使用 visual studio 生成项目时并不会将 Easy.Tool.MergeJson.dll 复制到生成文件
+    (个人感觉visual studio还原项目时就导入nuget包的targets文件,但是使用 dotnet restore 还原时并没有导入)
+
+  解决方案：
+  1.在解析引用包过后标记包不复制到生成文件中
+    在 ResolvePackageAssets 执行后，修改 @(RuntimeCopyLocalItems) 中 %(NuGetPackageId) == 'Easy.Tool.MergeJson.dll' 的 %(CopyLocal) 值为 false
+
+
+  注：
+  1.dotnet build [项目] 会执行 restore 和 build
   ~~~
 
 ---
@@ -75,6 +97,8 @@
 - [x] 添加自动发布包任务
 - [x] 处理vscode自动生成的文件
 - [x] (不重要)研究一下附加调试
+- [x] 解决 MergeJson 发布任务时原json被发布,合并的json没有被发布
+- [x] 解决 MergeJson 生成时会将 Easy.Tool.MergeJson.dll 复制到生成文件
 - [ ] 将包发布添加成任务
 - [ ] 查看 msbuild 的 (发布)PublishOnly 任务
 
