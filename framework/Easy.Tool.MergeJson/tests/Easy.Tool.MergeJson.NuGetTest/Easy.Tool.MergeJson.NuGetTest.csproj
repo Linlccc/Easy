@@ -5,10 +5,11 @@
     <TargetFramework>net6.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <IsPackable>true</IsPackable>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Easy.Tool.MergeJson" Version="1.0.0-beta6" />
+    <PackageReference Include="Easy.Tool.MergeJson" Version="1.0.0-beta9" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
   </ItemGroup>
 
