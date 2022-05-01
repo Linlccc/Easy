@@ -85,13 +85,38 @@
   1.在解析引用包过后标记包不复制到生成文件中
     在 ResolvePackageAssets 执行后，修改 @(RuntimeCopyLocalItems) 中 %(NuGetPackageId) == 'Easy.Tool.MergeJson.dll' 的 %(CopyLocal) 值为 false
 
-  0501 新的想法
+  注：
+  1.dotnet build [项目] 会执行 restore 和 build
+  ~~~
+
+---
+
+## 0501
+
+0430处理 解决MergeJson在项目生成时异常 后的新想法(废弃)
+
+  ~~~text
+  想法：
   1.在 ResolvePackageAssets 执行之前 将@(PackageReference) 中的 'Easy.Tool.MergeJson' 移除
   2.在 ResolvePackageAssets 执行执行之后再将'Easy.Tool.MergeJson'加入
 
+  废弃原因：
+  1.获取应该导入的程序集是从 project.assets.json 中读取,修改引用的包不会照成影响
 
-  注：
-  1.dotnet build [项目] 会执行 restore 和 build
+  废弃主要 terget
+
+  <Target Name="CutMergeJsonPackageReference" BeforeTargets="ResolvePackageAssets">
+    <ItemGroup>
+      <MergeJsonPackageReference Include="@(PackageReference)" Condition="%(Identity) == $(MSBuildThisFileName)" />
+      <PackageReference Remove="@(MergeJsonPackageReference)"/>
+    </ItemGroup>
+  </Target>
+
+  <Target Name="PasteMergeJsonPackageReference" AfterTargets="ResolvePackageAssets">
+    <ItemGroup>
+      <PackageReference Include="@(MergeJsonPackageReference)"/>
+    </ItemGroup>
+  </Target>
   ~~~
 
 ---

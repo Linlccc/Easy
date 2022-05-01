@@ -7,6 +7,7 @@
     <Nullable>enable</Nullable>
     <NoWarn>$(NoWarn);CS8618</NoWarn>
     <Description>自动合并json工具</Description>
+    <!-- <Version>1.0.0-test52</Version> -->
   </PropertyGroup>
 
   <PropertyGroup>
