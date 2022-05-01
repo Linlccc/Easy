@@ -29,7 +29,7 @@
 
 ## 0429
 
-处理vscode自动生成的文件
+续-处理vscode自动生成的文件
 
   ~~~text
   tasks.json    自定义任务文件
@@ -54,7 +54,7 @@
   }
   ~~~
 
-解决MergeJson在项目发布时的异常
+MergeJson 发布任务时原json被发布,合并的json没有被发布
 
   ~~~text
   问题描述
@@ -72,7 +72,7 @@
 
 ## 0430
 
-解决MergeJson在项目生成时异常
+MergeJson 生成时会将 Easy.Tool.MergeJson.dll 复制到生成文件
 
   ~~~text
   问题描述：
@@ -119,23 +119,29 @@
   </Target>
   ~~~
 
+查看 msbuild 的 (发布)PublishOnly 任务
+
+  ~~~text
+  想法：
+  1.msbuild 项目 -t:publishonly 是安装文件(不知道有什么用)
+
+  结果：
+  只执行 PublishOnly 任务没有意义
+  
+  可以参考 https://docs.microsoft.com/zh-cn/visualstudio/msbuild/msbuild-targets?view=vs-2022 链接中的信息
+  ~~~
+
 ---
 
 ## 计划
 
-- [x] 添加自动发布包任务
-- [x] 处理vscode自动生成的文件
-- [x] (不重要)研究一下附加调试
-- [x] 解决 MergeJson 发布任务时原json被发布,合并的json没有被发布
-- [x] 解决 MergeJson 生成时会将 Easy.Tool.MergeJson.dll 复制到生成文件
+- [x] 添加自动发布包任务 (研究) [0427]
+- [x] 处理vscode自动生成的文件 (研究) [0429]
+- [x] 研究附加进程调试(研究) [0429]
+- [x] MergeJson 发布任务时原json被发布,合并的json没有被发布 (bug) [0429]
+- [x] MergeJson 生成时会将 Easy.Tool.MergeJson.dll 复制到生成文件 (bug) [0430]
+- [x] 查看 msbuild 的 (发布)PublishOnly 任务 (研究) [0501]
 - [ ] 将包发布添加成任务
-- [ ] 查看 msbuild 的 (发布)PublishOnly 任务
-
-  ~~~text
-  使用 dotnet publish 项目时,发布文件中包含应该被忽略的json,合并的json文件也没有被发布  
-  msbuild 项目 -t:publishonly 是安装文件，但是也有上述情况
-  ~~~
-
 - [ ] 实现aop
 - [ ] 看是否可以获取项目使用的sdk,根据不同的sdk添加默认全局 using
 
