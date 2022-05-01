@@ -131,6 +131,12 @@ MergeJson 生成时会将 Easy.Tool.MergeJson.dll 复制到生成文件
   可以参考 https://docs.microsoft.com/zh-cn/visualstudio/msbuild/msbuild-targets?view=vs-2022 链接中的信息
   ~~~
 
+将包发布添加成任务
+
+  ~~~text
+  无细节
+  ~~~
+
 ---
 
 ## 计划
@@ -141,7 +147,7 @@ MergeJson 生成时会将 Easy.Tool.MergeJson.dll 复制到生成文件
 - [x] MergeJson 发布任务时原json被发布,合并的json没有被发布 (bug) [0429]
 - [x] MergeJson 生成时会将 Easy.Tool.MergeJson.dll 复制到生成文件 (bug) [0430]
 - [x] 查看 msbuild 的 (发布)PublishOnly 任务 (研究) [0501]
-- [ ] 将包发布添加成任务
+- [x] 将包发布添加成任务 (实现) [0501]
 - [ ] 实现aop
 - [ ] 看是否可以获取项目使用的sdk,根据不同的sdk添加默认全局 using
 

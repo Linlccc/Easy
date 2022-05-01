@@ -1,8 +1,5 @@
 {
-  /* 文档
-  任务文档：https://code.visualstudio.com/docs/editor/tasks
-  任务架构：https://code.visualstudio.com/docs/editor/tasks-appendix
-  */
+  // 任务文档：https://code.visualstudio.com/docs/editor/tasks
   "version": "2.0.0",
   "tasks": [
     {
@@ -18,7 +15,6 @@
       "problemMatcher": "$msCompile"
     },
     {
-      // 用于附加的任务
       "label": "Easy.Tool.MergeJson.NuGetTest Watch",
       "type": "process",
       "command": "dotnet",
@@ -26,9 +22,43 @@
         "watch",
         "run",
         "--project",
-        "${workspaceFolder}/framework/Easy.Tool.MergeJson/tests/Easy.Tool.MergeJson.NuGetTest/Easy.Tool.MergeJson.NuGetTest.csproj",
+        "${workspaceFolder}/framework/Easy.Tool.MergeJson/tests/Easy.Tool.MergeJson.NuGetTest/Easy.Tool.MergeJson.NuGetTest.csproj"
       ],
-      "problemMatcher": "$msCompile",
+      "problemMatcher": "$msCompile"
     },
+
+    // 发布包任务
+    {
+      "label": "(发布包)ReleaseNuGet Easy.Tool.MergeJson",
+      "type": "process",
+      "command": "msbuild",
+      "args": [ "-t:ReleaseNuGetToRemote"],
+      "options":{ "cwd":"${workspaceFolder}/framework/Easy.Tool.MergeJson/src/" },
+      "problemMatcher": "$msCompile"
+    },
+    {
+      "label": "(发布包)ReleaseNuGet asy.Extensions",
+      "type": "process",
+      "command": "msbuild",
+      "args": [ "-t:ReleaseNuGetToRemote"],
+      "options":{ "cwd":"${workspaceFolder}/framework/Easy.Extensions/src/" },
+      "problemMatcher": "$msCompile"
+    },
+    {
+      "label": "(发布包)ReleaseNuGet Easy.Extensions.DependencyInjection",
+      "type": "process",
+      "command": "msbuild",
+      "args": [ "-t:ReleaseNuGetToRemote"],
+      "options":{ "cwd":"${workspaceFolder}/framework/Easy.Extensions.DependencyInjection/src/" },
+      "problemMatcher": "$msCompile"
+    },
+    {
+      "label": "(发布包)ReleaseNuGet Easy.Extensions.DependencyInjection.Abstractions",
+      "type": "process",
+      "command": "msbuild",
+      "args": [ "-t:ReleaseNuGetToRemote"],
+      "options":{ "cwd":"${workspaceFolder}/framework/Easy.Extensions.DependencyInjection.Abstractions/src/" },
+      "problemMatcher": "$msCompile"
+    }
   ]
 }
