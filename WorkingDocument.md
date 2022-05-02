@@ -164,12 +164,14 @@ MergeJson 生成时会将 Easy.Tool.MergeJson.dll 复制到生成文件
   _MicrosoftNETSdkWindowsDesktop
   ~~~
 
-- [ ] 看怎么实现自动化命令[脚本]
+- [ ] 看怎么实现自动化命令(实现)
 
   ~~~text
   1.直接在解决方案上实现包含项目的包发布
   2.直接在项目上实现项目的包发布
   3.实现配置apikay脚本
   ~~~
+
+- [ ] 不同的项目使用一个 .vscode 文件夹 (研究)
 
 ---
