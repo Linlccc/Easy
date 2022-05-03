@@ -152,7 +152,7 @@ MergeJson 生成时会将 Easy.Tool.MergeJson.dll 复制到生成文件
 - [ ] 看是否可以获取项目使用的sdk,根据不同的sdk添加默认全局 using
 
   ~~~text
-  判断sdk是否引入的属性名
+  判断sdk是否引入的属性名 (实现) [优先]
   UsingILLinkTasksSdk
   UsingMicrosoftNETSdk
   UsingMicrosoftNETSdkBlazorWebAssembly
@@ -172,6 +172,6 @@ MergeJson 生成时会将 Easy.Tool.MergeJson.dll 复制到生成文件
   3.实现配置apikay脚本
   ~~~
 
-- [ ] 不同的项目使用一个 .vscode 文件夹 (研究)
+- [ ] 不同的项目使用一个 .vscode 文件夹 (研究) [优先]
 
 ---
