@@ -58,8 +58,16 @@
   <!-- 导入 自动导入文件属性（随意） -->
   <Import Project="$(EasyMSBuildImportDir)autoImport.props" />
 
-  <ItemGroup Label="引入公共文件">
-    <!--引入全局引用-->
-    <Compile Include="$(EasyCommonDir)GlobalUsings.cs" Link="Common\$(MsBuildProjectName).%(Filename)%(Extension)" Condition="$(UsingMicrosoftNETSdk)=='true'" />
+  <ItemGroup Label="引入全局using,根据sdk">
+    <!-- Microsoft.Net.Sdk -->
+    <Compile Include="$(EasyCommonDir)MicrosoftNETSdk.GlobalUsings.cs" Link="Common\$(MsBuildProjectName).%(Filename)%(Extension)" Condition="$(UsingMicrosoftNETSdk)=='true'" />
+    <!-- MicrosoftNETSdkBlazorWebAssembly -->
+    <Compile Include="$(EasyCommonDir)MicrosoftNETSdkBlazorWebAssembly.GlobalUsings.cs" Link="Common\$(MsBuildProjectName).%(Filename)%(Extension)" Condition="$(UsingMicrosoftNETSdkBlazorWebAssembly)=='true'" />
+    <!-- MicrosoftNETSdkRazor -->
+    <Compile Include="$(EasyCommonDir)MicrosoftNETSdkRazor.GlobalUsings.cs" Link="Common\$(MsBuildProjectName).%(Filename)%(Extension)" Condition="$(UsingMicrosoftNETSdkRazor)=='true'" />
+    <!-- MicrosoftNETSdkWeb -->
+    <Compile Include="$(EasyCommonDir)MicrosoftNETSdkWeb.GlobalUsings.cs" Link="Common\$(MsBuildProjectName).%(Filename)%(Extension)" Condition="$(UsingMicrosoftNETSdkWeb)=='true'" />
+    <!-- MicrosoftNETSdkWorker -->
+    <Compile Include="$(EasyCommonDir)MicrosoftNETSdkWorker.GlobalUsings.cs" Link="Common\$(MsBuildProjectName).%(Filename)%(Extension)" Condition="$(UsingMicrosoftNETSdkWorker)=='true'" />
   </ItemGroup>
 </Project>
