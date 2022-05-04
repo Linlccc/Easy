@@ -1,4 +1,6 @@
-﻿namespace System;
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace System;
 
 /// <summary>
 /// <see cref="string"/> 拓展

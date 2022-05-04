@@ -1,4 +1,6 @@
-﻿namespace System.Collections.Generic;
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace System.Collections.Generic;
 
 /// <summary>
 /// <see cref="IEnumerable{T}"/> 拓展
