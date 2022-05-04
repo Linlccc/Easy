@@ -139,20 +139,12 @@ MergeJson 生成时会将 Easy.Tool.MergeJson.dll 复制到生成文件
 
 ---
 
-## 计划
+## 0504
 
-- [x] 添加自动发布包任务 (研究) [0427]
-- [x] 处理vscode自动生成的文件 (研究) [0429]
-- [x] 研究附加进程调试(研究) [0429]
-- [x] MergeJson 发布任务时原json被发布,合并的json没有被发布 (bug) [0429]
-- [x] MergeJson 生成时会将 Easy.Tool.MergeJson.dll 复制到生成文件 (bug) [0430]
-- [x] 查看 msbuild 的 (发布)PublishOnly 任务 (研究) [0501]
-- [x] 将包发布添加成任务 (实现) [0501]
-- [ ] 实现aop
-- [ ] 看是否可以获取项目使用的sdk,根据不同的sdk添加默认全局 using
+根据不同的sdk添加默认全局 using
 
   ~~~text
-  判断sdk是否引入的属性名 (实现) [优先]
+  根据以下属性判断使用使用了该sdk，然后再到导入全局 using
   UsingILLinkTasksSdk
   UsingMicrosoftNETSdk
   UsingMicrosoftNETSdkBlazorWebAssembly
@@ -163,7 +155,21 @@ MergeJson 生成时会将 Easy.Tool.MergeJson.dll 复制到生成文件
   _MicrosoftWindowsDesktopSdkImported
   _MicrosoftNETSdkWindowsDesktop
   ~~~
+  
+---
 
+## 计划
+
+- [x] 添加自动发布包任务 (研究) [0427]
+- [x] 处理vscode自动生成的文件 (研究) [0429]
+- [x] 研究附加进程调试(研究) [0429]
+- [x] MergeJson 发布任务时原json被发布,合并的json没有被发布 (bug) [0429]
+- [x] MergeJson 生成时会将 Easy.Tool.MergeJson.dll 复制到生成文件 (bug) [0430]
+- [x] 查看 msbuild 的 (发布)PublishOnly 任务 (研究) [0501]
+- [x] 将包发布添加成任务 (实现) [0501]
+- [ ] 实现aop
+- [ ] 根据不同的sdk添加默认全局 using (实现) [0504]
+- [ ] 不同的项目使用一个 .vscode 文件夹 (研究) [优先]
 - [ ] 看怎么实现自动化命令(实现)
 
   ~~~text
@@ -171,7 +177,5 @@ MergeJson 生成时会将 Easy.Tool.MergeJson.dll 复制到生成文件
   2.直接在项目上实现项目的包发布
   3.实现配置apikay脚本
   ~~~
-
-- [ ] 不同的项目使用一个 .vscode 文件夹 (研究) [优先]
 
 ---
