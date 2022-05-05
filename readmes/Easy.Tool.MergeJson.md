@@ -33,7 +33,7 @@
 </ItemGroup>
 ~~~
 
-### 默认值
+### 默认
 
 ~~~text
 <PropertyGroup>
@@ -49,16 +49,16 @@
 
 日志：默认情况下不会保存合并日志
 包含的json：工作目录中所有的json文件
-主要json文件：工作根目录中所有以【appsettings】开头【.json】后缀的文件 
+主要json文件：工作根目录中所有以【appsettings】开头【.json】后缀的文件
  寻找子json：
   1.子json被包含在<JsonItems>中
   2.主json中存在【CustomConfigInfo.ConfigFileFolders】节点（数组类型），存放子json目录路径
   3.主json中【CustomConfigInfo.ExcludeSubFiles】节点，存放排除的子json文件名，这里面的json都不会被合并
-  
+
 注：如果主json是在工作目录中，合并后的文件也会在输出目录的相对位置，否者就直接输出到输出文件中
 ~~~
 
-### 自定义
+### 自定
 
 ~~~text
 ?  通配符匹配单个字符。
@@ -82,7 +82,7 @@
 <ItemGroup>
  包含 CusuomConfig 目录中的config.json
  <MainJsonItems Include="CusuomConfig\config.json" />
- 
+
  修改存放子文件的节点
  <MainJsonItems Update="包含的文件">
   <!--子目录（包含要合并的json文件），主Json文件中的节点-->
@@ -91,4 +91,20 @@
           <ExcludeSubFilesNode>CustomConfigInfo.ExcludeSubFiles</ExcludeSubFilesNode>
  </MainJsonItems>
 </ItemGroup>
+~~~
+
+---
+
+## 更新日志
+
+### 1.0.0
+
+~~~text
+发布第一个正式版
+~~~
+
+### 1.0.1-beta1
+
+~~~text
+1.修复包含子json文件夹路径是盘符根路径(e:)引发的异常
 ~~~
