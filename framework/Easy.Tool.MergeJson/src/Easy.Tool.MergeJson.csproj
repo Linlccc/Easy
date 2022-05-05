@@ -7,7 +7,10 @@
     <Nullable>enable</Nullable>
     <NoWarn>$(NoWarn);CS8618</NoWarn>
     <Description>自动合并json工具</Description>
-    <!-- <Version>1.0.0-test52</Version> -->
+    <!-- 独立版本 -->
+    <Version Condition="$(AloneVersion)">$(Version)$(BetaSuffix)2</Version>
+    <!-- 本地测试版本 -->
+    <!-- <Version>$(Version)-test52</Version> -->
   </PropertyGroup>
 
   <PropertyGroup>

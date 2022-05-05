@@ -6,7 +6,7 @@
     <!--目标框架-->
     <TargetFrameworks>$(Net6);$(NetCore3_1);$(NetFramework462);</TargetFrameworks>
     <!-- 测试项目保持预览版状态 -->
-    <Version>$(Version)$(PreviewInfo)</Version>
+    <Version>$(Version)$(RcSuffix)</Version>
     <!--生成XML文档-->
     <GenerateDocumentationFile>False</GenerateDocumentationFile>
     <!--默认解决方案名-->

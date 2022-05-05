@@ -3,15 +3,13 @@
     <!-- 链接包的自述文件，并且会打包到Nuget包的根目录 -->
     <None Include="$(EasyReadmeDir)$(MSBuildProjectName).md" Link="%(Filename)%(Extension)" Pack="true" PackagePath="\" />
   </ItemGroup>
-    
+
   <!-- NuGet包配置 -->
   <PropertyGroup Label="构建NuGet">
     <!--构建包-->
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <!--包ID-->
     <PackageId>$(AssemblyName)</PackageId>
-    <!--预览版后缀-->
-    <Version Condition="$(IsPreview)">$(Version)$(PreviewInfo)</Version>
     <!--作者-->
     <Authors>Linlccc</Authors>
     <!--公司-->

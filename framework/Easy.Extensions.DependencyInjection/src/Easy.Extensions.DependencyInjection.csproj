@@ -4,6 +4,8 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <Description>依赖注入</Description>
+    <!-- 会发布包的版本 -->
+    <Version Condition="$(AloneVersion)">$(Version)$(BetaSuffix)1</Version>
   </PropertyGroup>
 
   <!--如果是 NETFramework 框架引入包-->

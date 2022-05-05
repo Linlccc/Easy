@@ -39,17 +39,13 @@
 
     <!--试验品-->
     <AlphaSuffix>-alpha</AlphaSuffix>
-    <AlphaVersion>1</AlphaVersion>
     <!--下一完整版本，可能存在已知bug-->
     <BetaSuffix>-beta</BetaSuffix>
-    <BetaVersion>1</BetaVersion>
     <!--预发布版本-->
     <RcSuffix>-rc</RcSuffix>
-    <RcVersion>1</RcVersion>
 
-    <!--是否要后缀（预览版本）-->
-    <IsPreview>true</IsPreview>
-    <PreviewInfo>$(BetaSuffix)$(BetaVersion)</PreviewInfo>
+    <!-- 采用独立版本 -->
+    <AloneVersion>true</AloneVersion>
 
     <!--包版本-->
     <Version>$(MajorVersion).$(MinorVersion).$(PatchVersion)</Version>
