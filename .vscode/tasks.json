@@ -3,6 +3,27 @@
   "version": "2.0.0",
   "tasks": [
     {
+      "label": "【输出变量】OutputVariable",
+      "type": "shell",
+      "command": "echo",
+      "args": [
+        "workspaceFolder:   ${workspaceFolder}",
+        "workspaceFolderBasename:   ${workspaceFolderBasename}",
+        "file:    ${file}",
+        "relativeFile:    ${relativeFile}",
+        "relativeFileDirname:   ${relativeFileDirname}",
+        "fileBasename:    ${fileBasename}",
+        "fileBasenameNoExtension:   ${fileBasenameNoExtension}",
+        "fileDirname:   ${fileDirname}",
+        "fileExtname:   ${fileExtname}",
+        "cwd:   ${cwd}",
+        "lineNumber:    ${lineNumber}",
+        "execPath:    ${execPath}",
+        "pathSeparator:   ${pathSeparator}"
+      ],
+      "problemMatcher": "$msCompile"
+    },
+    {
       "label": "Easy.Tool.MergeJson.NuGetTest Build",
       "type": "process",
       "command": "dotnet",
@@ -26,38 +47,58 @@
       ],
       "problemMatcher": "$msCompile"
     },
-
-    // 发布包任务
     {
       "label": "(发布包)ReleaseNuGet Easy.Tool.MergeJson",
       "type": "process",
       "command": "msbuild",
-      "args": [ "-t:ReleaseNuGetToRemote"],
-      "options":{ "cwd":"${workspaceFolder}/framework/Easy.Tool.MergeJson/src/" },
+      "args": [
+        "-t:ReleaseNuGetToRemote"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}/framework/Easy.Tool.MergeJson/src/"
+      },
       "problemMatcher": "$msCompile"
     },
     {
       "label": "(发布包)ReleaseNuGet asy.Extensions",
       "type": "process",
       "command": "msbuild",
-      "args": [ "-t:ReleaseNuGetToRemote"],
-      "options":{ "cwd":"${workspaceFolder}/framework/Easy.Extensions/src/" },
+      "args": [
+        "-t:ReleaseNuGetToRemote"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}/framework/Easy.Extensions/src/"
+      },
       "problemMatcher": "$msCompile"
     },
     {
       "label": "(发布包)ReleaseNuGet Easy.Extensions.DependencyInjection",
       "type": "process",
       "command": "msbuild",
-      "args": [ "-t:ReleaseNuGetToRemote"],
-      "options":{ "cwd":"${workspaceFolder}/framework/Easy.Extensions.DependencyInjection/src/" },
+      "args": [
+        "-t:ReleaseNuGetToRemote"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}/framework/Easy.Extensions.DependencyInjection/src/"
+      },
       "problemMatcher": "$msCompile"
     },
     {
       "label": "(发布包)ReleaseNuGet Easy.Extensions.DependencyInjection.Abstractions",
       "type": "process",
       "command": "msbuild",
-      "args": [ "-t:ReleaseNuGetToRemote"],
-      "options":{ "cwd":"${workspaceFolder}/framework/Easy.Extensions.DependencyInjection.Abstractions/src/" },
+      "args": [
+        "-t:ReleaseNuGetToRemote"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}/framework/Easy.Extensions.DependencyInjection.Abstractions/src/"
+      },
+      "problemMatcher": "$msCompile"
+    },
+    {
+      "label": "(发布当前项目或解决方案包)ReleaseNuGet Current Project Or Solution",
+      "type": "shell",
+      "command": "msbuild ${file} -t:ReleaseNuGetToRemote",
       "problemMatcher": "$msCompile"
     }
   ]
