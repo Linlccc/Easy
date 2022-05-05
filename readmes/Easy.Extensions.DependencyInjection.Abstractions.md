@@ -36,3 +36,11 @@
 
   可使用 ServiceLifetimeExtension.GetLifetime(Type); 获取到 ServiceLifetime 类型数据
   ~~~
+
+## 更新日志
+
+### 1.0.0
+
+~~~text
+发布第一个正式版
+~~~
