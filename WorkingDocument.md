@@ -5,7 +5,7 @@
 添加自动发布包任务
 
  ~~~text
-  1.使用 
+  1.使用
     a.任意位置 msbuild <Project/solution> -t:ReleaseNuGetToRemote 即可自动发布包
     b.在项目目录直接使用 msbuild -t:ReleaseNuGetToRemote
   2.发布过后会将发布日志保存到 \artifacts\logs\nuGetLogs\<NuGetPackageName>.log
@@ -35,7 +35,7 @@
   tasks.json    自定义任务文件
   launch.json   调试文件
 
-  处理完成添加 
+  处理完成添加
   tasks.json 的文档文件 taskDocument.ts
   launch.json 的实例文件 launchExamples.json
   ~~~
@@ -127,7 +127,7 @@ MergeJson 生成时会将 Easy.Tool.MergeJson.dll 复制到生成文件
 
   结果：
   只执行 PublishOnly 任务没有意义
-  
+
   可以参考 https://docs.microsoft.com/zh-cn/visualstudio/msbuild/msbuild-targets?view=vs-2022 链接中的信息
   ~~~
 
@@ -155,7 +155,7 @@ MergeJson 生成时会将 Easy.Tool.MergeJson.dll 复制到生成文件
   _MicrosoftWindowsDesktopSdkImported
   _MicrosoftNETSdkWindowsDesktop
   ~~~
-  
+
 ---
 
 ## 计划
@@ -167,9 +167,8 @@ MergeJson 生成时会将 Easy.Tool.MergeJson.dll 复制到生成文件
 - [x] MergeJson 生成时会将 Easy.Tool.MergeJson.dll 复制到生成文件 (bug) [0430]
 - [x] 查看 msbuild 的 (发布)PublishOnly 任务 (研究) [0501]
 - [x] 将包发布添加成任务 (实现) [0501]
+- [x] 根据不同的sdk添加默认全局 using (实现) [0504]
 - [ ] 实现aop
-- [ ] 根据不同的sdk添加默认全局 using (实现) [0504]
-- [ ] 不同的项目使用一个 .vscode 文件夹 (研究) [优先]
 - [ ] 看怎么实现自动化命令(实现)
 
   ~~~text
@@ -177,5 +176,7 @@ MergeJson 生成时会将 Easy.Tool.MergeJson.dll 复制到生成文件
   2.直接在项目上实现项目的包发布
   3.实现配置apikay脚本
   ~~~
+
+- [ ] 不同的项目使用一个 .vscode 文件夹 (研究) {没找到方法}
 
 ---
