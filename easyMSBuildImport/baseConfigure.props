@@ -35,8 +35,8 @@
     <!--次版本-->
     <MinorVersion>0</MinorVersion>
     <!--补丁版本-->
-    <PatchVersion>0</PatchVersion>
-    
+    <PatchVersion>1</PatchVersion>
+
     <!--试验品-->
     <AlphaSuffix>-alpha</AlphaSuffix>
     <AlphaVersion>1</AlphaVersion>
@@ -46,11 +46,11 @@
     <!--预发布版本-->
     <RcSuffix>-rc</RcSuffix>
     <RcVersion>1</RcVersion>
-    
+
     <!--是否要后缀（预览版本）-->
     <IsPreview>true</IsPreview>
     <PreviewInfo>$(BetaSuffix)$(BetaVersion)</PreviewInfo>
-    
+
     <!--包版本-->
     <Version>$(MajorVersion).$(MinorVersion).$(PatchVersion)</Version>
     <!--程序集版本-->
