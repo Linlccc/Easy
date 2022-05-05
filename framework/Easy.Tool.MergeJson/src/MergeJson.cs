@@ -101,12 +101,12 @@ public class MergeJson : Task
 
                 JObject jObj = JObject.Parse(File.ReadAllText(path));
                 // 得到要合并json的子目录
-                string[] subDirectorys = jObj.SelectToken(item.GetMetadata("SubDirectoryNode"))?.ToArray().Select(jt => EnsureEndDirectorySeparator(jt.ToString())).Where(p => Directory.Exists(p)).ToArray() ?? Array.Empty<string>();
+                string[] subDirectorys = jObj.SelectToken(item.GetMetadata("SubDirectoryNode"))?.ToArray().Select(jt => jt.ToString()).Where(p => Directory.Exists(p)).ToArray() ?? Array.Empty<string>();
                 // 得到要排除的子文件(文件名)节点
                 string[] excludeSubFiles = jObj.SelectToken(item.GetMetadata("ExcludeSubFilesNode"))?.ToArray().Select(jt => jt.ToString()).ToArray() ?? Array.Empty<string>();
 
                 // 得到所有要合并的文件
-                IEnumerable<FileInfo> subFiles = subDirectorys.SelectMany(subDir => Directory.GetParent(subDir).GetFiles("*.json", SearchOption.TopDirectoryOnly)).Where(subf => !excludeSubFiles.Any(esf => esf == subf.Name));
+                IEnumerable<FileInfo> subFiles = subDirectorys.SelectMany(subDir => new DirectoryInfo(subDir).GetFiles("*.json", SearchOption.TopDirectoryOnly)).Where(subf => !excludeSubFiles.Any(esf => esf == subf.Name));
                 List<string> mergeJsonFiles = allJsonPaths.Where(j => subFiles.Any(sf => sf.FullName == j)).ToList();
 
                 // 合并json
