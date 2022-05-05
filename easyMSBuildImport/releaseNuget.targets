@@ -15,7 +15,7 @@
     <IsReleaseToLocal Condition="$(GeneratePackageOnBuild) and ($(TargetFrameworks.Trim().Trim(';').EndsWith('$(TargetFramework)')) or $(TargetFrameworks) == '')">true</IsReleaseToLocal>
     <IsReleaseToLocal Condition="$(TestReleaseNuGetToRemote)">false</IsReleaseToLocal>
   </PropertyGroup>
-  
+
   <!--发布NuGet包到本地(在构建完成后执行，执行之前要打包)-->
   <Target Name="ReleaseNuGetToLocal" AfterTargets="Build" DependsOnTargets="Pack" Inputs="$(NuGetPackagePath)$(NuGetPackageName)" Outputs="$(LocalNuGetServicePath)$(NuGetPackageName)" Condition="$(IsReleaseToLocal)">
     <Copy SourceFiles="$(NuGetPackagePath)$(NuGetPackageName)" DestinationFolder="$(LocalNuGetServicePath)" />
@@ -26,7 +26,7 @@
   </Target>
 
   <!-- 发布NuGet包到远程 -->
-  <Target Name="ReleaseNuGetToRemote" DependsOnTargets="Rebuild;Pack;">
+  <Target Name="ReleaseNuGetToRemote" DependsOnTargets="Rebuild;Pack;" Condition="$(GeneratePackageOnBuild)">
     <!-- 添加当前时间 -->
     <ItemGroup><ReleaseToRemoteOutput Include="$([System.DateTime]::Now.ToString())"/></ItemGroup>
     <PropertyGroup>
