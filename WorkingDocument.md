@@ -184,5 +184,19 @@ MergeJson 生成时会将 Easy.Tool.MergeJson.dll 复制到生成文件
 ### 暂时不处理
 
 - [ ] 不同的项目使用一个 .vscode 文件夹 (研究)
+- [ ] IHostBuilder 添加使用 Easy.Extensions.DependencyInjection 的拓展方法 UseEasyServiceProvider
+
+  ~~~C#
+
+  //该方式是 IHostBuilder 拓展,直接配置使用 EasyDependencyInjection
+    public static IHostBuilder UseEasyServiceProvider(this IHostBuilder hostBuilder, Action<EasyServiceProviderOptions>? optionsAction = null)
+    {
+        EasyServiceProviderOptions options = new();
+        optionsAction?.Invoke(options);
+        hostBuilder.UseServiceProviderFactory(new EasyServiceProviderFactory(options));
+        return hostBuilder;
+    }
+
+  ~~~
 
 ---
