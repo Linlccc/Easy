@@ -29,7 +29,7 @@
 - [x] 替换默认服务提供商
 
   ~~~text
-  <IHostBuilder>.UseServiceProviderFactory(new EasyServiceProviderFactory());
+  <IHostBuilder>.UseServiceProviderFactory(new EasyServiceProviderFactory([EasyServiceProviderOptions]));
   ~~~
 
 ## 更新日志
@@ -38,4 +38,10 @@
 
 ~~~text
 发布第一个正式版
+~~~
+
+### 1.0.1-beta1
+
+~~~text
+1.为服务提供商工厂添加无参构造函数(默认从当前程序域中所有程序集扫描要注册的服务)
 ~~~

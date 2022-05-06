@@ -8,6 +8,8 @@ namespace Easy.Extensions.DependencyInjection;
 /// </summary>
 public class EasyServiceProviderOptions
 {
+    public static readonly EasyServiceProviderOptions Default = new() { RegisterScanAssemblys = AppDomain.CurrentDomain.GetAssemblies().ToList() };
+
     /// <summary>
     /// 是否保留默认的服务提供商
     /// </summary>
@@ -17,7 +19,7 @@ public class EasyServiceProviderOptions
     /// 注册扫描程序集
     /// <br>如果为空，自动加载当前程序域的程序集</br>
     /// </summary>
-    public List<Assembly> RegisterScanAssemblys { get; set; } = new List<Assembly>();
+    public IEnumerable<Assembly> RegisterScanAssemblys { get; set; } = new List<Assembly>();
 
     /// <summary>
     /// 服务提供商的行为配置

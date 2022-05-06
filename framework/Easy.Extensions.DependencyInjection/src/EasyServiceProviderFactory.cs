@@ -8,7 +8,7 @@ namespace Easy.Extensions.DependencyInjection;
 public class EasyServiceProviderFactory : IServiceProviderFactory<IServiceCollection>
 {
     private readonly EasyServiceProviderOptions _easyServiceProviderOptions;
-
+    public EasyServiceProviderFactory() => _easyServiceProviderOptions = EasyServiceProviderOptions.Default;
     public EasyServiceProviderFactory(EasyServiceProviderOptions easyServiceProviderOptions) => _easyServiceProviderOptions = easyServiceProviderOptions;
 
     public IServiceCollection CreateBuilder(IServiceCollection services) => services;
