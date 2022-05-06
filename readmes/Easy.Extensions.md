@@ -47,3 +47,9 @@
 ~~~text
 发布第一个正式版
 ~~~
+
+### 1.0.0-beta1
+
+~~~text
+1.解决 Easy.Extensions.DependencyInjection 依赖问题
+~~~
