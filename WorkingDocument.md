@@ -182,7 +182,7 @@ MergeJson 生成时会将 Easy.Tool.MergeJson.dll 复制到生成文件
 - [ ] 实现aop
 
   ~~~text
-  使用特性拦截接口或者类
+  使用特性拦截接口()或者类
   ~~~
 
 - [ ] 考虑将 Easy.Extensions.DependencyInjection.Abstractions 项目中的 ServiceTypeProxy 修改成 ServiceTypeMask ,服务类型面具的意思 (实现)
