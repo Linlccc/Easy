@@ -180,7 +180,12 @@ MergeJson 生成时会将 Easy.Tool.MergeJson.dll 复制到生成文件
 - [x] 将包发布添加成任务 (实现) [0501]
 - [x] 根据不同的sdk添加默认全局 using (实现) [0504]
 - [ ] 实现aop
-- [ ] 考虑将 Easy.Extensions.DependencyInjection.Abstractions 项目中的 ServiceTypeProxy 修改成 ServiceTypeMask ,类型面具的意思 (实现)
+
+  ~~~text
+  使用特性拦截接口或者类
+  ~~~
+
+- [ ] 考虑将 Easy.Extensions.DependencyInjection.Abstractions 项目中的 ServiceTypeProxy 修改成 ServiceTypeMask ,服务类型面具的意思 (实现)
 
 ### 暂时不处理
 
