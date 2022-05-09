@@ -181,6 +181,7 @@ MergeJson 生成时会将 Easy.Tool.MergeJson.dll 复制到生成文件
 - [x] 根据不同的sdk添加默认全局 using (实现) [0504]
 - [ ] 添加项目 Easy.Extensions.DynamicProxy 项目(aop)
 - [ ] 考虑将 Easy.Extensions.DependencyInjection.Abstractions 项目中的 ServiceTypeProxy 修改成 ServiceTypeMask ,服务类型面具的意思 (实现)
+- [ ] 检查 TypeInfo 的 ContainsGenericParameters 属性 是否是判断开放泛型
 
 ### 暂时不处理
 

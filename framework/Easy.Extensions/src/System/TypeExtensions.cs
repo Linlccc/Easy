@@ -43,6 +43,8 @@ public static class TypeExtensions
         return false;
     }
 
+    
+
     /// <summary>
     /// 判断是否是开放泛型
     /// </summary>
@@ -87,4 +89,5 @@ public static class TypeExtensions
         string result = $"{typeName}<{argumentNames}>";
         return result;
     }
+
 }
