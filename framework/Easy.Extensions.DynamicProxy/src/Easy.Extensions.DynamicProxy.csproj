@@ -1,12 +1,17 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <!-- 会发布包的版本 -->
+    <Version Condition="$(AloneVersion)">$(Version)$(BetaSuffix)1</Version>
   </PropertyGroup>
 
   <ItemGroup Condition="$(TargetFramework) == '$(NetStandard2)'">
     <PackageReference Include="System.Reflection.Emit" Version="4.7.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Easy.Extensions\src\Easy.Extensions.csproj" />
   </ItemGroup>
 </Project>
