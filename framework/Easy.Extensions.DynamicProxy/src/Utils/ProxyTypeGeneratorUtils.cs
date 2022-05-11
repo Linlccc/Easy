@@ -16,20 +16,49 @@ internal class ProxyTypeGeneratorUtils
     /// <summary>
     /// 模块构建器
     /// </summary>
-    private readonly ModuleBuilder moduleBuilder;
+    private readonly ModuleBuilder _moduleBuilder;
+    /// <summary>
+    /// 代理类型地图
+    /// </summary>
+    private readonly Dictionary<string, Type> _proxyTypeMap;
+    /// <summary>
+    /// 代理类型名称提供程序
+    /// </summary>
+    private readonly ProxyTypeNameUtils _proxyTypeNameUtils;
+
+    private readonly object _lock = new();
 
 
     public ProxyTypeGeneratorUtils()
     {
-        moduleBuilder = AssemblyBuilder.DefineDynamicAssembly(new AssemblyName(ProxyAssemblyName), AssemblyBuilderAccess.RunAndCollect).DefineDynamicModule(ProxyAssemblyName);
+        // 创建模块构建器，因为在.net core和.net 5+ 中态程序集只能包含一个动态模块，所以直接创建模块,https://docs.microsoft.com/zh-cn/dotnet/api/system.reflection.emit.assemblybuilder?view=net-6.0#remarks
+        _moduleBuilder = AssemblyBuilder.DefineDynamicAssembly(new AssemblyName(ProxyAssemblyName), AssemblyBuilderAccess.RunAndCollect).DefineDynamicModule(ProxyAssemblyName);
+        _proxyTypeMap = new();
+        _proxyTypeNameUtils = new();
     }
-
 
     internal Type CreateInterfaceProxyType(Type interfaceType, Type classType)
     {
+        lock (_lock)
+        {
+            // 得到代理类型名称
+            string proxyTypeName = _proxyTypeNameUtils.GetProxyTypeName(interfaceType, classType);
+            if(_proxyTypeMap.TryGetValue(proxyTypeName,out Type? proxyType))return proxyType;
+
+            // 创建代理类型
+
+
+
+            return proxyType!;
+        }
+    }
+
+
+    internal Type CreateInterfaceProxyType1(Type interfaceType, Type classType)
+    {
         string typeName = $"{interfaceType.FullName}Proxy";
 
-        TypeBuilder typeBuild = moduleBuilder.DefineType(typeName, TypeAttributes.Public | TypeAttributes.Class | TypeAttributes.Sealed, classType, new[] { interfaceType });
+        TypeBuilder typeBuild = _moduleBuilder.DefineType(typeName, TypeAttributes.Public | TypeAttributes.Class | TypeAttributes.Sealed, classType, new[] { interfaceType });
 
         DefineGenericParameter(typeBuild, interfaceType);
 

@@ -10,6 +10,8 @@ public class ProxyTypeNameUtilsTest
     public void GetProxyTypeName()
     {
         ProxyTypeNameUtils proxyTypeNameUtils = new ProxyTypeNameUtils();
-        string n = proxyTypeNameUtils.GetProxyTypeName(typeof(string), typeof(int));
+        string n1 = proxyTypeNameUtils.GetProxyTypeName(typeof(string), typeof(int));
+        string n2 = proxyTypeNameUtils.GetProxyTypeName(typeof(string), typeof(int));
+
     }
 }
