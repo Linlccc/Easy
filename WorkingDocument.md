@@ -179,7 +179,16 @@ MergeJson 生成时会将 Easy.Tool.MergeJson.dll 复制到生成文件
 - [x] 查看 msbuild 的 (发布)PublishOnly 任务 (研究) [0501]
 - [x] 将包发布添加成任务 (实现) [0501]
 - [x] 根据不同的sdk添加默认全局 using (实现) [0504]
+- [ ] DI添加多框架版本更换服务容器 (实现)
 - [ ] 添加项目 Easy.Extensions.DynamicProxy 项目(aop)
+
+  ~~~text
+  查看开源项目
+  1.https://github.com/pamidur/aspect-injector(编译时 AOP 框架)
+  2.https://github.com/Jishun/RoslynWeave(编译时注入 C# 代码的目标，通过使用原始 C# 代码而不是 IL 进行编织)
+  3.https://github.com/vescon/MethodBoundaryAspect.Fody
+  ~~~
+
 - [ ] 考虑将 Easy.Extensions.DependencyInjection.Abstractions 项目中的 ServiceTypeProxy 修改成 ServiceTypeMask ,服务类型面具的意思 (实现)
 - [ ] 检查 TypeInfo 的 ContainsGenericParameters 属性 是否是判断开放泛型
 
