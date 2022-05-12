@@ -17,7 +17,11 @@ public static class ICustomAttributeProviderExtensions
     /// <param name="inherit">是否从继承链上获取</param>
     /// <returns><typeparamref name="TAttribute"/> 类型的第一个特性,不存在则为 null</returns>
     public static TAttribute? GetAttribute<TAttribute>(this ICustomAttributeProvider customAttributeProvider, bool inherit) where TAttribute : Attribute
-        => customAttributeProvider.GetCustomAttributes(typeof(TAttribute), inherit).FirstOrDefault() as TAttribute;
+    {
+        _ = customAttributeProvider ?? throw new ArgumentNullException(nameof(customAttributeProvider));
+
+        return customAttributeProvider.GetCustomAttributes(typeof(TAttribute), inherit).FirstOrDefault() as TAttribute;
+    }
 
     /// <summary>
     /// 获取 <typeparamref name="TAttribute"/> 类型特性集合
@@ -27,7 +31,11 @@ public static class ICustomAttributeProviderExtensions
     /// <param name="inherit">是否从继承链上获取</param>
     /// <returns><typeparamref name="TAttribute"/> 类型的特性集合</returns>
     public static IEnumerable<TAttribute?> GetAttributes<TAttribute>(this ICustomAttributeProvider customAttributeProvider, bool inherit) where TAttribute : Attribute
-        => customAttributeProvider.GetCustomAttributes(typeof(TAttribute), inherit).Select(x => x as TAttribute);
+    {
+        _ = customAttributeProvider ?? throw new ArgumentNullException(nameof(customAttributeProvider));
+
+        return customAttributeProvider.GetCustomAttributes(typeof(TAttribute), inherit).Cast<TAttribute>();
+    }
 
     /// <summary>
     /// 检查是否存在 <typeparamref name="TAttribute"/> 类型特性，如果存在过获取该特性
@@ -44,6 +52,8 @@ public static class ICustomAttributeProviderExtensions
     public static bool IsExistAttribute<TAttribute>(this ICustomAttributeProvider customAttributeProvider, bool inherit, [NotNullWhen(true)] out TAttribute? attribute) where TAttribute : Attribute
 #endif
     {
+        _ = customAttributeProvider ?? throw new ArgumentNullException(nameof(customAttributeProvider));
+        
         attribute = customAttributeProvider.GetCustomAttributes(typeof(TAttribute), inherit).FirstOrDefault() as TAttribute;
         return attribute is not null;
     }
@@ -58,7 +68,8 @@ public static class ICustomAttributeProviderExtensions
     /// <param name="value">要设置的值</param>
     public static void SetPropertyValue(this PropertyInfo propertyInfo, object? obj, object? value)
     {
-        if (obj is null) return;
+        _ = propertyInfo ?? throw new ArgumentNullException(nameof(propertyInfo));
+        _ = obj ?? throw new ArgumentNullException(nameof(obj));
 
         // 如果没有 Set 方法，获取到该属性的字段赋值
         if (propertyInfo.SetMethod is null) obj.GetType().GetField($"<{propertyInfo.Name}>k__BackingField", BindingFlags.Instance | BindingFlags.NonPublic)?.SetValue(obj, value);
