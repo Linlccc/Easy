@@ -191,6 +191,11 @@ MergeJson 生成时会将 Easy.Tool.MergeJson.dll 复制到生成文件
 
 - [ ] 考虑将 Easy.Extensions.DependencyInjection.Abstractions 项目中的 ServiceTypeProxy 修改成 ServiceTypeMask ,服务类型面具的意思 (实现)
 - [ ] 检查 TypeInfo 的 ContainsGenericParameters 属性 是否是判断开放泛型
+- [ ] 升级 Easy.Tool.MergeJson 项目
+
+  ~~~text
+  1.考虑使用 FindUnderPath,ConvertToAbsolutePath msbuild 任务处理文件夹路径，在程序中尽量少的处理路径
+  ~~~
 
 ### 暂时不处理
 
