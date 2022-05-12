@@ -13,7 +13,7 @@
 
   判断类型是否继承自指定类型  <type>.IsInheritFrom(type);
 
-  判断是否是开放泛型  <type>.IsOpenGeneric();
+  判断是否是完全开放泛型  <type>.IsAllOpenGeneric();
 
   获取类型定义 <type>.GetTypeDefinition();
 
@@ -52,4 +52,12 @@
 
 ~~~text
 1.解决 Easy.Extensions.DependencyInjection 依赖问题
+~~~
+
+### 1.0.1(待发布)
+
+~~~text
+1.修改 Type 拓展 IsOpenGeneric 为 IsAllOpenGeneric
+  a.判断是否为完全开放泛型
+  b.如果只是判断是否有没有指定特定类型的类型参数使用 ContainsGenericParameters 属性
 ~~~
