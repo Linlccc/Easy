@@ -37,4 +37,58 @@ public static class ILGeneratorExtensions
                 break;
         }
     }
+
+    /// <summary>
+    /// 调用方法
+    /// </summary>
+    /// <param name="iLGenerator">中间语言指令</param>
+    /// <param name="methodInfo">方法信息</param>
+    /// <exception cref="ArgumentNullException"></exception>
+    public static void Call(this ILGenerator iLGenerator, MethodInfo methodInfo)
+    {
+        _ = iLGenerator ?? throw new ArgumentNullException(nameof(iLGenerator));
+
+        iLGenerator.Emit(OpCodes.Call, methodInfo);
+        // TODO:这个好像是调用静态方法后面看一下
+        // iLGenerator.Emit(OpCodes.Callvirt, methodInfo);
+    }
+
+    /// <summary>
+    /// 调用构造函数
+    /// </summary>
+    /// <param name="iLGenerator">中间语言指令</param>
+    /// <param name="constructorInfo">构造函数信息</param>
+    /// <exception cref="ArgumentNullException"></exception>
+    public static void Call(this ILGenerator iLGenerator, ConstructorInfo constructorInfo)
+    {
+        _ = iLGenerator ?? throw new ArgumentNullException(nameof(iLGenerator));
+
+        iLGenerator.Emit(OpCodes.Call, constructorInfo);
+    }
+
+    /// <summary>
+    /// 将当前堆栈的值设置到字段
+    /// </summary>
+    /// <param name="iLGenerator">中间语言指令</param>
+    /// <param name="fieldInfo">字段信息</param>
+    /// <exception cref="ArgumentNullException"></exception>
+    public static void SetField(this ILGenerator iLGenerator, FieldInfo fieldInfo)
+    {
+        _ = iLGenerator ?? throw new ArgumentNullException(nameof(iLGenerator));
+
+        iLGenerator.Emit(OpCodes.Stfld, fieldInfo);
+    }
+
+    /// <summary>
+    /// 返回值
+    /// <br>将返回值(如果存在)从被调用者推送到调用者</br>
+    /// </summary>
+    /// <param name="iLGenerator"></param>
+    /// <exception cref="ArgumentNullException"></exception>
+    public static void Return(this ILGenerator iLGenerator)
+    {
+        _ = iLGenerator ?? throw new ArgumentNullException(nameof(iLGenerator));
+
+        iLGenerator.Emit(OpCodes.Ret);
+    }
 }
