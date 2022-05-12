@@ -169,6 +169,18 @@ MergeJson 生成时会将 Easy.Tool.MergeJson.dll 复制到生成文件
 
 ---
 
+## 0512
+
+检查 Type 的 ContainsGenericParameters 属性 是否是判断开放泛型
+
+  ~~~text
+  只要有一个类型参数没有指定特定类型就返回true
+
+  typeof(Tuple<T1,string>).ContainsGenericParameters  返回true
+  ~~~
+
+---
+
 ## 计划
 
 - [x] 添加自动发布包任务 (研究) [0427]
@@ -179,6 +191,7 @@ MergeJson 生成时会将 Easy.Tool.MergeJson.dll 复制到生成文件
 - [x] 查看 msbuild 的 (发布)PublishOnly 任务 (研究) [0501]
 - [x] 将包发布添加成任务 (实现) [0501]
 - [x] 根据不同的sdk添加默认全局 using (实现) [0504]
+- [x] 检查 Type 的 ContainsGenericParameters 属性 是否是判断开放泛型 (实验) [0512]
 - [ ] DI添加多框架版本更换服务容器 (实现)
 - [ ] 添加项目 Easy.Extensions.DynamicProxy 项目(aop)
 
@@ -190,7 +203,6 @@ MergeJson 生成时会将 Easy.Tool.MergeJson.dll 复制到生成文件
   ~~~
 
 - [ ] 考虑将 Easy.Extensions.DependencyInjection.Abstractions 项目中的 ServiceTypeProxy 修改成 ServiceTypeMask ,服务类型面具的意思 (实现)
-- [ ] 检查 TypeInfo 的 ContainsGenericParameters 属性 是否是判断开放泛型
 - [ ] 升级 Easy.Tool.MergeJson 项目
 
   ~~~text
