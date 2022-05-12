@@ -192,7 +192,13 @@ MergeJson 生成时会将 Easy.Tool.MergeJson.dll 复制到生成文件
 - [x] 将包发布添加成任务 (实现) [0501]
 - [x] 根据不同的sdk添加默认全局 using (实现) [0504]
 - [x] 检查 Type 的 ContainsGenericParameters 属性 是否是判断开放泛型 (实验) [0512]
-- [ ] DI添加多框架版本更换服务容器 (实现)
+- [ ] 处理 Easy.Extension.DenpendencyInjection 项目
+
+  ~~~text
+  1.DI添加多框架版本更换服务容器(实现)
+  2.处理容器的Dispose方法(实现)
+  ~~~
+
 - [ ] 添加项目 Easy.Extensions.DynamicProxy 项目(aop)
 
   ~~~text
