@@ -66,13 +66,13 @@ public class DynamicCreateType
         // 得到构造函数的IL中间语言指令
         ILGenerator ctor1IL = ctor1.GetILGenerator();
         // 加载实例
-        ctor1IL.Emit(OpCodes.Ldarg_0);
+        ctor1IL.LoadArg(0);
         // 调用基类(object)构造方法
         ctor1IL.Emit(OpCodes.Call, typeof(object).GetConstructor(Type.EmptyTypes)!);
         // 加载实例
-        ctor1IL.Emit(OpCodes.Ldarg_0);
+        ctor1IL.LoadArg(0);
         // 加载第一个参数
-        ctor1IL.Emit(OpCodes.Ldarg_1);
+        ctor1IL.LoadArg(1);
         // 向fbNumber字段赋值
         ctor1IL.Emit(OpCodes.Stfld, fbNumber1);
         // 从当前方法返回（方法完成）

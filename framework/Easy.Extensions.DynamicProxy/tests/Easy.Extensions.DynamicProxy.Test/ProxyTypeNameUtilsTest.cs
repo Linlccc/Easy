@@ -9,9 +9,18 @@ public class ProxyTypeNameUtilsTest
     [Fact]
     public void GetProxyTypeName()
     {
-        ProxyTypeNameUtils proxyTypeNameUtils = new ProxyTypeNameUtils();
-        string n1 = proxyTypeNameUtils.GetProxyTypeName(typeof(string), typeof(int));
-        string n2 = proxyTypeNameUtils.GetProxyTypeName(typeof(string), typeof(int));
-
+        TT<string> tT = new TT<string>();
+        Type t1 = tT.Value.GetType();
     }
+}
+
+
+public interface IT<T1,T2>
+{
+
+}
+
+public class TT<T1> : IT<T1, string>
+{
+    public Nullable<int> Value { get; set; } = 1;
 }

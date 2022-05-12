@@ -9,9 +9,18 @@
 
   <ItemGroup Condition="$(TargetFramework) == '$(NetStandard2)'">
     <PackageReference Include="System.Reflection.Emit" Version="4.7.0" />
+    <PackageReference Include="System.Threading.Tasks.Extensions" Version="4.5.4" />
+  </ItemGroup>
+
+  <ItemGroup Condition="$(TargetFramework) == '$(NetFramework462)'">
+    <PackageReference Include="System.Threading.Tasks.Extensions" Version="4.5.4" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\Easy.Extensions\src\Easy.Extensions.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Extensions\" />
   </ItemGroup>
 </Project>

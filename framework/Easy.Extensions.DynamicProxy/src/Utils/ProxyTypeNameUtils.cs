@@ -3,7 +3,7 @@
 /// <summary>
 /// 代理类型名称实用程序
 /// </summary>
-public class ProxyTypeNameUtils
+internal class ProxyTypeNameUtils
 {
     /// <summary>
     /// 代理类型命名空间

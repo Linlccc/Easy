@@ -45,8 +45,10 @@ internal class ProxyTypeGeneratorUtils
             string proxyTypeName = _proxyTypeNameUtils.GetProxyTypeName(interfaceType, classType);
             if(_proxyTypeMap.TryGetValue(proxyTypeName,out Type? proxyType))return proxyType;
 
-            // 创建代理类型
-
+            // 获取代理类型描述器
+            ProxyTypeDescriptor proxyTypeDescriptor = ProxyTypeDescriptorUtils.Describe(_moduleBuilder, proxyTypeName, interfaceType, typeof(object), new Type[] { interfaceType });
+            // 定义构造函数
+            ConstructorUtils.SetConstuctor(proxyTypeDescriptor, interfaceType);
 
 
             return proxyType!;
