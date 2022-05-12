@@ -84,12 +84,12 @@ internal sealed class EasyServicesRegistrar
         {
             // 得到要注册为服务的类型，【如果是开放泛型 就根据定义判断 也获取定义】
             List<Type> serviceTypes = serviceTypes = RegisterInfo.ServiceTypes
-            .Where(type => type.IsOpenGeneric() ? ImplementationType.IsInheritFrom(type) : type.IsAssignableFrom(ImplementationType))
-            .Select(type => type.IsOpenGeneric() ? type.GetTypeDefinition() : type).ToList();
+            .Where(type => type.IsAllOpenGeneric() ? ImplementationType.IsInheritFrom(type) : type.IsAssignableFrom(ImplementationType))
+            .Select(type => type.IsAllOpenGeneric() ? type.GetTypeDefinition() : type).ToList();
             // 如果自定义没有就找接口。从接口获取类型，【如果是开放泛型就获取类型定义】
             if (serviceTypes.IsNullOrEmpty()) serviceTypes = ImplementationType.GetInterfaces()
                  .Where(type => !_notRegisterServiceTypes.Any(ntst => ntst == type.GetTypeDefinition()))
-                 .Select(type => type.IsOpenGeneric() ? type.GetTypeDefinition() : type).ToList();
+                 .Select(type => type.IsAllOpenGeneric() ? type.GetTypeDefinition() : type).ToList();
 
             // 如果没有服务类型可注册，以自己为服务类型注册
             if (serviceTypes.IsNullOrEmpty()) serviceTypes.Add(ImplementationType);
@@ -151,7 +151,7 @@ internal sealed class EasyServicesRegistrar
                 // 如果服务类型是 object 就以自己为服务类型注册
                 if (serviceType == typeof(object)) serviceType = implementationType;
                 // 如果是开放泛型获取类型定义
-                if (serviceType.IsOpenGeneric()) serviceType = serviceType.GetTypeDefinition();
+                if (serviceType.IsAllOpenGeneric()) serviceType = serviceType.GetTypeDefinition();
                 services.Add(ServiceDescriptor.Describe(serviceType, useEasyimplementationFactory, serviceLifetime));
 
                 // 得到服务Key
