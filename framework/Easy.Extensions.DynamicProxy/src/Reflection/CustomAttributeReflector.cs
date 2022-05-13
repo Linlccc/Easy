@@ -28,4 +28,13 @@ public class CustomAttributeReflector
     {
         return null!;
     }
+
+    internal static CustomAttributeReflector Create(CustomAttributeData customAttributeData)
+    {
+        return new CustomAttributeReflector(customAttributeData);
+    }
+
+    public Attribute Invoke() => _invoker();
+
+    public CustomAttributeData GetCustomAttributeData() => _customAttributeData;
 }
