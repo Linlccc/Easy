@@ -32,4 +32,24 @@ internal static class GenericParameterUtils
         }
         return typeBuilder;
     }
+
+    public static MethodBuilder DefineGenericParameterByMethod(this MethodBuilder methodBuilder, MethodInfo methodInfo)
+    {
+        if (!methodInfo.IsGenericMethod) return methodBuilder;
+
+        Type[] genericArguments = methodInfo.GetGenericArguments();
+        GenericTypeParameterBuilder[] genericTypeParameterBuilders = methodBuilder.DefineGenericParameters(genericArguments.Select(ga => ga.Name).ToArray());
+        // 设置泛型参数的特性和约束
+        foreach (GenericTypeParameterBuilder genericTypeParameterBuilder in genericTypeParameterBuilders)
+        {
+            Type genericArgumentType = genericArguments[genericTypeParameterBuilder.GenericParameterPosition];
+            genericTypeParameterBuilder.SetGenericParameterAttributes(genericArgumentType.GenericParameterAttributes);
+            foreach (Type constraint in genericArgumentType.GetGenericParameterConstraints())
+            {
+                if (constraint.IsClass) genericTypeParameterBuilder.SetBaseTypeConstraint(constraint);
+                if (constraint.IsInterface) genericTypeParameterBuilder.SetInterfaceConstraints(constraint);
+            }
+        }
+        return methodBuilder;
+    }
 }
