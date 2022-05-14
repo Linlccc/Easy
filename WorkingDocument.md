@@ -206,6 +206,8 @@ MergeJson 生成时会将 Easy.Tool.MergeJson.dll 复制到生成文件
   1.https://github.com/pamidur/aspect-injector(编译时 AOP 框架)
   2.https://github.com/Jishun/RoslynWeave(编译时注入 C# 代码的目标，通过使用原始 C# 代码而不是 IL 进行编织)
   3.https://github.com/vescon/MethodBoundaryAspect.Fody
+
+  看看https://github.com/htrlq/NCoreCoder.Framework项目
   ~~~
 
 - [ ] 考虑将 Easy.Extensions.DependencyInjection.Abstractions 项目中的 ServiceTypeProxy 修改成 ServiceTypeMask ,服务类型面具的意思 (实现)
