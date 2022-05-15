@@ -208,6 +208,13 @@ MergeJson 生成时会将 Easy.Tool.MergeJson.dll 复制到生成文件
   3.https://github.com/vescon/MethodBoundaryAspect.Fody
 
   看看https://github.com/htrlq/NCoreCoder.Framework项目
+  1.先看官方实现
+  2.需要实现的有：
+    a.根据接口和类创建代理类型
+    b.根据类实现代理类型
+      I.在后期看怎么实现非虚方法的代理实现
+    c.直接对对象的代理
+
   ~~~
 
 - [ ] 考虑将 Easy.Extensions.DependencyInjection.Abstractions 项目中的 ServiceTypeProxy 修改成 ServiceTypeMask ,服务类型面具的意思 (实现)
