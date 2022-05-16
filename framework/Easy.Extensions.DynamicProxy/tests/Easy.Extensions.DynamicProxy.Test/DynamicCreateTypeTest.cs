@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using System.Reflection.Emit;
 using Xunit;
 
 namespace Easy.Extensions.DynamicProxy.Test;
@@ -73,7 +74,28 @@ public class DynamicCreateTypeTest
         
         Assert.Equal(11, v1.Length);
         Assert.Equal(22, v1[0]);
+    }
 
+
+    /// <summary>
+    /// 零时测试
+    /// </summary>
+    [Fact]
+    public void LTest1()
+    {
+        ModuleBuilder moduleBuilder = AssemblyBuilder.DefineDynamicAssembly(new AssemblyName("test"), AssemblyBuilderAccess.RunAndCollect).DefineDynamicModule("test");
+        TypeBuilder typeBuilder = moduleBuilder.DefineType("MyDynamicType", TypeAttributes.Public);
+        
+        MethodBuilder methodBuilder1 = typeBuilder.DefineMethod("Test1", MethodAttributes.Public);
+        ILGenerator mbIl = methodBuilder1.GetILGenerator();
+
+        mbIl.LoadInt(13);
+        mbIl.LoadInt64(13);
+
+        ILGenerator mbI2 = null!;
+        mbI2.LoadInt64(13);
+        mbI2.LoadInt(13);
+        
     }
 
 
