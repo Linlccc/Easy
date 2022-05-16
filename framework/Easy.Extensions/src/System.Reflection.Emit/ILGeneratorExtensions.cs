@@ -12,10 +12,8 @@ public static partial class ILGeneratorExtensions
     /// <param name="iLGenerator">中间语言指令</param>
     /// <param name="index">参数索引,0是当前实例</param>
     /// <exception cref="ArgumentNullException"></exception>
-    public static void LoadArg(this ILGenerator iLGenerator, uint index)
+    public static void LoadArg(this ILGenerator iLGenerator!!, uint index)
     {
-        _ = iLGenerator ?? throw new ArgumentNullException(nameof(iLGenerator));
-
         switch (index)
         {
             case 0: iLGenerator.Emit(OpCodes.Ldarg_0); return;
@@ -33,11 +31,8 @@ public static partial class ILGeneratorExtensions
     /// <param name="iLGenerator">中间语言指令</param>
     /// <param name="localBuilder">局部变量</param>
     /// <exception cref="ArgumentNullException"></exception>
-    public static void LoadLocal(this ILGenerator iLGenerator, LocalBuilder localBuilder)
+    public static void LoadLocal(this ILGenerator iLGenerator!!, LocalBuilder localBuilder!!)
     {
-        _ = iLGenerator ?? throw new ArgumentNullException(nameof(iLGenerator));
-        _ = localBuilder ?? throw new ArgumentNullException(nameof(localBuilder));
-
         switch (localBuilder.LocalIndex)
         {
             case 0: iLGenerator.Emit(OpCodes.Ldloc_0); return;
@@ -52,7 +47,7 @@ public static partial class ILGeneratorExtensions
 
     #region 推送数字
     /// <summary>
-    /// 加载数字常量
+    /// 推送 <see cref="Int32"/>/<see cref="Int16"/>/<see cref="byte"/> 数字常量
     /// </summary>
     /// <param name="iLGenerator">中间语言指令</param>
     /// <param name="value">要加载的数字常量</param>
@@ -76,40 +71,28 @@ public static partial class ILGeneratorExtensions
     }
 
     /// <summary>
-    /// 加载 <see cref="Int64"/> 数字常量
+    /// 推送 <see cref="Int64"/> 数字常量
     /// </summary>
     /// <param name="iLGenerator">中间语言指令</param>
     /// <param name="value">要加载的数字常量</param>
     /// <exception cref="ArgumentNullException"></exception>
-    public static void LoadInt64(this ILGenerator iLGenerator, long value)
-    {
-        _ = iLGenerator ?? throw new ArgumentNullException(nameof(iLGenerator));
-        iLGenerator.Emit(OpCodes.Ldc_I8, value);
-    }
+    public static void LoadInt64(this ILGenerator iLGenerator!!, long value) => iLGenerator.Emit(OpCodes.Ldc_I8, value);
 
     /// <summary>
-    /// 加载 <see cref="Single"/> 数字常量
+    /// 推送 <see cref="Single"/> 数字常量
     /// </summary>
     /// <param name="iLGenerator">中间语言指令</param>
     /// <param name="value">要加载的数字常量</param>
     /// <exception cref="ArgumentNullException"></exception>
-    public static void LoadFloat(this ILGenerator iLGenerator, float value)
-    {
-        _ = iLGenerator ?? throw new ArgumentNullException(nameof(iLGenerator));
-        iLGenerator.Emit(OpCodes.Ldc_R4, value);
-    }
+    public static void LoadFloat(this ILGenerator iLGenerator!!, float value) => iLGenerator.Emit(OpCodes.Ldc_R4, value);
 
     /// <summary>
-    /// 加载 <see cref="Double"/> 数字常量
+    /// 推送 <see cref="Double"/> 数字常量
     /// </summary>
     /// <param name="iLGenerator"></param>
     /// <param name="value"></param>
     /// <exception cref="ArgumentNullException"></exception>
-    public static void LoadDouble(this ILGenerator iLGenerator, double value)
-    {
-        _ = iLGenerator ?? throw new ArgumentNullException(nameof(iLGenerator));
-        iLGenerator.Emit(OpCodes.Ldc_R8, value);
-    }
+    public static void LoadDouble(this ILGenerator iLGenerator!!, double value) => iLGenerator.Emit(OpCodes.Ldc_R8, value);
     #endregion
     #endregion
 
@@ -119,12 +102,13 @@ public static partial class ILGeneratorExtensions
     /// </summary>
     /// <param name="iLGenerator"></param>
     /// <exception cref="ArgumentNullException"></exception>
-    public static void MathAdd(this ILGenerator iLGenerator)
-    {
-        _ = iLGenerator ?? throw new ArgumentNullException(nameof(iLGenerator));
-        iLGenerator.Emit(OpCodes.Add);
-    }
+    public static void MathAdd(this ILGenerator iLGenerator!!) => iLGenerator.Emit(OpCodes.Add);
     #endregion
+
+
+
+
+
 
 
 
@@ -134,11 +118,7 @@ public static partial class ILGeneratorExtensions
     /// </summary>
     /// <param name="iLGenerator">中间语言指令</param>
     /// <param name="type">数组类型</param>
-    public static void DefineArray(this ILGenerator iLGenerator, Type type)
-    {
-        _ = iLGenerator ?? throw new ArgumentNullException(nameof(iLGenerator));
-        iLGenerator.Emit(OpCodes.Newarr, type);
-    }
+    public static void DefineArray(this ILGenerator iLGenerator!!, Type type!!) => iLGenerator.Emit(OpCodes.Newarr, type);
     #endregion
 
     #region 赋值
@@ -148,12 +128,7 @@ public static partial class ILGeneratorExtensions
     /// <param name="iLGenerator">中间语言指令</param>
     /// <param name="fieldInfo">字段信息</param>
     /// <exception cref="ArgumentNullException"></exception>
-    public static void SetField(this ILGenerator iLGenerator, FieldInfo fieldInfo)
-    {
-        _ = iLGenerator ?? throw new ArgumentNullException(nameof(iLGenerator));
-
-        iLGenerator.Emit(OpCodes.Stfld, fieldInfo);
-    }
+    public static void SetField(this ILGenerator iLGenerator!!, FieldInfo fieldInfo!!) => iLGenerator.Emit(OpCodes.Stfld, fieldInfo);
 
     /// <summary>
     /// 将当前堆栈的值设置到局部变量
@@ -161,13 +136,7 @@ public static partial class ILGeneratorExtensions
     /// <param name="iLGenerator">中间语言指令</param>
     /// <param name="localBuilder">局部变量</param>
     /// <exception cref="ArgumentNullException"></exception>
-    public static void SetLocal(this ILGenerator iLGenerator, LocalBuilder localBuilder)
-    {
-        _ = iLGenerator ?? throw new ArgumentNullException(nameof(iLGenerator));
-        _ = localBuilder ?? throw new ArgumentNullException(nameof(localBuilder));
-
-        iLGenerator.Emit(OpCodes.Stloc, localBuilder);
-    }
+    public static void SetLocal(this ILGenerator iLGenerator, LocalBuilder localBuilder) => iLGenerator.Emit(OpCodes.Stloc, localBuilder);
 
     #endregion
 
@@ -209,10 +178,5 @@ public static partial class ILGeneratorExtensions
     /// </summary>
     /// <param name="iLGenerator"></param>
     /// <exception cref="ArgumentNullException"></exception>
-    public static void Return(this ILGenerator iLGenerator)
-    {
-        _ = iLGenerator ?? throw new ArgumentNullException(nameof(iLGenerator));
-
-        iLGenerator.Emit(OpCodes.Ret);
-    }
+    public static void Return(this ILGenerator iLGenerator) => iLGenerator.Emit(OpCodes.Ret);
 }

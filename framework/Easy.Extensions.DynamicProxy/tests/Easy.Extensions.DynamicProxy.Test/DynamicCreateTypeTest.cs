@@ -72,7 +72,7 @@ public class DynamicCreateTypeTest
         object v2 = methodInfo2.Invoke(o1, new object[] { 13, 22 })!;
 
         
-        Assert.Equal(11, v1.Length);
+        Assert.Equal(13, v1.Length);
         Assert.Equal(22, v1[0]);
     }
 
@@ -93,8 +93,8 @@ public class DynamicCreateTypeTest
         mbIl.LoadInt64(13);
 
         ILGenerator mbI2 = null!;
-        mbI2.LoadInt64(13);
-        mbI2.LoadInt(13);
+        Assert.Throws<ArgumentNullException>(() => mbI2.LoadInt64(12));
+        Assert.Throws<ArgumentNullException>(() => mbI2.LoadInt(12));
         
     }
 
