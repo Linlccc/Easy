@@ -7,6 +7,7 @@ namespace Easy.Extensions.DynamicProxy;
 /// </summary>
 public struct AspectActivatorContext
 {
+
     /// <summary>
     /// 代理实例
     /// </summary>

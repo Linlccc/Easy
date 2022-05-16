@@ -13,6 +13,11 @@ public class ProxyTypeNameUtilsTest
     public void GetProxyTypeName()
     {
         {
+            ProxyTypeNameUtils proxyTypeNameUtils = new();
+            ProxyTypeGeneratorUtils proxyTypeGeneratorUtils = new();
+        }
+
+        {
             Type t1 = typeof(TT<>);
             Type t2 = typeof(IT<,>);
 
