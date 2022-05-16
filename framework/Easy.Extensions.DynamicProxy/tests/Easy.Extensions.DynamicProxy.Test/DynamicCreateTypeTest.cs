@@ -11,7 +11,7 @@ public class DynamicCreateTypeTest
     [Fact]
     public void CreateDynamicTypeTest()
     {
-        Type dynamicType = DynamicCreateType.CreateMyDynamicType();
+        Type dynamicType = DynamicCreateType.CreateMyDynamicType1();
 
         // 获取构造函数
         ConstructorInfo[] constructorInfos = dynamicType.GetConstructors();
@@ -48,6 +48,32 @@ public class DynamicCreateTypeTest
         object o4 = Activator.CreateInstance(dynamicType, new object[] { "122133", 102 })!;
         // 测试属性
         Assert.Equal(102, propertyInfo.GetValue(o4));
+    }
+
+    /// <summary>
+    /// 本地参数参数
+    /// </summary>
+    [Fact]
+    public void LocalVarTest()
+    {
+        Type dynamicType = DynamicCreateType.CreateMyDynamicType2();
+
+        // 获取方法
+        MethodInfo methodInfo1 = dynamicType.GetMethod("TestLoaclVar1")!;
+        MethodInfo methodInfo2 = dynamicType.GetMethod("TestLoaclVar2")!;
+        Assert.NotNull(methodInfo1);
+        Assert.NotNull(methodInfo2);
+
+        // 使用默认构造函数创建 MyDynamicType 的实例
+        object o1 = Activator.CreateInstance(dynamicType)!;
+
+        int[] v1 = (int[])methodInfo1.Invoke(o1, new object[] { 13,22 })!;
+        object v2 = methodInfo2.Invoke(o1, new object[] { 13, 22 })!;
+
+        
+        Assert.Equal(11, v1.Length);
+        Assert.Equal(22, v1[0]);
+
     }
 
 

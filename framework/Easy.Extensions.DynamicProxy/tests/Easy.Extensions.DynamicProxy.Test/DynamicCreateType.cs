@@ -47,7 +47,7 @@ public class DynamicCreateType
     /// <summary>
     /// 创建MyDynamicTypes类型
     /// </summary>
-    public static Type CreateMyDynamicType()
+    public static Type CreateMyDynamicType1()
     {
         // 创建一个DynamicAssemblyName名称的可执行并可由垃圾回收器自动回收的动态程序集
         AssemblyBuilder assembly = AssemblyBuilder.DefineDynamicAssembly(new AssemblyName(DynamicAssemblyName), AssemblyBuilderAccess.RunAndCollect);
@@ -155,6 +155,63 @@ public class DynamicCreateType
         // 将两个值相乘
         methIL.Emit(OpCodes.Mul);
         methIL.Emit(OpCodes.Ret);
+
+        // 完成
+        return dynamicType.CreateType()!;
+    }
+
+    /// <summary>
+    /// 创建MyDynamicTypes类型
+    /// </summary>
+    public static Type CreateMyDynamicType2()
+    {
+        // 创建一个DynamicAssemblyName名称的可执行并可由垃圾回收器自动回收的动态程序集
+        AssemblyBuilder assembly = AssemblyBuilder.DefineDynamicAssembly(new AssemblyName(DynamicAssemblyName), AssemblyBuilderAccess.RunAndCollect);
+        // 创建一个模块，在.NET Core 和 .NET 5+中一个动态程序集只能有一个动态模块
+        ModuleBuilder module = assembly.DefineDynamicModule(DynamicAssemblyName);
+
+        // 创建一个类型
+        TypeBuilder dynamicType = module.DefineType("MyDynamicType", TypeAttributes.Public);
+
+        {
+            // 定义一个 测试本地变量的方法
+            MethodBuilder meth1 = dynamicType.DefineMethod("TestLoaclVar1", MethodAttributes.Public, typeof(int[]), new Type[] { typeof(int), typeof(int) });
+            ILGenerator methIL1 = meth1.GetILGenerator();
+            // 定义一个局部变量
+            LocalBuilder localBuilder = methIL1.DeclareLocal(typeof(int[]));
+            // 定义一个数组,数组 new int[参数1]
+            methIL1.LoadArg(1);
+            methIL1.DefineArray(typeof(int));
+            // 将数组赋值给局部变量
+            methIL1.SetLocal(localBuilder);
+            // 设置索引0的值
+            methIL1.SetLocalArrayValueBefore(localBuilder, 0);
+            methIL1.LoadArg(2);
+            methIL1.SetLocalArrayValueAfter(typeof(int));
+            // 设置索引1的值
+            methIL1.SetLocalArrayValueBefore(localBuilder, 1);
+            methIL1.LoadArg(1);
+            methIL1.SetLocalArrayValueAfter(typeof(int));
+            // 设置索引7的值
+            methIL1.SetLocalArrayValueBefore(localBuilder, 7);
+            methIL1.LoadInt(999);
+            methIL1.SetLocalArrayValueAfter(typeof(int));
+            // 返回局部变量
+            methIL1.LoadLocal(localBuilder);
+            methIL1.Return();
+        }
+
+
+        {
+            // 定义一个 测试本地变量的方法
+            MethodBuilder meth1 = dynamicType.DefineMethod("TestLoaclVar2", MethodAttributes.Public, typeof(object), new Type[] { typeof(int), typeof(int) });
+            ILGenerator methIL1 = meth1.GetILGenerator();
+            // 定义一个局部变量
+            LocalBuilder localBuilder = methIL1.DeclareLocal(typeof(int[]));
+            methIL1.LoadArg(0);
+            //methIL1.LoadArg(1);
+            methIL1.Return();
+        }
 
         // 完成
         return dynamicType.CreateType()!;
