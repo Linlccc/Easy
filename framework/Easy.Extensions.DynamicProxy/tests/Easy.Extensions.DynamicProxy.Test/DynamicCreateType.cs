@@ -92,6 +92,8 @@ public class DynamicCreateType
         ctor2IL.Emit(OpCodes.Ldarg_0);
         ctor2IL.Emit(OpCodes.Call,typeof(object).GetConstructor(Type.EmptyTypes)!);
 
+        ctor2IL.DebugBreakPoint();
+
         ctor2IL.Emit(OpCodes.Ldarg_0);
         ctor2IL.Emit(OpCodes.Ldarg_1);
         ctor2IL.Emit(OpCodes.Stfld, fbNumber1);
