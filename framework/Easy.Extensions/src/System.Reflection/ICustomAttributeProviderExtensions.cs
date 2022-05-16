@@ -16,11 +16,11 @@ public static class ICustomAttributeProviderExtensions
     /// <param name="customAttributeProvider">特性提供者</param>
     /// <param name="inherit">是否从继承链上获取</param>
     /// <returns><typeparamref name="TAttribute"/> 类型的第一个特性,不存在则为 null</returns>
-    public static TAttribute? GetAttribute<TAttribute>(this ICustomAttributeProvider customAttributeProvider, bool inherit) where TAttribute : Attribute
+    public static TAttribute? GetAttribute<TAttribute>(this ICustomAttributeProvider customAttributeProvider, bool inherit)
     {
         _ = customAttributeProvider ?? throw new ArgumentNullException(nameof(customAttributeProvider));
 
-        return customAttributeProvider.GetCustomAttributes(typeof(TAttribute), inherit).FirstOrDefault() as TAttribute;
+        return (TAttribute?)customAttributeProvider.GetCustomAttributes(typeof(TAttribute), inherit).FirstOrDefault();
     }
 
     /// <summary>
@@ -30,7 +30,7 @@ public static class ICustomAttributeProviderExtensions
     /// <param name="customAttributeProvider">特性提供者</param>
     /// <param name="inherit">是否从继承链上获取</param>
     /// <returns><typeparamref name="TAttribute"/> 类型的特性集合</returns>
-    public static IEnumerable<TAttribute?> GetAttributes<TAttribute>(this ICustomAttributeProvider customAttributeProvider, bool inherit) where TAttribute : Attribute
+    public static IEnumerable<TAttribute?> GetAttributes<TAttribute>(this ICustomAttributeProvider customAttributeProvider, bool inherit) where TAttribute : class
     {
         _ = customAttributeProvider ?? throw new ArgumentNullException(nameof(customAttributeProvider));
 
@@ -47,14 +47,14 @@ public static class ICustomAttributeProviderExtensions
     /// <param name="attribute">如果特性存在，获取一个该特性对象</param>
     /// <returns>如果存在 <typeparamref name="TAttribute"/> 类型特性返回 true，否者 false</returns>
 #if NET462 || NETSTANDARD2_0
-    public static bool IsExistAttribute<TAttribute>(this ICustomAttributeProvider customAttributeProvider, bool inherit, out TAttribute? attribute) where TAttribute : Attribute
+    public static bool IsExistAttribute<TAttribute>(this ICustomAttributeProvider customAttributeProvider, bool inherit, out TAttribute? attribute)
 #else
-    public static bool IsExistAttribute<TAttribute>(this ICustomAttributeProvider customAttributeProvider, bool inherit, [NotNullWhen(true)] out TAttribute? attribute) where TAttribute : Attribute
+    public static bool IsExistAttribute<TAttribute>(this ICustomAttributeProvider customAttributeProvider, bool inherit, [NotNullWhen(true)] out TAttribute? attribute)
 #endif
     {
         _ = customAttributeProvider ?? throw new ArgumentNullException(nameof(customAttributeProvider));
         
-        attribute = customAttributeProvider.GetCustomAttributes(typeof(TAttribute), inherit).FirstOrDefault() as TAttribute;
+        attribute = (TAttribute?)customAttributeProvider.GetCustomAttributes(typeof(TAttribute), inherit).FirstOrDefault();
         return attribute is not null;
     }
     #endregion

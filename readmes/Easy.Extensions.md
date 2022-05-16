@@ -60,4 +60,9 @@
 1.修改 Type 拓展 IsOpenGeneric 为 IsAllOpenGeneric
   a.判断是否为完全开放泛型
   b.如果只是判断是否有没有指定特定类型的类型参数使用 ContainsGenericParameters 属性
+  
+2.移除以下方法的泛型约束
+  a.<ICustomAttributeProvider>.GetAttribute<T>(bool);
+  b.<ICustomAttributeProvider>.GetAttributes<T>(bool):
+  c.<ICustomAttributeProvider>.IsExistAttribute<T>(bool,out T?);
 ~~~
