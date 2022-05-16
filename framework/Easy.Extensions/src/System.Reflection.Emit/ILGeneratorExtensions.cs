@@ -3,11 +3,11 @@
 /// <summary>
 /// <see cref="ILGenerator"/>(Microsoft 中间语言指令) 拓展
 /// </summary>
-public static class ILGeneratorExtensions
+public static partial class ILGeneratorExtensions
 {
-    #region 加载\推送(将指定的东西推送到堆栈上)
+    #region 加载\推送(将指定的值推送到计算堆栈)
     /// <summary>
-    /// 加载参数
+    /// 推送参数
     /// </summary>
     /// <param name="iLGenerator">中间语言指令</param>
     /// <param name="index">参数索引,0是当前实例</param>
@@ -28,7 +28,7 @@ public static class ILGeneratorExtensions
     }
 
     /// <summary>
-    /// 加载局部变量
+    /// 推送局部变量
     /// </summary>
     /// <param name="iLGenerator">中间语言指令</param>
     /// <param name="localBuilder">局部变量</param>
@@ -50,16 +50,14 @@ public static class ILGeneratorExtensions
     }
 
 
-    #region 加载数字
+    #region 推送数字
     /// <summary>
     /// 加载数字常量
     /// </summary>
     /// <param name="iLGenerator">中间语言指令</param>
     /// <param name="value">要加载的数字常量</param>
-    public static void LoadInt(this ILGenerator iLGenerator, int value)
+    public static void LoadInt(this ILGenerator iLGenerator!!, int value)
     {
-        _ = iLGenerator ?? throw new ArgumentNullException(nameof(iLGenerator));
-
         switch (value)
         {
             case -1: iLGenerator.Emit(OpCodes.Ldc_I4_M1); return;
@@ -115,6 +113,19 @@ public static class ILGeneratorExtensions
     #endregion
     #endregion
 
+    #region 计算
+    /// <summary>
+    /// 将两个值相加并推送结果
+    /// </summary>
+    /// <param name="iLGenerator"></param>
+    /// <exception cref="ArgumentNullException"></exception>
+    public static void MathAdd(this ILGenerator iLGenerator)
+    {
+        _ = iLGenerator ?? throw new ArgumentNullException(nameof(iLGenerator));
+        iLGenerator.Emit(OpCodes.Add);
+    }
+    #endregion
+
 
 
     #region 定义
@@ -156,41 +167,6 @@ public static class ILGeneratorExtensions
         _ = localBuilder ?? throw new ArgumentNullException(nameof(localBuilder));
 
         iLGenerator.Emit(OpCodes.Stloc, localBuilder);
-    }
-
-    /// <summary>
-    /// 设置局部数组变量之前
-    /// <br>示例:</br>
-    /// <code>
-    /// iLGenerator.SetLocalArrayValueBefore(localBuilder,0);
-    /// // 将要设置的值加载到堆栈上
-    /// iLGenerator.SetLocalArrayValueAfter(type[设置值的类型]);
-    /// </code>
-    /// </summary>
-    /// <param name="iLGenerator">中间语言指令</param>
-    /// <param name="localBuilder">局部变量</param>
-    /// <param name="index">要修改值的索引</param>
-    /// <exception cref="ArgumentNullException"></exception>
-    public static void SetLocalArrayValueBefore(this ILGenerator iLGenerator, LocalBuilder localBuilder, int index)
-    {
-        _ = iLGenerator ?? throw new ArgumentNullException(nameof(iLGenerator));
-        _ = localBuilder ?? throw new ArgumentNullException(nameof(localBuilder));
-
-        iLGenerator.LoadLocal(localBuilder);
-        iLGenerator.LoadInt(index);
-    }
-
-    /// <summary>
-    /// 设置局部数组变量之后
-    /// </summary>
-    /// <param name="iLGenerator">中间语言指令</param>
-    /// <param name="type">设置的变量的类型</param>
-    /// <exception cref="ArgumentNullException"></exception>
-    public static void SetLocalArrayValueAfter(this ILGenerator iLGenerator, Type type)
-    {
-        _ = iLGenerator ?? throw new ArgumentNullException(nameof(iLGenerator));
-
-        iLGenerator.Emit(OpCodes.Stelem, type);
     }
 
     #endregion
