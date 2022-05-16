@@ -6,6 +6,7 @@
     <Description>系统类型拓展</Description>
     <!-- 会发布包的版本 -->
     <Version Condition="$(AloneVersion)">$(Version)$(BetaSuffix)1</Version>
+    <RootNamespace>$(MSBuildProjectName.Replace(" ", "_").Replace("Easy.Extensions", ""))</RootNamespace>
   </PropertyGroup>
 
 
