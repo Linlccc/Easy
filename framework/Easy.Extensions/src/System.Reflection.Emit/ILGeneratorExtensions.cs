@@ -42,6 +42,23 @@ public static partial class ILGeneratorExtensions
         }
     }
 
+    /// <summary>
+    /// 推送字段
+    /// </summary>
+    /// <param name="iLGenerator">中间语言指令</param>
+    /// <param name="fieldInfo">字段信息</param>
+    public static void LoadField(this ILGenerator iLGenerator!!,FieldInfo fieldInfo!!)
+    {
+        if (fieldInfo.IsStatic) iLGenerator.Emit(OpCodes.Ldsfld, fieldInfo);
+        else iLGenerator.Emit(OpCodes.Ldfld, fieldInfo);
+    }
+
+    /// <summary>
+    /// 推送空引用(null)
+    /// </summary>
+    /// <param name="iLGenerator">中间语言指令</param>
+    public static void LoadNull(this ILGenerator iLGenerator!!) => iLGenerator.Emit(OpCodes.Ldnull);
+
 
     #region 推送数字
     /// <summary>
@@ -89,6 +106,13 @@ public static partial class ILGeneratorExtensions
     /// <param name="value">要加载的数字常量</param>
     public static void LoadDouble(this ILGenerator iLGenerator!!, double value) => iLGenerator.Emit(OpCodes.Ldc_R8, value);
     #endregion
+
+    /// <summary>
+    /// 推送 <see cref="string"/> 类型对象
+    /// </summary>
+    /// <param name="iLGenerator">中间语言指令</param>
+    /// <param name="value">值</param>
+    public static void LoadString(this ILGenerator iLGenerator!!, string value) => iLGenerator.Emit(OpCodes.Ldstr, value);
     #endregion
 
     #region 数学运算
@@ -433,6 +457,12 @@ public static partial class ILGeneratorExtensions
     /// </summary>
     /// <param name="iLGenerator">中间语言指令</param>
     public static void GetArrayIndexObject(this ILGenerator iLGenerator!!) => iLGenerator.Emit(OpCodes.Ldelem_Ref);
+
+    /// <summary>
+    /// 推送数组的长度
+    /// </summary>
+    /// <param name="iLGenerator">中间语言指令</param>
+    public static void GetArrayLength(this ILGenerator iLGenerator!!) => iLGenerator.Emit(OpCodes.Ldlen);
     #endregion
 
 
@@ -531,62 +561,76 @@ public static partial class ILGeneratorExtensions
     #region 暂时不做拓展（不太清楚用法的）
     /* https://docs.microsoft.com/zh-cn/dotnet/api/system.reflection.emit.opcodes?view=net-6.0#fields
      * Arglist      返回指向当前方法的参数列表的非托管指针
-     * 
+     *
      * ** 转移到目标指令
      * Beq          如果两个值相等，则将控制转移到目标指令。
-     *  
+     *
      * Bge          如果第一个值大于或等于第二个值，则将控制转移到目标指令。
-     *  
+     *
      * Bgt          如果第一个值大于第二个值，则将控制转移到目标指令。
-     * 
+     *
      * Ble          如果第一个值小于或等于第二个值，则将控制转移到目标指令。
-     * 
+     *
      * Blt          如果第一个值小于第二个值，则将控制转移到目标指令。
-     * 
+     *
      * Bne_Un       当两个无符号整数值或未经排序的浮点值不相等时，将控制转移到目标指令。
-     * 
+     *
      * Br           无条件地将控制转移到目标指令。
-     * 
+     *
      * Brfalse      如果 value 为 false、空引用（Visual Basic 中的 Nothing）或零，则将控制转移到目标指令。
-     * 
+     *
      * Brtrue       如果 value 为 true、非空或非零，则将控制转移到目标指令。
-     * 
-     * 
+     *
+     *
      * ** 调用方法
      * Calli        通过调用约定描述的参数调用在计算堆栈上指示的方法（作为指向入口点的指针）
-     * 
+     *
      * Callvirt     对对象调用后期绑定方法，并且将返回值推送到计算堆栈上。【应该是调用静态方法】
-     * 
-     * 
+     *
+     *
      * ** 约束
      * Constrained  约束要对其进行虚方法调用的类型。
-     * 
-     * 
+     *
+     *
      * ** 复制
      * Cpblk        将指定数目的字节从源地址复制到目标地址。【应该是复制一部分字符串】
-     * 
+     *
      * Cpobj        将位于对象地址的值类型（类型 & 或native  int）复制到目标对象的地址（类型 & 或native  int）。
-     * 
-     * 
+     *
+     *
      * ** 异常
      * Endfilter    将控制从异常的 filter 子句转移回公共语言结构 (CLI) 异常处理程序。
-     * 
+     *
      * Endfinally   将控制从异常块的 fault 或 finally 子句转移回公共语言结构 (CLI) 异常处理程序。
-     * 
-     * 
+     *
+     *
      * ** 初始化
      * Initblk      将位于特定地址的内存的指定块初始化为给定大小和初始值。
-     * 
+     *
      * Initobj      将位于指定地址的值类型的每个字段初始化为空引用或适当的基元类型的 0。
-     * 
-     * 
+     *
+     *
      * ** 跳转
      * Jmp          退出当前方法并跳至指定方法。
-     * 
+     *
      * ** 加载/推送
      * Ldarga       将参数地址加载到计算堆栈上。
-     * 
+     *
      * Ldelema      将位于指定数组索引的数组元素的地址作为 & 类型（托管指针）加载到计算堆栈的顶部。
+     * 
+     * Ldflda       查找对象中其引用当前位于计算堆栈的字段的地址。
+     * 
+     * Ldftn        将指向实现特定方法的本机代码的非托管指针（native int 类型）推送到计算堆栈上。
+     * 
+     * Ldind_I      将 native int 类型的值作为 native int 间接加载到计算堆栈上。
+     * 
+     * Ldloca       将位于特定索引处的局部变量的地址加载到计算堆栈上。
+     *
+     * Ldobj        将地址指向的值类型对象复制到计算堆栈的顶部。
+     * 
+     * Ldsflda      将静态字段的地址推送到计算堆栈上。
+     * 
+     * Ldtoken      将元数据标记转换为其运行时表示形式，并将其推送到计算堆栈上。
      */
     #endregion
 }

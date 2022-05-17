@@ -62,6 +62,8 @@ public class DynamicCreateTypeTest
         // 获取方法
         MethodInfo methodInfo1 = dynamicType.GetMethod("TestLoaclVar1")!;
         MethodInfo methodInfo2 = dynamicType.GetMethod("TestLoaclVar2")!;
+        MethodInfo methodInfo3 = dynamicType.GetMethod("TestLoaclVar3")!;
+        MethodInfo methodInfo4 = dynamicType.GetMethod("TestLoaclVar4")!;
         Assert.NotNull(methodInfo1);
         Assert.NotNull(methodInfo2);
 
@@ -70,6 +72,8 @@ public class DynamicCreateTypeTest
 
         object v1 = methodInfo1.Invoke(o1, new object[] { 13, 22 })!;
         object v2 = methodInfo2.Invoke(o1, new object[] { 43, 22 })!;
+        object v3 = methodInfo3.Invoke(o1, new object[] { 43, 22 })!;
+        object v4 = methodInfo4.Invoke(o1, new object[] { 43, 22 })!;
 
         
         //Assert.Equal(13, v1.Length);
