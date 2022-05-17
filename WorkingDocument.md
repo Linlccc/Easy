@@ -197,6 +197,9 @@ MergeJson 生成时会将 Easy.Tool.MergeJson.dll 复制到生成文件
   ~~~text
   1.DI添加多框架版本更换服务容器(实现)
   2.处理容器的Dispose方法(实现)
+  3.添加获取服务前/后aop功能
+    a.添加抽象类/接口实例
+    b.代理方法
   ~~~
 
 - [ ] 添加项目 Easy.Extensions.DynamicProxy 项目(aop)
