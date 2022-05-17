@@ -200,18 +200,25 @@ public class DynamicCreateType
             methIL1.SetLocalArrayValueAfter(typeof(int));
             // 返回局部变量
             methIL1.LoadLocal(localBuilder);
+
             methIL1.Return();
         }
 
 
         {
             // 定义一个 测试本地变量的方法
-            MethodBuilder meth1 = dynamicType.DefineMethod("TestLoaclVar2", MethodAttributes.Public, typeof(object), new Type[] { typeof(int), typeof(int) });
+            MethodBuilder meth1 = dynamicType.DefineMethod("TestLoaclVar2", MethodAttributes.Public, typeof(float), new Type[] { typeof(int), typeof(int) });
             ILGenerator methIL1 = meth1.GetILGenerator();
             // 定义一个局部变量
             LocalBuilder localBuilder = methIL1.DeclareLocal(typeof(int[]));
-            methIL1.LoadArg(0);
-            //methIL1.LoadArg(1);
+            //methIL1.LoadArg(0);
+            methIL1.LoadArg(1);
+            methIL1.ConvertFloat();
+            methIL1.LoadArg(2);
+            methIL1.ConvertFloat();
+            methIL1.Emit(OpCodes.Div);
+            methIL1.Box(typeof(float));
+            methIL1.ConvertFloat();
             methIL1.Return();
         }
 
