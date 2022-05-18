@@ -17,13 +17,13 @@ public class MyDynamicType
         m_number1 = initNumber;
     }
 
-    public MyDynamicType(int initNumber,string str)
+    public MyDynamicType(int initNumber, string str)
     {
         m_number1 = initNumber;
         m_number2 = str;
     }
 
-    public MyDynamicType(string str,int initNumber):this(initNumber, str) { }
+    public MyDynamicType(string str, int initNumber) : this(initNumber, str) { }
 
     public int Number
     {
@@ -87,10 +87,10 @@ public class DynamicCreateType
         ctor0IL.Emit(OpCodes.Ret);
 
         // 定义两个参数的构造函数
-        ConstructorBuilder ctor2 = dynamicType.DefineConstructor(MethodAttributes.Public,CallingConventions.Standard,new Type[] { typeof(int),typeof(string) });
+        ConstructorBuilder ctor2 = dynamicType.DefineConstructor(MethodAttributes.Public, CallingConventions.Standard, new Type[] { typeof(int), typeof(string) });
         ILGenerator ctor2IL = ctor2.GetILGenerator();
         ctor2IL.Emit(OpCodes.Ldarg_0);
-        ctor2IL.Emit(OpCodes.Call,typeof(object).GetConstructor(Type.EmptyTypes)!);
+        ctor2IL.Emit(OpCodes.Call, typeof(object).GetConstructor(Type.EmptyTypes)!);
 
         ctor2IL.DebugBreakPoint();
 
@@ -104,7 +104,7 @@ public class DynamicCreateType
         ctor2IL.Emit(OpCodes.Ret);
 
         // 定义两个参数的构造函数
-        ConstructorBuilder ctor2_1 = dynamicType.DefineConstructor(MethodAttributes.Public, CallingConventions.Standard, new Type[] { typeof(string),typeof(int) });
+        ConstructorBuilder ctor2_1 = dynamicType.DefineConstructor(MethodAttributes.Public, CallingConventions.Standard, new Type[] { typeof(string), typeof(int) });
         ILGenerator ctor2IL_1 = ctor2_1.GetILGenerator();
         ctor2IL_1.Emit(OpCodes.Ldarg_0);
         ctor2IL_1.Emit(OpCodes.Ldarg_2);
@@ -338,7 +338,7 @@ public class DynamicCreateType
             il.SizeOf(typeof(object));
             il.SetArrayValue(typeof(int));
 
-            il.SetLocalArrayValueBefore(localBuilder,5);
+            il.SetLocalArrayValueBefore(localBuilder, 5);
             il.SizeOf(typeof(string));
             il.SetArrayValue(typeof(int));
 
@@ -352,7 +352,7 @@ public class DynamicCreateType
 
         {
             // 定义一个 测试本地变量的方法
-            ILGenerator il = dynamicType.DefineMethod("TestLoaclVar12", MethodAttributes.Public, typeof(IntPtr[]), new Type[] { typeof(IntPtr),typeof(IntPtr) }).GetILGenerator();
+            ILGenerator il = dynamicType.DefineMethod("TestLoaclVar12", MethodAttributes.Public, typeof(IntPtr[]), new Type[] { typeof(IntPtr), typeof(IntPtr) }).GetILGenerator();
 
             // 定义一个局部变量
             LocalBuilder localBuilder = il.DeclareLocal(typeof(IntPtr[]));
@@ -391,7 +391,7 @@ public class DynamicCreateType
             FieldInfo f1 = dynamicType.DefineField("TestField1", typeof(string), FieldAttributes.Public);
             FieldInfo f2 = dynamicType.DefineField("TestField2", typeof(int), FieldAttributes.Public);
             FieldInfo f3 = dynamicType.DefineField("TestField2", typeof(int), FieldAttributes.Public | FieldAttributes.Static);
-            
+
             // 定义一个 测试本地变量的方法
             ILGenerator il = dynamicType.DefineMethod("TestLoaclVar14", MethodAttributes.Public, typeof(string), new Type[] { typeof(int), typeof(string) }).GetILGenerator();
 
@@ -437,11 +437,81 @@ public class DynamicCreateType
             //methIL1.Emit(OpCodes.Unbox_Any,typeof(float));
             methIL1.Emit(OpCodes.Unbox, typeof(float));
             methIL1.Emit(OpCodes.Ldobj, typeof(float));
-            
+
             methIL1.Return();
         }
 
         // 完成
         return dynamicType.CreateType()!;
+    }
+
+    public static Type CreateMyDynamicType3()
+    {
+        AssemblyBuilder assembly = AssemblyBuilder.DefineDynamicAssembly(new AssemblyName(DynamicAssemblyName), AssemblyBuilderAccess.RunAndCollect);
+        ModuleBuilder myModBuilder = assembly.DefineDynamicModule("MyJumpTableDemo");
+
+        TypeBuilder myTypeBuilder = myModBuilder.DefineType("JumpTableDemo", TypeAttributes.Public);
+        MethodBuilder myMthdBuilder = myTypeBuilder.DefineMethod("SwitchMe", MethodAttributes.Public | MethodAttributes.Static, typeof(string), new Type[] { typeof(int) });
+
+        ILGenerator myIL = myMthdBuilder.GetILGenerator();
+
+
+        Label defaultCase = myIL.DefineLabel();
+        Label endOfMethod = myIL.DefineLabel();
+
+
+        // 我们正在初始化我们的跳转表。 请注意，稍后将使用 MarkLabel 方法放置标签。
+
+        Label[] jumpTable = new Label[] {
+            myIL.DefineLabel(),
+            myIL.DefineLabel(),
+            myIL.DefineLabel(),
+            myIL.DefineLabel(),
+            myIL.DefineLabel()
+        };
+
+        // arg0，我们传递的数字，被压入堆栈。
+        // 在这种情况下，由于代码示例的设计，压入堆栈的值恰好与标签的索引匹配（在IL术语中，跳转表中的偏移量的索引）。
+        // 如果不是这种情况，例如在基于非整数值进行切换时，则必须在 ILGenerator.Emit 调用之外建立可能的 case 值与偏移量的每个索引之间的对应关系的规则，就像编译器一样。
+
+        myIL.Emit(OpCodes.Ldarg_0);
+        myIL.Emit(OpCodes.Switch, jumpTable);
+
+        // 默认情况下的分支
+        myIL.Emit(OpCodes.Br_S, defaultCase);
+
+        // Case arg0 = 0
+        myIL.MarkLabel(jumpTable[0]);
+        myIL.Emit(OpCodes.Ldstr, "不是香蕉");
+        myIL.Emit(OpCodes.Br_S, endOfMethod);
+
+        // Case arg0 = 1
+        myIL.MarkLabel(jumpTable[1]);
+        myIL.Emit(OpCodes.Ldstr, "一个香蕉");
+        myIL.Emit(OpCodes.Br_S, endOfMethod);
+
+        // Case arg0 = 2
+        myIL.MarkLabel(jumpTable[2]);
+        myIL.Emit(OpCodes.Ldstr, "两个香蕉");
+        myIL.Emit(OpCodes.Br_S, endOfMethod);
+
+        // Case arg0 = 3
+        myIL.MarkLabel(jumpTable[3]);
+        myIL.Emit(OpCodes.Ldstr, "三个香蕉");
+        myIL.Emit(OpCodes.Br_S, endOfMethod);
+
+        // Case arg0 = 4
+        myIL.MarkLabel(jumpTable[4]);
+        myIL.Emit(OpCodes.Ldstr, "四个香蕉");
+        myIL.Emit(OpCodes.Br_S, endOfMethod);
+
+        // Default case
+        myIL.MarkLabel(defaultCase);
+        myIL.Emit(OpCodes.Ldstr, "很多香蕉");
+
+        myIL.MarkLabel(endOfMethod);
+        myIL.Emit(OpCodes.Ret);
+
+        return myTypeBuilder.CreateType();
     }
 }

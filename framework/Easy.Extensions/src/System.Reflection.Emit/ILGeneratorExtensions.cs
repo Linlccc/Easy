@@ -5,6 +5,10 @@
 /// </summary>
 public static partial class ILGeneratorExtensions
 {
+    /* 概念
+     * 1.Label(标签) 类似于代码中的 goto
+     */
+
     #region 加载\推送(将指定的值推送到计算堆栈)
     /// <summary>
     /// 推送参数
@@ -491,7 +495,7 @@ public static partial class ILGeneratorExtensions
     /// <param name="iLGenerator">中间语言指令</param>
     /// <param name="valueType">值类型</param>
     /// <param name="isPointer">是否推送指针</param>
-    public static void UnBox(this ILGenerator iLGenerator!!, Type valueType!!,bool isPointer = false)
+    public static void UnBox(this ILGenerator iLGenerator!!, Type valueType!!, bool isPointer = false)
     {
         if (isPointer) iLGenerator.Emit(OpCodes.Unbox, valueType);
         else iLGenerator.Emit(OpCodes.Unbox_Any, valueType);
@@ -600,6 +604,20 @@ public static partial class ILGeneratorExtensions
     /// </summary>
     /// <param name="iLGenerator">中间语言指令</param>
     public static void DebugBreakPoint(this ILGenerator iLGenerator!!) => iLGenerator.Emit(OpCodes.Break);
+    #endregion
+
+    #region 跳转
+    /// <summary>
+    /// 如果两个值相等则跳转
+    /// </summary>
+    /// <param name="iLGenerator">中间语言指令</param>
+    /// <param name="label">跳转标签</param>
+    /// <param name="isShort">是否段格式</param>
+    public static void GotoByEqual(this ILGenerator iLGenerator!!, Label label, bool isShort = true)
+    {
+        if (isShort) iLGenerator.Emit(OpCodes.Beq_S, label);
+        else iLGenerator.Emit(OpCodes.Beq, label);
+    }
     #endregion
 
 
@@ -712,7 +730,7 @@ public static partial class ILGeneratorExtensions
     /// </summary>
     /// <param name="iLGenerator">中间语言指令</param>
     /// <param name="localIndex">局部变量索引</param>
-    public static void SetLocal(this ILGenerator iLGenerator!!,int localIndex)
+    public static void SetLocal(this ILGenerator iLGenerator!!, int localIndex)
     {
         switch (localIndex)
         {

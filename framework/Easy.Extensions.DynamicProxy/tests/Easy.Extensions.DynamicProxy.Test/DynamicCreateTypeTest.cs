@@ -124,5 +124,17 @@ public class DynamicCreateTypeTest
         
     }
 
+    [Fact]
+    public void LTest2()
+    {
+        Type myType = DynamicCreateType.CreateMyDynamicType3();
+
+        int theValue = 1;
+
+        Object myInstance = Activator.CreateInstance(myType, new object[0]);
+
+        var v1 = myType.InvokeMember("SwitchMe",BindingFlags.InvokeMethod, null,myInstance,new object[] { theValue });
+    }    
+
 
 }
