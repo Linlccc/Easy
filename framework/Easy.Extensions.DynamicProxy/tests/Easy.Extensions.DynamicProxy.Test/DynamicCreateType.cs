@@ -420,6 +420,26 @@ public class DynamicCreateType
             il.Return();
         }
 
+        {
+            // 定义一个 测试本地变量的方法
+            ILGenerator il = dynamicType.DefineMethod("TestLoaclVar16", MethodAttributes.Public, typeof(string), new Type[] { typeof(string), typeof(int) }).GetILGenerator();
+
+            LocalBuilder l1 = il.DeclareLocal(typeof(string));
+
+            il.LoadNull();
+            il.SetLocal(l1);
+            //il.LoadLocal(l1);
+            //il.Return();
+
+            il.Emit(OpCodes.Ldloca, l1.LocalIndex);
+            il.Emit(OpCodes.Ldarga, 1);
+            il.LoadArg(2);
+            il.Emit(OpCodes.Cpblk);
+
+            il.LoadLocal(l1);
+            il.Return();
+        }
+
 
         {
             // 定义一个 测试本地变量的方法

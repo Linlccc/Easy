@@ -612,12 +612,139 @@ public static partial class ILGeneratorExtensions
     /// </summary>
     /// <param name="iLGenerator">中间语言指令</param>
     /// <param name="label">跳转标签</param>
-    /// <param name="isShort">是否段格式</param>
+    /// <param name="isShort">是否短格式</param>
     public static void GotoByEqual(this ILGenerator iLGenerator!!, Label label, bool isShort = true)
     {
         if (isShort) iLGenerator.Emit(OpCodes.Beq_S, label);
         else iLGenerator.Emit(OpCodes.Beq, label);
     }
+
+    /// <summary>
+    /// 如果第一个值大于第二个或者相等则跳转
+    /// </summary>
+    /// <param name="iLGenerator">中间语言指令</param>
+    /// <param name="label">跳转标签</param>
+    /// <param name="isShort">是否短格式</param>
+    /// <param name="isUnsigned">是否是无符号整数值或未经排序的浮点值</param>
+    public static void GotoByGreaterOrEqual(this ILGenerator iLGenerator!!, Label label, bool isShort = true, bool isUnsigned = false)
+    {
+        if (isShort == isUnsigned == true) iLGenerator.Emit(OpCodes.Bge_Un_S, label);
+        else if (isUnsigned) iLGenerator.Emit(OpCodes.Bge_Un, label);
+        else if (isShort) iLGenerator.Emit(OpCodes.Bge_S, label);
+        else iLGenerator.Emit(OpCodes.Bge, label);
+    }
+
+    /// <summary>
+    /// 如果第一个值大于第二个值则跳转
+    /// </summary>
+    /// <param name="iLGenerator">中间语言指令</param>
+    /// <param name="label">跳转标签</param>
+    /// <param name="isShort">是否短格式</param>
+    /// <param name="isUnsigned">是否是无符号整数值或未经排序的浮点值</param>
+    public static void GotoByGreater(this ILGenerator iLGenerator!!, Label label, bool isShort = true, bool isUnsigned = false)
+    {
+        if (isShort == isUnsigned == true) iLGenerator.Emit(OpCodes.Bgt_Un_S, label);
+        else if (isUnsigned) iLGenerator.Emit(OpCodes.Bgt_Un, label);
+        else if (isShort) iLGenerator.Emit(OpCodes.Bgt_S, label);
+        else iLGenerator.Emit(OpCodes.Bgt, label);
+    }
+
+    /// <summary>
+    /// 如果第一个值小于第二个或者相等则跳转
+    /// </summary>
+    /// <param name="iLGenerator">中间语言指令</param>
+    /// <param name="label">跳转标签</param>
+    /// <param name="isShort">是否短格式</param>
+    /// <param name="isUnsigned">是否是无符号整数值或未经排序的浮点值</param>
+    public static void GotoByLessOrEqual(this ILGenerator iLGenerator!!, Label label, bool isShort = true, bool isUnsigned = false)
+    {
+        if (isShort == isUnsigned == true) iLGenerator.Emit(OpCodes.Ble_Un_S, label);
+        else if (isUnsigned) iLGenerator.Emit(OpCodes.Ble_Un, label);
+        else if (isShort) iLGenerator.Emit(OpCodes.Ble_S, label);
+        else iLGenerator.Emit(OpCodes.Ble, label);
+    }
+
+    /// <summary>
+    /// 如果第一个值小于第二个值则跳转
+    /// </summary>
+    /// <param name="iLGenerator">中间语言指令</param>
+    /// <param name="label">跳转标签</param>
+    /// <param name="isShort">是否短格式</param>
+    /// <param name="isUnsigned">是否是无符号整数值或未经排序的浮点值</param>
+    public static void GotoByLess(this ILGenerator iLGenerator!!, Label label, bool isShort = true, bool isUnsigned = false)
+    {
+        if (isShort == isUnsigned == true) iLGenerator.Emit(OpCodes.Blt_Un_S, label);
+        else if (isUnsigned) iLGenerator.Emit(OpCodes.Blt_Un, label);
+        else if (isShort) iLGenerator.Emit(OpCodes.Blt_S, label);
+        else iLGenerator.Emit(OpCodes.Blt, label);
+    }
+
+    /// <summary>
+    /// 如果两个无符号整数值或未经排序的浮点值不相等则跳转
+    /// </summary>
+    /// <param name="iLGenerator">中间语言指令</param>
+    /// <param name="label">跳转标签</param>
+    /// <param name="isShort">是否短格式</param>
+    public static void GotoByUnsignedNotEqual(this ILGenerator iLGenerator!!, Label label, bool isShort = true)
+    {
+        if (isShort) iLGenerator.Emit(OpCodes.Bne_Un_S, label);
+        else iLGenerator.Emit(OpCodes.Bne_Un, label);
+    }
+
+    /// <summary>
+    /// 跳转
+    /// </summary>
+    /// <param name="iLGenerator">中间语言指令</param>
+    /// <param name="label">跳转标签</param>
+    /// <param name="isShort">是否短格式</param>
+    public static void Goto(this ILGenerator iLGenerator!!, Label label, bool isShort = true)
+    {
+        if (isShort) iLGenerator.Emit(OpCodes.Br_S, label);
+        else iLGenerator.Emit(OpCodes.Br, label);
+    }
+
+    /// <summary>
+    /// 如果值为 false\空引用\零则跳转
+    /// </summary>
+    /// <param name="iLGenerator">中间语言指令</param>
+    /// <param name="label">跳转标签</param>
+    /// <param name="isShort">是否短格式</param>
+    public static void GotoByFalse(this ILGenerator iLGenerator!!, Label label, bool isShort = true)
+    {
+        if (isShort) iLGenerator.Emit(OpCodes.Brfalse_S, label);
+        else iLGenerator.Emit(OpCodes.Brfalse, label);
+    }
+
+    /// <summary>
+    /// 如果值为 false\空引用\零则跳转
+    /// </summary>
+    /// <param name="iLGenerator">中间语言指令</param>
+    /// <param name="label">跳转标签</param>
+    /// <param name="isShort">是否短格式</param>
+    public static void GotoByTrue(this ILGenerator iLGenerator!!, Label label, bool isShort = true)
+    {
+        if (isShort) iLGenerator.Emit(OpCodes.Brtrue_S, label);
+        else iLGenerator.Emit(OpCodes.Brtrue, label);
+    }
+
+    /// <summary>
+    /// 跳转(强制),可用于退出try\filter\catch块
+    /// </summary>
+    /// <param name="iLGenerator">中间语言指令</param>
+    /// <param name="label">跳转标签</param>
+    /// <param name="isShort">是否短格式</param>
+    public static void GotoLeave(this ILGenerator iLGenerator!!, Label label, bool isShort = true)
+    {
+        if (isShort) iLGenerator.Emit(OpCodes.Leave_S, label);
+        else iLGenerator.Emit(OpCodes.Leave, label);
+    }
+
+    /// <summary>
+    /// 跳转到指定索引处的标签
+    /// </summary>
+    /// <param name="iLGenerator">中间语言指令</param>
+    /// <param name="labels">跳转标签集合</param>
+    public static void Switch(this ILGenerator iLGenerator!!, Label[] labels) => iLGenerator.Emit(OpCodes.Switch, labels);
     #endregion
 
 
@@ -786,30 +913,6 @@ public static partial class ILGeneratorExtensions
     /* https://docs.microsoft.com/zh-cn/dotnet/api/system.reflection.emit.opcodes?view=net-6.0#fields
      * Arglist      返回指向当前方法的参数列表的非托管指针
      *
-     * ** 转移到目标指令
-     * Beq          如果两个值相等，则将控制转移到目标指令。
-     *
-     * Bge          如果第一个值大于或等于第二个值，则将控制转移到目标指令。
-     *
-     * Bgt          如果第一个值大于第二个值，则将控制转移到目标指令。
-     *
-     * Ble          如果第一个值小于或等于第二个值，则将控制转移到目标指令。
-     *
-     * Blt          如果第一个值小于第二个值，则将控制转移到目标指令。
-     *
-     * Bne_Un       当两个无符号整数值或未经排序的浮点值不相等时，将控制转移到目标指令。
-     *
-     * Br           无条件地将控制转移到目标指令。
-     *
-     * Brfalse      如果 value 为 false、空引用（Visual Basic 中的 Nothing）或零，则将控制转移到目标指令。
-     *
-     * Brtrue       如果 value 为 true、非空或非零，则将控制转移到目标指令。
-     * 
-     * Leave        退出受保护的代码区域，无条件将控制转移到特定目标指令
-     * 
-     * Switch       实现跳转表。
-     *
-     *
      * ** 调用方法
      * Calli        通过调用约定描述的参数调用在计算堆栈上指示的方法（作为指向入口点的指针）
      *
@@ -845,65 +948,65 @@ public static partial class ILGeneratorExtensions
      * Ldarga       将参数地址加载到计算堆栈上。
      *
      * Ldelema      将位于指定数组索引的数组元素的地址作为 & 类型（托管指针）加载到计算堆栈的顶部。
-     * 
+     *
      * Ldflda       查找对象中其引用当前位于计算堆栈的字段的地址。
-     * 
+     *
      * Ldftn        将指向实现特定方法的本机代码的非托管指针（native int 类型）推送到计算堆栈上。
-     * 
+     *
      * Ldind_I      将 native int 类型的值作为 native int 间接加载到计算堆栈上。
-     * 
+     *
      * Ldloca       将位于特定索引处的局部变量的地址加载到计算堆栈上。
-     * 
+     *
      * Ldsflda      将静态字段的地址推送到计算堆栈上。
-     * 
+     *
      * Ldtoken      将元数据标记转换为其运行时表示形式，并将其推送到计算堆栈上。
-     * 
-     * 
+     *
+     *
      * ** 分配空间
      * Localloc     从本地动态内存池分配特定数目的字节并将第一个分配的字节的地址（瞬态指针，* 类型）推送到计算堆栈上
-     * 
-     * 
+     *
+     *
      * ** 转换
      * Mkrefany     将对特定类型实例的类型化引用推送到计算堆栈上。
-     * 
-     * 
+     *
+     *
      * ** 没有任何操作
      * Nop          如果修补操作码，则填充空间。 尽管可能消耗处理周期，但未执行任何有意义的操作
-     * 
+     *
      * ** 只读
      * Readonly     指定后面的数组地址操作在运行时不执行类型检查，并且返回可变性受限的托管指针。
-     * 
-     * 
+     *
+     *
      * ** 获取信息
      * Refanytype   检索嵌入在类型化引用内的类型标记。【应该是获取值的类型】
-     * 
+     *
      * Refanyval    检索嵌入在类型化引用内的地址（& 类型）。
-     * 
+     *
      * ** 异常
      * Rethrow      再次引发当前异常
-     * 
-     * 
+     *
+     *
      * ** 放置参数
      * Starg        将位于计算堆栈顶部的值存储到位于指定索引的自变量槽中。
-     * 
-     * 
+     *
+     *
      * ** 设置值
      * Stelem_I     用计算堆栈上的 native int 值替换给定索引处的数组元素。
-     * 
+     *
      * Stelem_Ref   用计算堆栈上的对象 ref 值（O 类型）替换给定索引处的数组元素。
-     * 
+     *
      * Stind_I      在所提供的地址存储 native int 类型的值。
-     * 
+     *
      * Stobj        将指定类型的值从计算堆栈复制到所提供的内存地址中。
-     * 
-     * 
+     *
+     *
      * ** 调用方法移除堆栈帧
      * Tailcall     执行后缀的方法调用指令，以便在执行实际调用指令前移除当前方法的堆栈帧。
-     * 
-     * 
+     *
+     *
      * Unaligned    指示当前位于计算堆栈上的地址可能没有与紧接的 ldind、stind、ldfld、stfld、ldobj、stobj、initblk 或 cpblk 指令的自然大小对齐。
-     * 
-     * 
+     *
+     *
      * Volatile     指定当前位于计算堆栈顶部的地址可以是易失的，并且读取该位置的结果不能被缓存，或者对该地址的多个存储区不能被取消。
      */
     #endregion

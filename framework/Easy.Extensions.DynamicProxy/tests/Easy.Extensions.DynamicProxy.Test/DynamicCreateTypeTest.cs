@@ -59,47 +59,26 @@ public class DynamicCreateTypeTest
     {
         Type dynamicType = DynamicCreateType.CreateMyDynamicType2();
 
-        // 获取方法
-        MethodInfo methodInfo1 = dynamicType.GetMethod("TestLoaclVar1")!;
-        MethodInfo methodInfo2 = dynamicType.GetMethod("TestLoaclVar2")!;
-        MethodInfo methodInfo3 = dynamicType.GetMethod("TestLoaclVar3")!;
-        MethodInfo methodInfo4 = dynamicType.GetMethod("TestLoaclVar4")!;
-        MethodInfo methodInfo5 = dynamicType.GetMethod("TestLoaclVar5")!;
-        MethodInfo methodInfo6 = dynamicType.GetMethod("TestLoaclVar6")!;
-        MethodInfo methodInfo7 = dynamicType.GetMethod("TestLoaclVar7")!;
-        MethodInfo methodInfo8 = dynamicType.GetMethod("TestLoaclVar8")!;
-        MethodInfo methodInfo9 = dynamicType.GetMethod("TestLoaclVar9")!;
-        MethodInfo methodInfo10 = dynamicType.GetMethod("TestLoaclVar10")!;
-        MethodInfo methodInfo11 = dynamicType.GetMethod("TestLoaclVar11")!;
-        MethodInfo methodInfo12 = dynamicType.GetMethod("TestLoaclVar12")!;
-        MethodInfo methodInfo13 = dynamicType.GetMethod("TestLoaclVar13")!;
-        MethodInfo methodInfo14 = dynamicType.GetMethod("TestLoaclVar14")!;
-        MethodInfo methodInfo15 = dynamicType.GetMethod("TestLoaclVar15")!;
-        Assert.NotNull(methodInfo1);
-        Assert.NotNull(methodInfo2);
-
         // 使用默认构造函数创建 MyDynamicType 的实例
         object o1 = Activator.CreateInstance(dynamicType)!;
 
-        object v1 = methodInfo1.Invoke(o1, new object[] { 13, 22 })!;
-        object v2 = methodInfo2.Invoke(o1, new object[] { 43, 22 })!;
-        object v3 = methodInfo3.Invoke(o1, new object[] { 43, 22 })!;
-        object v4 = methodInfo4.Invoke(o1, new object[] { 43, 22 })!;
-        object v5 = methodInfo5.Invoke(o1, new object[] { 43, 22 })!;
-        object v6 = methodInfo6.Invoke(o1, new object[] { 43, 22 })!;
-        object v7 = methodInfo7.Invoke(o1, new object[] { 43, 22 })!;
-        object v8 = methodInfo8.Invoke(o1, new object[] { 43, 22 })!;
-        object v9 = methodInfo9.Invoke(o1, new object[] { 43, 22 })!;
-        object v10 = methodInfo10.Invoke(o1, new object[] { 43, 22 })!;
-        object v11 = methodInfo11.Invoke(o1, new object[] { typeof(int) })!;
-        object v12 = methodInfo12?.Invoke(o1, new object[] { new IntPtr(5),new IntPtr(11) })!;
-        object v13 = methodInfo13?.Invoke(o1, new object[] { new IntPtr(5),new IntPtr(11) })!;
-        object v14 = methodInfo14?.Invoke(o1, new object[] { 5,"123" })!;
-        object v15 = methodInfo15?.Invoke(o1, new object[] { (float)14,(float)9 })!;
-
-        
-        //Assert.Equal(13, v1.Length);
-        //Assert.Equal(22, v1[0]);
+        // 执行方法
+        object v1 = dynamicType.InvokeMember("TestLoaclVar1", BindingFlags.InvokeMethod, null, o1, new object[] { 13, 22 })!;
+        object v2 = dynamicType.InvokeMember("TestLoaclVar2", BindingFlags.InvokeMethod, null, o1, new object[] { 43, 22 })!;
+        object v3 = dynamicType.InvokeMember("TestLoaclVar3", BindingFlags.InvokeMethod, null, o1, new object[] { 43, 22 })!;
+        object v4 = dynamicType.InvokeMember("TestLoaclVar4", BindingFlags.InvokeMethod, null, o1, new object[] { 43, 22 })!;
+        object v5 = dynamicType.InvokeMember("TestLoaclVar5", BindingFlags.InvokeMethod, null, o1, new object[] { 43, 22 })!;
+        object v6 = dynamicType.InvokeMember("TestLoaclVar6", BindingFlags.InvokeMethod, null, o1, new object[] { 43, 22 })!;
+        object v7 = dynamicType.InvokeMember("TestLoaclVar7", BindingFlags.InvokeMethod, null, o1, new object[] { 43, 22 })!;
+        object v8 = dynamicType.InvokeMember("TestLoaclVar8", BindingFlags.InvokeMethod, null, o1, new object[] { 43, 22 })!;
+        object v9 = dynamicType.InvokeMember("TestLoaclVar9", BindingFlags.InvokeMethod, null, o1, new object[] { 43, 22 })!;
+        object v10 = dynamicType.InvokeMember("TestLoaclVar10", BindingFlags.InvokeMethod, null, o1, new object[] { 43, 22 })!;
+        object v11 = dynamicType.InvokeMember("TestLoaclVar11", BindingFlags.InvokeMethod, null, o1, new object[] { typeof(int) })!;
+        object v12 = dynamicType.InvokeMember("TestLoaclVar12", BindingFlags.InvokeMethod, null, o1, new object[] { new IntPtr(5), new IntPtr(11) })!;
+        object v13 = dynamicType.InvokeMember("TestLoaclVar13", BindingFlags.InvokeMethod, null, o1, new object[] { new IntPtr(5), new IntPtr(11) })!;
+        object v14 = dynamicType.InvokeMember("TestLoaclVar14", BindingFlags.InvokeMethod, null, o1, new object[] { 5, "123" })!;
+        object v15 = dynamicType.InvokeMember("TestLoaclVar15", BindingFlags.InvokeMethod, null, o1, new object[] { (float)14, (float)9 })!;
+        object v16 = dynamicType.InvokeMember("TestLoaclVar16", BindingFlags.InvokeMethod, null, o1, new object[] { "abcdefghijklmnopqrstuvwxyz", 8 })!;
     }
 
 
