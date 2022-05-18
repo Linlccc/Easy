@@ -183,7 +183,7 @@ public class DynamicCreateType
             LocalBuilder localBuilder = methIL1.DeclareLocal(typeof(int[]));
             // 定义一个数组,数组 new int[参数1]
             methIL1.LoadArg(1);
-            methIL1.DefineArray(typeof(int));
+            methIL1.NewArray(typeof(int));
             // 将数组赋值给局部变量
             methIL1.SetLocal(localBuilder);
             // 设置索引0的值
@@ -212,7 +212,7 @@ public class DynamicCreateType
             LocalBuilder localBuilder = methIL1.DeclareLocal(typeof(int[]));
             // 定义一个数组,数组 new int[参数1]
             methIL1.LoadArg(1);
-            methIL1.DefineArray(typeof(int));
+            methIL1.NewArray(typeof(int));
             // 将数组赋值给局部变量
             methIL1.SetLocal(localBuilder);
             // 设置索引0的值
@@ -244,6 +244,182 @@ public class DynamicCreateType
             methIL1.Return();
         }
 
+        {
+            // 定义一个 测试本地变量的方法
+            MethodBuilder meth1 = dynamicType.DefineMethod("TestLoaclVar5", MethodAttributes.Public, typeof(float), new Type[] { typeof(float), typeof(int) });
+            ILGenerator methIL1 = meth1.GetILGenerator();
+
+            methIL1.LoadArg(1);
+            methIL1.Emit(OpCodes.Neg);
+
+            methIL1.Return();
+        }
+
+        {
+            // 定义一个 测试本地变量的方法
+            ILGenerator il = dynamicType.DefineMethod("TestLoaclVar6", MethodAttributes.Public, typeof(int), new Type[] { typeof(int), typeof(int) }).GetILGenerator(); ;
+
+            il.LoadArg(1);
+            il.BitwiseNot();
+
+            il.Return();
+        }
+
+        {
+            // 定义一个 测试本地变量的方法
+            ILGenerator il = dynamicType.DefineMethod("TestLoaclVar7", MethodAttributes.Public, typeof(object), new Type[] { typeof(int), typeof(int) }).GetILGenerator(); ;
+
+            il.NewObject(typeof(object).GetConstructor(Type.EmptyTypes));
+
+            il.Return();
+        }
+
+        {
+            // 定义一个 测试本地变量的方法
+            ILGenerator il = dynamicType.DefineMethod("TestLoaclVar8", MethodAttributes.Public, typeof(int), new Type[] { typeof(int), typeof(int) }).GetILGenerator(); ;
+
+            il.LoadArg(1);
+            il.LoadArg(2);
+            il.MathRem();
+
+            il.Return();
+        }
+
+        {
+            // 定义一个 测试本地变量的方法
+            ILGenerator il = dynamicType.DefineMethod("TestLoaclVar9", MethodAttributes.Public, typeof(int), new Type[] { typeof(int), typeof(int) }).GetILGenerator(); ;
+
+            il.LoadArg(1);
+            il.LoadArg(2);
+            il.BitwiseShiftLeft();
+
+            il.Return();
+        }
+
+        {
+            // 定义一个 测试本地变量的方法
+            ILGenerator il = dynamicType.DefineMethod("TestLoaclVar10", MethodAttributes.Public, typeof(int), new Type[] { typeof(int), typeof(int) }).GetILGenerator(); ;
+
+            il.LoadArg(1);
+            il.LoadArg(2);
+            il.BitwiseShiftRight();
+
+            il.Return();
+        }
+
+        {
+            // 定义一个 测试本地变量的方法
+            ILGenerator il = dynamicType.DefineMethod("TestLoaclVar11", MethodAttributes.Public, typeof(int[]), new Type[] { typeof(Type) }).GetILGenerator();
+
+            // 定义一个局部变量
+            LocalBuilder localBuilder = il.DeclareLocal(typeof(int[]));
+            // 定义一个数组,数组 new int[10]
+            il.LoadInt(10);
+            il.NewArray(typeof(int));
+            il.SetLocal(localBuilder);
+
+            il.SetLocalArrayValueBefore(localBuilder, 0);
+            il.SizeOf(typeof(byte));
+            il.SetArrayValue(typeof(int));
+
+            il.SetLocalArrayValueBefore(localBuilder, 1);
+            il.SizeOf(typeof(Int16));
+            il.SetArrayValue(typeof(int));
+
+            il.SetLocalArrayValueBefore(localBuilder, 2);
+            il.SizeOf(typeof(Int32));
+            il.SetArrayValue(typeof(int));
+
+            il.SetLocalArrayValueBefore(localBuilder, 3);
+            il.SizeOf(typeof(Int64));
+            il.SetArrayValue(typeof(int));
+
+            il.SetLocalArrayValueBefore(localBuilder, 4);
+            il.SizeOf(typeof(object));
+            il.SetArrayValue(typeof(int));
+
+            il.SetLocalArrayValueBefore(localBuilder,5);
+            il.SizeOf(typeof(string));
+            il.SetArrayValue(typeof(int));
+
+            il.SetLocalArrayValueBefore(localBuilder, 6);
+            il.SizeOf(typeof(MyDynamicType));
+            il.SetArrayValue(typeof(int));
+
+            il.LoadLocal(localBuilder);
+            il.Return();
+        }
+
+        {
+            // 定义一个 测试本地变量的方法
+            ILGenerator il = dynamicType.DefineMethod("TestLoaclVar12", MethodAttributes.Public, typeof(IntPtr[]), new Type[] { typeof(IntPtr),typeof(IntPtr) }).GetILGenerator();
+
+            // 定义一个局部变量
+            LocalBuilder localBuilder = il.DeclareLocal(typeof(IntPtr[]));
+            // 定义一个数组,数组 new int[10]
+            il.LoadInt(2);
+            il.NewArray(typeof(IntPtr));
+            il.SetLocal(localBuilder);
+
+            il.SetLocalArrayValueBefore(localBuilder, 0);
+            il.LoadArg(1);
+            il.SetArrayValue(typeof(IntPtr));
+
+            il.SetLocalArrayValueBefore(localBuilder, 1);
+            il.LoadArg(2);
+            il.SetArrayValue(typeof(IntPtr));
+
+            il.LoadLocal(localBuilder);
+            il.Return();
+
+
+        }
+
+        {
+            // 定义一个 测试本地变量的方法
+            ILGenerator il = dynamicType.DefineMethod("TestLoaclVar13", MethodAttributes.Public, typeof(IntPtr), new Type[] { typeof(IntPtr), typeof(IntPtr) }).GetILGenerator();
+
+            var a = typeof(object).GetMethod("ToString");
+
+            il.NewObject(typeof(object).GetConstructor(Type.EmptyTypes));
+            il.LoadMethodPointer(a);
+
+            il.Return();
+        }
+
+        {
+            FieldInfo f1 = dynamicType.DefineField("TestField1", typeof(string), FieldAttributes.Public);
+            FieldInfo f2 = dynamicType.DefineField("TestField2", typeof(int), FieldAttributes.Public);
+            FieldInfo f3 = dynamicType.DefineField("TestField2", typeof(int), FieldAttributes.Public | FieldAttributes.Static);
+            
+            // 定义一个 测试本地变量的方法
+            ILGenerator il = dynamicType.DefineMethod("TestLoaclVar14", MethodAttributes.Public, typeof(string), new Type[] { typeof(int), typeof(string) }).GetILGenerator();
+
+            il.LoadArg(0);
+            il.LoadArg(1);
+            il.SetField(f2);
+
+            il.LoadArg(1);
+            il.SetField(f3);
+
+            il.LoadArg(0);
+            il.LoadArg(2);
+            il.SetField(f1);
+
+            il.LoadArg(2);
+            il.Return();
+        }
+
+        {
+            // 定义一个 测试本地变量的方法
+            ILGenerator il = dynamicType.DefineMethod("TestLoaclVar15", MethodAttributes.Public, typeof(float), new Type[] { typeof(float), typeof(float) }).GetILGenerator();
+
+            il.LoadArg(1);
+            il.LoadArg(2);
+            il.MathSub();
+            il.Return();
+        }
+
 
         {
             // 定义一个 测试本地变量的方法
@@ -256,9 +432,12 @@ public class DynamicCreateType
             methIL1.ConvertFloat();
             methIL1.LoadArg(2);
             methIL1.ConvertFloat();
-            methIL1.Emit(OpCodes.Div);
+            methIL1.MathDiv();
             methIL1.Box(typeof(float));
-            methIL1.ConvertFloat();
+            //methIL1.Emit(OpCodes.Unbox_Any,typeof(float));
+            methIL1.Emit(OpCodes.Unbox, typeof(float));
+            methIL1.Emit(OpCodes.Ldobj, typeof(float));
+            
             methIL1.Return();
         }
 

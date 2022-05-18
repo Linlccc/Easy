@@ -64,6 +64,17 @@ public class DynamicCreateTypeTest
         MethodInfo methodInfo2 = dynamicType.GetMethod("TestLoaclVar2")!;
         MethodInfo methodInfo3 = dynamicType.GetMethod("TestLoaclVar3")!;
         MethodInfo methodInfo4 = dynamicType.GetMethod("TestLoaclVar4")!;
+        MethodInfo methodInfo5 = dynamicType.GetMethod("TestLoaclVar5")!;
+        MethodInfo methodInfo6 = dynamicType.GetMethod("TestLoaclVar6")!;
+        MethodInfo methodInfo7 = dynamicType.GetMethod("TestLoaclVar7")!;
+        MethodInfo methodInfo8 = dynamicType.GetMethod("TestLoaclVar8")!;
+        MethodInfo methodInfo9 = dynamicType.GetMethod("TestLoaclVar9")!;
+        MethodInfo methodInfo10 = dynamicType.GetMethod("TestLoaclVar10")!;
+        MethodInfo methodInfo11 = dynamicType.GetMethod("TestLoaclVar11")!;
+        MethodInfo methodInfo12 = dynamicType.GetMethod("TestLoaclVar12")!;
+        MethodInfo methodInfo13 = dynamicType.GetMethod("TestLoaclVar13")!;
+        MethodInfo methodInfo14 = dynamicType.GetMethod("TestLoaclVar14")!;
+        MethodInfo methodInfo15 = dynamicType.GetMethod("TestLoaclVar15")!;
         Assert.NotNull(methodInfo1);
         Assert.NotNull(methodInfo2);
 
@@ -74,6 +85,17 @@ public class DynamicCreateTypeTest
         object v2 = methodInfo2.Invoke(o1, new object[] { 43, 22 })!;
         object v3 = methodInfo3.Invoke(o1, new object[] { 43, 22 })!;
         object v4 = methodInfo4.Invoke(o1, new object[] { 43, 22 })!;
+        object v5 = methodInfo5.Invoke(o1, new object[] { 43, 22 })!;
+        object v6 = methodInfo6.Invoke(o1, new object[] { 43, 22 })!;
+        object v7 = methodInfo7.Invoke(o1, new object[] { 43, 22 })!;
+        object v8 = methodInfo8.Invoke(o1, new object[] { 43, 22 })!;
+        object v9 = methodInfo9.Invoke(o1, new object[] { 43, 22 })!;
+        object v10 = methodInfo10.Invoke(o1, new object[] { 43, 22 })!;
+        object v11 = methodInfo11.Invoke(o1, new object[] { typeof(int) })!;
+        object v12 = methodInfo12?.Invoke(o1, new object[] { new IntPtr(5),new IntPtr(11) })!;
+        object v13 = methodInfo13?.Invoke(o1, new object[] { new IntPtr(5),new IntPtr(11) })!;
+        object v14 = methodInfo14?.Invoke(o1, new object[] { 5,"123" })!;
+        object v15 = methodInfo15?.Invoke(o1, new object[] { (float)14,(float)9 })!;
 
         
         //Assert.Equal(13, v1.Length);
