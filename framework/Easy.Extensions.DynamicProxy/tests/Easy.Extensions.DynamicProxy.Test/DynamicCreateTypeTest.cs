@@ -79,6 +79,13 @@ public class DynamicCreateTypeTest
         object v14 = dynamicType.InvokeMember("TestLoaclVar14", BindingFlags.InvokeMethod, null, o1, new object[] { 5, "123" })!;
         object v15 = dynamicType.InvokeMember("TestLoaclVar15", BindingFlags.InvokeMethod, null, o1, new object[] { (float)14, (float)9 })!;
         object v16 = dynamicType.InvokeMember("TestLoaclVar16", BindingFlags.InvokeMethod, null, o1, new object[] { "abcdefghijklmnopqrstuvwxyz", 8 })!;
+        object v17 = dynamicType.InvokeMember("TestLoaclVar17", BindingFlags.InvokeMethod, null, o1, new object[] { new Test1(1), 8 })!;
+        object v18 = dynamicType.InvokeMember("TestLoaclVar18", BindingFlags.InvokeMethod, null, o1, new object[] { new Test1(1), "123" })!;
+        object v19 = dynamicType.InvokeMember("TestLoaclVar19", BindingFlags.InvokeMethod, null, o1, new object[] { new Test1(1), 8 })!;
+        object v20 = dynamicType.InvokeMember("TestLoaclVar20", BindingFlags.InvokeMethod, null, o1, new object[] { 127,128 })!;
+        object v21 = dynamicType.InvokeMember("TestLoaclVar21", BindingFlags.InvokeMethod, null, o1, new object[] { new Test1(1), 128 })!;
+        object v22 = dynamicType.InvokeMember("TestLoaclVar22", BindingFlags.InvokeMethod, null, o1, new object[] { new Test1(1), 128 })!;
+        object v23 = dynamicType.InvokeMember("TestLoaclVar23", BindingFlags.InvokeMethod, null, o1, new object[] { new Test1(1), 128 })!;
     }
 
 

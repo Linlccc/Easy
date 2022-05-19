@@ -29,6 +29,20 @@ public static partial class ILGeneratorExtensions
     }
 
     /// <summary>
+    /// 推送参数地址
+    /// </summary>
+    /// <param name="iLGenerator">中间语言指令</param>
+    /// <param name="index">参数索引</param>
+    public static void LoadArgAddr(this ILGenerator iLGenerator!!, int index)
+    {
+        switch (index)
+        {
+            case <= byte.MaxValue: iLGenerator.Emit(OpCodes.Ldarga_S, index); return;
+            default: iLGenerator.Emit(OpCodes.Ldarga, index); return;
+        }
+    }
+
+    /// <summary>
     /// 推送局部变量
     /// </summary>
     /// <param name="iLGenerator">中间语言指令</param>
@@ -65,6 +79,20 @@ public static partial class ILGeneratorExtensions
     }
 
     /// <summary>
+    /// 推送索引处局部变量地址
+    /// </summary>
+    /// <param name="iLGenerator">中间语言指令</param>
+    /// <param name="index">局部变量索引</param>
+    public static void LoadLocalAddr(this ILGenerator iLGenerator!!, int index)
+    {
+        switch (index)
+        {
+            case <= byte.MaxValue: iLGenerator.Emit(OpCodes.Ldloca_S, index); return;
+            default: iLGenerator.Emit(OpCodes.Ldloca, index); return;
+        }
+    }
+
+    /// <summary>
     /// 推送字段
     /// </summary>
     /// <param name="iLGenerator">中间语言指令</param>
@@ -73,6 +101,17 @@ public static partial class ILGeneratorExtensions
     {
         if (fieldInfo.IsStatic) iLGenerator.Emit(OpCodes.Ldsfld, fieldInfo);
         else iLGenerator.Emit(OpCodes.Ldfld, fieldInfo);
+    }
+
+    /// <summary>
+    /// 推送字段地址
+    /// </summary>
+    /// <param name="iLGenerator">中间语言指令</param>
+    /// <param name="fieldInfo">字段信息</param>
+    public static void LoadFieldAddr(this ILGenerator iLGenerator!!, FieldInfo fieldInfo!!)
+    {
+        if (fieldInfo.IsStatic) iLGenerator.Emit(OpCodes.Ldsflda, fieldInfo);
+        else iLGenerator.Emit(OpCodes.Ldflda, fieldInfo);
     }
 
     /// <summary>
@@ -141,6 +180,42 @@ public static partial class ILGeneratorExtensions
     /// <param name="iLGenerator">中间语言指令</param>
     /// <param name="value">要加载的数字常量</param>
     public static void LoadDouble(this ILGenerator iLGenerator!!, double value) => iLGenerator.Emit(OpCodes.Ldc_R8, value);
+
+    /// <summary>
+    /// 推送指定地址处的整数值
+    /// </summary>
+    /// <param name="iLGenerator">中间语言指令</param>
+    /// <param name="integerType">整数类型</param>
+    public static void LoadIntegerByAddr(this ILGenerator iLGenerator!!, IntegerType integerType = IntegerType.Int32)
+    {
+        switch (integerType)
+        {
+            case IntegerType.SByte: iLGenerator.Emit(OpCodes.Ldind_I1); return;
+            case IntegerType.Byte: iLGenerator.Emit(OpCodes.Ldind_U1); return;
+            case IntegerType.Int16: iLGenerator.Emit(OpCodes.Ldind_I2); return;
+            case IntegerType.UInt16: iLGenerator.Emit(OpCodes.Ldind_U2); return;
+            case IntegerType.Int32: iLGenerator.Emit(OpCodes.Ldind_I4); return;
+            case IntegerType.UInt32: iLGenerator.Emit(OpCodes.Ldind_U4); return;
+            case IntegerType.Int64: iLGenerator.Emit(OpCodes.Ldind_I8); return;
+            case IntegerType.NativeInt: iLGenerator.Emit(OpCodes.Ldind_I); return;
+            default: throw new ArgumentException(Strings.InvalidParameter, nameof(integerType));
+        }
+    }
+
+    /// <summary>
+    /// 推送指定地址处的浮点数值
+    /// </summary>
+    /// <param name="iLGenerator">中间语言指令</param>
+    /// <param name="floatType">整数类型</param>
+    public static void LoadFloatByAddr(this ILGenerator iLGenerator!!, FloatType floatType = FloatType.Single)
+    {
+        switch (floatType)
+        {
+            case FloatType.Single: iLGenerator.Emit(OpCodes.Ldind_R4); return;
+            case FloatType.Double: iLGenerator.Emit(OpCodes.Ldind_R8); return;
+            default: throw new ArgumentException(Strings.InvalidParameter, nameof(floatType));
+        }
+    }
     #endregion
 
     /// <summary>
@@ -155,6 +230,25 @@ public static partial class ILGeneratorExtensions
     /// </summary>
     /// <param name="iLGenerator">中间语言指令</param>
     public static void LoadNull(this ILGenerator iLGenerator!!) => iLGenerator.Emit(OpCodes.Ldnull);
+
+    /// <summary>
+    /// 获取指定地址处的对象值
+    /// </summary>
+    /// <param name="iLGenerator">中间语言指令</param>
+    public static void LaodObjectByAddr(this ILGenerator iLGenerator!!) => iLGenerator.Emit(OpCodes.Ldind_Ref);
+
+    /// <summary>
+    /// 获取 <paramref name="token"/> 的运行时句柄
+    /// </summary>
+    /// <typeparam name="T"><see cref="Type"/>/<seealso cref="FieldInfo"/>/<seealso cref="MethodInfo"/></typeparam>
+    /// <param name="iLGenerator">中间语言指令</param>
+    /// <param name="token">获取运行时句柄的token</param>
+    public static void LoadRuntimeHandle<T>(this ILGenerator iLGenerator!!, T token!!) where T : MemberInfo
+    {
+        if (typeof(T) == typeof(Type)) iLGenerator.Emit(OpCodes.Ldtoken, (token as Type)!);
+        else if (typeof(T) == typeof(FieldInfo)) iLGenerator.Emit(OpCodes.Ldtoken, (token as FieldInfo)!);
+        else if (typeof(T) == typeof(MethodInfo)) iLGenerator.Emit(OpCodes.Ldtoken, (token as MethodInfo)!);
+    }
     #endregion
 
     #region 数学运算
@@ -591,6 +685,13 @@ public static partial class ILGeneratorExtensions
     public static void GetArrayIndexObject(this ILGenerator iLGenerator!!) => iLGenerator.Emit(OpCodes.Ldelem_Ref);
 
     /// <summary>
+    /// 推送索引处的值的地址
+    /// </summary>
+    /// <param name="iLGenerator">中间语言指令</param>
+    /// <param name="valueType">值类型</param>
+    public static void GetArrayIndexAddr(this ILGenerator iLGenerator!!, Type valueType!!) => iLGenerator.Emit(OpCodes.Ldelema, valueType);
+
+    /// <summary>
     /// 推送数组的长度
     /// </summary>
     /// <param name="iLGenerator">中间语言指令</param>
@@ -750,10 +851,16 @@ public static partial class ILGeneratorExtensions
 
 
     /// <summary>
-    /// 复制值,并推送副本
+    /// 复制值,并推送原值和副本
     /// </summary>
-    /// <param name="iLGenerator"></param>
+    /// <param name="iLGenerator">中间语言指令</param>
     public static void Copy(this ILGenerator iLGenerator!!) => iLGenerator.Emit(OpCodes.Dup);
+
+    /// <summary>
+    /// 从源地址复制指定字节数到目标地址
+    /// </summary>
+    /// <param name="iLGenerator">中间语言指令</param>
+    public static void CopyToTargetAddr(this ILGenerator iLGenerator!!) => iLGenerator.Emit(OpCodes.Cpblk);
 
 
 
@@ -777,6 +884,12 @@ public static partial class ILGeneratorExtensions
     /// <param name="iLGenerator">中间语言指令</param>
     /// <param name="constructorInfo">构造函数信息</param>
     public static void Call(this ILGenerator iLGenerator!!, ConstructorInfo constructorInfo!!) => iLGenerator.Emit(OpCodes.Call, constructorInfo);
+
+    /// <summary>
+    /// 最后的调用,在call之前使用,被标记的调用后面必须接return
+    /// </summary>
+    /// <param name="iLGenerator"></param>
+    public static void TailCall(this ILGenerator iLGenerator!!) => iLGenerator.Emit(OpCodes.Tailcall);
 
     /// <summary>
     /// 弹出当前值
@@ -874,11 +987,12 @@ public static partial class ILGeneratorExtensions
     /// 设置数组值
     /// </summary>
     /// <param name="iLGenerator">中间语言指令</param>
-    /// <param name="valueType">值类型</param>
-    public static void SetArrayValue(this ILGenerator iLGenerator!!, Type valueType!!)
+    /// <param name="valueType">值类型,如果是引用类型可以忽略</param>
+    public static void SetArrayValue(this ILGenerator iLGenerator!!, Type? valueType = null)
     {
-        // native int 类型无法判断这里不会使用 OpCodes.Stelem_I 赋值
-        if (valueType == typeof(byte)) iLGenerator.Emit(OpCodes.Stelem_I1);// int8
+        if (valueType is null) iLGenerator.Emit(OpCodes.Stelem_Ref);// 值支持引用类型
+        else if (valueType == typeof(IntPtr)) iLGenerator.Emit(OpCodes.Stelem_I);// native int
+        else if (valueType == typeof(SByte)) iLGenerator.Emit(OpCodes.Stelem_I1);// int8
         else if (valueType == typeof(Int16)) iLGenerator.Emit(OpCodes.Stelem_I2);
         else if (valueType == typeof(Int32)) iLGenerator.Emit(OpCodes.Stelem_I4);
         else if (valueType == typeof(Int64)) iLGenerator.Emit(OpCodes.Stelem_I8);// long
@@ -888,6 +1002,56 @@ public static partial class ILGeneratorExtensions
     }
 
     #endregion
+
+    /// <summary>
+    /// 分配空间并推送第一个字节的指针
+    /// </summary>
+    /// <param name="iLGenerator">中间语言指令</param>
+    public static void Localloc(this ILGenerator iLGenerator!!) => iLGenerator.Emit(OpCodes.Localloc);
+
+    /// <summary>
+    /// 设置整数值到指定地址
+    /// </summary>
+    /// <param name="iLGenerator">中间语言指令</param>
+    /// <param name="valueType">值类型</param>
+    public static void SetIntegerValueToAddr(this ILGenerator iLGenerator!!, IntegerType valueType)
+    {
+        switch (valueType)
+        {
+            case IntegerType.SByte: iLGenerator.Emit(OpCodes.Stind_I1); return;
+            case IntegerType.Int16: iLGenerator.Emit(OpCodes.Stind_I2); return;
+            case IntegerType.Int32:iLGenerator.Emit(OpCodes.Stind_I4); return;
+            case IntegerType.Int64:iLGenerator.Emit(OpCodes.Stind_I8); return;
+            case IntegerType.NativeInt:iLGenerator.Emit(OpCodes.Stind_I); return;
+            default: throw new ArgumentException(Strings.InvalidParameter, nameof(valueType));
+        }
+    }
+
+    /// <summary>
+    /// 设置浮点值到指定地址
+    /// </summary>
+    /// <param name="iLGenerator">中间语言指令</param>
+    /// <param name="valueType">值类型</param>
+    public static void SetFloatValueToAddr(this ILGenerator iLGenerator!!, FloatType valueType)
+    {
+        switch (valueType)
+        {
+            case FloatType.Single: iLGenerator.Emit(OpCodes.Stind_R4); return;
+            case FloatType.Double: iLGenerator.Emit(OpCodes.Stind_R8); return;
+            default: throw new ArgumentException(Strings.InvalidParameter, nameof(valueType));
+        }
+    }
+
+    /// <summary>
+    /// 设置引用类型到指定地址
+    /// </summary>
+    /// <param name="iLGenerator">中间语言指令</param>
+    /// <param name="valueType">值类型,如果不为空使用 <see cref="OpCodes.Stobj"/> 指令</param>
+    public static void SetRefValueToAddr(this ILGenerator iLGenerator!!,Type? valueType = null)
+    {
+        if(valueType is null) iLGenerator.Emit(OpCodes.Stind_Ref);
+        else iLGenerator.Emit(OpCodes.Stobj,valueType);
+    }
 
 
 
@@ -924,13 +1088,12 @@ public static partial class ILGeneratorExtensions
      *
      *
      * ** 复制
-     * Cpblk        将指定数目的字节从源地址复制到目标地址。【应该是复制一部分字符串】
      *
      * Cpobj        将位于对象地址的值类型（类型 & 或native  int）复制到目标对象的地址（类型 & 或native  int）。
      *
      *
      * ** 异常
-     * Endfilter    将控制从异常的 filter 子句转移回公共语言结构 (CLI) 异常处理程序。
+     * Endfilter    将控制从异常的 filter 子句转移回公共语言结构 (CLI) 异常处理程序。【好像是跳出异常筛选子句】
      *
      * Endfinally   将控制从异常块的 fault 或 finally 子句转移回公共语言结构 (CLI) 异常处理程序。
      *
@@ -943,27 +1106,6 @@ public static partial class ILGeneratorExtensions
      *
      * ** 跳转
      * Jmp          退出当前方法并跳至指定方法。
-     *
-     * ** 加载/推送
-     * Ldarga       将参数地址加载到计算堆栈上。
-     *
-     * Ldelema      将位于指定数组索引的数组元素的地址作为 & 类型（托管指针）加载到计算堆栈的顶部。
-     *
-     * Ldflda       查找对象中其引用当前位于计算堆栈的字段的地址。
-     *
-     * Ldftn        将指向实现特定方法的本机代码的非托管指针（native int 类型）推送到计算堆栈上。
-     *
-     * Ldind_I      将 native int 类型的值作为 native int 间接加载到计算堆栈上。
-     *
-     * Ldloca       将位于特定索引处的局部变量的地址加载到计算堆栈上。
-     *
-     * Ldsflda      将静态字段的地址推送到计算堆栈上。
-     *
-     * Ldtoken      将元数据标记转换为其运行时表示形式，并将其推送到计算堆栈上。
-     *
-     *
-     * ** 分配空间
-     * Localloc     从本地动态内存池分配特定数目的字节并将第一个分配的字节的地址（瞬态指针，* 类型）推送到计算堆栈上
      *
      *
      * ** 转换
@@ -990,20 +1132,7 @@ public static partial class ILGeneratorExtensions
      * Starg        将位于计算堆栈顶部的值存储到位于指定索引的自变量槽中。
      *
      *
-     * ** 设置值
-     * Stelem_I     用计算堆栈上的 native int 值替换给定索引处的数组元素。
-     *
-     * Stelem_Ref   用计算堆栈上的对象 ref 值（O 类型）替换给定索引处的数组元素。
-     *
-     * Stind_I      在所提供的地址存储 native int 类型的值。
-     *
-     * Stobj        将指定类型的值从计算堆栈复制到所提供的内存地址中。
-     *
-     *
      * ** 调用方法移除堆栈帧
-     * Tailcall     执行后缀的方法调用指令，以便在执行实际调用指令前移除当前方法的堆栈帧。
-     *
-     *
      * Unaligned    指示当前位于计算堆栈上的地址可能没有与紧接的 ldind、stind、ldfld、stfld、ldobj、stobj、initblk 或 cpblk 指令的自然大小对齐。
      *
      *
@@ -1018,11 +1147,11 @@ public static partial class ILGeneratorExtensions
 public enum IntegerType
 {
     /// <summary>
-    /// <see cref="System.SByte"/>(有符号byte) 类型
+    /// <see cref="System.SByte"/>(有符号byte/int8) 类型
     /// </summary>
     SByte,
     /// <summary>
-    /// <see cref="System.Byte"/>(无符号byte) 类型
+    /// <see cref="System.Byte"/>(无符号byte/int8) 类型
     /// </summary>
     Byte,
     /// <summary>

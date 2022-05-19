@@ -3,6 +3,28 @@ using System.Reflection;
 
 namespace Easy.Extensions.DynamicProxy.Test;
 
+public class Test1
+{
+    public Test1(int f1)
+    {
+        this.f1 = f1;
+    }
+    
+    public int f1;
+
+    public int m1() => f1;
+}
+
+public class Test2: Test1
+{
+    public Test2(int f2, int f1) : base(f1)
+    {
+        this.f2 = f2;
+    }
+
+    public int f2;
+}
+
 /// <summary>
 /// 下面使用代码动态创建的类和这个一样
 /// </summary>
@@ -426,17 +448,112 @@ public class DynamicCreateType
 
             LocalBuilder l1 = il.DeclareLocal(typeof(string));
 
-            il.LoadNull();
-            il.SetLocal(l1);
-            //il.LoadLocal(l1);
-            //il.Return();
-
             il.Emit(OpCodes.Ldloca, l1.LocalIndex);
             il.Emit(OpCodes.Ldarga, 1);
             il.LoadArg(2);
             il.Emit(OpCodes.Cpblk);
 
             il.LoadLocal(l1);
+            il.Return();
+        }
+
+        {
+            // 定义一个 测试本地变量的方法
+            ILGenerator il = dynamicType.DefineMethod("TestLoaclVar17", MethodAttributes.Public, typeof(Test1[]), new Type[] { typeof(Test1), typeof(int) }).GetILGenerator();
+
+            LocalBuilder l1 = il.DeclareLocal(typeof(Test1[]));
+            il.LoadInt(2);
+            il.NewArray(typeof(Test1));
+            il.SetLocal(l1);
+
+            il.LoadLocal(l1);
+            il.LoadInt(0);
+            il.LoadArg(1);
+            il.SetArrayValue();
+
+            il.LoadLocal(l1);
+            il.LoadInt(1);
+            il.Emit(OpCodes.Ldelema, typeof(Test1));
+            il.Emit(OpCodes.Ldarga, 1);
+            il.SizeOf(typeof(Test1));
+            il.Emit(OpCodes.Cpblk);
+
+            FieldInfo fieldInfo = typeof(Test1).GetField("f1")!;
+            il.LoadArg(1);
+            il.LoadArg(2);
+            il.SetField(fieldInfo);
+
+            il.LoadLocal(l1);
+            il.Return();
+        }
+
+        {
+            // 定义一个 测试本地变量的方法
+            ILGenerator il = dynamicType.DefineMethod("TestLoaclVar18", MethodAttributes.Public, typeof(object), new Type[] { typeof(object), typeof(object) }).GetILGenerator();
+
+            il.LoadArgAddr(2);
+            il.Emit(OpCodes.Ldind_Ref);
+            //il.UnBox(typeof(string));
+            il.Return();
+        }
+
+        {
+            // 定义一个 测试本地变量的方法
+            ILGenerator il = dynamicType.DefineMethod("TestLoaclVar19", MethodAttributes.Public, typeof(object), new Type[] { typeof(object), typeof(object) }).GetILGenerator();
+
+            il.LoadRuntimeHandle(typeof(string));
+            il.Return();
+        }
+
+        {
+            ILGenerator il = dynamicType.DefineMethod("TestLoaclVar20", MethodAttributes.Public, typeof(int), new Type[] { typeof(int), typeof(int) }).GetILGenerator();
+
+            LocalBuilder l1 = il.DeclareLocal(typeof(int));
+            il.LoadLocalAddr(l1.LocalIndex);
+            il.LoadArg(1);
+            il.Emit(OpCodes.Stind_I4);
+
+            il.LoadLocal(l1);
+            il.Return();
+        }
+
+        {
+            ILGenerator il = dynamicType.DefineMethod("TestLoaclVar21", MethodAttributes.Public, typeof(object), new Type[] { typeof(object), typeof(object) }).GetILGenerator();
+
+            LocalBuilder l1 = il.DeclareLocal(typeof(object));
+            il.LoadLocalAddr(l1.LocalIndex);
+            il.LoadArg(1);
+            il.Emit(OpCodes.Stind_Ref);
+
+            il.LoadLocal(l1);
+            il.Return();
+        }
+
+        {
+            ILGenerator il = dynamicType.DefineMethod("TestLoaclVar22", MethodAttributes.Public, typeof(object), new Type[] { typeof(object), typeof(object) }).GetILGenerator();
+
+            LocalBuilder l1 = il.DeclareLocal(typeof(object));
+            il.LoadLocalAddr(l1.LocalIndex);
+            il.LoadArg(1);
+            il.Emit(OpCodes.Stobj,typeof(object));
+
+            il.LoadLocal(l1);
+            il.Return();
+        }
+
+        {
+            ILGenerator il = dynamicType.DefineMethod("TestLoaclVar23", MethodAttributes.Public, typeof(int), new Type[] { typeof(object), typeof(object) }).GetILGenerator();
+
+            MethodInfo m1 = typeof(Test1).GetMethod("m1")!;
+
+            
+            il.LoadArg(1);
+            il.Emit(OpCodes.Tailcall);
+            il.Call(m1);
+            il.Return();
+
+            il.LoadInt(1000);
+            il.MathAdd();
             il.Return();
         }
 
@@ -464,6 +581,7 @@ public class DynamicCreateType
         // 完成
         return dynamicType.CreateType()!;
     }
+
 
     public static Type CreateMyDynamicType3()
     {
