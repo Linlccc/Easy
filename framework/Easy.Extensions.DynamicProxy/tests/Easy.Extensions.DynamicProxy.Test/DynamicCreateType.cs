@@ -1,5 +1,6 @@
 ﻿using System.Reflection.Emit;
 using System.Reflection;
+using Xunit.Abstractions;
 
 namespace Easy.Extensions.DynamicProxy.Test;
 
@@ -542,18 +543,20 @@ public class DynamicCreateType
         }
 
         {
-            ILGenerator il = dynamicType.DefineMethod("TestLoaclVar23", MethodAttributes.Public, typeof(int), new Type[] { typeof(object), typeof(object) }).GetILGenerator();
+            ILGenerator il = dynamicType.DefineMethod("TestLoaclVar23", MethodAttributes.Public, typeof(object), new Type[] { typeof(Test1), typeof(int) }).GetILGenerator();
+
+            il.LoadArg(1);
+            il.Return();
+        }
+
+        {
+            ILGenerator il = dynamicType.DefineMethod("TestLoaclVar24", MethodAttributes.Public, typeof(int), new Type[] { typeof(Test1), typeof(object) }).GetILGenerator();
 
             MethodInfo m1 = typeof(Test1).GetMethod("m1")!;
 
-            
             il.LoadArg(1);
-            il.Emit(OpCodes.Tailcall);
             il.Call(m1);
-            il.Return();
 
-            il.LoadInt(1000);
-            il.MathAdd();
             il.Return();
         }
 

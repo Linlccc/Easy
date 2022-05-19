@@ -86,6 +86,7 @@ public class DynamicCreateTypeTest
         object v21 = dynamicType.InvokeMember("TestLoaclVar21", BindingFlags.InvokeMethod, null, o1, new object[] { new Test1(1), 128 })!;
         object v22 = dynamicType.InvokeMember("TestLoaclVar22", BindingFlags.InvokeMethod, null, o1, new object[] { new Test1(1), 128 })!;
         object v23 = dynamicType.InvokeMember("TestLoaclVar23", BindingFlags.InvokeMethod, null, o1, new object[] { new Test1(1), 128 })!;
+        object v24 = dynamicType.InvokeMember("TestLoaclVar24", BindingFlags.InvokeMethod, null, o1, new object[] { new Test1(1), 128 })!;
     }
 
 

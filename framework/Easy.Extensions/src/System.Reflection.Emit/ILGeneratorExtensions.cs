@@ -6,7 +6,11 @@
 public static partial class ILGeneratorExtensions
 {
     /* 概念
-     * 1.Label(标签) 类似于代码中的 goto
+     * 1.Label:     (标签) 类似于代码中的 goto
+     * 2.地址:      (address) 数据值存放的地址,一串数字
+     * 3.指针:      (pointer)
+     *  3.1. 指针类型,是一种数据类型 比如:int*(int指针类型)
+     *  3.2. 指针变量,是一个变量,指针变量的值是一个地址,指针变量也有自己的地址
      */
 
     #region 加载\推送(将指定的值推送到计算堆栈)
@@ -126,11 +130,11 @@ public static partial class ILGeneratorExtensions
     }
 
     /// <summary>
-    /// 推送该指针处的对象的值
+    /// 推送该地址处的对象的值
     /// </summary>
     /// <param name="iLGenerator">中间语言指令</param>
     /// <param name="valueType">值类型</param>
-    public static void LoadPointerObject(this ILGenerator iLGenerator!!, Type valueType!!) => iLGenerator.Emit(OpCodes.Ldobj, valueType);
+    public static void LoadAddrObject(this ILGenerator iLGenerator!!, Type valueType!!) => iLGenerator.Emit(OpCodes.Ldobj, valueType);
 
 
 
@@ -235,7 +239,7 @@ public static partial class ILGeneratorExtensions
     /// 获取指定地址处的对象值
     /// </summary>
     /// <param name="iLGenerator">中间语言指令</param>
-    public static void LaodObjectByAddr(this ILGenerator iLGenerator!!) => iLGenerator.Emit(OpCodes.Ldind_Ref);
+    public static void LoadObjectByAddr(this ILGenerator iLGenerator!!) => iLGenerator.Emit(OpCodes.Ldind_Ref);
 
     /// <summary>
     /// 获取 <paramref name="token"/> 的运行时句柄
@@ -1075,68 +1079,44 @@ public static partial class ILGeneratorExtensions
      */
 
     /* https://docs.microsoft.com/zh-cn/dotnet/api/system.reflection.emit.opcodes?view=net-6.0#fields
-     * Arglist      返回指向当前方法的参数列表的非托管指针
      *
-     * ** 调用方法
-     * Calli        通过调用约定描述的参数调用在计算堆栈上指示的方法（作为指向入口点的指针）
+     * ** 以下是一些不太懂的指令
      *
-     * Callvirt     对对象调用后期绑定方法，并且将返回值推送到计算堆栈上。【应该是调用静态方法】
+     * Arglist      返回指向当前方法的参数列表的非托管指针。
      *
+     * Calli        使用调用约定描述的参数调用评估堆栈上指示的方法（作为指向入口点的指针）。
      *
-     * ** 约束
-     * Constrained  约束要对其进行虚方法调用的类型。
+     * Callvirt     调用对象的后期绑定方法，将返回值推送到评估堆栈。
      *
+     * Constrained  约束对其进行虚拟方法调用的类型。
      *
-     * ** 复制
-     *
-     * Cpobj        将位于对象地址的值类型（类型 & 或native  int）复制到目标对象的地址（类型 & 或native  int）。
-     *
-     *
-     * ** 异常
-     * Endfilter    将控制从异常的 filter 子句转移回公共语言结构 (CLI) 异常处理程序。【好像是跳出异常筛选子句】
-     *
-     * Endfinally   将控制从异常块的 fault 或 finally 子句转移回公共语言结构 (CLI) 异常处理程序。
-     *
-     *
-     * ** 初始化
-     * Initblk      将位于特定地址的内存的指定块初始化为给定大小和初始值。
-     *
-     * Initobj      将位于指定地址的值类型的每个字段初始化为空引用或适当的基元类型的 0。
-     *
-     *
-     * ** 跳转
-     * Jmp          退出当前方法并跳至指定方法。
-     *
-     *
-     * ** 转换
-     * Mkrefany     将对特定类型实例的类型化引用推送到计算堆栈上。
-     *
-     *
-     * ** 没有任何操作
-     * Nop          如果修补操作码，则填充空间。 尽管可能消耗处理周期，但未执行任何有意义的操作
-     *
-     * ** 只读
-     * Readonly     指定后面的数组地址操作在运行时不执行类型检查，并且返回可变性受限的托管指针。
-     *
-     *
-     * ** 获取信息
-     * Refanytype   检索嵌入在类型化引用内的类型标记。【应该是获取值的类型】
-     *
-     * Refanyval    检索嵌入在类型化引用内的地址（& 类型）。
-     *
-     * ** 异常
-     * Rethrow      再次引发当前异常
-     *
-     *
-     * ** 放置参数
-     * Starg        将位于计算堆栈顶部的值存储到位于指定索引的自变量槽中。
-     *
-     *
-     * ** 调用方法移除堆栈帧
-     * Unaligned    指示当前位于计算堆栈上的地址可能没有与紧接的 ldind、stind、ldfld、stfld、ldobj、stobj、initblk 或 cpblk 指令的自然大小对齐。
-     *
-     *
-     * Volatile     指定当前位于计算堆栈顶部的地址可以是易失的，并且读取该位置的结果不能被缓存，或者对该地址的多个存储区不能被取消。
+     * Cpobj        将位于对象地址的值类型（类型 & 或原生 int）复制到目标对象的地址（类型 & 或原生 int）。
+     * 
+     * Endfilter    将控制从异常的过滤子句转移回公共语言基础结构 (CLI) 异常处理程序。
+     * 
+     * Endfinally   将控制从异常块的故障或 finally 子句转移回公共语言基础结构 (CLI) 异常处理程序。
+     * 
+     * Initblk      将特定地址处的指定内存块初始化为给定大小和初始值。
+     * 
+     * Initobj      将指定地址处的值类型的每个字段初始化为空引用或相应原始类型的 0。
+     * 
+     * Jmp          退出当前方法并跳转到指定方法。
+     * 
+     * Mkrefany     将对特定类型的实例的类型化引用推送到评估堆栈上。
+     * 
+     * Nop          如果修补了操作码，则填充空间。 尽管可以消耗一个处理周期，但没有执行任何有意义的操作。
+     * 
+     * Readonly     指定后续的数组地址操作在运行时不执行类型检查，并返回一个可变性受到限制的托管指针。
+     * 
+     * Refanytype   检索嵌入在类型化引用中的类型标记。
+     * 
+     * Rethrow      重新抛出当前异常。
+     * 
+     * Starg        将计算堆栈顶部的值存储在指定索引处的参数槽中。
+     * 
+     * Unaligned    指示当前位于评估堆栈顶部的地址可能未与紧随其后的 ldind、stind、ldfld、stfld、ldobj、stobj、initblk 或 cpblk 指令的自然大小对齐。
+     * 
+     * Volatile     指定当前位于评估堆栈顶部的地址可能是易失的，并且无法缓存读取该位置的结果，或者无法抑制对该位置的多个存储。
      */
     #endregion
 }
