@@ -220,6 +220,13 @@ MergeJson 生成时会将 Easy.Tool.MergeJson.dll 复制到生成文件
 
   ~~~
 
+- [ ] Emit(动态生成代码)学习
+
+  ~~~text
+  1.看是否有办法将 emit 的代码生成dll，然后再反编译
+  2.看看该链接的方法，不过暂时不是很推荐，因为可能会花大量的时间看汇编 https://www.bilibili.com/video/BV1b5411U7M5?spm_id_from=333.337.search-card.all.click
+  ~~~
+
 - [ ] 考虑将 Easy.Extensions.DependencyInjection.Abstractions 项目中的 ServiceTypeProxy 修改成 ServiceTypeMask ,服务类型面具的意思 (实现)
 - [ ] 升级 Easy.Tool.MergeJson 项目
 
