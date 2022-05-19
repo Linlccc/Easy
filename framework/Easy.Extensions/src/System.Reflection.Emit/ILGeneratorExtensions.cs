@@ -126,7 +126,7 @@ public static partial class ILGeneratorExtensions
     }
 
     /// <summary>
-    /// 推送该指针出的对象的值
+    /// 推送该指针处的对象的值
     /// </summary>
     /// <param name="iLGenerator">中间语言指令</param>
     /// <param name="valueType">值类型</param>
