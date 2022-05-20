@@ -181,6 +181,18 @@ MergeJson 生成时会将 Easy.Tool.MergeJson.dll 复制到生成文件
 
 ---
 
+## 0521
+
+使用 emit 动态生成dll,然后再反编译
+
+~~~text
+1.在.net framework框架中可以使用 emit 动态生成dll(程序集)
+2.可以使用以下方式进行反编译
+  a.使用 ildasm.exe(IL 反汇编程序) 读dll文件的中间语言指令 (不推荐,可读性不高)
+  b.在vs中引用该动态生成的dll,读取反编译后的的源码 (可用,可读性可以,但是不太方便)
+  c.下载 https://github.com/icsharpcode/ILSpy 链接中的工具，反编译动态生成的dll查看源码 (推荐)
+~~~
+
 ## 计划
 
 - [x] 添加自动发布包任务 (研究) [0427]
@@ -192,70 +204,84 @@ MergeJson 生成时会将 Easy.Tool.MergeJson.dll 复制到生成文件
 - [x] 将包发布添加成任务 (实现) [0501]
 - [x] 根据不同的sdk添加默认全局 using (实现) [0504]
 - [x] 检查 Type 的 ContainsGenericParameters 属性 是否是判断开放泛型 (实验) [0512]
-- [ ] 处理 Easy.Extension.DenpendencyInjection 项目
+- [x] 使用 emit 动态生成dll,然后再反编译 (实验) [0521]
 
-  ~~~text
-  1.DI添加多框架版本更换服务容器(实现)
-  2.处理容器的Dispose方法(实现)
-  3.添加获取服务前/后aop功能
-    a.添加抽象类/接口实例
-    b.代理方法
-  ~~~
+### Easy.Extensions 项目升级/修改计划
 
-- [ ] 添加项目 Easy.Extensions.DynamicProxy 项目(aop)
+~~~text
 
-  ~~~text
-  查看开源项目
-  1.https://github.com/pamidur/aspect-injector(编译时 AOP 框架)
-  2.https://github.com/Jishun/RoslynWeave(编译时注入 C# 代码的目标，通过使用原始 C# 代码而不是 IL 进行编织)
-  3.https://github.com/vescon/MethodBoundaryAspect.Fody
+后期计划
+1.将默认类型的拓展方法分成不同的项目,步骤
+  a.拆分成多个项目,如：Easy.Extensions.System/Easy.Extensions.Microsoft 等等
+  b.Easy.Extensions 项目只需引入所有默认类型拓展项目,这样就可按需引入和全部引入
+~~~
 
-  看看https://github.com/htrlq/NCoreCoder.Framework项目
-  1.先看官方实现
-  2.需要实现的有：
-    a.根据接口和类创建代理类型
-    b.根据类实现代理类型
-      I.在后期看怎么实现非虚方法的代理实现
-    c.直接对对象的代理
+### Easy.Extensions.DependencyInjection 项目升级/修改/开发计划
 
-  ~~~
+~~~text
+添加功能
+1.添加获取服务前/后aop功能
+  a.添加抽象类/接口实例
+  b.代理方法
 
-- [ ] Emit(动态生成代码)学习
 
-  ~~~text
-  1.看是否有办法将 emit 的代码生成dll，然后再反编译
-  2.看看该链接的方法，不过暂时不是很推荐，因为可能会花大量的时间看汇编 https://www.bilibili.com/video/BV1b5411U7M5?spm_id_from=333.337.search-card.all.click
+修改
+1.修改容器的Dispose方法,主要是看异步处理
 
-  看一下以下链接，是否有营养：
-  https://www.cnblogs.com/minhost/p/12190865.html
-  https://www.jianshu.com/p/b6b86476c106
-  ~~~
 
-- [ ] 考虑将 Easy.Extensions.DependencyInjection.Abstractions 项目中的 ServiceTypeProxy 修改成 ServiceTypeMask ,服务类型面具的意思 (实现)
-- [ ] 升级 Easy.Tool.MergeJson 项目
+实现
+1.DI添加多框架版本更换服务容器(实现)
 
-  ~~~text
-  1.考虑使用 FindUnderPath,ConvertToAbsolutePath msbuild 任务处理文件夹路径，在程序中尽量少的处理路径
 
-  问题：
-  1.项目中的appsettings.json 和 appsettings.dev.json 分开了可能是因为该项目移除了json为内容的原因(经验证：不是，新建一个项目在2022也是分开的)
-  ~~~
+后期计划
+1.添加多框架版本更换服务容器
+  // 该方式是 IHostBuilder 拓展,直接配置使用 EasyDependencyInjection
+  // 不同框架是 (IHostBuilder) 类型可能不同
+  public static IHostBuilder UseEasyServiceProvider(this IHostBuilder hostBuilder, Action<EasyServiceProviderOptions>? optionsAction = null)
+  {
+      EasyServiceProviderOptions options = new();
+      optionsAction?.Invoke(options);
+      hostBuilder.UseServiceProviderFactory(new EasyServiceProviderFactory(options));
+      return hostBuilder;
+  }
+~~~
+
+### Easy.Extensions.DependencyInjection.Abstractions 项目升级/修改/开发计划
+
+~~~text
+实现
+1.ServiceTypeProxy 类修改成 ServiceTypeMask ,服务类型面具的意思
+~~~
+
+### Easy.Tool.MergeJson 项目升级/修改/开发计划
+
+~~~text
+实现
+1.使用 FindUnderPath,ConvertToAbsolutePath msbuild 任务处理文件夹路径，在程序中尽量少的处理路径
+~~~
+
+### Easy.Extensions.DynamicProxy 项目升级/修改/开发计划
+
+~~~text
+开发
+1.看官方项目的实现
+2.需要实现的功能有:
+  a.根据接口和类创建代理类型
+  b.根据类实现代理类型
+    I.在后期看怎么实现非虚方法的代理实现
+  c.直接对对象的代理
+
+
+可以看的开源项目
+1.https://github.com/pamidur/aspect-injector(编译时 AOP 框架)
+2.https://github.com/Jishun/RoslynWeave(编译时注入 C# 代码的目标，通过使用原始 C# 代码而不是 IL 进行编织)
+3.https://github.com/vescon/MethodBoundaryAspect.Fody
+4.https://github.com/htrlq/NCoreCoder.Framework(动态代理)
+~~~
 
 ### 暂时不处理
 
 - [ ] 不同的项目使用一个 .vscode 文件夹 (研究)
 - [ ] IHostBuilder 添加使用 Easy.Extensions.DependencyInjection 的拓展方法 UseEasyServiceProvider
-
-  ~~~C#
-
-  //该方式是 IHostBuilder 拓展,直接配置使用 EasyDependencyInjection
-    public static IHostBuilder UseEasyServiceProvider(this IHostBuilder hostBuilder, Action<EasyServiceProviderOptions>? optionsAction = null)
-    {
-        EasyServiceProviderOptions options = new();
-        optionsAction?.Invoke(options);
-        hostBuilder.UseServiceProviderFactory(new EasyServiceProviderFactory(options));
-        return hostBuilder;
-    }
-  ~~~
 
 ---
