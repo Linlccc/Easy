@@ -1,7 +1,7 @@
 ﻿namespace System.Reflection.Emit;
 
 /// <summary>
-/// <see cref="ILGenerator"/>(Microsoft 中间语言指令) 拓展
+/// <see cref="ILGenerator"/>(Microsoft 中间语言指令生成器) 拓展
 /// </summary>
 public static partial class ILGeneratorExtensions
 {
@@ -17,7 +17,7 @@ public static partial class ILGeneratorExtensions
     /// <summary>
     /// 推送参数
     /// </summary>
-    /// <param name="iLGenerator">中间语言指令</param>
+    /// <param name="iLGenerator">中间语言指令生成器</param>
     /// <param name="index">参数索引,0是当前实例</param>
     public static void LoadArg(this ILGenerator iLGenerator!!, int index)
     {
@@ -35,7 +35,7 @@ public static partial class ILGeneratorExtensions
     /// <summary>
     /// 推送参数地址
     /// </summary>
-    /// <param name="iLGenerator">中间语言指令</param>
+    /// <param name="iLGenerator">中间语言指令生成器</param>
     /// <param name="index">参数索引</param>
     public static void LoadArgAddr(this ILGenerator iLGenerator!!, int index)
     {
@@ -49,7 +49,7 @@ public static partial class ILGeneratorExtensions
     /// <summary>
     /// 推送局部变量
     /// </summary>
-    /// <param name="iLGenerator">中间语言指令</param>
+    /// <param name="iLGenerator">中间语言指令生成器</param>
     /// <param name="localBuilder">局部变量</param>
     public static void LoadLocal(this ILGenerator iLGenerator!!, LocalBuilder localBuilder!!)
     {
@@ -67,7 +67,7 @@ public static partial class ILGeneratorExtensions
     /// <summary>
     /// 推送索引处局部变量
     /// </summary>
-    /// <param name="iLGenerator">中间语言指令</param>
+    /// <param name="iLGenerator">中间语言指令生成器</param>
     /// <param name="localIndex">局部变量索引</param>
     public static void LoadLocal(this ILGenerator iLGenerator!!, int localIndex)
     {
@@ -85,7 +85,7 @@ public static partial class ILGeneratorExtensions
     /// <summary>
     /// 推送索引处局部变量地址
     /// </summary>
-    /// <param name="iLGenerator">中间语言指令</param>
+    /// <param name="iLGenerator">中间语言指令生成器</param>
     /// <param name="index">局部变量索引</param>
     public static void LoadLocalAddr(this ILGenerator iLGenerator!!, int index)
     {
@@ -99,7 +99,7 @@ public static partial class ILGeneratorExtensions
     /// <summary>
     /// 推送字段
     /// </summary>
-    /// <param name="iLGenerator">中间语言指令</param>
+    /// <param name="iLGenerator">中间语言指令生成器</param>
     /// <param name="fieldInfo">字段信息</param>
     public static void LoadField(this ILGenerator iLGenerator!!, FieldInfo fieldInfo!!)
     {
@@ -110,7 +110,7 @@ public static partial class ILGeneratorExtensions
     /// <summary>
     /// 推送字段地址
     /// </summary>
-    /// <param name="iLGenerator">中间语言指令</param>
+    /// <param name="iLGenerator">中间语言指令生成器</param>
     /// <param name="fieldInfo">字段信息</param>
     public static void LoadFieldAddr(this ILGenerator iLGenerator!!, FieldInfo fieldInfo!!)
     {
@@ -121,7 +121,7 @@ public static partial class ILGeneratorExtensions
     /// <summary>
     /// 推送方法指针
     /// </summary>
-    /// <param name="iLGenerator">中间语言指令</param>
+    /// <param name="iLGenerator">中间语言指令生成器</param>
     /// <param name="methodInfo">方法信息</param>
     public static void LoadMethodPointer(this ILGenerator iLGenerator!!, MethodInfo methodInfo!!)
     {
@@ -132,7 +132,7 @@ public static partial class ILGeneratorExtensions
     /// <summary>
     /// 推送该地址处的对象的值
     /// </summary>
-    /// <param name="iLGenerator">中间语言指令</param>
+    /// <param name="iLGenerator">中间语言指令生成器</param>
     /// <param name="valueType">值类型</param>
     public static void LoadAddrObject(this ILGenerator iLGenerator!!, Type valueType!!) => iLGenerator.Emit(OpCodes.Ldobj, valueType);
 
@@ -143,7 +143,7 @@ public static partial class ILGeneratorExtensions
     /// <summary>
     /// 推送 <see cref="Int32"/>/<see cref="Int16"/>/<see cref="byte"/> 数字常量
     /// </summary>
-    /// <param name="iLGenerator">中间语言指令</param>
+    /// <param name="iLGenerator">中间语言指令生成器</param>
     /// <param name="value">要加载的数字常量</param>
     public static void LoadInt(this ILGenerator iLGenerator!!, int value)
     {
@@ -167,28 +167,28 @@ public static partial class ILGeneratorExtensions
     /// <summary>
     /// 推送 <see cref="Int64"/> 数字常量
     /// </summary>
-    /// <param name="iLGenerator">中间语言指令</param>
+    /// <param name="iLGenerator">中间语言指令生成器</param>
     /// <param name="value">要加载的数字常量</param>
     public static void LoadInt64(this ILGenerator iLGenerator!!, long value) => iLGenerator.Emit(OpCodes.Ldc_I8, value);
 
     /// <summary>
     /// 推送 <see cref="Single"/>(float32) 数字常量
     /// </summary>
-    /// <param name="iLGenerator">中间语言指令</param>
+    /// <param name="iLGenerator">中间语言指令生成器</param>
     /// <param name="value">要加载的数字常量</param>
     public static void LoadFloat(this ILGenerator iLGenerator!!, float value) => iLGenerator.Emit(OpCodes.Ldc_R4, value);
 
     /// <summary>
     /// 推送 <see cref="Double"/>(float64) 数字常量
     /// </summary>
-    /// <param name="iLGenerator">中间语言指令</param>
+    /// <param name="iLGenerator">中间语言指令生成器</param>
     /// <param name="value">要加载的数字常量</param>
     public static void LoadDouble(this ILGenerator iLGenerator!!, double value) => iLGenerator.Emit(OpCodes.Ldc_R8, value);
 
     /// <summary>
     /// 推送指定地址处的整数值
     /// </summary>
-    /// <param name="iLGenerator">中间语言指令</param>
+    /// <param name="iLGenerator">中间语言指令生成器</param>
     /// <param name="integerType">整数类型</param>
     public static void LoadIntegerByAddr(this ILGenerator iLGenerator!!, IntegerType integerType = IntegerType.Int32)
     {
@@ -209,7 +209,7 @@ public static partial class ILGeneratorExtensions
     /// <summary>
     /// 推送指定地址处的浮点数值
     /// </summary>
-    /// <param name="iLGenerator">中间语言指令</param>
+    /// <param name="iLGenerator">中间语言指令生成器</param>
     /// <param name="floatType">整数类型</param>
     public static void LoadFloatByAddr(this ILGenerator iLGenerator!!, FloatType floatType = FloatType.Single)
     {
@@ -225,27 +225,27 @@ public static partial class ILGeneratorExtensions
     /// <summary>
     /// 推送 <see cref="string"/> 类型对象
     /// </summary>
-    /// <param name="iLGenerator">中间语言指令</param>
+    /// <param name="iLGenerator">中间语言指令生成器</param>
     /// <param name="value">值</param>
     public static void LoadString(this ILGenerator iLGenerator!!, string value) => iLGenerator.Emit(OpCodes.Ldstr, value);
 
     /// <summary>
     /// 推送空引用(null)
     /// </summary>
-    /// <param name="iLGenerator">中间语言指令</param>
+    /// <param name="iLGenerator">中间语言指令生成器</param>
     public static void LoadNull(this ILGenerator iLGenerator!!) => iLGenerator.Emit(OpCodes.Ldnull);
 
     /// <summary>
     /// 获取指定地址处的对象值
     /// </summary>
-    /// <param name="iLGenerator">中间语言指令</param>
+    /// <param name="iLGenerator">中间语言指令生成器</param>
     public static void LoadObjectByAddr(this ILGenerator iLGenerator!!) => iLGenerator.Emit(OpCodes.Ldind_Ref);
 
     /// <summary>
     /// 获取 <paramref name="token"/> 的运行时句柄
     /// </summary>
     /// <typeparam name="T"><see cref="Type"/>/<seealso cref="FieldInfo"/>/<seealso cref="MethodInfo"/></typeparam>
-    /// <param name="iLGenerator">中间语言指令</param>
+    /// <param name="iLGenerator">中间语言指令生成器</param>
     /// <param name="token">获取运行时句柄的token</param>
     public static void LoadRuntimeHandle<T>(this ILGenerator iLGenerator!!, T token!!) where T : MemberInfo
     {
@@ -259,7 +259,7 @@ public static partial class ILGeneratorExtensions
     /// <summary>
     /// 将两个值相加,并推送结果
     /// </summary>
-    /// <param name="iLGenerator">中间语言指令</param>
+    /// <param name="iLGenerator">中间语言指令生成器</param>
     /// <param name="isOverflowCheck">是否启动溢出检查</param>
     /// <param name="isUnsigned">是否是无符号,开启无符号自动开启溢出检查</param>
     public static void MathAdd(this ILGenerator iLGenerator!!, bool isOverflowCheck = false, bool isUnsigned = false)
@@ -272,7 +272,7 @@ public static partial class ILGeneratorExtensions
     /// <summary>
     /// 将两个值相减,并推送结果
     /// </summary>
-    /// <param name="iLGenerator">中间语言指令</param>
+    /// <param name="iLGenerator">中间语言指令生成器</param>
     /// <param name="isOverflowCheck">是否启动溢出检查</param>
     /// <param name="isUnsigned">是否是无符号,开启无符号自动开启溢出检查</param>
     public static void MathSub(this ILGenerator iLGenerator!!, bool isOverflowCheck = false, bool isUnsigned = false)
@@ -285,7 +285,7 @@ public static partial class ILGeneratorExtensions
     /// <summary>
     /// 将两个值相乘,并将结果推送
     /// </summary>
-    /// <param name="iLGenerator">中间语言指令</param>
+    /// <param name="iLGenerator">中间语言指令生成器</param>
     /// <param name="isOverflowCheck">是否启动溢出检查</param>
     /// <param name="isUnsigned">是否是无符号,开启无符号自动开启溢出检查</param>
     public static void MathMul(this ILGenerator iLGenerator!!, bool isOverflowCheck = false, bool isUnsigned = false)
@@ -298,7 +298,7 @@ public static partial class ILGeneratorExtensions
     /// <summary>
     /// 将两个值相除,并推送结果
     /// </summary>
-    /// <param name="iLGenerator">中间语言指令</param>
+    /// <param name="iLGenerator">中间语言指令生成器</param>
     /// <param name="isUnsigned">被除数和除数是否是无符号</param>
     public static void MathDiv(this ILGenerator iLGenerator!!, bool isUnsigned = false)
     {
@@ -309,7 +309,7 @@ public static partial class ILGeneratorExtensions
     /// <summary>
     /// 将两个值求余,并推送结果
     /// </summary>
-    /// <param name="iLGenerator">中间语言指令</param>
+    /// <param name="iLGenerator">中间语言指令生成器</param>
     /// <param name="isUnsigned">两个求余的值是否是无符号</param>
     public static void MathRem(this ILGenerator iLGenerator!!, bool isUnsigned = false)
     {
@@ -322,43 +322,43 @@ public static partial class ILGeneratorExtensions
     /// <summary>
     /// 计算两个值按位"与",并推送结果
     /// </summary>
-    /// <param name="iLGenerator">中间语言指令</param>
+    /// <param name="iLGenerator">中间语言指令生成器</param>
     public static void BitwiseAnd(this ILGenerator iLGenerator!!) => iLGenerator.Emit(OpCodes.And);
 
     /// <summary>
     /// 计算两个值按位"或",并推送结果
     /// </summary>
-    /// <param name="iLGenerator">中间语言指令</param>
+    /// <param name="iLGenerator">中间语言指令生成器</param>
     public static void BitwiseOr(this ILGenerator iLGenerator!!) => iLGenerator.Emit(OpCodes.Or);
 
     /// <summary>
     /// 计算两个值按位"异或",并推送结果
     /// </summary>
-    /// <param name="iLGenerator">中间语言指令</param>
+    /// <param name="iLGenerator">中间语言指令生成器</param>
     public static void BitwiseXor(this ILGenerator iLGenerator!!) => iLGenerator.Emit(OpCodes.Xor);
 
     /// <summary>
     /// 对值求反,并将结果推送
     /// </summary>
-    /// <param name="iLGenerator">中间语言指令</param>
+    /// <param name="iLGenerator">中间语言指令生成器</param>
     public static void BitwiseNeg(this ILGenerator iLGenerator!!) => iLGenerator.Emit(OpCodes.Neg);
 
     /// <summary>
     /// 对整数值按位求补,并推送结果
     /// </summary>
-    /// <param name="iLGenerator">中间语言指令</param>
+    /// <param name="iLGenerator">中间语言指令生成器</param>
     public static void BitwiseNot(this ILGenerator iLGenerator!!) => iLGenerator.Emit(OpCodes.Not);
 
     /// <summary>
     /// 对整数值左移位,并推送结果
     /// </summary>
-    /// <param name="iLGenerator">中间语言指令</param>
+    /// <param name="iLGenerator">中间语言指令生成器</param>
     public static void BitwiseShiftLeft(this ILGenerator iLGenerator!!) => iLGenerator.Emit(OpCodes.Shl);
 
     /// <summary>
     /// 对整数值右移位,并推送结果
     /// </summary>
-    /// <param name="iLGenerator">中间语言指令</param>
+    /// <param name="iLGenerator">中间语言指令生成器</param>
     /// <param name="isUnsigned">移位值是否是无符号值</param>
     public static void BitwiseShiftRight(this ILGenerator iLGenerator!!, bool isUnsigned = false)
     {
@@ -371,13 +371,13 @@ public static partial class ILGeneratorExtensions
     /// <summary>
     /// 比较两个值,如果相等推送 (<see cref="int"/>)1,否者推送 (<see cref="int"/>)0
     /// </summary>
-    /// <param name="iLGenerator">中间语言指令</param>
+    /// <param name="iLGenerator">中间语言指令生成器</param>
     public static void CompareEqual(this ILGenerator iLGenerator!!) => iLGenerator.Emit(OpCodes.Ceq);
 
     /// <summary>
     /// 比较两个值,如果第一个值大于第二个值推送 (<see cref="int"/>)1,否者推送 (<see cref="int"/>)0
     /// </summary>
-    /// <param name="iLGenerator">中间语言指令</param>
+    /// <param name="iLGenerator">中间语言指令生成器</param>
     /// <param name="isUnsigned">是否是无符号的或未经排序的值</param>
     public static void CompareGreater(this ILGenerator iLGenerator!!, bool isUnsigned = false)
     {
@@ -388,7 +388,7 @@ public static partial class ILGeneratorExtensions
     /// <summary>
     /// 比较两个值,如果第一个值小于第二个值推送 (<see cref="int"/>)1,否者推送 (<see cref="int"/>)0
     /// </summary>
-    /// <param name="iLGenerator">中间语言指令</param>
+    /// <param name="iLGenerator">中间语言指令生成器</param>
     /// <param name="isUnsigned">是否是无符号的或未经排序的值</param>
     public static void CompareLess(this ILGenerator iLGenerator!!, bool isUnsigned = false)
     {
@@ -413,14 +413,14 @@ public static partial class ILGeneratorExtensions
     /// <summary>
     /// 转换对象为 <paramref name="targetType"/> 类型,并推送结果
     /// </summary>
-    /// <param name="iLGenerator">中间语言指令</param>
+    /// <param name="iLGenerator">中间语言指令生成器</param>
     /// <param name="targetType">目标类型</param>
     public static void ConvertType(this ILGenerator iLGenerator!!, Type targetType!!) => iLGenerator.Emit(OpCodes.Castclass, targetType);
 
     /// <summary>
     /// 转换值为有符号整数类型,并推送结果
     /// </summary>
-    /// <param name="iLGenerator">中间语言指令</param>
+    /// <param name="iLGenerator">中间语言指令生成器</param>
     /// <param name="basis">执行转换基础
     /// <list type="bullet">
     ///     <item>
@@ -487,7 +487,7 @@ public static partial class ILGeneratorExtensions
     /// <summary>
     /// 转换值为无符号整数类型,并推送结果
     /// </summary>
-    /// <param name="iLGenerator">中间语言指令</param>
+    /// <param name="iLGenerator">中间语言指令生成器</param>
     /// <param name="basis">执行转换基础
     /// <list type="bullet">
     ///     <item>
@@ -554,7 +554,7 @@ public static partial class ILGeneratorExtensions
     /// <summary>
     /// 转换值为浮点数,并推送结果
     /// </summary>
-    /// <param name="iLGenerator">中间语言指令</param>
+    /// <param name="iLGenerator">中间语言指令生成器</param>
     /// <param name="floatType">
     /// <list type="bullet">
     ///     <item><see cref="Single"/> (float32)</item>
@@ -583,14 +583,14 @@ public static partial class ILGeneratorExtensions
     /// 转换 <paramref name="valueType"/> 类型的值为引用类型(object类型),并推送结果
     /// <br>执行装箱操作</br>
     /// </summary>
-    /// <param name="iLGenerator">中间语言指令</param>
+    /// <param name="iLGenerator">中间语言指令生成器</param>
     /// <param name="valueType">要转换成object类型的值的类型(int/float)</param>
     public static void Box(this ILGenerator iLGenerator!!, Type valueType!!) => iLGenerator.Emit(OpCodes.Box, valueType);
 
     /// <summary>
     /// 转换object类型为指定类型,根据需求推送指令/值
     /// </summary>
-    /// <param name="iLGenerator">中间语言指令</param>
+    /// <param name="iLGenerator">中间语言指令生成器</param>
     /// <param name="valueType">值类型</param>
     /// <param name="isPointer">是否推送指针</param>
     public static void UnBox(this ILGenerator iLGenerator!!, Type valueType!!, bool isPointer = false)
@@ -605,14 +605,14 @@ public static partial class ILGeneratorExtensions
     /// <summary>
     /// 将索引处的元素作为 <paramref name="valueType"/> 类型推送
     /// </summary>
-    /// <param name="iLGenerator">中间语言指令</param>
+    /// <param name="iLGenerator">中间语言指令生成器</param>
     /// <param name="valueType">索引处值的类型</param>
     public static void GetArrayIndexValue(this ILGenerator iLGenerator!!, Type valueType!!) => iLGenerator.Emit(OpCodes.Ldelem, valueType);
 
     /// <summary>
     /// 将索引处的元素作为整数类型推送
     /// </summary>
-    /// <param name="iLGenerator">中间语言指令</param>
+    /// <param name="iLGenerator">中间语言指令生成器</param>
     /// <param name="basis">推送类型的根据
     /// <list type="bullet">
     ///     <item>
@@ -669,7 +669,7 @@ public static partial class ILGeneratorExtensions
     /// <summary>
     /// 将索引处的元素作为浮点类型推送
     /// </summary>
-    /// <param name="iLGenerator">中间语言指令</param>
+    /// <param name="iLGenerator">中间语言指令生成器</param>
     /// <param name="basis">推送类型的根据</param>
     public static void GetArrayIndexFloat(this ILGenerator iLGenerator!!, FloatType basis = FloatType.Single)
     {
@@ -685,20 +685,20 @@ public static partial class ILGeneratorExtensions
     /// <summary>
     /// 将索引处的对象作为object类型推送
     /// </summary>
-    /// <param name="iLGenerator">中间语言指令</param>
+    /// <param name="iLGenerator">中间语言指令生成器</param>
     public static void GetArrayIndexObject(this ILGenerator iLGenerator!!) => iLGenerator.Emit(OpCodes.Ldelem_Ref);
 
     /// <summary>
     /// 推送索引处的值的地址
     /// </summary>
-    /// <param name="iLGenerator">中间语言指令</param>
+    /// <param name="iLGenerator">中间语言指令生成器</param>
     /// <param name="valueType">值类型</param>
     public static void GetArrayIndexAddr(this ILGenerator iLGenerator!!, Type valueType!!) => iLGenerator.Emit(OpCodes.Ldelema, valueType);
 
     /// <summary>
     /// 推送数组的长度
     /// </summary>
-    /// <param name="iLGenerator">中间语言指令</param>
+    /// <param name="iLGenerator">中间语言指令生成器</param>
     public static void GetArrayLength(this ILGenerator iLGenerator!!) => iLGenerator.Emit(OpCodes.Ldlen);
     #endregion
 
@@ -707,7 +707,7 @@ public static partial class ILGeneratorExtensions
     /// <summary>
     /// 通知调试器以碰撞一个断点
     /// </summary>
-    /// <param name="iLGenerator">中间语言指令</param>
+    /// <param name="iLGenerator">中间语言指令生成器</param>
     public static void DebugBreakPoint(this ILGenerator iLGenerator!!) => iLGenerator.Emit(OpCodes.Break);
     #endregion
 
@@ -715,7 +715,7 @@ public static partial class ILGeneratorExtensions
     /// <summary>
     /// 如果两个值相等则跳转
     /// </summary>
-    /// <param name="iLGenerator">中间语言指令</param>
+    /// <param name="iLGenerator">中间语言指令生成器</param>
     /// <param name="label">跳转标签</param>
     /// <param name="isShort">是否短格式</param>
     public static void GotoByEqual(this ILGenerator iLGenerator!!, Label label, bool isShort = true)
@@ -727,7 +727,7 @@ public static partial class ILGeneratorExtensions
     /// <summary>
     /// 如果第一个值大于第二个或者相等则跳转
     /// </summary>
-    /// <param name="iLGenerator">中间语言指令</param>
+    /// <param name="iLGenerator">中间语言指令生成器</param>
     /// <param name="label">跳转标签</param>
     /// <param name="isShort">是否短格式</param>
     /// <param name="isUnsigned">是否是无符号整数值或未经排序的浮点值</param>
@@ -742,7 +742,7 @@ public static partial class ILGeneratorExtensions
     /// <summary>
     /// 如果第一个值大于第二个值则跳转
     /// </summary>
-    /// <param name="iLGenerator">中间语言指令</param>
+    /// <param name="iLGenerator">中间语言指令生成器</param>
     /// <param name="label">跳转标签</param>
     /// <param name="isShort">是否短格式</param>
     /// <param name="isUnsigned">是否是无符号整数值或未经排序的浮点值</param>
@@ -757,7 +757,7 @@ public static partial class ILGeneratorExtensions
     /// <summary>
     /// 如果第一个值小于第二个或者相等则跳转
     /// </summary>
-    /// <param name="iLGenerator">中间语言指令</param>
+    /// <param name="iLGenerator">中间语言指令生成器</param>
     /// <param name="label">跳转标签</param>
     /// <param name="isShort">是否短格式</param>
     /// <param name="isUnsigned">是否是无符号整数值或未经排序的浮点值</param>
@@ -772,7 +772,7 @@ public static partial class ILGeneratorExtensions
     /// <summary>
     /// 如果第一个值小于第二个值则跳转
     /// </summary>
-    /// <param name="iLGenerator">中间语言指令</param>
+    /// <param name="iLGenerator">中间语言指令生成器</param>
     /// <param name="label">跳转标签</param>
     /// <param name="isShort">是否短格式</param>
     /// <param name="isUnsigned">是否是无符号整数值或未经排序的浮点值</param>
@@ -787,7 +787,7 @@ public static partial class ILGeneratorExtensions
     /// <summary>
     /// 如果两个无符号整数值或未经排序的浮点值不相等则跳转
     /// </summary>
-    /// <param name="iLGenerator">中间语言指令</param>
+    /// <param name="iLGenerator">中间语言指令生成器</param>
     /// <param name="label">跳转标签</param>
     /// <param name="isShort">是否短格式</param>
     public static void GotoByUnsignedNotEqual(this ILGenerator iLGenerator!!, Label label, bool isShort = true)
@@ -799,7 +799,7 @@ public static partial class ILGeneratorExtensions
     /// <summary>
     /// 跳转
     /// </summary>
-    /// <param name="iLGenerator">中间语言指令</param>
+    /// <param name="iLGenerator">中间语言指令生成器</param>
     /// <param name="label">跳转标签</param>
     /// <param name="isShort">是否短格式</param>
     public static void Goto(this ILGenerator iLGenerator!!, Label label, bool isShort = true)
@@ -811,7 +811,7 @@ public static partial class ILGeneratorExtensions
     /// <summary>
     /// 如果值为 false\空引用\零则跳转
     /// </summary>
-    /// <param name="iLGenerator">中间语言指令</param>
+    /// <param name="iLGenerator">中间语言指令生成器</param>
     /// <param name="label">跳转标签</param>
     /// <param name="isShort">是否短格式</param>
     public static void GotoByFalse(this ILGenerator iLGenerator!!, Label label, bool isShort = true)
@@ -823,7 +823,7 @@ public static partial class ILGeneratorExtensions
     /// <summary>
     /// 如果值为 false\空引用\零则跳转
     /// </summary>
-    /// <param name="iLGenerator">中间语言指令</param>
+    /// <param name="iLGenerator">中间语言指令生成器</param>
     /// <param name="label">跳转标签</param>
     /// <param name="isShort">是否短格式</param>
     public static void GotoByTrue(this ILGenerator iLGenerator!!, Label label, bool isShort = true)
@@ -835,7 +835,7 @@ public static partial class ILGeneratorExtensions
     /// <summary>
     /// 跳转(强制),可用于退出try\filter\catch块
     /// </summary>
-    /// <param name="iLGenerator">中间语言指令</param>
+    /// <param name="iLGenerator">中间语言指令生成器</param>
     /// <param name="label">跳转标签</param>
     /// <param name="isShort">是否短格式</param>
     public static void GotoLeave(this ILGenerator iLGenerator!!, Label label, bool isShort = true)
@@ -847,7 +847,7 @@ public static partial class ILGeneratorExtensions
     /// <summary>
     /// 跳转到指定索引处的标签
     /// </summary>
-    /// <param name="iLGenerator">中间语言指令</param>
+    /// <param name="iLGenerator">中间语言指令生成器</param>
     /// <param name="labels">跳转标签集合</param>
     public static void Switch(this ILGenerator iLGenerator!!, Label[] labels) => iLGenerator.Emit(OpCodes.Switch, labels);
     #endregion
@@ -857,13 +857,13 @@ public static partial class ILGeneratorExtensions
     /// <summary>
     /// 复制值,并推送原值和副本
     /// </summary>
-    /// <param name="iLGenerator">中间语言指令</param>
+    /// <param name="iLGenerator">中间语言指令生成器</param>
     public static void Copy(this ILGenerator iLGenerator!!) => iLGenerator.Emit(OpCodes.Dup);
 
     /// <summary>
     /// 从源地址复制指定字节数到目标地址
     /// </summary>
-    /// <param name="iLGenerator">中间语言指令</param>
+    /// <param name="iLGenerator">中间语言指令生成器</param>
     public static void CopyToTargetAddr(this ILGenerator iLGenerator!!) => iLGenerator.Emit(OpCodes.Cpblk);
 
 
@@ -873,7 +873,7 @@ public static partial class ILGeneratorExtensions
     /// <summary>
     /// 调用方法
     /// </summary>
-    /// <param name="iLGenerator">中间语言指令</param>
+    /// <param name="iLGenerator">中间语言指令生成器</param>
     /// <param name="methodInfo">方法信息</param>
     /// <param name="optionalParameterTypes">可选参数类型,如果存在该值应该是调用约定为 <see cref=" CallingConventions.VarArgs"/> 的方法</param>
     public static void Call(this ILGenerator iLGenerator!!, MethodInfo methodInfo!!, params Type[] optionalParameterTypes)
@@ -885,7 +885,7 @@ public static partial class ILGeneratorExtensions
     /// <summary>
     /// 调用构造函数
     /// </summary>
-    /// <param name="iLGenerator">中间语言指令</param>
+    /// <param name="iLGenerator">中间语言指令生成器</param>
     /// <param name="constructorInfo">构造函数信息</param>
     public static void Call(this ILGenerator iLGenerator!!, ConstructorInfo constructorInfo!!) => iLGenerator.Emit(OpCodes.Call, constructorInfo);
 
@@ -898,20 +898,20 @@ public static partial class ILGeneratorExtensions
     /// <summary>
     /// 弹出当前值
     /// </summary>
-    /// <param name="iLGenerator">中间语言指令</param>
+    /// <param name="iLGenerator">中间语言指令生成器</param>
     public static void Pop(this ILGenerator iLGenerator!!) => iLGenerator.Emit(OpCodes.Pop);
 
     /// <summary>
     /// 推送类型的大小,单位字节(byte)
     /// </summary>
-    /// <param name="iLGenerator">中间语言指令</param>
+    /// <param name="iLGenerator">中间语言指令生成器</param>
     /// <param name="type">类型</param>
     public static void SizeOf(this ILGenerator iLGenerator!!, Type type!!) => iLGenerator.Emit(OpCodes.Sizeof, type);
 
     /// <summary>
     /// 引发异常
     /// </summary>
-    /// <param name="iLGenerator">中间语言指令</param>
+    /// <param name="iLGenerator">中间语言指令生成器</param>
     public static void Throw(this ILGenerator iLGenerator!!) => iLGenerator.Emit(OpCodes.Throw);
 
 
@@ -927,14 +927,14 @@ public static partial class ILGeneratorExtensions
     /// <summary>
     /// 创建一个数组,并推送结果
     /// </summary>
-    /// <param name="iLGenerator">中间语言指令</param>
+    /// <param name="iLGenerator">中间语言指令生成器</param>
     /// <param name="type">数组类型</param>
     public static void NewArray(this ILGenerator iLGenerator!!, Type type!!) => iLGenerator.Emit(OpCodes.Newarr, type);
 
     /// <summary>
     /// 创建一个对象,并推送结果
     /// </summary>
-    /// <param name="iLGenerator">中间语言指令</param>
+    /// <param name="iLGenerator">中间语言指令生成器</param>
     /// <param name="constructorInfo">创建对象的构造函数</param>
     public static void NewObject(this ILGenerator iLGenerator!!, ConstructorInfo constructorInfo!!) => iLGenerator.Emit(OpCodes.Newobj, constructorInfo);
     #endregion
@@ -943,7 +943,7 @@ public static partial class ILGeneratorExtensions
     /// <summary>
     /// 将当前堆栈的值设置到字段
     /// </summary>
-    /// <param name="iLGenerator">中间语言指令</param>
+    /// <param name="iLGenerator">中间语言指令生成器</param>
     /// <param name="fieldInfo">字段信息</param>
     public static void SetField(this ILGenerator iLGenerator!!, FieldInfo fieldInfo!!)
     {
@@ -954,7 +954,7 @@ public static partial class ILGeneratorExtensions
     /// <summary>
     /// 将当前堆栈的值设置到局部变量
     /// </summary>
-    /// <param name="iLGenerator">中间语言指令</param>
+    /// <param name="iLGenerator">中间语言指令生成器</param>
     /// <param name="localBuilder">局部变量</param>
     public static void SetLocal(this ILGenerator iLGenerator!!, LocalBuilder localBuilder!!)
     {
@@ -972,7 +972,7 @@ public static partial class ILGeneratorExtensions
     /// <summary>
     /// 将当前堆栈的值设置到索引处局部变量
     /// </summary>
-    /// <param name="iLGenerator">中间语言指令</param>
+    /// <param name="iLGenerator">中间语言指令生成器</param>
     /// <param name="localIndex">局部变量索引</param>
     public static void SetLocal(this ILGenerator iLGenerator!!, int localIndex)
     {
@@ -990,7 +990,7 @@ public static partial class ILGeneratorExtensions
     /// <summary>
     /// 设置数组值
     /// </summary>
-    /// <param name="iLGenerator">中间语言指令</param>
+    /// <param name="iLGenerator">中间语言指令生成器</param>
     /// <param name="valueType">值类型,如果是引用类型可以忽略</param>
     public static void SetArrayValue(this ILGenerator iLGenerator!!, Type? valueType = null)
     {
@@ -1010,13 +1010,13 @@ public static partial class ILGeneratorExtensions
     /// <summary>
     /// 分配空间并推送第一个字节的指针
     /// </summary>
-    /// <param name="iLGenerator">中间语言指令</param>
+    /// <param name="iLGenerator">中间语言指令生成器</param>
     public static void Localloc(this ILGenerator iLGenerator!!) => iLGenerator.Emit(OpCodes.Localloc);
 
     /// <summary>
     /// 设置整数值到指定地址
     /// </summary>
-    /// <param name="iLGenerator">中间语言指令</param>
+    /// <param name="iLGenerator">中间语言指令生成器</param>
     /// <param name="valueType">值类型</param>
     public static void SetIntegerValueToAddr(this ILGenerator iLGenerator!!, IntegerType valueType)
     {
@@ -1034,7 +1034,7 @@ public static partial class ILGeneratorExtensions
     /// <summary>
     /// 设置浮点值到指定地址
     /// </summary>
-    /// <param name="iLGenerator">中间语言指令</param>
+    /// <param name="iLGenerator">中间语言指令生成器</param>
     /// <param name="valueType">值类型</param>
     public static void SetFloatValueToAddr(this ILGenerator iLGenerator!!, FloatType valueType)
     {
@@ -1049,7 +1049,7 @@ public static partial class ILGeneratorExtensions
     /// <summary>
     /// 设置引用类型到指定地址
     /// </summary>
-    /// <param name="iLGenerator">中间语言指令</param>
+    /// <param name="iLGenerator">中间语言指令生成器</param>
     /// <param name="valueType">值类型,如果不为空使用 <see cref="OpCodes.Stobj"/> 指令</param>
     public static void SetRefValueToAddr(this ILGenerator iLGenerator!!,Type? valueType = null)
     {
