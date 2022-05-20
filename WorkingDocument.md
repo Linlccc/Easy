@@ -236,6 +236,9 @@ MergeJson 生成时会将 Easy.Tool.MergeJson.dll 复制到生成文件
 
   ~~~text
   1.考虑使用 FindUnderPath,ConvertToAbsolutePath msbuild 任务处理文件夹路径，在程序中尽量少的处理路径
+
+  问题：
+  1.项目中的appsettings.json 和 appsettings.dev.json 分开了可能是因为该项目移除了json为内容的原因(经验证：不是，新建一个项目在2022也是分开的)
   ~~~
 
 ### 暂时不处理
