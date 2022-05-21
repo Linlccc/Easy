@@ -61,9 +61,15 @@
         {
             Type type = _moduleBuilder.DefineType_EmitOpCodesVerify();
 
+            int[] add1 = (int[])type.InvokeMember("Add1", BindingFlags.InvokeMethod, null, null, new object[] { 10, 2 });
+            int[] add2 = (int[])type.InvokeMember("Add2", BindingFlags.InvokeMethod, null, null, new object[] { 123, 2 });
+            Assert.Equal(12, add1[0]);
+            Assert.Equal(125, add2[0]);
 
-            object? addValue = type.InvokeMember("Add1", BindingFlags.InvokeMethod, null, null, new object[] { 1, 2 });
-            object? addValue1 = type.InvokeMember("Add2", BindingFlags.InvokeMethod, null, null, new object[] { 123, 1 });
+
+            int[] sub1 = (int[])type.InvokeMember("Sub1", BindingFlags.InvokeMethod, null, null, new object[] { 123, 2 });
+
+            Assert.Equal(121, sub1[0]);
         }
 
 

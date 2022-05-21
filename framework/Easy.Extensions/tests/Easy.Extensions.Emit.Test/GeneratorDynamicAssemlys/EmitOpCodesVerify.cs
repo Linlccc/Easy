@@ -46,6 +46,10 @@ public static class EmitOpCodesVerifyCreator
 
         DefineMethod_Add1(typeBuilder);
         DefineMethod_Add2(typeBuilder);
+
+        DefineMethod_Sub1(typeBuilder);
+
+
         DefineMethod_StringAdd1(typeBuilder);
 
         return typeBuilder.CreateType();
@@ -168,6 +172,52 @@ public static class EmitOpCodesVerifyCreator
         il.SetLocal(0);
 
         il.LoadLocal(0);
+        il.Return();
+
+        return methodBuilder;
+    }
+    #endregion
+
+
+
+    #region Sub
+    /// <summary>
+    /// 定义 Add2 方法
+    /// </summary>
+    /// <returns></returns>
+    public static MethodBuilder DefineMethod_Sub1(TypeBuilder typeBuilder)
+    {
+        MethodBuilder methodBuilder = typeBuilder.DefineMethod("Sub1", MethodAttributes.Public | MethodAttributes.Static, typeof(int[]), new Type[] { typeof(int), typeof(int) });
+        ILGenerator il = methodBuilder.GetILGenerator();
+        // 声明本地变量数组
+        LocalBuilder arr = il.DeclareLocal(typeof(int[]));
+        il.LoadInt(3);
+        il.NewArray(typeof(int));
+        il.SetLocal(arr);
+
+        // 正常添加
+        il.LoadLocal(arr);
+        il.LoadInt(0);
+        il.LoadArg();
+        il.LoadArg(1);
+        il.MathSub();
+        il.SetArrayValue(typeof(int));
+        // 检查溢出添加
+        il.LoadLocal(arr);
+        il.LoadInt(1);
+        il.LoadArg();
+        il.LoadArg(1);
+        il.MathSub(true);
+        il.SetArrayValue(typeof(int));
+        // 检查溢出无符号添加
+        il.LoadLocal(arr);
+        il.LoadInt(2);
+        il.LoadArg();
+        il.LoadArg(1);
+        il.MathSub(isUnsigned: true);
+        il.SetArrayValue(typeof(int));
+
+        il.LoadLocal(arr);
         il.Return();
 
         return methodBuilder;
