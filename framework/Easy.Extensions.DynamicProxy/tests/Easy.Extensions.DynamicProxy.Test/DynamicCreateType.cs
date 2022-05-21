@@ -1,6 +1,5 @@
-﻿using System.Reflection.Emit;
-using System.Reflection;
-using Xunit.Abstractions;
+﻿using System.Reflection;
+using System.Reflection.Emit;
 
 namespace Easy.Extensions.DynamicProxy.Test;
 
@@ -10,13 +9,13 @@ public class Test1
     {
         this.f1 = f1;
     }
-    
+
     public int f1;
 
     public int m1() => f1;
 }
 
-public class Test2: Test1
+public class Test2 : Test1
 {
     public Test2(int f2, int f1) : base(f1)
     {
@@ -402,7 +401,7 @@ public class DynamicCreateType
             // 定义一个 测试本地变量的方法
             ILGenerator il = dynamicType.DefineMethod("TestLoaclVar13", MethodAttributes.Public, typeof(IntPtr), new Type[] { typeof(IntPtr), typeof(IntPtr) }).GetILGenerator();
 
-            var a = typeof(object).GetMethod("ToString");
+            MethodInfo? a = typeof(object).GetMethod("ToString");
 
             il.NewObject(typeof(object).GetConstructor(Type.EmptyTypes));
             il.LoadMethodPointer(a);
@@ -536,7 +535,7 @@ public class DynamicCreateType
             LocalBuilder l1 = il.DeclareLocal(typeof(object));
             il.LoadLocalAddr(l1.LocalIndex);
             il.LoadArg(1);
-            il.Emit(OpCodes.Stobj,typeof(object));
+            il.Emit(OpCodes.Stobj, typeof(object));
 
             il.LoadLocal(l1);
             il.Return();
