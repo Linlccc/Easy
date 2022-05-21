@@ -195,6 +195,54 @@ public static partial class ILGeneratorExtensions
         else if (isOverflowCheck) iLGenerator.Emit(OpCodes.Add_Ovf);
         else iLGenerator.Emit(OpCodes.Add);
     }
+
+    /// <summary>
+    /// 将堆栈顶部两个值相减,并推送结果
+    /// </summary>
+    /// <param name="iLGenerator">中间语言指令生成器</param>
+    /// <param name="isOverflowCheck">是否启动溢出检查</param>
+    /// <param name="isUnsigned">是否是无符号,开启无符号自动启用溢出检查</param>
+    public static void MathSub(this ILGenerator iLGenerator!!, bool isOverflowCheck = false, bool isUnsigned = false)
+    {
+        if (isUnsigned) iLGenerator.Emit(OpCodes.Sub_Ovf_Un);
+        else if (isOverflowCheck) iLGenerator.Emit(OpCodes.Sub_Ovf);
+        else iLGenerator.Emit(OpCodes.Sub);
+    }
+
+    /// <summary>
+    /// 将堆栈顶部两个值相乘,并将结果推送
+    /// </summary>
+    /// <param name="iLGenerator">中间语言指令生成器</param>
+    /// <param name="isOverflowCheck">是否启动溢出检查</param>
+    /// <param name="isUnsigned">是否是无符号,开启无符号自动启用溢出检查</param>
+    public static void MathMul(this ILGenerator iLGenerator!!, bool isOverflowCheck = false, bool isUnsigned = false)
+    {
+        if (isUnsigned) iLGenerator.Emit(OpCodes.Mul_Ovf_Un);
+        else if (isOverflowCheck) iLGenerator.Emit(OpCodes.Mul_Ovf);
+        else iLGenerator.Emit(OpCodes.Mul);
+    }
+
+    /// <summary>
+    /// 将堆栈顶部两个值相除,并推送结果
+    /// </summary>
+    /// <param name="iLGenerator">中间语言指令生成器</param>
+    /// <param name="isUnsigned">被除数和除数是否是无符号</param>
+    public static void MathDiv(this ILGenerator iLGenerator!!, bool isUnsigned = false)
+    {
+        if (isUnsigned) iLGenerator.Emit(OpCodes.Div_Un);
+        else iLGenerator.Emit(OpCodes.Div);
+    }
+
+    /// <summary>
+    /// 将堆栈顶部两个值求余,并推送结果
+    /// </summary>
+    /// <param name="iLGenerator">中间语言指令生成器</param>
+    /// <param name="isUnsigned">两个求余的值是否是无符号</param>
+    public static void MathRem(this ILGenerator iLGenerator!!, bool isUnsigned = false)
+    {
+        if (isUnsigned) iLGenerator.Emit(OpCodes.Rem_Un);
+        else iLGenerator.Emit(OpCodes.Rem);
+    }
     #endregion
 
 
@@ -367,58 +415,6 @@ public static partial class ILGeneratorExtensions
         if (typeof(T) == typeof(Type)) iLGenerator.Emit(OpCodes.Ldtoken, (token as Type)!);
         else if (typeof(T) == typeof(FieldInfo)) iLGenerator.Emit(OpCodes.Ldtoken, (token as FieldInfo)!);
         else if (typeof(T) == typeof(MethodInfo)) iLGenerator.Emit(OpCodes.Ldtoken, (token as MethodInfo)!);
-    }
-    #endregion
-
-    #region 数学运算
-
-
-    /// <summary>
-    /// 将两个值相减,并推送结果
-    /// </summary>
-    /// <param name="iLGenerator">中间语言指令生成器</param>
-    /// <param name="isOverflowCheck">是否启动溢出检查</param>
-    /// <param name="isUnsigned">是否是无符号,开启无符号自动开启溢出检查</param>
-    public static void MathSub(this ILGenerator iLGenerator!!, bool isOverflowCheck = false, bool isUnsigned = false)
-    {
-        if (isUnsigned) iLGenerator.Emit(OpCodes.Sub_Ovf_Un);
-        else if (isOverflowCheck) iLGenerator.Emit(OpCodes.Sub_Ovf);
-        else iLGenerator.Emit(OpCodes.Sub);
-    }
-
-    /// <summary>
-    /// 将两个值相乘,并将结果推送
-    /// </summary>
-    /// <param name="iLGenerator">中间语言指令生成器</param>
-    /// <param name="isOverflowCheck">是否启动溢出检查</param>
-    /// <param name="isUnsigned">是否是无符号,开启无符号自动开启溢出检查</param>
-    public static void MathMul(this ILGenerator iLGenerator!!, bool isOverflowCheck = false, bool isUnsigned = false)
-    {
-        if (isUnsigned) iLGenerator.Emit(OpCodes.Mul_Ovf_Un);
-        else if (isOverflowCheck) iLGenerator.Emit(OpCodes.Mul_Ovf);
-        else iLGenerator.Emit(OpCodes.Mul);
-    }
-
-    /// <summary>
-    /// 将两个值相除,并推送结果
-    /// </summary>
-    /// <param name="iLGenerator">中间语言指令生成器</param>
-    /// <param name="isUnsigned">被除数和除数是否是无符号</param>
-    public static void MathDiv(this ILGenerator iLGenerator!!, bool isUnsigned = false)
-    {
-        if (isUnsigned) iLGenerator.Emit(OpCodes.Div_Un);
-        else iLGenerator.Emit(OpCodes.Div);
-    }
-
-    /// <summary>
-    /// 将两个值求余,并推送结果
-    /// </summary>
-    /// <param name="iLGenerator">中间语言指令生成器</param>
-    /// <param name="isUnsigned">两个求余的值是否是无符号</param>
-    public static void MathRem(this ILGenerator iLGenerator!!, bool isUnsigned = false)
-    {
-        if (isUnsigned) iLGenerator.Emit(OpCodes.Rem_Un);
-        else iLGenerator.Emit(OpCodes.Rem);
     }
     #endregion
 
