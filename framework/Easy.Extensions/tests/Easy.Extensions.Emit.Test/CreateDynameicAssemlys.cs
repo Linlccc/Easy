@@ -102,6 +102,23 @@
             // >>
             int[] shiftRight1 = (int[])type.InvokeMember("ShiftRight1", BindingFlags.InvokeMethod, null, null, new object[] { 123, 2 });
             Assert.Equal(123 >> 2, shiftRight1[0]);
+
+            // ** 比较
+            // ==
+            int equal1 = (int)type.InvokeMember("Equal1", BindingFlags.InvokeMethod, null, null, new object[] { 123, 123 });
+            Assert.Equal(123 == 123 ? 1 : 0, equal1);
+            // >
+            int greater1 = (int)type.InvokeMember("Greater1", BindingFlags.InvokeMethod, null, null, new object[] { 123, 123 });
+            Assert.Equal(123 > 123 ? 1 : 0, greater1);
+            // >
+            int less1 = (int)type.InvokeMember("Less1", BindingFlags.InvokeMethod, null, null, new object[] { 123, 123 });
+            Assert.Equal(123 < 123 ? 1 : 0, less1);
+
+
+            string t1 = (string)type.InvokeMember("Test1", BindingFlags.InvokeMethod, null, null, new object[] { 123, 123 });
+            Assert.Equal(123 == 123 ? "True" : "False", t1);
+            string t2 = (string)type.InvokeMember("Test1", BindingFlags.InvokeMethod, null, null, new object[] { 123, 124 });
+            Assert.Equal(123 == 124 ? "True" : "False", t2);
         }
 
 

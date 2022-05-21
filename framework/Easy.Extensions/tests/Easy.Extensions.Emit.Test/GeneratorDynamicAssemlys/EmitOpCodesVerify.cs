@@ -143,7 +143,17 @@ public static class EmitOpCodesVerifyCreator
         // >>
         DefineMethod_ShiftRight1(typeBuilder);
 
+        // ==
+        DefineMethod_Equal1(typeBuilder);
+        // >
+        DefineMethod_Greater1(typeBuilder);
+        // <
+        DefineMethod_Less1(typeBuilder);
+
+        // 字符串拼接
         DefineMethod_StringAdd1(typeBuilder);
+
+        Test1(typeBuilder);
 
         return typeBuilder.CreateType();
     }
@@ -556,6 +566,65 @@ public static class EmitOpCodesVerifyCreator
     }
     #endregion
 
+    #region 比较
+    // ==
+    public static MethodBuilder DefineMethod_Equal1(TypeBuilder typeBuilder)
+    {
+        MethodBuilder methodBuilder = typeBuilder.DefineMethod("Equal1", MethodAttributes.Public | MethodAttributes.Static, typeof(int), new Type[] { typeof(int), typeof(int) });
+        ILGenerator il = methodBuilder.GetILGenerator();
+
+        LocalBuilder l1 = il.DeclareLocal(typeof(int));
+
+        il.LoadArg();
+        il.LoadArg(1);
+        il.CompareEqual();
+        il.SetLocal(l1);
+
+        il.LoadLocal(l1);
+        il.Return();
+
+        return methodBuilder;
+    }
+
+    // >
+    public static MethodBuilder DefineMethod_Greater1(TypeBuilder typeBuilder)
+    {
+        MethodBuilder methodBuilder = typeBuilder.DefineMethod("Greater1", MethodAttributes.Public | MethodAttributes.Static, typeof(int), new Type[] { typeof(int), typeof(int) });
+        ILGenerator il = methodBuilder.GetILGenerator();
+
+        LocalBuilder l1 = il.DeclareLocal(typeof(int));
+
+        il.LoadArg();
+        il.LoadArg(1);
+        il.CompareGreater();
+        il.SetLocal(l1);
+
+        il.LoadLocal(l1);
+        il.Return();
+
+        return methodBuilder;
+    }
+
+    // <
+    public static MethodBuilder DefineMethod_Less1(TypeBuilder typeBuilder)
+    {
+        MethodBuilder methodBuilder = typeBuilder.DefineMethod("Less1", MethodAttributes.Public | MethodAttributes.Static, typeof(int), new Type[] { typeof(int), typeof(int) });
+        ILGenerator il = methodBuilder.GetILGenerator();
+
+        LocalBuilder l1 = il.DeclareLocal(typeof(int));
+
+        il.LoadArg();
+        il.LoadArg(1);
+        il.CompareLess();
+        il.SetLocal(l1);
+
+        il.LoadLocal(l1);
+        il.Return();
+
+        return methodBuilder;
+    }
+    #endregion
+
     #region 字符串相加
     /// <summary>
     /// 定义 StringAdd1(字符串相加) 方法
@@ -579,4 +648,38 @@ public static class EmitOpCodesVerifyCreator
         return methodBuilder;
     }
     #endregion
+
+    public static MethodBuilder Test1(TypeBuilder typeBuilder)
+    {
+        MethodBuilder methodBuilder = typeBuilder.DefineMethod("Test1", MethodAttributes.Public | MethodAttributes.Static, typeof(string), new Type[] { typeof(int), typeof(int) });
+        ILGenerator il = methodBuilder.GetILGenerator();
+
+        LocalBuilder l1 = il.DeclareLocal(typeof(string));
+        Label label1 = il.DefineLabel();
+        Label label2 = il.DefineLabel();
+        Label label3 = il.DefineLabel();
+
+        il.LoadArg();
+        il.LoadArg(1);
+        il.GotoByEqual(label2);
+
+        il.MarkLabel(label1);
+        il.LoadString("False");
+        il.SetLocal(l1);
+        il.LoadLocal(l1);
+        il.Goto(label3);
+
+        il.MarkLabel(label2);
+        il.LoadString("True");
+        il.SetLocal(l1);
+        il.LoadLocal(l1);
+        il.Goto(label3);
+
+        il.MarkLabel(label3);
+
+
+        il.Return();
+
+        return methodBuilder;
+    }
 }

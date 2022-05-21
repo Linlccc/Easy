@@ -409,10 +409,6 @@ public static partial class ILGeneratorExtensions
     /* 未验证方法
      * LoadField
      * 
-     * CompareEqual
-     * CompareGreater
-     * CompareLess
-     * 
      * SetField
      * 
      * NewObject
