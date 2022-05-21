@@ -11,8 +11,7 @@ public static partial class ILGeneratorExtensions
      * 3.指针:      (pointer)
      *  3.1. 指针类型,是一种数据类型 比如:int*(int指针类型)
      *  3.2. 指针变量,是一个变量,指针变量的值是一个地址,指针变量也有自己的地址
-     *  
-     * 
+     * 4.native int 就是C#中的 IntPtr
      */
 
     #region 加载/推送(将指定的值推送到计算堆栈)
@@ -83,7 +82,7 @@ public static partial class ILGeneratorExtensions
     }
     #endregion
 
-    #region 值
+    #region 常量
     /// <summary>
     /// 推送 <see cref="Int32"/> / <see cref="Int16"/> / <see cref="byte"/> 数字常量
     /// </summary>
@@ -107,6 +106,40 @@ public static partial class ILGeneratorExtensions
             default: iLGenerator.Emit(OpCodes.Ldc_I4, value); return;
         }
     }
+
+    /// <summary>
+    /// 推送 <see cref="Int64"/> 数字常量
+    /// </summary>
+    /// <param name="iLGenerator">中间语言指令生成器</param>
+    /// <param name="value">要推送的数字常量</param>
+    public static void LoadInt64(this ILGenerator iLGenerator!!, long value) => iLGenerator.Emit(OpCodes.Ldc_I8, value);
+
+    /// <summary>
+    /// 推送 <see cref="Single"/>(float32) 数字常量
+    /// </summary>
+    /// <param name="iLGenerator">中间语言指令生成器</param>
+    /// <param name="value">要推送的数字常量</param>
+    public static void LoadFloat(this ILGenerator iLGenerator!!, float value) => iLGenerator.Emit(OpCodes.Ldc_R4, value);
+
+    /// <summary>
+    /// 推送 <see cref="Double"/>(float64) 数字常量
+    /// </summary>
+    /// <param name="iLGenerator">中间语言指令生成器</param>
+    /// <param name="value">要推送的数字常量</param>
+    public static void LoadDouble(this ILGenerator iLGenerator!!, double value) => iLGenerator.Emit(OpCodes.Ldc_R8, value);
+
+    /// <summary>
+    /// 推送 <see cref="string"/> 类型对象
+    /// </summary>
+    /// <param name="iLGenerator">中间语言指令生成器</param>
+    /// <param name="value">要推送的字符串</param>
+    public static void LoadString(this ILGenerator iLGenerator!!, string value) => iLGenerator.Emit(OpCodes.Ldstr, value);
+
+    /// <summary>
+    /// 推送空引用(null)
+    /// </summary>
+    /// <param name="iLGenerator">中间语言指令生成器</param>
+    public static void LoadNull(this ILGenerator iLGenerator!!) => iLGenerator.Emit(OpCodes.Ldnull);
     #endregion
     #endregion
 
@@ -243,7 +276,69 @@ public static partial class ILGeneratorExtensions
         if (isUnsigned) iLGenerator.Emit(OpCodes.Rem_Un);
         else iLGenerator.Emit(OpCodes.Rem);
     }
+
+    /// <summary>
+    /// 将堆栈顶部的值执行"求反"操作,并推送结果
+    /// </summary>
+    /// <param name="iLGenerator">中间语言指令生成器</param>
+    public static void MathNeg(this ILGenerator iLGenerator!!) => iLGenerator.Emit(OpCodes.Neg);
     #endregion
+
+    #region 计算
+    /// <summary>
+    /// 将堆栈顶部两个值执行"按位与"操作,并推送结果
+    /// </summary>
+    /// <param name="iLGenerator">中间语言指令生成器</param>
+    public static void BitwiseAnd(this ILGenerator iLGenerator!!) => iLGenerator.Emit(OpCodes.And);
+
+    /// <summary>
+    /// 将堆栈顶部两个值执行"按位或"操作,并推送结果
+    /// </summary>
+    /// <param name="iLGenerator">中间语言指令生成器</param>
+    public static void BitwiseOr(this ILGenerator iLGenerator!!) => iLGenerator.Emit(OpCodes.Or);
+
+    /// <summary>
+    /// 将堆栈顶部两个值执行"按位异或"操作,并推送结果
+    /// </summary>
+    /// <param name="iLGenerator">中间语言指令生成器</param>
+    public static void BitwiseXor(this ILGenerator iLGenerator!!) => iLGenerator.Emit(OpCodes.Xor);
+
+    /// <summary>
+    /// 将堆栈顶部的值执行"按位求补"操作,并推送结果
+    /// 对整数值,并推送结果
+    /// </summary>
+    /// <param name="iLGenerator">中间语言指令生成器</param>
+    public static void BitwiseNot(this ILGenerator iLGenerator!!) => iLGenerator.Emit(OpCodes.Not);
+
+    /// <summary>
+    /// 将堆栈顶部整数值执行"左移位"操作,并推送结果
+    /// <list type="bullet">
+    ///     <item>1.推送值</item>
+    ///     <item>2.推送位数</item>
+    /// </list>
+    /// </summary>
+    /// <param name="iLGenerator">中间语言指令生成器</param>
+    public static void BitwiseShiftLeft(this ILGenerator iLGenerator!!) => iLGenerator.Emit(OpCodes.Shl);
+
+    /// <summary>
+    /// 将堆栈顶部整数值执行"右移位"操作,并推送结果
+    /// <list type="bullet">
+    ///     <item>1.推送值</item>
+    ///     <item>2.推送位数</item>
+    /// </list>
+    /// </summary>
+    /// <param name="iLGenerator">中间语言指令生成器</param>
+    /// <param name="isUnsigned">移位值是否是无符号值</param>
+    public static void BitwiseShiftRight(this ILGenerator iLGenerator!!, bool isUnsigned = false)
+    {
+        if (isUnsigned) iLGenerator.Emit(OpCodes.Shr_Un);
+        else iLGenerator.Emit(OpCodes.Shr);
+    }
+    #endregion
+
+
+
+
 
 
 
@@ -327,26 +422,7 @@ public static partial class ILGeneratorExtensions
     #region 推送数字
 
 
-    /// <summary>
-    /// 推送 <see cref="Int64"/> 数字常量
-    /// </summary>
-    /// <param name="iLGenerator">中间语言指令生成器</param>
-    /// <param name="value">要加载的数字常量</param>
-    public static void LoadInt64(this ILGenerator iLGenerator!!, long value) => iLGenerator.Emit(OpCodes.Ldc_I8, value);
 
-    /// <summary>
-    /// 推送 <see cref="Single"/>(float32) 数字常量
-    /// </summary>
-    /// <param name="iLGenerator">中间语言指令生成器</param>
-    /// <param name="value">要加载的数字常量</param>
-    public static void LoadFloat(this ILGenerator iLGenerator!!, float value) => iLGenerator.Emit(OpCodes.Ldc_R4, value);
-
-    /// <summary>
-    /// 推送 <see cref="Double"/>(float64) 数字常量
-    /// </summary>
-    /// <param name="iLGenerator">中间语言指令生成器</param>
-    /// <param name="value">要加载的数字常量</param>
-    public static void LoadDouble(this ILGenerator iLGenerator!!, double value) => iLGenerator.Emit(OpCodes.Ldc_R8, value);
 
     /// <summary>
     /// 推送指定地址处的整数值
@@ -385,18 +461,7 @@ public static partial class ILGeneratorExtensions
     }
     #endregion
 
-    /// <summary>
-    /// 推送 <see cref="string"/> 类型对象
-    /// </summary>
-    /// <param name="iLGenerator">中间语言指令生成器</param>
-    /// <param name="value">值</param>
-    public static void LoadString(this ILGenerator iLGenerator!!, string value) => iLGenerator.Emit(OpCodes.Ldstr, value);
 
-    /// <summary>
-    /// 推送空引用(null)
-    /// </summary>
-    /// <param name="iLGenerator">中间语言指令生成器</param>
-    public static void LoadNull(this ILGenerator iLGenerator!!) => iLGenerator.Emit(OpCodes.Ldnull);
 
     /// <summary>
     /// 获取指定地址处的对象值
@@ -418,54 +483,7 @@ public static partial class ILGeneratorExtensions
     }
     #endregion
 
-    #region 计算
-    /// <summary>
-    /// 计算两个值按位"与",并推送结果
-    /// </summary>
-    /// <param name="iLGenerator">中间语言指令生成器</param>
-    public static void BitwiseAnd(this ILGenerator iLGenerator!!) => iLGenerator.Emit(OpCodes.And);
 
-    /// <summary>
-    /// 计算两个值按位"或",并推送结果
-    /// </summary>
-    /// <param name="iLGenerator">中间语言指令生成器</param>
-    public static void BitwiseOr(this ILGenerator iLGenerator!!) => iLGenerator.Emit(OpCodes.Or);
-
-    /// <summary>
-    /// 计算两个值按位"异或",并推送结果
-    /// </summary>
-    /// <param name="iLGenerator">中间语言指令生成器</param>
-    public static void BitwiseXor(this ILGenerator iLGenerator!!) => iLGenerator.Emit(OpCodes.Xor);
-
-    /// <summary>
-    /// 对值求反,并将结果推送
-    /// </summary>
-    /// <param name="iLGenerator">中间语言指令生成器</param>
-    public static void BitwiseNeg(this ILGenerator iLGenerator!!) => iLGenerator.Emit(OpCodes.Neg);
-
-    /// <summary>
-    /// 对整数值按位求补,并推送结果
-    /// </summary>
-    /// <param name="iLGenerator">中间语言指令生成器</param>
-    public static void BitwiseNot(this ILGenerator iLGenerator!!) => iLGenerator.Emit(OpCodes.Not);
-
-    /// <summary>
-    /// 对整数值左移位,并推送结果
-    /// </summary>
-    /// <param name="iLGenerator">中间语言指令生成器</param>
-    public static void BitwiseShiftLeft(this ILGenerator iLGenerator!!) => iLGenerator.Emit(OpCodes.Shl);
-
-    /// <summary>
-    /// 对整数值右移位,并推送结果
-    /// </summary>
-    /// <param name="iLGenerator">中间语言指令生成器</param>
-    /// <param name="isUnsigned">移位值是否是无符号值</param>
-    public static void BitwiseShiftRight(this ILGenerator iLGenerator!!, bool isUnsigned = false)
-    {
-        if (isUnsigned) iLGenerator.Emit(OpCodes.Shr_Un);
-        else iLGenerator.Emit(OpCodes.Shr);
-    }
-    #endregion
 
     #region 比较
     /// <summary>

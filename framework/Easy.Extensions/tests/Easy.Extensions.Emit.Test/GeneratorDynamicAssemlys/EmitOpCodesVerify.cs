@@ -92,12 +92,28 @@ public static class EmitOpCodesVerifyCreator
         DefineMethod_Div1(typeBuilder);
         // %
         DefineMethod_Rem1(typeBuilder);
+        // -arg
+        DefineMethod_Neg1(typeBuilder);
+
+        // &
+        DefineMethod_And1(typeBuilder);
+        // |
+        DefineMethod_Or1(typeBuilder);
+        // ^
+        DefineMethod_Xor1(typeBuilder);
+        // ~arg
+        DefineMethod_Not1(typeBuilder);
+        // <<
+        DefineMethod_ShiftLeft1(typeBuilder);
+        // >>
+        DefineMethod_ShiftRight1(typeBuilder);
 
         DefineMethod_StringAdd1(typeBuilder);
 
         return typeBuilder.CreateType();
     }
 
+    #region 数学
     #region Add
     /// <summary>
     /// 定义 Add1 方法
@@ -193,28 +209,6 @@ public static class EmitOpCodesVerifyCreator
         il.SetArrayValue(typeof(int));
 
         il.LoadLocal(arr);
-        il.Return();
-
-        return methodBuilder;
-    }
-
-    /// <summary>
-    /// 定义 StringAdd1(字符串相加) 方法
-    /// </summary>
-    /// <returns></returns>
-    public static MethodBuilder DefineMethod_StringAdd1(TypeBuilder typeBuilder)
-    {
-        MethodBuilder methodBuilder = typeBuilder.DefineMethod("StringAdd1", MethodAttributes.Public | MethodAttributes.Static, typeof(string), new Type[] { typeof(string), typeof(string) });
-        ILGenerator il = methodBuilder.GetILGenerator();
-
-        LocalBuilder l1 = il.DeclareLocal(typeof(string));
-
-        il.LoadArg();
-        il.LoadArg(1);
-        il.Call(typeof(string).GetMethod("Concat", new Type[] { typeof(string), typeof(string) }));
-        il.SetLocal(0);
-
-        il.LoadLocal(0);
         il.Return();
 
         return methodBuilder;
@@ -381,5 +375,174 @@ public static class EmitOpCodesVerifyCreator
 
         return methodBuilder;
     }
-    #endregion    
+    #endregion
+
+    #region 求反
+    // -arg
+    public static MethodBuilder DefineMethod_Neg1(TypeBuilder typeBuilder)
+    {
+        MethodBuilder methodBuilder = typeBuilder.DefineMethod("Neg1", MethodAttributes.Public | MethodAttributes.Static, typeof(int), new Type[] { typeof(int) });
+        ILGenerator il = methodBuilder.GetILGenerator();
+
+        LocalBuilder l1 = il.DeclareLocal(typeof(int));
+
+        il.LoadArg();
+        il.MathNeg();
+        il.SetLocal(l1);
+        il.LoadLocal(l1);
+        il.Return();
+
+        return methodBuilder;
+    }
+    #endregion
+    #endregion
+
+    #region 计算
+    // &
+    public static MethodBuilder DefineMethod_And1(TypeBuilder typeBuilder)
+    {
+        MethodBuilder methodBuilder = typeBuilder.DefineMethod("And1", MethodAttributes.Public | MethodAttributes.Static, typeof(int), new Type[] { typeof(int), typeof(int) });
+        ILGenerator il = methodBuilder.GetILGenerator();
+
+        LocalBuilder l1 = il.DeclareLocal(typeof(int));
+
+        il.LoadArg();
+        il.LoadArg(1);
+        il.BitwiseAnd();
+        il.SetLocal(l1);
+        il.LoadLocal(l1);
+        il.Return();
+
+        return methodBuilder;
+    }
+
+    // |
+    public static MethodBuilder DefineMethod_Or1(TypeBuilder typeBuilder)
+    {
+        MethodBuilder methodBuilder = typeBuilder.DefineMethod("Or1", MethodAttributes.Public | MethodAttributes.Static, typeof(int), new Type[] { typeof(int), typeof(int) });
+        ILGenerator il = methodBuilder.GetILGenerator();
+
+        LocalBuilder l1 = il.DeclareLocal(typeof(int));
+
+        il.LoadArg();
+        il.LoadArg(1);
+        il.BitwiseOr();
+        il.SetLocal(l1);
+        il.LoadLocal(l1);
+        il.Return();
+
+        return methodBuilder;
+    }
+
+    // ^
+    public static MethodBuilder DefineMethod_Xor1(TypeBuilder typeBuilder)
+    {
+        MethodBuilder methodBuilder = typeBuilder.DefineMethod("Xor1", MethodAttributes.Public | MethodAttributes.Static, typeof(int), new Type[] { typeof(int), typeof(int) });
+        ILGenerator il = methodBuilder.GetILGenerator();
+
+        LocalBuilder l1 = il.DeclareLocal(typeof(int));
+
+        il.LoadArg();
+        il.LoadArg(1);
+        il.BitwiseXor();
+        il.SetLocal(l1);
+        il.LoadLocal(l1);
+        il.Return();
+
+        return methodBuilder;
+    }
+
+    // ~arg
+    public static MethodBuilder DefineMethod_Not1(TypeBuilder typeBuilder)
+    {
+        MethodBuilder methodBuilder = typeBuilder.DefineMethod("Not1", MethodAttributes.Public | MethodAttributes.Static, typeof(int), new Type[] { typeof(int) });
+        ILGenerator il = methodBuilder.GetILGenerator();
+
+        LocalBuilder l1 = il.DeclareLocal(typeof(int));
+
+        il.LoadArg();
+        il.BitwiseNot();
+        il.SetLocal(l1);
+        il.LoadLocal(l1);
+        il.Return();
+
+        return methodBuilder;
+    }
+
+    // <<
+    public static MethodBuilder DefineMethod_ShiftLeft1(TypeBuilder typeBuilder)
+    {
+        MethodBuilder methodBuilder = typeBuilder.DefineMethod("ShiftLeft1", MethodAttributes.Public | MethodAttributes.Static, typeof(int), new Type[] { typeof(int), typeof(int) });
+        ILGenerator il = methodBuilder.GetILGenerator();
+
+        LocalBuilder l1 = il.DeclareLocal(typeof(int));
+
+        il.LoadArg();
+        il.LoadArg(1);
+        il.BitwiseShiftLeft();
+        il.SetLocal(l1);
+        il.LoadLocal(l1);
+        il.Return();
+
+        return methodBuilder;
+    }
+
+    // >>
+    public static MethodBuilder DefineMethod_ShiftRight1(TypeBuilder typeBuilder)
+    {
+        MethodBuilder methodBuilder = typeBuilder.DefineMethod("ShiftRight1", MethodAttributes.Public | MethodAttributes.Static, typeof(int[]), new Type[] { typeof(int), typeof(int) });
+        ILGenerator il = methodBuilder.GetILGenerator();
+
+        LocalBuilder l1 = il.DeclareLocal(typeof(int[]));
+        il.LoadInt(2);
+        il.NewArray(typeof(int));
+        il.SetLocal(l1);
+
+        // 正常右移位
+        il.LoadLocal(l1);
+        il.LoadInt(0);
+        il.LoadArg();
+        il.LoadArg(1);
+        il.BitwiseShiftRight();
+        il.SetArrayValue(typeof(int));
+
+        // 无符号右移位
+        il.LoadLocal(l1);
+        il.LoadInt(1);
+        il.LoadArg();
+        il.LoadArg(1);
+        il.BitwiseShiftRight(true);
+        il.SetArrayValue(typeof(int));
+
+        il.LoadLocal(l1);
+        il.Return();
+
+        return methodBuilder;
+    }
+    #endregion
+
+
+    #region 字符串相加
+    /// <summary>
+    /// 定义 StringAdd1(字符串相加) 方法
+    /// </summary>
+    /// <returns></returns>
+    public static MethodBuilder DefineMethod_StringAdd1(TypeBuilder typeBuilder)
+    {
+        MethodBuilder methodBuilder = typeBuilder.DefineMethod("StringAdd1", MethodAttributes.Public | MethodAttributes.Static, typeof(string), new Type[] { typeof(string), typeof(string) });
+        ILGenerator il = methodBuilder.GetILGenerator();
+
+        LocalBuilder l1 = il.DeclareLocal(typeof(string));
+
+        il.LoadArg();
+        il.LoadArg(1);
+        il.Call(typeof(string).GetMethod("Concat", new Type[] { typeof(string), typeof(string) }));
+        il.SetLocal(0);
+
+        il.LoadLocal(0);
+        il.Return();
+
+        return methodBuilder;
+    }
+    #endregion
 }

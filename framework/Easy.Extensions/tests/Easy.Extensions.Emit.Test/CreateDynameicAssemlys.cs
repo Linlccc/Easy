@@ -61,6 +61,7 @@
         {
             Type type = _moduleBuilder.DefineType_EmitOpCodesVerify();
 
+            // ** 数学
             // +
             int[] add1 = (int[])type.InvokeMember("Add1", BindingFlags.InvokeMethod, null, null, new object[] { 10, 2 });
             int[] add2 = (int[])type.InvokeMember("Add2", BindingFlags.InvokeMethod, null, null, new object[] { 123, 2 });
@@ -78,6 +79,29 @@
             // %
             int[] rem1 = (int[])type.InvokeMember("Rem1", BindingFlags.InvokeMethod, null, null, new object[] { 123, 2 });
             Assert.Equal(1, rem1[0]);
+            // -arg
+            int neg1 = (int)type.InvokeMember("Neg1", BindingFlags.InvokeMethod, null, null, new object[] { 123 });
+            Assert.Equal(-123, neg1);
+
+            // ** 按位计算
+            // &
+            int and1 = (int)type.InvokeMember("And1", BindingFlags.InvokeMethod, null, null, new object[] { 123, 2 });
+            Assert.Equal(123 & 2, and1);
+            // |
+            int or1 = (int)type.InvokeMember("Or1", BindingFlags.InvokeMethod, null, null, new object[] { 123, 2 });
+            Assert.Equal(123 | 2, or1);
+            // ^
+            int xor1 = (int)type.InvokeMember("Xor1", BindingFlags.InvokeMethod, null, null, new object[] { 123, 2 });
+            Assert.Equal(123 ^ 2, xor1);
+            // ~arg
+            int not1 = (int)type.InvokeMember("Not1", BindingFlags.InvokeMethod, null, null, new object[] { 123 });
+            Assert.Equal(~123, not1);
+            // <<
+            int shiftLeft1 = (int)type.InvokeMember("ShiftLeft1", BindingFlags.InvokeMethod, null, null, new object[] { 123, 2 });
+            Assert.Equal(123 << 2, shiftLeft1);
+            // >>
+            int[] shiftRight1 = (int[])type.InvokeMember("ShiftRight1", BindingFlags.InvokeMethod, null, null, new object[] { 123, 2 });
+            Assert.Equal(123 >> 2, shiftRight1[0]);
         }
 
 
