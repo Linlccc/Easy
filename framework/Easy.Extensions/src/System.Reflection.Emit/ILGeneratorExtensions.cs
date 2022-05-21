@@ -80,6 +80,17 @@ public static partial class ILGeneratorExtensions
             default: iLGenerator.Emit(OpCodes.Ldloc, localIndex); return;
         }
     }
+
+    /// <summary>
+    /// 推送字段
+    /// </summary>
+    /// <param name="iLGenerator">中间语言指令生成器</param>
+    /// <param name="fieldInfo">字段信息</param>
+    public static void LoadField(this ILGenerator iLGenerator!!, FieldInfo fieldInfo!!)
+    {
+        if (fieldInfo.IsStatic) iLGenerator.Emit(OpCodes.Ldsfld, fieldInfo);
+        else iLGenerator.Emit(OpCodes.Ldfld, fieldInfo);
+    }
     #endregion
 
     #region 常量
@@ -153,6 +164,16 @@ public static partial class ILGeneratorExtensions
     /// <param name="iLGenerator">中间语言指令生成器</param>
     /// <param name="type">数组类型</param>
     public static void NewArray(this ILGenerator iLGenerator!!, Type type!!) => iLGenerator.Emit(OpCodes.Newarr, type);
+
+    /// <summary>
+    /// 初始化一个对象,并推送结果
+    /// <list type="bullet">
+    ///     <item>1.按顺序推送构造函数的参数</item>
+    /// </list>
+    /// </summary>
+    /// <param name="iLGenerator">中间语言指令生成器</param>
+    /// <param name="constructorInfo">创建对象的构造函数</param>
+    public static void NewObject(this ILGenerator iLGenerator!!, ConstructorInfo constructorInfo!!) => iLGenerator.Emit(OpCodes.Newobj, constructorInfo);
     #endregion
 
     #region 赋值
@@ -189,6 +210,17 @@ public static partial class ILGeneratorExtensions
             case <= byte.MaxValue: iLGenerator.Emit(OpCodes.Stloc_S, localIndex); return;
             default: iLGenerator.Emit(OpCodes.Stloc, localIndex); return;
         }
+    }
+
+    /// <summary>
+    /// 将堆栈顶部的值赋值给指定额字段
+    /// </summary>
+    /// <param name="iLGenerator">中间语言指令生成器</param>
+    /// <param name="fieldInfo">字段信息</param>
+    public static void SetField(this ILGenerator iLGenerator!!, FieldInfo fieldInfo!!)
+    {
+        if (fieldInfo.IsStatic) iLGenerator.Emit(OpCodes.Stsfld, fieldInfo);
+        else iLGenerator.Emit(OpCodes.Stfld, fieldInfo);
     }
 
     /// <summary>
@@ -336,6 +368,56 @@ public static partial class ILGeneratorExtensions
     }
     #endregion
 
+    #region 比较
+    /// <summary>
+    /// 比较堆栈顶部两个值,如果<c>value1 == value2</c>推送 1,否则推送 0
+    /// </summary>
+    /// <param name="iLGenerator">中间语言指令生成器</param>
+    public static void CompareEqual(this ILGenerator iLGenerator!!) => iLGenerator.Emit(OpCodes.Ceq);
+
+    /// <summary>
+    /// 比较堆栈顶部两个值,如果<c>value1 > value2</c>推送 1,否则推送 0
+    /// </summary>
+    /// <param name="iLGenerator">中间语言指令生成器</param>
+    /// <param name="isUnsigned">是否是无符号的或未经排序的值</param>
+    public static void CompareGreater(this ILGenerator iLGenerator!!, bool isUnsigned = false)
+    {
+        if (isUnsigned) iLGenerator.Emit(OpCodes.Cgt_Un);
+        else iLGenerator.Emit(OpCodes.Cgt);
+    }
+
+    /// <summary>
+    /// 比较堆栈顶部两个值,如果<c>value1 &lt; value2</c>推送 1,否则推送 0
+    /// </summary>
+    /// <param name="iLGenerator">中间语言指令生成器</param>
+    /// <param name="isUnsigned">是否是无符号的或未经排序的值</param>
+    public static void CompareLess(this ILGenerator iLGenerator!!, bool isUnsigned = false)
+    {
+        if (isUnsigned) iLGenerator.Emit(OpCodes.Clt_Un);
+        else iLGenerator.Emit(OpCodes.Clt);
+    }
+    #endregion
+
+    /// <summary>
+    /// 方法结束，如果有返回值推送返回值
+    /// </summary>
+    /// <param name="iLGenerator">中间语言指令生成器</param>
+
+    public static void Return(this ILGenerator iLGenerator) => iLGenerator.Emit(OpCodes.Ret);
+
+
+    /* 未验证方法
+     * LoadField
+     * 
+     * CompareEqual
+     * CompareGreater
+     * CompareLess
+     * 
+     * SetField
+     * 
+     * NewObject
+     */
+
 
 
 
@@ -374,17 +456,6 @@ public static partial class ILGeneratorExtensions
             case <= byte.MaxValue: iLGenerator.Emit(OpCodes.Ldloca_S, index); return;
             default: iLGenerator.Emit(OpCodes.Ldloca, index); return;
         }
-    }
-
-    /// <summary>
-    /// 推送字段
-    /// </summary>
-    /// <param name="iLGenerator">中间语言指令生成器</param>
-    /// <param name="fieldInfo">字段信息</param>
-    public static void LoadField(this ILGenerator iLGenerator!!, FieldInfo fieldInfo!!)
-    {
-        if (fieldInfo.IsStatic) iLGenerator.Emit(OpCodes.Ldsfld, fieldInfo);
-        else iLGenerator.Emit(OpCodes.Ldfld, fieldInfo);
     }
 
     /// <summary>
@@ -485,35 +556,7 @@ public static partial class ILGeneratorExtensions
 
 
 
-    #region 比较
-    /// <summary>
-    /// 比较两个值,如果相等推送 (<see cref="int"/>)1,否者推送 (<see cref="int"/>)0
-    /// </summary>
-    /// <param name="iLGenerator">中间语言指令生成器</param>
-    public static void CompareEqual(this ILGenerator iLGenerator!!) => iLGenerator.Emit(OpCodes.Ceq);
 
-    /// <summary>
-    /// 比较两个值,如果第一个值大于第二个值推送 (<see cref="int"/>)1,否者推送 (<see cref="int"/>)0
-    /// </summary>
-    /// <param name="iLGenerator">中间语言指令生成器</param>
-    /// <param name="isUnsigned">是否是无符号的或未经排序的值</param>
-    public static void CompareGreater(this ILGenerator iLGenerator!!, bool isUnsigned = false)
-    {
-        if (isUnsigned) iLGenerator.Emit(OpCodes.Cgt_Un);
-        else iLGenerator.Emit(OpCodes.Cgt);
-    }
-
-    /// <summary>
-    /// 比较两个值,如果第一个值小于第二个值推送 (<see cref="int"/>)1,否者推送 (<see cref="int"/>)0
-    /// </summary>
-    /// <param name="iLGenerator">中间语言指令生成器</param>
-    /// <param name="isUnsigned">是否是无符号的或未经排序的值</param>
-    public static void CompareLess(this ILGenerator iLGenerator!!, bool isUnsigned = false)
-    {
-        if (isUnsigned) iLGenerator.Emit(OpCodes.Clt_Un);
-        else iLGenerator.Emit(OpCodes.Clt);
-    }
-    #endregion
 
     #region 检查
     /// <summary>
@@ -1035,43 +1078,6 @@ public static partial class ILGeneratorExtensions
 
 
 
-
-
-
-
-
-
-    #region 定义
-
-
-    /// <summary>
-    /// 创建一个对象,并推送结果
-    /// </summary>
-    /// <param name="iLGenerator">中间语言指令生成器</param>
-    /// <param name="constructorInfo">创建对象的构造函数</param>
-    public static void NewObject(this ILGenerator iLGenerator!!, ConstructorInfo constructorInfo!!) => iLGenerator.Emit(OpCodes.Newobj, constructorInfo);
-    #endregion
-
-    #region 赋值
-    /// <summary>
-    /// 将当前堆栈的值设置到字段
-    /// </summary>
-    /// <param name="iLGenerator">中间语言指令生成器</param>
-    /// <param name="fieldInfo">字段信息</param>
-    public static void SetField(this ILGenerator iLGenerator!!, FieldInfo fieldInfo!!)
-    {
-        if (fieldInfo.IsStatic) iLGenerator.Emit(OpCodes.Stsfld, fieldInfo);
-        else iLGenerator.Emit(OpCodes.Stfld, fieldInfo);
-    }
-
-
-
-
-
-
-
-    #endregion
-
     /// <summary>
     /// 分配空间并推送第一个字节的指针
     /// </summary>
@@ -1128,13 +1134,7 @@ public static partial class ILGeneratorExtensions
 
 
 
-    /// <summary>
-    /// 返回值
-    /// <br>将返回值(如果存在)从被调用者推送到调用者</br>
-    /// </summary>
-    /// <param name="iLGenerator"></param>
 
-    public static void Return(this ILGenerator iLGenerator) => iLGenerator.Emit(OpCodes.Ret);
 
 
 
