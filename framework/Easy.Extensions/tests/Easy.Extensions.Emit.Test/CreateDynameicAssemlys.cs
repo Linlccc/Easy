@@ -32,6 +32,7 @@
         public void CreateAssemlys()
         {
             _moduleBuilder.DefineType_HelloWorld();
+            _moduleBuilder.DefineType_EmitOpCodesVerify();
             CreateCynameicAssemlys();
         }
 
@@ -52,12 +53,18 @@
             Assert.Equal(20 * 100, type.InvokeMember("Mul", BindingFlags.InvokeMethod, null, instance, new object[] { 20 }));
         }
 
+        /// <summary>
+        /// 创建类型 EmitOpCodesVerify
+        /// </summary>
         [Fact]
-        public void TestCreate()
+        public void Create_EmitOpCodesVerify()
         {
+            Type type = _moduleBuilder.DefineType_EmitOpCodesVerify();
 
+
+            object? addValue = type.InvokeMember("Add1", BindingFlags.InvokeMethod, null, null, new object[] { 1, 2 });
+            object? addValue1 = type.InvokeMember("Add2", BindingFlags.InvokeMethod, null, null, new object[] { 123, 1 });
         }
-
 
 
     }
