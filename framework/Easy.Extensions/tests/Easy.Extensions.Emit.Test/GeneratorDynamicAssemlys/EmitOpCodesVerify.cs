@@ -65,6 +65,41 @@ public class EmitOpCodesVerify
         };
     }
 
+    public static int And1(int P_0, int P_1)
+    {
+        return P_0 & P_1;
+    }
+
+    public static int Or1(int P_0, int P_1)
+    {
+        return P_0 | P_1;
+    }
+
+    public static int Xor1(int P_0, int P_1)
+    {
+        return P_0 ^ P_1;
+    }
+
+    public static int Neg1(int P_0)
+    {
+        return -P_0;
+    }
+
+    public static int Not1(int P_0)
+    {
+        return ~P_0;
+    }
+
+    public static int ShiftLeft1(int P_0, int P_1)
+    {
+        return P_0 << P_1;
+    }
+
+    public static int ShiftRight1(int P_0, int P_1)
+    {
+        return P_0 >> P_1;
+    }
+
     public static string StringAdd1(string P_0, string P_1)
     {
         return P_0 + P_1;
@@ -520,7 +555,6 @@ public static class EmitOpCodesVerifyCreator
         return methodBuilder;
     }
     #endregion
-
 
     #region 字符串相加
     /// <summary>
