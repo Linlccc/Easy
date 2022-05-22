@@ -65,6 +65,11 @@ public class EmitOpCodesVerify
         };
     }
 
+    public static int Neg1(int P_0)
+    {
+        return -P_0;
+    }
+
     public static int And1(int P_0, int P_1)
     {
         return P_0 & P_1;
@@ -80,11 +85,6 @@ public class EmitOpCodesVerify
         return P_0 ^ P_1;
     }
 
-    public static int Neg1(int P_0)
-    {
-        return -P_0;
-    }
-
     public static int Not1(int P_0)
     {
         return ~P_0;
@@ -95,14 +95,51 @@ public class EmitOpCodesVerify
         return P_0 << P_1;
     }
 
-    public static int ShiftRight1(int P_0, int P_1)
+    public static int[] ShiftRight1(int P_0, int P_1)
     {
-        return P_0 >> P_1;
+        return new int[2]
+        {
+            P_0 >> P_1,
+            (int)((uint)P_0 >> P_1)
+        };
+    }
+
+    public static int Equal1(int P_0, int P_1)
+    {
+        return (P_0 == P_1) ? 1 : 0;
+    }
+
+    public static bool Equal2(int P_0, int P_1)
+    {
+        return P_0 == P_1;
+    }
+
+    public static int Greater1(int P_0, int P_1)
+    {
+        return (P_0 > P_1) ? 1 : 0;
+    }
+
+    public static int Less1(int P_0, int P_1)
+    {
+        return (P_0 < P_1) ? 1 : 0;
     }
 
     public static string StringAdd1(string P_0, string P_1)
     {
         return P_0 + P_1;
+    }
+
+    public static object[] Arglist1(__arglist)
+    {
+        int num = 0;
+        ArgIterator argIterator = new ArgIterator(__arglist);
+        object[] array = new object[argIterator.GetRemainingCount()];
+        while (argIterator.GetRemainingCount() > 0)
+        {
+            array[num] = TypedReference.ToObject(argIterator.GetNextArg());
+            num++;
+        }
+        return array;
     }
 }
 
@@ -145,6 +182,7 @@ public static class EmitOpCodesVerifyCreator
 
         // ==
         DefineMethod_Equal1(typeBuilder);
+        DefineMethod_Equal2(typeBuilder);
         // >
         DefineMethod_Greater1(typeBuilder);
         // <
@@ -153,7 +191,15 @@ public static class EmitOpCodesVerifyCreator
         // 字符串拼接
         DefineMethod_StringAdd1(typeBuilder);
 
-        Test1(typeBuilder);
+
+        // ** 特殊
+        // Arglist 个数不定，类型不定参数
+        DefineMethod_Arglist1(typeBuilder);
+
+
+
+        DefineMethod_Test1(typeBuilder);
+
 
         return typeBuilder.CreateType();
     }
@@ -198,17 +244,17 @@ public static class EmitOpCodesVerifyCreator
         il.LoadLocal(arr);
         il.LoadInt(0);
         il.LoadLocal(i1);
-        il.SetArrayValue(typeof(int));
+        il.SetArray(typeof(int));
 
         il.LoadLocal(arr);
         il.LoadInt(1);
         il.LoadLocal(i2);
-        il.SetArrayValue(typeof(int));
+        il.SetArray(typeof(int));
 
         il.LoadLocal(arr);
         il.LoadInt(2);
         il.LoadLocal(i3);
-        il.SetArrayValue(typeof(int));
+        il.SetArray(typeof(int));
 
         // 返回数组
         il.LoadLocal(arr);
@@ -237,21 +283,21 @@ public static class EmitOpCodesVerifyCreator
         il.LoadArg();
         il.LoadArg(1);
         il.MathAdd();
-        il.SetArrayValue(typeof(int));
+        il.SetArray(typeof(int));
         // 检查溢出添加
         il.LoadLocal(arr);
         il.LoadInt(1);
         il.LoadArg();
         il.LoadArg(1);
         il.MathAdd(true);
-        il.SetArrayValue(typeof(int));
+        il.SetArray(typeof(int));
         // 检查溢出无符号添加
         il.LoadLocal(arr);
         il.LoadInt(2);
         il.LoadArg();
         il.LoadArg(1);
         il.MathAdd(isUnsigned: true);
-        il.SetArrayValue(typeof(int));
+        il.SetArray(typeof(int));
 
         il.LoadLocal(arr);
         il.Return();
@@ -281,21 +327,21 @@ public static class EmitOpCodesVerifyCreator
         il.LoadArg();
         il.LoadArg(1);
         il.MathSub();
-        il.SetArrayValue(typeof(int));
+        il.SetArray(typeof(int));
         // 检查溢出添加
         il.LoadLocal(arr);
         il.LoadInt(1);
         il.LoadArg();
         il.LoadArg(1);
         il.MathSub(true);
-        il.SetArrayValue(typeof(int));
+        il.SetArray(typeof(int));
         // 检查溢出无符号添加
         il.LoadLocal(arr);
         il.LoadInt(2);
         il.LoadArg();
         il.LoadArg(1);
         il.MathSub(isUnsigned: true);
-        il.SetArrayValue(typeof(int));
+        il.SetArray(typeof(int));
 
         il.LoadLocal(arr);
         il.Return();
@@ -325,21 +371,21 @@ public static class EmitOpCodesVerifyCreator
         il.LoadArg();
         il.LoadArg(1);
         il.MathMul();
-        il.SetArrayValue(typeof(int));
+        il.SetArray(typeof(int));
         // 检查溢出添加
         il.LoadLocal(arr);
         il.LoadInt(1);
         il.LoadArg();
         il.LoadArg(1);
         il.MathMul(true);
-        il.SetArrayValue(typeof(int));
+        il.SetArray(typeof(int));
         // 检查溢出无符号添加
         il.LoadLocal(arr);
         il.LoadInt(2);
         il.LoadArg();
         il.LoadArg(1);
         il.MathMul(isUnsigned: true);
-        il.SetArrayValue(typeof(int));
+        il.SetArray(typeof(int));
 
         il.LoadLocal(arr);
         il.Return();
@@ -369,14 +415,14 @@ public static class EmitOpCodesVerifyCreator
         il.LoadArg();
         il.LoadArg(1);
         il.MathDiv();
-        il.SetArrayValue(typeof(int));
+        il.SetArray(typeof(int));
         // 检查溢出无符号添加
         il.LoadLocal(arr);
         il.LoadInt(1);
         il.LoadArg();
         il.LoadArg(1);
         il.MathDiv(isUnsigned: true);
-        il.SetArrayValue(typeof(int));
+        il.SetArray(typeof(int));
 
         il.LoadLocal(arr);
         il.Return();
@@ -406,14 +452,14 @@ public static class EmitOpCodesVerifyCreator
         il.LoadArg();
         il.LoadArg(1);
         il.MathRem();
-        il.SetArrayValue(typeof(int));
+        il.SetArray(typeof(int));
         // 检查溢出无符号添加
         il.LoadLocal(arr);
         il.LoadInt(1);
         il.LoadArg();
         il.LoadArg(1);
         il.MathRem(isUnsigned: true);
-        il.SetArrayValue(typeof(int));
+        il.SetArray(typeof(int));
 
         il.LoadLocal(arr);
         il.Return();
@@ -549,7 +595,7 @@ public static class EmitOpCodesVerifyCreator
         il.LoadArg();
         il.LoadArg(1);
         il.BitwiseShiftRight();
-        il.SetArrayValue(typeof(int));
+        il.SetArray(typeof(int));
 
         // 无符号右移位
         il.LoadLocal(l1);
@@ -557,7 +603,7 @@ public static class EmitOpCodesVerifyCreator
         il.LoadArg();
         il.LoadArg(1);
         il.BitwiseShiftRight(true);
-        il.SetArrayValue(typeof(int));
+        il.SetArray(typeof(int));
 
         il.LoadLocal(l1);
         il.Return();
@@ -574,6 +620,25 @@ public static class EmitOpCodesVerifyCreator
         ILGenerator il = methodBuilder.GetILGenerator();
 
         LocalBuilder l1 = il.DeclareLocal(typeof(int));
+
+        il.LoadArg();
+        il.LoadArg(1);
+        il.CompareEqual();
+        il.SetLocal(l1);
+
+        il.LoadLocal(l1);
+        il.Return();
+
+        return methodBuilder;
+    }
+
+    // ==
+    public static MethodBuilder DefineMethod_Equal2(TypeBuilder typeBuilder)
+    {
+        MethodBuilder methodBuilder = typeBuilder.DefineMethod("Equal2", MethodAttributes.Public | MethodAttributes.Static, typeof(bool), new Type[] { typeof(int), typeof(int) });
+        ILGenerator il = methodBuilder.GetILGenerator();
+
+        LocalBuilder l1 = il.DeclareLocal(typeof(bool));
 
         il.LoadArg();
         il.LoadArg(1);
@@ -649,37 +714,90 @@ public static class EmitOpCodesVerifyCreator
     }
     #endregion
 
-    public static MethodBuilder Test1(TypeBuilder typeBuilder)
+    #region 特殊
+    // 使用 Arglist 示例
+    public static MethodBuilder DefineMethod_Arglist1(TypeBuilder typeBuilder)
     {
-        MethodBuilder methodBuilder = typeBuilder.DefineMethod("Test1", MethodAttributes.Public | MethodAttributes.Static, typeof(string), new Type[] { typeof(int), typeof(int) });
+        // 需要定义 CallingConventions.VarArgs 就会在方法参数默认添加一个 __arglist 参数
+        // 该方法不能使用反射调用所以写不了测试,如需测试引用生成的程序集然后调用 EmitOpCodesVerify.Arglist1(__arglist(1, 2, "aa", "d", 4.6, new { A = 1 }));
+
+        MethodBuilder methodBuilder = typeBuilder.DefineMethod("Arglist1", MethodAttributes.Public | MethodAttributes.Static, CallingConventions.VarArgs, typeof(object[]), Type.EmptyTypes);
         ILGenerator il = methodBuilder.GetILGenerator();
 
-        LocalBuilder l1 = il.DeclareLocal(typeof(string));
-        Label label1 = il.DefineLabel();
-        Label label2 = il.DefineLabel();
-        Label label3 = il.DefineLabel();
+        // 局部变量
+        LocalBuilder lb_result = il.DeclareLocal(typeof(object[]));//结果
+        LocalBuilder lb_currentIndex = il.DeclareLocal(typeof(int));//结果的当前索引
+        LocalBuilder lb_varargs = il.DeclareLocal(typeof(ArgIterator));//可变参数
 
-        il.LoadArg();
-        il.LoadArg(1);
-        il.GotoByEqual(label2);
+        // 结束
+        Label returnL = il.DefineLabel();
+        // 判断是否有可变参数
+        Label haveValueL = il.DefineLabel();
 
-        il.MarkLabel(label1);
-        il.LoadString("False");
-        il.SetLocal(l1);
-        il.LoadLocal(l1);
-        il.Goto(label3);
+        // lb_currentIndex = 0;
+        il.LoadInt(0);
+        il.SetLocal(lb_currentIndex);
 
-        il.MarkLabel(label2);
-        il.LoadString("True");
-        il.SetLocal(l1);
-        il.LoadLocal(l1);
-        il.Goto(label3);
+        // lb_varargs = new ArgIterator(__arglist);
+        il.LoadLocalAddr(lb_varargs.LocalIndex); // 因为构造 ArgIterator 类型返回的是地址，所以加载地址去接收
+        il.LoadVarArgs();
+        il.Call(typeof(ArgIterator).GetConstructor(new Type[] { typeof(RuntimeArgumentHandle) }));
 
-        il.MarkLabel(label3);
+        // lb_result = new object[lb_varargs.GetRemainingCount()];
+        il.LoadLocalAddr(lb_varargs.LocalIndex);
+        il.Call(typeof(ArgIterator).GetMethod("GetRemainingCount"));
+        il.NewArray(typeof(object));
+        il.SetLocal(lb_result);
 
+        // if(lb_havearg = lb_varargs.GetRemainingCount() < 0) return lb_result;
+        il.MarkLabel(haveValueL);
+        il.LoadLocalAddr(lb_varargs.LocalIndex);
+        il.Call(typeof(ArgIterator).GetMethod("GetRemainingCount"));
+        il.LoadInt(0);
+        il.CompareGreater();
+        il.GotoIfFalse(returnL);
 
+        // lb_result[lb_currentIndex] = lb_varargs.GetNextArg();
+        il.Nop();
+        il.LoadLocal(lb_result);
+        il.LoadLocal(lb_currentIndex);
+        il.LoadLocalAddr(lb_varargs.LocalIndex);
+        il.Call(typeof(ArgIterator).GetMethod("GetNextArg", Type.EmptyTypes));
+        il.Call(typeof(TypedReference).GetMethod("ToObject"));
+        il.SetArray(typeof(object));
+        // lb_currentIndex++;
+        il.LoadLocal(lb_currentIndex);
+        il.LoadInt(1);
+        il.MathAdd();
+        il.SetLocal(lb_currentIndex);
+        il.Nop();
+        il.Goto(haveValueL);
+
+        // 结束
+        il.MarkLabel(returnL);
+        il.LoadLocal(lb_result);
         il.Return();
+        return methodBuilder;
+    }
+    #endregion
 
+
+    public static MethodBuilder DefineMethod_Test1(TypeBuilder typeBuilder)
+    {
+        // 测试方法
+
+        MethodBuilder methodBuilder = typeBuilder.DefineMethod("Test1", MethodAttributes.Public | MethodAttributes.Static, typeof(string), Type.EmptyTypes);
+        ILGenerator il = methodBuilder.GetILGenerator();
+
+        // 局部变量
+        LocalBuilder lb_result = il.DeclareLocal(typeof(IntPtr));//结果
+        il.LoadLocalAddr(lb_result.LocalIndex);
+        il.LoadInt(3221);
+        il.Call(typeof(IntPtr).GetConstructor(new Type[] { typeof(int) }));
+
+        il.LoadLocalAddr(lb_result.LocalIndex);
+        il.Call(typeof(IntPtr).GetMethod("ToString", Type.EmptyTypes));
+        il.Return();
         return methodBuilder;
     }
 }

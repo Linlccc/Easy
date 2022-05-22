@@ -147,7 +147,7 @@ public class DynamicCreateType
         MethodBuilder mbNumberGetAccessor = dynamicType.DefineMethod("get_Number", getSetAttr, typeof(int), Type.EmptyTypes);
         ILGenerator numberGetIL = mbNumberGetAccessor.GetILGenerator();
         // 在实例属性上，Ldarg_0 就是当前实例
-        // 
+        //
         // 在实例中查找引用fbNumber字段并返回
         numberGetIL.Emit(OpCodes.Ldarg_0);
         numberGetIL.Emit(OpCodes.Ldfld, fbNumber1);
@@ -342,31 +342,31 @@ public class DynamicCreateType
 
             il.SetLocalArrayValueBefore(localBuilder, 0);
             il.SizeOf(typeof(byte));
-            il.SetArrayValue(typeof(int));
+            il.SetArray(typeof(int));
 
             il.SetLocalArrayValueBefore(localBuilder, 1);
             il.SizeOf(typeof(Int16));
-            il.SetArrayValue(typeof(int));
+            il.SetArray(typeof(int));
 
             il.SetLocalArrayValueBefore(localBuilder, 2);
             il.SizeOf(typeof(Int32));
-            il.SetArrayValue(typeof(int));
+            il.SetArray(typeof(int));
 
             il.SetLocalArrayValueBefore(localBuilder, 3);
             il.SizeOf(typeof(Int64));
-            il.SetArrayValue(typeof(int));
+            il.SetArray(typeof(int));
 
             il.SetLocalArrayValueBefore(localBuilder, 4);
             il.SizeOf(typeof(object));
-            il.SetArrayValue(typeof(int));
+            il.SetArray(typeof(int));
 
             il.SetLocalArrayValueBefore(localBuilder, 5);
             il.SizeOf(typeof(string));
-            il.SetArrayValue(typeof(int));
+            il.SetArray(typeof(int));
 
             il.SetLocalArrayValueBefore(localBuilder, 6);
             il.SizeOf(typeof(MyDynamicType));
-            il.SetArrayValue(typeof(int));
+            il.SetArray(typeof(int));
 
             il.LoadLocal(localBuilder);
             il.Return();
@@ -385,11 +385,11 @@ public class DynamicCreateType
 
             il.SetLocalArrayValueBefore(localBuilder, 0);
             il.LoadArg(1);
-            il.SetArrayValue(typeof(IntPtr));
+            il.SetArray(typeof(IntPtr));
 
             il.SetLocalArrayValueBefore(localBuilder, 1);
             il.LoadArg(2);
-            il.SetArrayValue(typeof(IntPtr));
+            il.SetArray(typeof(IntPtr));
 
             il.LoadLocal(localBuilder);
             il.Return();
@@ -469,7 +469,7 @@ public class DynamicCreateType
             il.LoadLocal(l1);
             il.LoadInt(0);
             il.LoadArg(1);
-            il.SetArrayValue();
+            il.SetArray();
 
             il.LoadLocal(l1);
             il.LoadInt(1);

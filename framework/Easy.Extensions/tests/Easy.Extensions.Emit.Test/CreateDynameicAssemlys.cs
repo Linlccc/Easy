@@ -107,6 +107,8 @@
             // ==
             int equal1 = (int)type.InvokeMember("Equal1", BindingFlags.InvokeMethod, null, null, new object[] { 123, 123 });
             Assert.Equal(123 == 123 ? 1 : 0, equal1);
+            bool equal2 = (bool)type.InvokeMember("Equal2", BindingFlags.InvokeMethod, null, null, new object[] { 123, 123 });
+            Assert.Equal(123 == 123, equal2);
             // >
             int greater1 = (int)type.InvokeMember("Greater1", BindingFlags.InvokeMethod, null, null, new object[] { 123, 123 });
             Assert.Equal(123 > 123 ? 1 : 0, greater1);
@@ -115,12 +117,8 @@
             Assert.Equal(123 < 123 ? 1 : 0, less1);
 
 
-            string t1 = (string)type.InvokeMember("Test1", BindingFlags.InvokeMethod, null, null, new object[] { 123, 123 });
-            Assert.Equal(123 == 123 ? "True" : "False", t1);
-            string t2 = (string)type.InvokeMember("Test1", BindingFlags.InvokeMethod, null, null, new object[] { 123, 124 });
-            Assert.Equal(123 == 124 ? "True" : "False", t2);
+
+            object test1 = type.InvokeMember("Test1", BindingFlags.InvokeMethod, null, null, new object[] { });
         }
-
-
     }
 }

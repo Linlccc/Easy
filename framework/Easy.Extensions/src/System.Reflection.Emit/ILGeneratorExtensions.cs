@@ -47,6 +47,13 @@ public static partial class ILGeneratorExtensions
     }
 
     /// <summary>
+    /// 推送可变参数(__arglist)
+    /// <br>只能在有 <see cref="CallingConventions.VarArgs"/> 标记的方法中使用</br>
+    /// </summary>
+    /// <param name="iLGenerator"></param>
+    public static void LoadVarArgs(this ILGenerator iLGenerator!!) => iLGenerator.Emit(OpCodes.Arglist);
+
+    /// <summary>
     /// 推送局部变量
     /// </summary>
     /// <param name="iLGenerator">中间语言指令生成器</param>
@@ -90,6 +97,47 @@ public static partial class ILGeneratorExtensions
     {
         if (fieldInfo.IsStatic) iLGenerator.Emit(OpCodes.Ldsfld, fieldInfo);
         else iLGenerator.Emit(OpCodes.Ldfld, fieldInfo);
+    }
+    #endregion
+
+    #region 变量地址
+    /// <summary>
+    /// 推送索引处参数地址
+    /// </summary>
+    /// <param name="iLGenerator">中间语言指令生成器</param>
+    /// <param name="index">参数索引</param>
+    public static void LoadArgAddr(this ILGenerator iLGenerator!!, int index)
+    {
+        switch (index)
+        {
+            case <= byte.MaxValue: iLGenerator.Emit(OpCodes.Ldarga_S, index); return;
+            default: iLGenerator.Emit(OpCodes.Ldarga, index); return;
+        }
+    }
+
+    /// <summary>
+    /// 推送索引处局部变量地址
+    /// </summary>
+    /// <param name="iLGenerator">中间语言指令生成器</param>
+    /// <param name="index">局部变量索引</param>
+    public static void LoadLocalAddr(this ILGenerator iLGenerator!!, int index)
+    {
+        switch (index)
+        {
+            case <= byte.MaxValue: iLGenerator.Emit(OpCodes.Ldloca_S, index); return;
+            default: iLGenerator.Emit(OpCodes.Ldloca, index); return;
+        }
+    }
+
+    /// <summary>
+    /// 推送字段地址
+    /// </summary>
+    /// <param name="iLGenerator">中间语言指令生成器</param>
+    /// <param name="fieldInfo">字段信息</param>
+    public static void LoadFieldAddr(this ILGenerator iLGenerator!!, FieldInfo fieldInfo!!)
+    {
+        if (fieldInfo.IsStatic) iLGenerator.Emit(OpCodes.Ldsflda, fieldInfo);
+        else iLGenerator.Emit(OpCodes.Ldflda, fieldInfo);
     }
     #endregion
 
@@ -233,7 +281,7 @@ public static partial class ILGeneratorExtensions
     /// </summary>
     /// <param name="iLGenerator">中间语言指令生成器</param>
     /// <param name="valueType">值类型,如果是引用类型可以忽略</param>
-    public static void SetArrayValue(this ILGenerator iLGenerator!!, Type? valueType = null)
+    public static void SetArray(this ILGenerator iLGenerator!!, Type? valueType = null)
     {
         if (valueType is null) iLGenerator.Emit(OpCodes.Stelem_Ref);// 值支持引用类型
         else if (valueType == typeof(IntPtr)) iLGenerator.Emit(OpCodes.Stelem_I);// native int
@@ -316,7 +364,7 @@ public static partial class ILGeneratorExtensions
     public static void MathNeg(this ILGenerator iLGenerator!!) => iLGenerator.Emit(OpCodes.Neg);
     #endregion
 
-    #region 计算
+    #region 按位计算
     /// <summary>
     /// 将堆栈顶部两个值执行"按位与"操作,并推送结果
     /// </summary>
@@ -398,12 +446,212 @@ public static partial class ILGeneratorExtensions
     }
     #endregion
 
+    #region 调用方法
+    /// <summary>
+    /// 调用构造函数,该方法针对返回地址的构造函数
+    /// <br>如 <see cref="IntPtr"/> / ArgIterator 等类型</br>
+    /// <br>该方法不会推送结果</br>
+    /// <list type="bullet">
+    ///     <item>1.推送接收构造函数返回的地址</item>
+    ///     <item>2.推送构造函数的参数</item>
+    /// </list>
+    /// </summary>
+    /// <param name="iLGenerator">中间语言指令生成器</param>
+    /// <param name="constructorInfo">构造函数信息</param>
+    public static void Call(this ILGenerator iLGenerator!!, ConstructorInfo constructorInfo!!) => iLGenerator.Emit(OpCodes.Call, constructorInfo);
+
+    /// <summary>
+    /// 调用方法/虚方法,并推送结果
+    /// <br>如果使用该方法调用虚方法,表明是使用方法指定的类来解析,而不是被调用的对象动态指定</br>
+    /// <list type="bullet">
+    ///     <item>1.如果是实例方法,推送实例,否则跳过</item>
+    ///     <item>2.推送方法的参数</item>
+    /// </list>
+    /// </summary>
+    /// <param name="iLGenerator">中间语言指令生成器</param>
+    /// <param name="methodInfo">方法信息</param>
+    /// <param name="optionalParameterTypes">可变参数类型,如果存在该值说明方法的调用约定包含 <see cref=" CallingConventions.VarArgs"/></param>
+    public static void Call(this ILGenerator iLGenerator!!, MethodInfo methodInfo!!, params Type[] optionalParameterTypes)
+    {
+        if (optionalParameterTypes.IsNullOrEmpty()) iLGenerator.Emit(OpCodes.Call, methodInfo);
+        else iLGenerator.EmitCall(OpCodes.Call, methodInfo, optionalParameterTypes);
+    }
+    #endregion
+
+    #region Goto
+    /// <summary>
+    /// 跳转
+    /// </summary>
+    /// <param name="iLGenerator">中间语言指令生成器</param>
+    /// <param name="label">跳转标签</param>
+    /// <param name="isShort">是否短格式</param>
+    public static void Goto(this ILGenerator iLGenerator!!, Label label, bool isShort = true)
+    {
+        if (isShort) iLGenerator.Emit(OpCodes.Br_S, label);
+        else iLGenerator.Emit(OpCodes.Br, label);
+    }
+    /// <summary>
+    /// 跳转(强制),可用于退出 try\filter\catch 块
+    /// </summary>
+    /// <param name="iLGenerator">中间语言指令生成器</param>
+    /// <param name="label">跳转标签</param>
+    /// <param name="isShort">是否短格式</param>
+    public static void GotoLeave(this ILGenerator iLGenerator!!, Label label, bool isShort = true)
+    {
+        if (isShort) iLGenerator.Emit(OpCodes.Leave_S, label);
+        else iLGenerator.Emit(OpCodes.Leave, label);
+    }
+
+    /// <summary>
+    /// 如果值为 true\非空\非零 则跳转
+    /// </summary>
+    /// <param name="iLGenerator">中间语言指令生成器</param>
+    /// <param name="label">跳转标签</param>
+    /// <param name="isShort">是否短格式</param>
+    public static void GotoIfTrue(this ILGenerator iLGenerator!!, Label label, bool isShort = true)
+    {
+        if (isShort) iLGenerator.Emit(OpCodes.Brtrue_S, label);
+        else iLGenerator.Emit(OpCodes.Brtrue, label);
+    }
+    /// <summary>
+    /// 如果堆栈顶部的值为 false\空引用\零 则跳转
+    /// </summary>
+    /// <param name="iLGenerator">中间语言指令生成器</param>
+    /// <param name="label">跳转标签</param>
+    /// <param name="isShort">是否短格式</param>
+    public static void GotoIfFalse(this ILGenerator iLGenerator!!, Label label, bool isShort = true)
+    {
+        if (isShort) iLGenerator.Emit(OpCodes.Brfalse_S, label);
+        else iLGenerator.Emit(OpCodes.Brfalse, label);
+    }
+
+    /// <summary>
+    /// 如果 value1 == value2 则跳转
+    /// <list type="bullet">
+    ///     <item>1.推送value1</item>
+    ///     <item>2.推送value2</item>
+    /// </list>
+    /// </summary>
+    /// <param name="iLGenerator">中间语言指令生成器</param>
+    /// <param name="label">跳转标签</param>
+    /// <param name="isShort">是否短格式</param>
+    public static void GotoIfEqual(this ILGenerator iLGenerator!!, Label label, bool isShort = true)
+    {
+        if (isShort) iLGenerator.Emit(OpCodes.Beq_S, label);
+        else iLGenerator.Emit(OpCodes.Beq, label);
+    }
+    /// <summary>
+    /// 如果 value1 > value2 则跳转
+    /// <list type="bullet">
+    ///     <item>1.推送value1</item>
+    ///     <item>2.推送value2</item>
+    /// </list>
+    /// </summary>
+    /// <param name="iLGenerator">中间语言指令生成器</param>
+    /// <param name="label">跳转标签</param>
+    /// <param name="isShort">是否短格式</param>
+    /// <param name="isUnsigned">是否是无符号整数值或未经排序的浮点值</param>
+    public static void GotoIfGreater(this ILGenerator iLGenerator!!, Label label, bool isShort = true, bool isUnsigned = false)
+    {
+        if (isShort == isUnsigned == true) iLGenerator.Emit(OpCodes.Bgt_Un_S, label);
+        else if (isUnsigned) iLGenerator.Emit(OpCodes.Bgt_Un, label);
+        else if (isShort) iLGenerator.Emit(OpCodes.Bgt_S, label);
+        else iLGenerator.Emit(OpCodes.Bgt, label);
+    }
+    /// <summary>
+    /// 如果 value1 >= value2 则跳转
+    /// <list type="bullet">
+    ///     <item>1.推送value1</item>
+    ///     <item>2.推送value2</item>
+    /// </list>
+    /// </summary>
+    /// <param name="iLGenerator">中间语言指令生成器</param>
+    /// <param name="label">跳转标签</param>
+    /// <param name="isShort">是否短格式</param>
+    /// <param name="isUnsigned">是否是无符号整数值或未经排序的浮点值</param>
+    public static void GotoIfGreaterOrEqual(this ILGenerator iLGenerator!!, Label label, bool isShort = true, bool isUnsigned = false)
+    {
+        if (isShort == isUnsigned == true) iLGenerator.Emit(OpCodes.Bge_Un_S, label);
+        else if (isUnsigned) iLGenerator.Emit(OpCodes.Bge_Un, label);
+        else if (isShort) iLGenerator.Emit(OpCodes.Bge_S, label);
+        else iLGenerator.Emit(OpCodes.Bge, label);
+    }
+    /// <summary>
+    /// 如果 value1 &lt; value2 则跳转
+    /// <list type="bullet">
+    ///     <item>1.推送value1</item>
+    ///     <item>2.推送value2</item>
+    /// </list>
+    /// </summary>
+    /// <param name="iLGenerator">中间语言指令生成器</param>
+    /// <param name="label">跳转标签</param>
+    /// <param name="isShort">是否短格式</param>
+    /// <param name="isUnsigned">是否是无符号整数值或未经排序的浮点值</param>
+    public static void GotoIfLess(this ILGenerator iLGenerator!!, Label label, bool isShort = true, bool isUnsigned = false)
+    {
+        if (isShort == isUnsigned == true) iLGenerator.Emit(OpCodes.Blt_Un_S, label);
+        else if (isUnsigned) iLGenerator.Emit(OpCodes.Blt_Un, label);
+        else if (isShort) iLGenerator.Emit(OpCodes.Blt_S, label);
+        else iLGenerator.Emit(OpCodes.Blt, label);
+    }
+    /// <summary>
+    /// 如果 value1 &lt;= value2 则跳转
+    /// <list type="bullet">
+    ///     <item>1.推送value1</item>
+    ///     <item>2.推送value2</item>
+    /// </list>
+    /// </summary>
+    /// <param name="iLGenerator">中间语言指令生成器</param>
+    /// <param name="label">跳转标签</param>
+    /// <param name="isShort">是否短格式</param>
+    /// <param name="isUnsigned">是否是无符号整数值或未经排序的浮点值</param>
+    public static void GotoIfLessOrEqual(this ILGenerator iLGenerator!!, Label label, bool isShort = true, bool isUnsigned = false)
+    {
+        if (isShort == isUnsigned == true) iLGenerator.Emit(OpCodes.Ble_Un_S, label);
+        else if (isUnsigned) iLGenerator.Emit(OpCodes.Ble_Un, label);
+        else if (isShort) iLGenerator.Emit(OpCodes.Ble_S, label);
+        else iLGenerator.Emit(OpCodes.Ble, label);
+    }
+
+    /// <summary>
+    /// 如果两个无符号整数值或未经排序的浮点值不相等则跳转
+    /// <list type="bullet">
+    ///     <item>1.推送第一个无符号整数值或未经排序的浮点值</item>
+    ///     <item>2.推送第二个无符号整数值或未经排序的浮点值</item>
+    /// </list>
+    /// </summary>
+    /// <param name="iLGenerator">中间语言指令生成器</param>
+    /// <param name="label">跳转标签</param>
+    /// <param name="isShort">是否短格式</param>
+    public static void GotoIfUnsignedNotEqual(this ILGenerator iLGenerator!!, Label label, bool isShort = true)
+    {
+        if (isShort) iLGenerator.Emit(OpCodes.Bne_Un_S, label);
+        else iLGenerator.Emit(OpCodes.Bne_Un, label);
+    }
+
+    /// <summary>
+    /// 跳转到指定索引处的标签
+    /// <list type="bullet">
+    ///     <item>1.推送要跳转的标签的索引</item>
+    /// </list>
+    /// </summary>
+    /// <param name="iLGenerator">中间语言指令生成器</param>
+    /// <param name="labels">跳转标签集合</param>
+    public static void Switch(this ILGenerator iLGenerator!!, Label[] labels) => iLGenerator.Emit(OpCodes.Switch, labels);
+    #endregion
+
     /// <summary>
     /// 方法结束，如果有返回值推送返回值
     /// </summary>
     /// <param name="iLGenerator">中间语言指令生成器</param>
+    public static void Return(this ILGenerator iLGenerator!!) => iLGenerator.Emit(OpCodes.Ret);
 
-    public static void Return(this ILGenerator iLGenerator) => iLGenerator.Emit(OpCodes.Ret);
+    /// <summary>
+    /// 如果修补了操作码,则填充空间。但是没有执行任何有意义的操作
+    /// <br>相当于代码中的 "{" / "}" </br>
+    /// </summary>
+    /// <param name="iLGenerator">中间语言指令生成器</param>
+    public static void Nop(this ILGenerator iLGenerator!!) => iLGenerator.Emit(OpCodes.Nop);
 
 
     /* 未验证方法
@@ -425,45 +673,12 @@ public static partial class ILGeneratorExtensions
 
     #region 加载\推送(将指定的值推送到计算堆栈)
 
-    /// <summary>
-    /// 推送参数地址
-    /// </summary>
-    /// <param name="iLGenerator">中间语言指令生成器</param>
-    /// <param name="index">参数索引</param>
-    public static void LoadArgAddr(this ILGenerator iLGenerator!!, int index)
-    {
-        switch (index)
-        {
-            case <= byte.MaxValue: iLGenerator.Emit(OpCodes.Ldarga_S, index); return;
-            default: iLGenerator.Emit(OpCodes.Ldarga, index); return;
-        }
-    }
 
 
-    /// <summary>
-    /// 推送索引处局部变量地址
-    /// </summary>
-    /// <param name="iLGenerator">中间语言指令生成器</param>
-    /// <param name="index">局部变量索引</param>
-    public static void LoadLocalAddr(this ILGenerator iLGenerator!!, int index)
-    {
-        switch (index)
-        {
-            case <= byte.MaxValue: iLGenerator.Emit(OpCodes.Ldloca_S, index); return;
-            default: iLGenerator.Emit(OpCodes.Ldloca, index); return;
-        }
-    }
 
-    /// <summary>
-    /// 推送字段地址
-    /// </summary>
-    /// <param name="iLGenerator">中间语言指令生成器</param>
-    /// <param name="fieldInfo">字段信息</param>
-    public static void LoadFieldAddr(this ILGenerator iLGenerator!!, FieldInfo fieldInfo!!)
-    {
-        if (fieldInfo.IsStatic) iLGenerator.Emit(OpCodes.Ldsflda, fieldInfo);
-        else iLGenerator.Emit(OpCodes.Ldflda, fieldInfo);
-    }
+
+
+
 
     /// <summary>
     /// 推送方法指针
@@ -868,147 +1083,6 @@ public static partial class ILGeneratorExtensions
     public static void DebugBreakPoint(this ILGenerator iLGenerator!!) => iLGenerator.Emit(OpCodes.Break);
     #endregion
 
-    #region 跳转
-    /// <summary>
-    /// 如果两个值相等则跳转
-    /// </summary>
-    /// <param name="iLGenerator">中间语言指令生成器</param>
-    /// <param name="label">跳转标签</param>
-    /// <param name="isShort">是否短格式</param>
-    public static void GotoByEqual(this ILGenerator iLGenerator!!, Label label, bool isShort = true)
-    {
-        if (isShort) iLGenerator.Emit(OpCodes.Beq_S, label);
-        else iLGenerator.Emit(OpCodes.Beq, label);
-    }
-
-    /// <summary>
-    /// 如果第一个值大于第二个或者相等则跳转
-    /// </summary>
-    /// <param name="iLGenerator">中间语言指令生成器</param>
-    /// <param name="label">跳转标签</param>
-    /// <param name="isShort">是否短格式</param>
-    /// <param name="isUnsigned">是否是无符号整数值或未经排序的浮点值</param>
-    public static void GotoByGreaterOrEqual(this ILGenerator iLGenerator!!, Label label, bool isShort = true, bool isUnsigned = false)
-    {
-        if (isShort == isUnsigned == true) iLGenerator.Emit(OpCodes.Bge_Un_S, label);
-        else if (isUnsigned) iLGenerator.Emit(OpCodes.Bge_Un, label);
-        else if (isShort) iLGenerator.Emit(OpCodes.Bge_S, label);
-        else iLGenerator.Emit(OpCodes.Bge, label);
-    }
-
-    /// <summary>
-    /// 如果第一个值大于第二个值则跳转
-    /// </summary>
-    /// <param name="iLGenerator">中间语言指令生成器</param>
-    /// <param name="label">跳转标签</param>
-    /// <param name="isShort">是否短格式</param>
-    /// <param name="isUnsigned">是否是无符号整数值或未经排序的浮点值</param>
-    public static void GotoByGreater(this ILGenerator iLGenerator!!, Label label, bool isShort = true, bool isUnsigned = false)
-    {
-        if (isShort == isUnsigned == true) iLGenerator.Emit(OpCodes.Bgt_Un_S, label);
-        else if (isUnsigned) iLGenerator.Emit(OpCodes.Bgt_Un, label);
-        else if (isShort) iLGenerator.Emit(OpCodes.Bgt_S, label);
-        else iLGenerator.Emit(OpCodes.Bgt, label);
-    }
-
-    /// <summary>
-    /// 如果第一个值小于第二个或者相等则跳转
-    /// </summary>
-    /// <param name="iLGenerator">中间语言指令生成器</param>
-    /// <param name="label">跳转标签</param>
-    /// <param name="isShort">是否短格式</param>
-    /// <param name="isUnsigned">是否是无符号整数值或未经排序的浮点值</param>
-    public static void GotoByLessOrEqual(this ILGenerator iLGenerator!!, Label label, bool isShort = true, bool isUnsigned = false)
-    {
-        if (isShort == isUnsigned == true) iLGenerator.Emit(OpCodes.Ble_Un_S, label);
-        else if (isUnsigned) iLGenerator.Emit(OpCodes.Ble_Un, label);
-        else if (isShort) iLGenerator.Emit(OpCodes.Ble_S, label);
-        else iLGenerator.Emit(OpCodes.Ble, label);
-    }
-
-    /// <summary>
-    /// 如果第一个值小于第二个值则跳转
-    /// </summary>
-    /// <param name="iLGenerator">中间语言指令生成器</param>
-    /// <param name="label">跳转标签</param>
-    /// <param name="isShort">是否短格式</param>
-    /// <param name="isUnsigned">是否是无符号整数值或未经排序的浮点值</param>
-    public static void GotoByLess(this ILGenerator iLGenerator!!, Label label, bool isShort = true, bool isUnsigned = false)
-    {
-        if (isShort == isUnsigned == true) iLGenerator.Emit(OpCodes.Blt_Un_S, label);
-        else if (isUnsigned) iLGenerator.Emit(OpCodes.Blt_Un, label);
-        else if (isShort) iLGenerator.Emit(OpCodes.Blt_S, label);
-        else iLGenerator.Emit(OpCodes.Blt, label);
-    }
-
-    /// <summary>
-    /// 如果两个无符号整数值或未经排序的浮点值不相等则跳转
-    /// </summary>
-    /// <param name="iLGenerator">中间语言指令生成器</param>
-    /// <param name="label">跳转标签</param>
-    /// <param name="isShort">是否短格式</param>
-    public static void GotoByUnsignedNotEqual(this ILGenerator iLGenerator!!, Label label, bool isShort = true)
-    {
-        if (isShort) iLGenerator.Emit(OpCodes.Bne_Un_S, label);
-        else iLGenerator.Emit(OpCodes.Bne_Un, label);
-    }
-
-    /// <summary>
-    /// 跳转
-    /// </summary>
-    /// <param name="iLGenerator">中间语言指令生成器</param>
-    /// <param name="label">跳转标签</param>
-    /// <param name="isShort">是否短格式</param>
-    public static void Goto(this ILGenerator iLGenerator!!, Label label, bool isShort = true)
-    {
-        if (isShort) iLGenerator.Emit(OpCodes.Br_S, label);
-        else iLGenerator.Emit(OpCodes.Br, label);
-    }
-
-    /// <summary>
-    /// 如果值为 false\空引用\零则跳转
-    /// </summary>
-    /// <param name="iLGenerator">中间语言指令生成器</param>
-    /// <param name="label">跳转标签</param>
-    /// <param name="isShort">是否短格式</param>
-    public static void GotoByFalse(this ILGenerator iLGenerator!!, Label label, bool isShort = true)
-    {
-        if (isShort) iLGenerator.Emit(OpCodes.Brfalse_S, label);
-        else iLGenerator.Emit(OpCodes.Brfalse, label);
-    }
-
-    /// <summary>
-    /// 如果值为 false\空引用\零则跳转
-    /// </summary>
-    /// <param name="iLGenerator">中间语言指令生成器</param>
-    /// <param name="label">跳转标签</param>
-    /// <param name="isShort">是否短格式</param>
-    public static void GotoByTrue(this ILGenerator iLGenerator!!, Label label, bool isShort = true)
-    {
-        if (isShort) iLGenerator.Emit(OpCodes.Brtrue_S, label);
-        else iLGenerator.Emit(OpCodes.Brtrue, label);
-    }
-
-    /// <summary>
-    /// 跳转(强制),可用于退出try\filter\catch块
-    /// </summary>
-    /// <param name="iLGenerator">中间语言指令生成器</param>
-    /// <param name="label">跳转标签</param>
-    /// <param name="isShort">是否短格式</param>
-    public static void GotoLeave(this ILGenerator iLGenerator!!, Label label, bool isShort = true)
-    {
-        if (isShort) iLGenerator.Emit(OpCodes.Leave_S, label);
-        else iLGenerator.Emit(OpCodes.Leave, label);
-    }
-
-    /// <summary>
-    /// 跳转到指定索引处的标签
-    /// </summary>
-    /// <param name="iLGenerator">中间语言指令生成器</param>
-    /// <param name="labels">跳转标签集合</param>
-    public static void Switch(this ILGenerator iLGenerator!!, Label[] labels) => iLGenerator.Emit(OpCodes.Switch, labels);
-    #endregion
-
 
 
     /// <summary>
@@ -1027,24 +1101,9 @@ public static partial class ILGeneratorExtensions
 
 
 
-    /// <summary>
-    /// 调用方法
-    /// </summary>
-    /// <param name="iLGenerator">中间语言指令生成器</param>
-    /// <param name="methodInfo">方法信息</param>
-    /// <param name="optionalParameterTypes">可选参数类型,如果存在该值应该是调用约定为 <see cref=" CallingConventions.VarArgs"/> 的方法</param>
-    public static void Call(this ILGenerator iLGenerator!!, MethodInfo methodInfo!!, params Type[] optionalParameterTypes)
-    {
-        if (optionalParameterTypes.IsNullOrEmpty()) iLGenerator.Emit(OpCodes.Call, methodInfo);
-        else iLGenerator.EmitCall(OpCodes.Call, methodInfo, optionalParameterTypes);
-    }
 
-    /// <summary>
-    /// 调用构造函数
-    /// </summary>
-    /// <param name="iLGenerator">中间语言指令生成器</param>
-    /// <param name="constructorInfo">构造函数信息</param>
-    public static void Call(this ILGenerator iLGenerator!!, ConstructorInfo constructorInfo!!) => iLGenerator.Emit(OpCodes.Call, constructorInfo);
+
+
 
     /// <summary>
     /// 最后的调用,在call之前使用,被标记的调用后面必须接return

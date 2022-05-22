@@ -6,5 +6,5 @@
 可以对生成的程序集做以下操作
 1.使用 ildasm.exe(IL 反汇编程序) 读dll文件的中间语言指令 (不推荐,可读性不高)
 2.在vs中引用该动态生成的dll,读取反编译后的的源码 (可用,可读性可以,但是不太方便)
-3.下载 https://github.com/icsharpcode/ILSpy 链接中的工具，反编译动态生成的dll查看源码 (推荐)
+3.下载 https://github.com/icsharpcode/ILSpy 链接中的工具，或者vs中ILSpy扩展工具，反编译动态生成的dll查看源码 (推荐)
 ~~~
