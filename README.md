@@ -1,12 +1,8 @@
 # Easy
 
-----
-
 让一切变得简单
 
 ## 文档目录
-
-----
 
 * 架构
   * [系统类型拓展](./readmes/Easy.Extensions.md)
@@ -16,8 +12,6 @@
   * [Json合并工具](./readmes/Easy.Tool.MergeJson.md)
 
 ## 发布包任务
-
-----
 
 * 使用 msbuild
   * 任意位置 msbuild <Project/solution> -t:ReleaseNuGetToRemote 即可自动发布包
@@ -31,15 +25,11 @@
 
 ## 查看所有以发布的包的信息
 
-----
-
 ~~~text
 在项目根目录执行
 .\nuget.exe list Linlccc -PreRelease -Verbosity detailed
 ~~~
 
 ## License
-
-----
 
 [TIM](./LICENSE)
