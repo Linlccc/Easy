@@ -771,6 +771,24 @@ public static partial class ILGeneratorExtensions
         if (integerType == typeof(Int64)) { if (!isOverflowCheck) iLGenerator.Emit(OpCodes.Conv_I8); else iLGenerator.Emit(OpCodes.Conv_Ovf_U8); }
         else if (integerType == typeof(UInt64)) iLGenerator.Emit(OpCodes.Conv_Ovf_U8_Un);
     }
+
+    /// <summary>
+    /// 将堆栈顶部的值类型值转换成 <paramref name="floatType"/> 类型浮点值,并推送结果
+    /// </summary>
+    /// <param name="iLGenerator">中间语言指令生成器</param>
+    /// <param name="floatType">浮点类型</param>
+    public static void ConvertFloat(this ILGenerator iLGenerator!!, Type floatType!!)
+    {
+        if (floatType == typeof(Single)) iLGenerator.Emit(OpCodes.Conv_R4);
+        else if (floatType == typeof(Double)) iLGenerator.Emit(OpCodes.Conv_R8);
+        else throw new ArgumentException(Strings.InvalidParameter, nameof(floatType));
+    }
+
+    /// <summary>
+    /// 将堆栈顶部的无符号整数值转换成 <see cref="Single"/> 类型浮点值,并推送结果
+    /// </summary>
+    /// <param name="iLGenerator">中间语言指令生成器</param>
+    public static void ConvertUnsignedIntegerToFloat(this ILGenerator iLGenerator!!) => iLGenerator.Emit(OpCodes.Conv_R_Un);
     #endregion
 
     /// <summary>
@@ -864,25 +882,7 @@ public static partial class ILGeneratorExtensions
 
 
 
-    /// <summary>
-    /// 转换值为浮点数,并推送结果
-    /// </summary>
-    /// <param name="iLGenerator">中间语言指令生成器</param>
-    /// <param name="floatType">
-    /// <list type="bullet">
-    ///     <item><see cref="Single"/> (float32)</item>
-    ///     <item><see cref="Double"/> (float64)</item>
-    /// </list>
-    /// </param>
-    public static void ConvertFloat(this ILGenerator iLGenerator!!, FloatType floatType = FloatType.Single)
-    {
-        switch (floatType)
-        {
-            case FloatType.Single: iLGenerator.Emit(OpCodes.Conv_R4); break;
-            case FloatType.Double: iLGenerator.Emit(OpCodes.Conv_R8); break;
-            default: throw new ArgumentException(Strings.InvalidParameter, nameof(floatType));
-        }
-    }
+
 
 
     /// <summary>
