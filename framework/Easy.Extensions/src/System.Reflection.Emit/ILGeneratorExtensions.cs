@@ -100,7 +100,7 @@ public static partial class ILGeneratorExtensions
     }
     #endregion
 
-    #region 变量地址
+    #region 变量To地址
     /// <summary>
     /// 推送索引处参数地址
     /// </summary>
@@ -139,6 +139,52 @@ public static partial class ILGeneratorExtensions
         if (fieldInfo.IsStatic) iLGenerator.Emit(OpCodes.Ldsflda, fieldInfo);
         else iLGenerator.Emit(OpCodes.Ldflda, fieldInfo);
     }
+    #endregion
+
+    #region 地址To值
+    /// <summary>
+    /// 推送堆栈顶部地址处的 <paramref name="valueType"/>(值类型) 类型的值
+    /// <br></br>TODO：不确定是否只是值类型可用
+    /// </summary>
+    /// <param name="iLGenerator">中间语言指令生成器</param>
+    /// <param name="valueType">值类型</param>
+    public static void LoadAddrValue(this ILGenerator iLGenerator!!, Type valueType!!) => iLGenerator.Emit(OpCodes.Ldobj, valueType);
+
+    /// <summary>
+    /// 推送堆栈顶部地址处的 <paramref name="intererType"/>(整数类型) 类型的值
+    /// </summary>
+    /// <param name="iLGenerator">中间语言指令生成器</param>
+    /// <param name="intererType">整数类型</param>
+    public static void LoadAddrInteger(this ILGenerator iLGenerator!!, Type intererType!!)
+    {
+        if (intererType == typeof(IntPtr)) iLGenerator.Emit(OpCodes.Ldind_I);
+        else if (intererType == typeof(SByte)) iLGenerator.Emit(OpCodes.Ldind_I1);
+        else if (intererType == typeof(Byte)) iLGenerator.Emit(OpCodes.Ldind_U1);
+        else if (intererType == typeof(Int16)) iLGenerator.Emit(OpCodes.Ldind_I2);
+        else if (intererType == typeof(UInt16)) iLGenerator.Emit(OpCodes.Ldind_U2);
+        else if (intererType == typeof(Int32)) iLGenerator.Emit(OpCodes.Ldind_I4);
+        else if (intererType == typeof(UInt32)) iLGenerator.Emit(OpCodes.Ldind_U4);
+        else if (intererType == typeof(Int64)) iLGenerator.Emit(OpCodes.Ldind_I8);
+        else throw new ArgumentException(Strings.InvalidParameter, nameof(intererType));
+    }
+
+    /// <summary>
+    /// 推送堆栈顶部地址处的 <paramref name="floatType"/>(浮点类型) 类型的值
+    /// </summary>
+    /// <param name="iLGenerator">中间语言指令生成器</param>
+    /// <param name="floatType">浮点类型</param>
+    public static void LoadAddrFloat(this ILGenerator iLGenerator!!, Type floatType!!)
+    {
+        if (floatType == typeof(Single)) iLGenerator.Emit(OpCodes.Ldind_R4);
+        else if (floatType == typeof(Double)) iLGenerator.Emit(OpCodes.Ldind_R8);
+        else throw new ArgumentException(Strings.InvalidParameter, nameof(floatType));
+    }
+
+    /// <summary>
+    /// 推送堆栈顶部地址处的引用类型的对象
+    /// </summary>
+    /// <param name="iLGenerator">中间语言指令生成器</param>
+    public static void LoadAddrObject(this ILGenerator iLGenerator!!) => iLGenerator.Emit(OpCodes.Ldind_Ref);
     #endregion
 
     #region 常量
@@ -640,6 +686,93 @@ public static partial class ILGeneratorExtensions
     public static void Switch(this ILGenerator iLGenerator!!, Label[] labels) => iLGenerator.Emit(OpCodes.Switch, labels);
     #endregion
 
+    #region 类型转换
+    /// <summary>
+    /// 将堆栈顶部的 <paramref name="valueType"/>(值类型) 类型的值转换为 <see cref="object"/> 类型,并推送结果
+    /// <br>执行装箱操作</br>
+    /// </summary>
+    /// <param name="iLGenerator">中间语言指令生成器</param>
+    /// <param name="valueType">值类型</param>
+    public static void Box(this ILGenerator iLGenerator!!, Type valueType!!) => iLGenerator.Emit(OpCodes.Box, valueType);
+
+    /// <summary>
+    /// 将堆栈顶部的 <see cref="object"/> 类型的值转换为 <paramref name="valueType"/> 类型,并推送结果
+    /// <br>执行拆箱操作</br>
+    /// <list type="bullet">
+    ///     <item>该指令应用于值类型时 == <see cref="OpCodes.Unbox"/> + <see cref="OpCodes.Ldobj"/></item>
+    ///     <item>该指令应用于引用类型时 == <see cref="OpCodes.Castclass" /></item>
+    /// </list>
+    /// </summary>
+    /// <param name="iLGenerator">中间语言指令生成器</param>
+    /// <param name="valueType">值类型</param>
+    public static void UnBox(this ILGenerator iLGenerator!!, Type valueType!!) => iLGenerator.Emit(OpCodes.Unbox_Any, valueType);
+
+    /// <summary>
+    /// 将堆栈顶部的 <see cref="object"/> 类型的值转换为 <paramref name="valueType"/>(值类型) 类型,并推送指针
+    /// <br>该指令将对象引用(值类型的装箱表示)转换为未装箱形式的值类型指针</br>
+    /// </summary>
+    /// <param name="iLGenerator">中间语言指令生成器</param>
+    /// <param name="valueType">值类型</param>
+    public static void UnBoxThenLoadPointer(this ILGenerator iLGenerator!!, Type valueType!!) => iLGenerator.Emit(OpCodes.Unbox, valueType);
+
+    /// <summary>
+    /// 将堆栈顶部的引用类型对象转换成 <paramref name="targetType"/>(引用类型) 类型的引用,并推送结果
+    /// </summary>
+    /// <param name="iLGenerator">中间语言指令生成器</param>
+    /// <param name="targetType">目标类型</param>
+    public static void ConvertType(this ILGenerator iLGenerator!!, Type targetType!!) => iLGenerator.Emit(OpCodes.Castclass, targetType);
+
+    /// <summary>
+    /// 将堆栈顶部的值类型值转换成有符号整数类型的值,并推送结果
+    /// </summary>
+    /// <param name="iLGenerator">中间语言指令生成器</param>
+    /// <param name="integerType">整数类型</param>
+    /// <param name="isOverflowCheck">是否检查溢出,如果 <paramref name="integerType"/> 是无符号类型,将自动启用溢出检查</param>
+    public static void ConvertInteger(this ILGenerator iLGenerator!!, Type integerType, bool isOverflowCheck = false)
+    {
+        if (integerType == typeof(IntPtr)) { if (!isOverflowCheck) iLGenerator.Emit(OpCodes.Conv_I); else iLGenerator.Emit(OpCodes.Conv_Ovf_I); } // 有符号转有符号
+        else if (integerType == typeof(UIntPtr)) iLGenerator.Emit(OpCodes.Conv_Ovf_I_Un); //无符号转有符号
+
+        if (integerType == typeof(SByte)) { if (!isOverflowCheck) iLGenerator.Emit(OpCodes.Conv_I1); else iLGenerator.Emit(OpCodes.Conv_Ovf_I1); }
+        else if (integerType == typeof(Byte)) iLGenerator.Emit(OpCodes.Conv_Ovf_I1_Un);
+
+        if (integerType == typeof(Int16)) { if (!isOverflowCheck) iLGenerator.Emit(OpCodes.Conv_I2); else iLGenerator.Emit(OpCodes.Conv_Ovf_I2); }
+        else if (integerType == typeof(UInt64)) iLGenerator.Emit(OpCodes.Conv_Ovf_I2_Un);
+
+        if (integerType == typeof(Int32)) { if (!isOverflowCheck) iLGenerator.Emit(OpCodes.Conv_I4); else iLGenerator.Emit(OpCodes.Conv_Ovf_I4); }
+        else if (integerType == typeof(UInt32)) iLGenerator.Emit(OpCodes.Conv_Ovf_I4_Un);
+
+        if (integerType == typeof(Int64)) { if (!isOverflowCheck) iLGenerator.Emit(OpCodes.Conv_I8); else iLGenerator.Emit(OpCodes.Conv_Ovf_I8); }
+        else if (integerType == typeof(UInt64)) iLGenerator.Emit(OpCodes.Conv_Ovf_I8_Un);
+
+        else throw new ArgumentException(Strings.InvalidParameter, nameof(integerType));
+    }
+
+    /// <summary>
+    /// 将堆栈顶部的值类型值转换成无符号整数类型的值,并推送结果
+    /// </summary>
+    /// <param name="iLGenerator">中间语言指令生成器</param>
+    /// <param name="integerType">整数类型</param>
+    /// <param name="isOverflowCheck">是否检查溢出,如果 <paramref name="integerType"/> 是无符号类型,将自动启用溢出检查</param>
+    public static void ConvertUnsignedInteger(this ILGenerator iLGenerator!!, Type integerType, bool isOverflowCheck = false)
+    {
+        if (integerType == typeof(IntPtr)) { if (!isOverflowCheck) iLGenerator.Emit(OpCodes.Conv_U); else iLGenerator.Emit(OpCodes.Conv_Ovf_U); } // 有符号转无符号
+        else if (integerType == typeof(UIntPtr)) iLGenerator.Emit(OpCodes.Conv_Ovf_U_Un); //无符号转无符号
+
+        if (integerType == typeof(SByte)) { if (!isOverflowCheck) iLGenerator.Emit(OpCodes.Conv_U1); else iLGenerator.Emit(OpCodes.Conv_Ovf_U1); }
+        else if (integerType == typeof(Byte)) iLGenerator.Emit(OpCodes.Conv_Ovf_U1_Un);
+
+        if (integerType == typeof(Int16)) { if (!isOverflowCheck) iLGenerator.Emit(OpCodes.Conv_I2); else iLGenerator.Emit(OpCodes.Conv_Ovf_U2); }
+        else if (integerType == typeof(UInt64)) iLGenerator.Emit(OpCodes.Conv_Ovf_U2_Un);
+
+        if (integerType == typeof(Int32)) { if (!isOverflowCheck) iLGenerator.Emit(OpCodes.Conv_I4); else iLGenerator.Emit(OpCodes.Conv_Ovf_U4); }
+        else if (integerType == typeof(UInt32)) iLGenerator.Emit(OpCodes.Conv_Ovf_U4_Un);
+
+        if (integerType == typeof(Int64)) { if (!isOverflowCheck) iLGenerator.Emit(OpCodes.Conv_I8); else iLGenerator.Emit(OpCodes.Conv_Ovf_U8); }
+        else if (integerType == typeof(UInt64)) iLGenerator.Emit(OpCodes.Conv_Ovf_U8_Un);
+    }
+    #endregion
+
     /// <summary>
     /// 方法结束，如果有返回值推送返回值
     /// </summary>
@@ -652,6 +785,8 @@ public static partial class ILGeneratorExtensions
     /// </summary>
     /// <param name="iLGenerator">中间语言指令生成器</param>
     public static void Nop(this ILGenerator iLGenerator!!) => iLGenerator.Emit(OpCodes.Nop);
+
+    public static void FFF() { }
 
 
     /* 未验证方法
@@ -691,65 +826,6 @@ public static partial class ILGeneratorExtensions
         else iLGenerator.Emit(OpCodes.Ldftn, methodInfo);
     }
 
-    /// <summary>
-    /// 推送该地址处的对象的值
-    /// </summary>
-    /// <param name="iLGenerator">中间语言指令生成器</param>
-    /// <param name="valueType">值类型</param>
-    public static void LoadAddrObject(this ILGenerator iLGenerator!!, Type valueType!!) => iLGenerator.Emit(OpCodes.Ldobj, valueType);
-
-
-
-
-    #region 推送数字
-
-
-
-
-    /// <summary>
-    /// 推送指定地址处的整数值
-    /// </summary>
-    /// <param name="iLGenerator">中间语言指令生成器</param>
-    /// <param name="integerType">整数类型</param>
-    public static void LoadIntegerByAddr(this ILGenerator iLGenerator!!, IntegerType integerType = IntegerType.Int32)
-    {
-        switch (integerType)
-        {
-            case IntegerType.SByte: iLGenerator.Emit(OpCodes.Ldind_I1); return;
-            case IntegerType.Byte: iLGenerator.Emit(OpCodes.Ldind_U1); return;
-            case IntegerType.Int16: iLGenerator.Emit(OpCodes.Ldind_I2); return;
-            case IntegerType.UInt16: iLGenerator.Emit(OpCodes.Ldind_U2); return;
-            case IntegerType.Int32: iLGenerator.Emit(OpCodes.Ldind_I4); return;
-            case IntegerType.UInt32: iLGenerator.Emit(OpCodes.Ldind_U4); return;
-            case IntegerType.Int64: iLGenerator.Emit(OpCodes.Ldind_I8); return;
-            case IntegerType.NativeInt: iLGenerator.Emit(OpCodes.Ldind_I); return;
-            default: throw new ArgumentException(Strings.InvalidParameter, nameof(integerType));
-        }
-    }
-
-    /// <summary>
-    /// 推送指定地址处的浮点数值
-    /// </summary>
-    /// <param name="iLGenerator">中间语言指令生成器</param>
-    /// <param name="floatType">整数类型</param>
-    public static void LoadFloatByAddr(this ILGenerator iLGenerator!!, FloatType floatType = FloatType.Single)
-    {
-        switch (floatType)
-        {
-            case FloatType.Single: iLGenerator.Emit(OpCodes.Ldind_R4); return;
-            case FloatType.Double: iLGenerator.Emit(OpCodes.Ldind_R8); return;
-            default: throw new ArgumentException(Strings.InvalidParameter, nameof(floatType));
-        }
-    }
-    #endregion
-
-
-
-    /// <summary>
-    /// 获取指定地址处的对象值
-    /// </summary>
-    /// <param name="iLGenerator">中间语言指令生成器</param>
-    public static void LoadObjectByAddr(this ILGenerator iLGenerator!!) => iLGenerator.Emit(OpCodes.Ldind_Ref);
 
     /// <summary>
     /// 获取 <paramref name="token"/> 的运行时句柄
@@ -782,146 +858,11 @@ public static partial class ILGeneratorExtensions
     #endregion
 
     #region 转换
-    /// <summary>
-    /// 转换对象为 <paramref name="targetType"/> 类型,并推送结果
-    /// </summary>
-    /// <param name="iLGenerator">中间语言指令生成器</param>
-    /// <param name="targetType">目标类型</param>
-    public static void ConvertType(this ILGenerator iLGenerator!!, Type targetType!!) => iLGenerator.Emit(OpCodes.Castclass, targetType);
 
-    /// <summary>
-    /// 转换值为有符号整数类型,并推送结果
-    /// </summary>
-    /// <param name="iLGenerator">中间语言指令生成器</param>
-    /// <param name="basis">执行转换基础
-    /// <list type="bullet">
-    ///     <item>
-    ///         <term><see cref="IntegerType.SByte"/></term>
-    ///         <description>将值转换成有符号的 <see cref="SByte"/> 类型的值,根据 <paramref name="isOverflowCheck"/> 值判断是否执行溢出检查</description>
-    ///     </item>
-    ///     <item>
-    ///         <term><see cref="IntegerType.Byte"/></term>
-    ///         <description>将无符号值转换成有符号的 <see cref="SByte"/> 类型的值,一定会执行溢出检查</description>
-    ///     </item>
-    ///     <item>
-    ///         <term><see cref="IntegerType.Int16"/></term>
-    ///         <description>将值转换成有符号的 <see cref="Int16"/> 类型的值,根据 <paramref name="isOverflowCheck"/> 值判断是否执行溢出检查</description>
-    ///     </item>
-    ///     <item>
-    ///         <term><see cref="IntegerType.UInt16"/></term>
-    ///         <description>将无符号值转换成有符号的 <see cref="Int16"/> 类型的值,一定会执行溢出检查</description>
-    ///     </item>
-    ///     <item>
-    ///         <term><see cref="IntegerType.Int32"/></term>
-    ///         <description>将值转换成有符号的 <see cref="Int32"/> 类型的值,根据 <paramref name="isOverflowCheck"/> 值判断是否执行溢出检查</description>
-    ///     </item>
-    ///     <item>
-    ///         <term><see cref="IntegerType.UInt32"/></term>
-    ///         <description>将无符号值转换成有符号的 <see cref="Int32"/> 类型的值,一定会执行溢出检查</description>
-    ///     </item>
-    ///     <item>
-    ///         <term><see cref="IntegerType.Int64"/></term>
-    ///         <description>将值转换成有符号的 <see cref="Int64"/> 类型的值,根据 <paramref name="isOverflowCheck"/> 值判断是否执行溢出检查</description>
-    ///     </item>
-    ///     <item>
-    ///         <term><see cref="IntegerType.UInt64"/></term>
-    ///         <description>将无符号值转换成有符号的 <see cref="Int64"/> 类型的值,一定会执行溢出检查</description>
-    ///     </item>
-    ///     <item>
-    ///         <term><see cref="IntegerType.NativeInt"/></term>
-    ///         <description>将值转换成有符号的 native int 类型的值,根据 <paramref name="isOverflowCheck"/> 值判断是否执行溢出检查</description>
-    ///     </item>
-    ///     <item>
-    ///         <term><see cref="IntegerType.UNativeInt"/></term>
-    ///         <description>将无符号值转换成有符号的 native int 类型的值,一定会执行溢出检查</description>
-    ///     </item>
-    /// </list>
-    /// </param>
-    /// <param name="isOverflowCheck">是否检查溢出,如果是无符号类型一定会检查溢出</param>
-    public static void ConvertInteger(this ILGenerator iLGenerator!!, IntegerType basis = IntegerType.Int32, bool isOverflowCheck = false)
-    {
-        switch (basis)
-        {
-            case IntegerType.SByte: if (isOverflowCheck) iLGenerator.Emit(OpCodes.Conv_Ovf_I1); else iLGenerator.Emit(OpCodes.Conv_I1); return;
-            case IntegerType.Byte: iLGenerator.Emit(OpCodes.Conv_Ovf_I1_Un); return;
-            case IntegerType.Int16: if (isOverflowCheck) iLGenerator.Emit(OpCodes.Conv_Ovf_I2); else iLGenerator.Emit(OpCodes.Conv_I2); return;
-            case IntegerType.UInt16: iLGenerator.Emit(OpCodes.Conv_Ovf_I2_Un); return;
-            case IntegerType.Int32: if (isOverflowCheck) iLGenerator.Emit(OpCodes.Conv_Ovf_I4); else iLGenerator.Emit(OpCodes.Conv_I4); return;
-            case IntegerType.UInt32: iLGenerator.Emit(OpCodes.Conv_Ovf_I4_Un); return;
-            case IntegerType.Int64: if (isOverflowCheck) iLGenerator.Emit(OpCodes.Conv_Ovf_I8); else iLGenerator.Emit(OpCodes.Conv_I8); return;
-            case IntegerType.UInt64: iLGenerator.Emit(OpCodes.Conv_Ovf_I8_Un); return;
-            case IntegerType.NativeInt: if (isOverflowCheck) iLGenerator.Emit(OpCodes.Conv_Ovf_I); else iLGenerator.Emit(OpCodes.Conv_I); return;
-            case IntegerType.UNativeInt: iLGenerator.Emit(OpCodes.Conv_Ovf_I_Un); return;
-            default: throw new ArgumentException(Strings.InvalidParameter, nameof(basis));
-        }
-    }
 
-    /// <summary>
-    /// 转换值为无符号整数类型,并推送结果
-    /// </summary>
-    /// <param name="iLGenerator">中间语言指令生成器</param>
-    /// <param name="basis">执行转换基础
-    /// <list type="bullet">
-    ///     <item>
-    ///         <term><see cref="IntegerType.SByte"/></term>
-    ///         <description>将值转换成无符号的 <see cref="Byte"/> 类型的值,根据 <paramref name="isOverflowCheck"/> 值判断是否执行溢出检查</description>
-    ///     </item>
-    ///     <item>
-    ///         <term><see cref="IntegerType.Byte"/></term>
-    ///         <description>将无符号值转换成无符号的 <see cref="Byte"/> 类型的值,一定会执行溢出检查</description>
-    ///     </item>
-    ///     <item>
-    ///         <term><see cref="IntegerType.Int16"/></term>
-    ///         <description>将值转换成无符号的 <see cref="UInt16"/> 类型的值,根据 <paramref name="isOverflowCheck"/> 值判断是否执行溢出检查</description>
-    ///     </item>
-    ///     <item>
-    ///         <term><see cref="IntegerType.UInt16"/></term>
-    ///         <description>将无符号值转换成无符号的 <see cref="UInt16"/> 类型的值,一定会执行溢出检查</description>
-    ///     </item>
-    ///     <item>
-    ///         <term><see cref="IntegerType.Int32"/></term>
-    ///         <description>将值转换成无符号的 <see cref="UInt32"/> 类型的值,根据 <paramref name="isOverflowCheck"/> 值判断是否执行溢出检查</description>
-    ///     </item>
-    ///     <item>
-    ///         <term><see cref="IntegerType.UInt32"/></term>
-    ///         <description>将无符号值转换成无符号的 <see cref="UInt32"/> 类型的值,一定会执行溢出检查</description>
-    ///     </item>
-    ///     <item>
-    ///         <term><see cref="IntegerType.Int64"/></term>
-    ///         <description>将值转换成无符号的 <see cref="UInt64"/> 类型的值,根据 <paramref name="isOverflowCheck"/> 值判断是否执行溢出检查</description>
-    ///     </item>
-    ///     <item>
-    ///         <term><see cref="IntegerType.UInt64"/></term>
-    ///         <description>将无符号值转换成无符号的 <see cref="UInt64"/> 类型的值,一定会执行溢出检查</description>
-    ///     </item>
-    ///     <item>
-    ///         <term><see cref="IntegerType.NativeInt"/></term>
-    ///         <description>将值转换成无符号的 native int 类型的值,根据 <paramref name="isOverflowCheck"/> 值判断是否执行溢出检查</description>
-    ///     </item>
-    ///     <item>
-    ///         <term><see cref="IntegerType.UNativeInt"/></term>
-    ///         <description>将无符号值转换成无符号的 native int 类型的值,一定会执行溢出检查</description>
-    ///     </item>
-    /// </list>
-    /// </param>
-    /// <param name="isOverflowCheck">是否检查溢出,如果是无符号类型一定会检查溢出</param>
-    public static void ConvertUnsignedInteger(this ILGenerator iLGenerator!!, IntegerType basis = IntegerType.Int32, bool isOverflowCheck = false)
-    {
-        switch (basis)
-        {
-            case IntegerType.SByte: if (isOverflowCheck) iLGenerator.Emit(OpCodes.Conv_Ovf_U1); else iLGenerator.Emit(OpCodes.Conv_U1); return;
-            case IntegerType.Byte: iLGenerator.Emit(OpCodes.Conv_Ovf_U1_Un); return;
-            case IntegerType.Int16: if (isOverflowCheck) iLGenerator.Emit(OpCodes.Conv_Ovf_U2); else iLGenerator.Emit(OpCodes.Conv_U2); return;
-            case IntegerType.UInt16: iLGenerator.Emit(OpCodes.Conv_Ovf_U2_Un); return;
-            case IntegerType.Int32: if (isOverflowCheck) iLGenerator.Emit(OpCodes.Conv_Ovf_U4); else iLGenerator.Emit(OpCodes.Conv_U4); return;
-            case IntegerType.UInt32: iLGenerator.Emit(OpCodes.Conv_Ovf_U4_Un); return;
-            case IntegerType.Int64: if (isOverflowCheck) iLGenerator.Emit(OpCodes.Conv_Ovf_U8); else iLGenerator.Emit(OpCodes.Conv_U8); return;
-            case IntegerType.UInt64: iLGenerator.Emit(OpCodes.Conv_Ovf_U8_Un); return;
-            case IntegerType.NativeInt: if (isOverflowCheck) iLGenerator.Emit(OpCodes.Conv_Ovf_U); else iLGenerator.Emit(OpCodes.Conv_U); return;
-            case IntegerType.UNativeInt: iLGenerator.Emit(OpCodes.Conv_Ovf_U_Un); return;
-            default: throw new ArgumentException(Strings.InvalidParameter, nameof(basis));
-        }
-    }
+
+
+
 
     /// <summary>
     /// 转换值为浮点数,并推送结果
@@ -951,25 +892,7 @@ public static partial class ILGeneratorExtensions
     /// <param name="targetType"></param>
     public static void AS(this ILGenerator iLGenerator!!, Type targetType!!) => iLGenerator.Emit(OpCodes.Isinst, targetType);
 
-    /// <summary>
-    /// 转换 <paramref name="valueType"/> 类型的值为引用类型(object类型),并推送结果
-    /// <br>执行装箱操作</br>
-    /// </summary>
-    /// <param name="iLGenerator">中间语言指令生成器</param>
-    /// <param name="valueType">要转换成object类型的值的类型(int/float)</param>
-    public static void Box(this ILGenerator iLGenerator!!, Type valueType!!) => iLGenerator.Emit(OpCodes.Box, valueType);
 
-    /// <summary>
-    /// 转换object类型为指定类型,根据需求推送指令/值
-    /// </summary>
-    /// <param name="iLGenerator">中间语言指令生成器</param>
-    /// <param name="valueType">值类型</param>
-    /// <param name="isPointer">是否推送指针</param>
-    public static void UnBox(this ILGenerator iLGenerator!!, Type valueType!!, bool isPointer = false)
-    {
-        if (isPointer) iLGenerator.Emit(OpCodes.Unbox, valueType);
-        else iLGenerator.Emit(OpCodes.Unbox_Any, valueType);
-    }
     #endregion
 
 

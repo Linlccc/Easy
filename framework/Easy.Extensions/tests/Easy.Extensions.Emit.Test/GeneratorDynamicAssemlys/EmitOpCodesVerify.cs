@@ -197,6 +197,17 @@ public static class EmitOpCodesVerifyCreator
         DefineMethod_Arglist1(typeBuilder);
 
 
+        // ** 类型转换
+        // (object)int
+        DefineMethod_Box1(typeBuilder);
+        // (int)obj
+        DefineMethod_UnBox1(typeBuilder);
+        // (int)obj
+        DefineMethod_UnBox2(typeBuilder);
+        // float to int
+        DefineMethod_ConvertInteger1(typeBuilder);
+
+
 
         DefineMethod_Test1(typeBuilder);
 
@@ -781,23 +792,100 @@ public static class EmitOpCodesVerifyCreator
     }
     #endregion
 
+    #region 类型转换
+    // box
+    public static MethodBuilder DefineMethod_Box1(TypeBuilder typeBuilder)
+    {
+        MethodBuilder methodBuilder = typeBuilder.DefineMethod("Box1", MethodAttributes.Public | MethodAttributes.Static, typeof(object), new Type[] { typeof(int) });
+        ILGenerator il = methodBuilder.GetILGenerator();
+
+        il.LoadArg(0);
+        il.Box(typeof(int));
+        il.Return();
+
+        return methodBuilder;
+    }
+    //unbox_any
+    public static MethodBuilder DefineMethod_UnBox1(TypeBuilder typeBuilder)
+    {
+        MethodBuilder methodBuilder = typeBuilder.DefineMethod("UnBox1", MethodAttributes.Public | MethodAttributes.Static, typeof(int), new Type[] { typeof(object) });
+        ILGenerator il = methodBuilder.GetILGenerator();
+
+        il.LoadArg(0);
+        il.UnBox(typeof(int));
+        il.Return();
+
+        return methodBuilder;
+    }
+    //unbox
+    public static MethodBuilder DefineMethod_UnBox2(TypeBuilder typeBuilder)
+    {
+        MethodBuilder methodBuilder = typeBuilder.DefineMethod("UnBox2", MethodAttributes.Public | MethodAttributes.Static, typeof(int), new Type[] { typeof(object) });
+        ILGenerator il = methodBuilder.GetILGenerator();
+
+        il.LoadArg(0);
+        il.UnBoxThenLoadPointer(typeof(int));
+        il.LoadAddrValue(typeof(int));
+        il.Return();
+
+        return methodBuilder;
+    }
+
+    //float to int
+    public static MethodBuilder DefineMethod_ConvertInteger1(TypeBuilder typeBuilder)
+    {
+        MethodBuilder methodBuilder = typeBuilder.DefineMethod("ConvertInteger1", MethodAttributes.Public | MethodAttributes.Static, typeof(int), new Type[] { typeof(float) });
+        ILGenerator il = methodBuilder.GetILGenerator();
+
+        il.LoadArg(0);
+        il.ConvertInteger(typeof(int));
+        il.Return();
+
+        return methodBuilder;
+    }
+    #endregion
+
 
     public static MethodBuilder DefineMethod_Test1(TypeBuilder typeBuilder)
     {
         // 测试方法
 
-        MethodBuilder methodBuilder = typeBuilder.DefineMethod("Test1", MethodAttributes.Public | MethodAttributes.Static, typeof(string), Type.EmptyTypes);
+        MethodBuilder methodBuilder = typeBuilder.DefineMethod("Test1", MethodAttributes.Public | MethodAttributes.Static, typeof(object), Type.EmptyTypes);
         ILGenerator il = methodBuilder.GetILGenerator();
 
-        // 局部变量
-        LocalBuilder lb_result = il.DeclareLocal(typeof(IntPtr));//结果
-        il.LoadLocalAddr(lb_result.LocalIndex);
-        il.LoadInt(3221);
-        il.Call(typeof(IntPtr).GetConstructor(new Type[] { typeof(int) }));
-
-        il.LoadLocalAddr(lb_result.LocalIndex);
-        il.Call(typeof(IntPtr).GetMethod("ToString", Type.EmptyTypes));
+        il.LoadInt(100);
+        //il.Box(typeof(int));
         il.Return();
         return methodBuilder;
+    }
+
+    public static int SF1(object o)
+    {
+        return (int)o;
+    }
+
+    public static string SF2(object o)
+    {
+        return (string)o;
+    }
+
+    public static Type SF2_1(object o)
+    {
+        return (Type)o;
+    }
+
+    public static object SF3()
+    {
+        return typeof(string);
+    }
+
+    public static object SF4()
+    {
+        return typeof(Type);
+    }
+
+    public static object SF5()
+    {
+        return typeof(object);
     }
 }

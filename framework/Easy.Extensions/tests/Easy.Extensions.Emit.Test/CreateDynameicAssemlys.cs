@@ -116,6 +116,20 @@
             int less1 = (int)type.InvokeMember("Less1", BindingFlags.InvokeMethod, null, null, new object[] { 123, 123 });
             Assert.Equal(123 < 123 ? 1 : 0, less1);
 
+            // ** 类型转换
+            // (object)int
+            object box1 = (int)type.InvokeMember("Box1", BindingFlags.InvokeMethod, null, null, new object[] { 123 });
+            Assert.Equal(123, box1);
+            // (int)obj
+            int unBox1 = (int)type.InvokeMember("UnBox1", BindingFlags.InvokeMethod, null, null, new object[] { 123 });
+            Assert.Equal(123, unBox1);
+            // (int)obj
+            int unBox2 = (int)type.InvokeMember("UnBox2", BindingFlags.InvokeMethod, null, null, new object[] { 123 });
+            Assert.Equal(123, unBox2);
+            //float to int
+            int convert1 = (int)type.InvokeMember("ConvertInteger1", BindingFlags.InvokeMethod, null, null, new object[] { 123.999f });
+            Assert.Equal((int)123.999, convert1);
+
 
 
             object test1 = type.InvokeMember("Test1", BindingFlags.InvokeMethod, null, null, new object[] { });
