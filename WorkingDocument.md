@@ -205,6 +205,7 @@ MergeJson 生成时会将 Easy.Tool.MergeJson.dll 复制到生成文件
 - [x] 根据不同的sdk添加默认全局 using (实现) [0504]
 - [x] 检查 Type 的 ContainsGenericParameters 属性 是否是判断开放泛型 (实验) [0512]
 - [x] 使用 emit 动态生成dll,然后再反编译 (实验) [0521]
+- [ ] 了解一下动态启停web项目
 
 ### Easy.Extensions 项目升级/修改计划
 
