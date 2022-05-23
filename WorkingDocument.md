@@ -220,6 +220,7 @@ MergeJson 生成时会将 Easy.Tool.MergeJson.dll 复制到生成文件
 ### Easy.Extensions 项目升级/修改计划
 
 ~~~text
+1.检查Emit拓展的参数空检查
 
 后期计划
 1.将默认类型的拓展方法分成不同的项目,步骤
