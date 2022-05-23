@@ -206,6 +206,16 @@ MergeJson 生成时会将 Easy.Tool.MergeJson.dll 复制到生成文件
 - [x] 检查 Type 的 ContainsGenericParameters 属性 是否是判断开放泛型 (实验) [0512]
 - [x] 使用 emit 动态生成dll,然后再反编译 (实验) [0521]
 - [ ] 了解一下动态启停web项目
+- [ ] 了解为什么应该将 IHttpContextAccessor 作为Singleton注入
+
+  ~~~text
+  1.看网上解释说因为【后备存储是异步本地】,没懂是什么意思
+  2.如果只是在控制器中使用的话不用注册 IHttpContextAccessor 服务，看看控制器中的httpcontext怎么来的
+
+
+  可以看看
+  https://github.com/aspnet/Hosting/issues/793#issuecomment-224924030
+  ~~~
 
 ### Easy.Extensions 项目升级/修改计划
 
