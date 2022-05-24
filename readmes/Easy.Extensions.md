@@ -54,7 +54,7 @@
 1.解决 Easy.Extensions.DependencyInjection 依赖问题
 ~~~
 
-### 1.0.1(待发布)
+### 1.0.1
 
 ~~~text
 1.修改 Type 拓展 IsOpenGeneric 为 IsAllOpenGeneric

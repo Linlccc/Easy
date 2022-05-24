@@ -51,3 +51,9 @@
 ~~~text
 1.解决当前项目依赖问题
 ~~~
+
+### 1.0.1
+
+~~~text
+1.Easy.Extensions.DependencyInjection 的服务提供商实现AOP
+~~~
