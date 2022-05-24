@@ -1,8 +1,7 @@
 ﻿using System.Collections.Concurrent;
 using System.Reflection;
-using Easy.Extensions.DependencyInjection.Abstractions;
 using Easy.Extensions.DependencyInjection.Abstractions.Extensions;
-using Microsoft.Extensions.DependencyInjection;
+
 
 namespace Easy.Extensions.DependencyInjection;
 
@@ -27,6 +26,11 @@ public sealed class EasyServiceProvider : IServiceProvider, ISupportRequiredServ
     private readonly Type _serviceProviderEngineScopeType;
 
     /// <summary>
+    /// Easy服务提供商事件
+    /// </summary>
+    private readonly EasyServiceProviderEvents? _providerEvents;
+
+    /// <summary>
     /// 服务提供商字典
     /// </summary>
     internal readonly ConcurrentDictionary<IServiceProvider, EasyServiceProviderScope> _serviceProviders = new();
@@ -37,11 +41,12 @@ public sealed class EasyServiceProvider : IServiceProvider, ISupportRequiredServ
     /// 构造函数
     /// </summary>
     /// <param name="serviceDescriptors">服务描述集合</param>
-    /// <param name="serviceProviderOptions">服务提供商配置</param>
-    /// <param name="holdDefaultServiceProvider">是否保留默认服务提供商</param>
+    /// <param name="easyServiceProviderOptions">Easy 服务提供商配置</param>
     /// <exception cref="InvalidOperationException">永远不该出现的错误</exception>
-    internal EasyServiceProvider(IServiceCollection serviceDescriptors, ServiceProviderOptions? serviceProviderOptions, bool holdDefaultServiceProvider)
+    internal EasyServiceProvider(IServiceCollection serviceDescriptors, EasyServiceProviderOptions easyServiceProviderOptions)
     {
+        // 注册Easy服务提供商事件类型
+        serviceDescriptors.AddSingleton(easyServiceProviderOptions.ServiceProviderEventsType);
         // 注册默认 IServiceProvider
         serviceDescriptors.AddScoped<IServiceProvider>(service => GetOrCreate( service, false));
 #if DEBUG
@@ -49,8 +54,11 @@ public sealed class EasyServiceProvider : IServiceProvider, ISupportRequiredServ
         serviceDescriptors.AddScoped(typeof(IServiceProvider).WearMicrosoftMask(), service => string.Empty);
         serviceDescriptors.AddSingleton(typeof(IServiceScopeFactory).WearMicrosoftMask(), service => string.Empty);
 #endif
+        // 得到真实服务提供商
+        _realServiceProvider = serviceDescriptors.BuildServiceProvider(easyServiceProviderOptions.ServiceProviderOptions ?? new ServiceProviderOptions());
+        // 得到Easy服务提供商事件实例
+        _providerEvents = _realServiceProvider.GetService(easyServiceProviderOptions.ServiceProviderEventsType) as EasyServiceProviderEvents;
 
-        _realServiceProvider = serviceDescriptors.BuildServiceProvider(serviceProviderOptions ?? new ServiceProviderOptions());
 
         // 设置服务提供商范围
         if (typeof(ServiceProvider).GetProperty("Root", BindingFlags.Instance | BindingFlags.NonPublic)?.GetValue(_realServiceProvider) is not IServiceProvider realServiceProviderScope) throw new InvalidOperationException($"{nameof(realServiceProviderScope)} 永远不应为空");
@@ -58,7 +66,7 @@ public sealed class EasyServiceProvider : IServiceProvider, ISupportRequiredServ
         _serviceProviderEngineScopeType = realServiceProviderScope.GetType();
 
         // 替换默认服务提供商
-        ReplaceDefaultProvider(holdDefaultServiceProvider, realServiceProviderScope);
+        ReplaceDefaultProvider(easyServiceProviderOptions.HoldDefaultServiceProvider, realServiceProviderScope);
     }
 
     /// <summary>
@@ -99,22 +107,30 @@ public sealed class EasyServiceProvider : IServiceProvider, ISupportRequiredServ
 
 
     #region 静态方法
-    internal static object GetRequiredService(IServiceProvider serviceProvider, Type serviceType)
+    internal object GetRequiredService(IServiceProvider serviceProvider, Type serviceType)
     {
         object? result = GetService(serviceProvider, serviceType);
         if (result is null) throw new InvalidOperationException($"没有注册\"{nameof(serviceType)}\"类型的服务");
         return result;
     }
 
-    internal static object? GetService(IServiceProvider serviceProvider, Type serviceType)
+    internal object? GetService(IServiceProvider serviceProvider, Type serviceType)
     {
+        // 调用获取服务前事件
+        _providerEvents?.BeforeGetService(serviceProvider,ref serviceType);
+        // 获取实例
         object? result = serviceProvider.GetService(serviceType);
+        // 调用获取服务后事件
+        _providerEvents?.AfterGetService(serviceProvider, serviceType,ref result);
 
         // 属性注入
         PropertyInject(result, serviceProvider);
         // 字段注入
         FieldInject(result, serviceProvider);
-
+        
+        // 调用获取服务完成事件
+        _providerEvents?.GetServiceCompleted(serviceProvider, serviceType,ref result);
+        
         return result;
     }
 
@@ -124,7 +140,7 @@ public sealed class EasyServiceProvider : IServiceProvider, ISupportRequiredServ
     /// <param name="instance">需要属性注入的实例</param>
     /// <param name="serviceProvider">属性注入的服务提供商</param>
     /// <returns></returns>
-    private static object? PropertyInject(object? instance, IServiceProvider serviceProvider)
+    private object? PropertyInject(object? instance, IServiceProvider serviceProvider)
     {
         if (instance is null) return instance;
 
@@ -152,7 +168,7 @@ public sealed class EasyServiceProvider : IServiceProvider, ISupportRequiredServ
     /// <param name="instance">需要属性注入的实例</param>
     /// <param name="serviceProvider">属性注入的服务提供商</param>
     /// <returns></returns>
-    private static object? FieldInject(object? instance, IServiceProvider serviceProvider)
+    private object? FieldInject(object? instance, IServiceProvider serviceProvider)
     {
         if (instance is null) return instance;
 

@@ -87,7 +87,7 @@ public class EasyServiceProviderTests
     {
         IServiceCollection services = new ServiceCollection();
         EasyServiceProvider service = GetEasyServiceProvider(services);
-        Assert.Equal(23, services.Count);
+        Assert.Equal(24, services.Count);
 
         // 类型注册
         // 1

@@ -11,11 +11,9 @@ public static class ServiceCollectionContainerBuilderExtensions
     /// 构建服务提供商
     /// </summary>
     /// <param name="services">服务集合</param>
-    /// <param name="serviceProviderOptions">服务提供商配置</param>
-    /// <param name="holdDefaultServiceProvider">是否保留默认服务提供商</param>
+    /// <param name="easyServiceProviderOptions">Easy 服务提供商配置</param>
     /// <returns></returns>
-    public static EasyServiceProvider BuildEasyServiceProvider(this IServiceCollection services, ServiceProviderOptions? serviceProviderOptions, bool holdDefaultServiceProvider)
-        => new(services, serviceProviderOptions, holdDefaultServiceProvider);
+    public static EasyServiceProvider BuildEasyServiceProvider(this IServiceCollection services, EasyServiceProviderOptions easyServiceProviderOptions) => new(services, easyServiceProviderOptions);
 
-    public static EasyServiceProvider BuildEasyServiceProvider(this IServiceCollection services) => new(services, null, true);
+    public static EasyServiceProvider BuildEasyServiceProvider(this IServiceCollection services) => new(services, new EasyServiceProviderOptions());
 }

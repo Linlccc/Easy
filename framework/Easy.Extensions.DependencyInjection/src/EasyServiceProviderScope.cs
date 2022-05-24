@@ -30,21 +30,21 @@ internal class EasyServiceProviderScope : IServiceScopeFactory, IServiceScope, I
     /// <summary>
     /// 创建服务提供商范围容器
     /// </summary>
-    /// <param name="fastServiceProvider">原始服务提供商容器</param>
+    /// <param name="easyServiceProvider">原始服务提供商容器</param>
     /// <param name="realServiceProvider">真实服务提供商范围</param>
     /// <param name="isRoot">是否是root</param>
-    internal EasyServiceProviderScope(EasyServiceProvider fastServiceProvider, IServiceProvider realServiceProvider, bool isRoot)
+    internal EasyServiceProviderScope(EasyServiceProvider easyServiceProvider, IServiceProvider realServiceProvider, bool isRoot)
     {
-        _rootServiceProvider = fastServiceProvider;
+        _rootServiceProvider = easyServiceProvider;
         _realServiceProvider = realServiceProvider;
         _isRoot = isRoot;
     }
 
     public IServiceProvider ServiceProvider => this;
 
-    public object? GetService(Type serviceType) => EasyServiceProvider.GetService(_realServiceProvider, serviceType);
+    public object? GetService(Type serviceType) => _rootServiceProvider.GetService(_realServiceProvider, serviceType);
 
-    public object GetRequiredService(Type serviceType) => EasyServiceProvider.GetRequiredService(_realServiceProvider, serviceType);
+    public object GetRequiredService(Type serviceType) => _rootServiceProvider.GetRequiredService(_realServiceProvider, serviceType);
 
     public IServiceScope CreateScope() => _rootServiceProvider.CreateScope();
 
