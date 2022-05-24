@@ -245,10 +245,6 @@ Easy.Extensions.DependencyInjection 的服务提供商实现AOP
 ### Easy.Extensions.DependencyInjection 项目升级/修改/开发计划
 
 ~~~text
-修改
-1.修改容器的Dispose方法,主要是看异步处理
-
-
 后期计划
 1.添加多框架版本更换服务容器
   // 该方式是 IHostBuilder 拓展,直接配置使用 EasyDependencyInjection
