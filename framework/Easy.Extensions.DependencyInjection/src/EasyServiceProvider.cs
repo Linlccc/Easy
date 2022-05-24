@@ -46,8 +46,8 @@ public sealed class EasyServiceProvider : IServiceProvider, ISupportRequiredServ
         serviceDescriptors.AddScoped<IServiceProvider>(service => GetOrCreate( service, false));
 #if DEBUG
         // 如果不添加，获取默认的服务商会被 IsService 筛掉(只针对测试环境)
-        serviceDescriptors.AddScoped(typeof(IServiceProvider).DefaultProxy(), service => string.Empty);
-        serviceDescriptors.AddSingleton(typeof(IServiceScopeFactory).DefaultProxy(), service => string.Empty);
+        serviceDescriptors.AddScoped(typeof(IServiceProvider).WearMicrosoftMask(), service => string.Empty);
+        serviceDescriptors.AddSingleton(typeof(IServiceScopeFactory).WearMicrosoftMask(), service => string.Empty);
 #endif
 
         _realServiceProvider = serviceDescriptors.BuildServiceProvider(serviceProviderOptions ?? new ServiceProviderOptions());
@@ -137,7 +137,7 @@ public sealed class EasyServiceProvider : IServiceProvider, ISupportRequiredServ
         foreach ((PropertyInfo Property, InjectAttribute Inject) in injectPropertyInfos)
         {
             // 得到获取实例的服务类型
-            Type serviceType = Inject.Key.IsNullOrEmpty() ? Property.PropertyType : Property.PropertyType.Proxy(Inject.Key);
+            Type serviceType = Inject.Key.IsNullOrEmpty() ? Property.PropertyType : Property.PropertyType.WearMask(Inject.Key);
             // 获取服务
             if (Inject.Require) Property.SetPropertyValue(instance, GetRequiredService(serviceProvider, serviceType));
             else Property.SetPropertyValue(instance, GetService(serviceProvider, serviceType));
@@ -164,7 +164,7 @@ public sealed class EasyServiceProvider : IServiceProvider, ISupportRequiredServ
         foreach ((FieldInfo Field, InjectAttribute Inject) in injectFieldInfos)
         {
             // 得到获取实例的服务类型
-            Type serviceType = Inject.Key.IsNullOrEmpty() ? Field.FieldType : Field.FieldType.Proxy(Inject.Key);
+            Type serviceType = Inject.Key.IsNullOrEmpty() ? Field.FieldType : Field.FieldType.WearMask(Inject.Key);
             // 获取服务
             if (Inject.Require) Field.SetValue(instance, GetRequiredService(serviceProvider, serviceType));
             else Field.SetValue(instance, GetService(serviceProvider, serviceType));
@@ -219,8 +219,8 @@ public sealed class EasyServiceProvider : IServiceProvider, ISupportRequiredServ
         if (holdDefaultServiceProvider)
         {
             // 创建 microsoft Key
-            object microsoftIServiceProviderKey = Activator.CreateInstance(serviceCacheKeyType, typeof(IServiceProvider).DefaultProxy(), 0)!;
-            object microsoftIServiceScopeFactoryKey = Activator.CreateInstance(serviceCacheKeyType, typeof(IServiceScopeFactory).DefaultProxy(), 0)!;
+            object microsoftIServiceProviderKey = Activator.CreateInstance(serviceCacheKeyType, typeof(IServiceProvider).WearMicrosoftMask(), 0)!;
+            object microsoftIServiceScopeFactoryKey = Activator.CreateInstance(serviceCacheKeyType, typeof(IServiceScopeFactory).WearMicrosoftMask(), 0)!;
 
             // 服务提供商访问站点类型(IServiceProvider 获取的默认类型)
             Type serviceCallSiteType = dIAssembly.GetType("Microsoft.Extensions.DependencyInjection.ServiceLookup.ServiceProviderCallSite")!;

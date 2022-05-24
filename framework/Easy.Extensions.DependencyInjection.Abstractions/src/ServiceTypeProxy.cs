@@ -4,13 +4,13 @@ using System.Runtime.InteropServices;
 namespace Easy.Extensions.DependencyInjection.Abstractions;
 
 /// <summary>
-/// 服务类型代理
+/// 服务类型面具
 /// </summary>
-public class ServiceTypeProxy : TypeDelegator
+public class ServiceTypeMask : TypeDelegator
 {
     private readonly int _hashCode;
 
-    internal ServiceTypeProxy(Type type, string? key = null) : base(type is ServiceTypeProxy serviceTypeProxy ? serviceTypeProxy.typeImpl : type)
+    internal ServiceTypeMask(Type type, string? key = null) : base(type is ServiceTypeMask serviceTypeMask ? serviceTypeMask.typeImpl : type)
     {
         Key = key;
         _hashCode = HashCode.Combine(typeImpl, Key);
@@ -28,7 +28,7 @@ public class ServiceTypeProxy : TypeDelegator
     /// 获取泛型类型定义是也代理一下
     /// </summary>
     /// <returns></returns>
-    public override Type GetGenericTypeDefinition() => new ServiceTypeProxy(typeImpl.GetGenericTypeDefinition(), Key);
+    public override Type GetGenericTypeDefinition() => new ServiceTypeMask(typeImpl.GetGenericTypeDefinition(), Key);
 
     #region 使用原类型数据
     public override bool ContainsGenericParameters => typeImpl.ContainsGenericParameters;

@@ -1,33 +1,33 @@
 ﻿namespace Easy.Extensions.DependencyInjection.Abstractions.Extensions;
 
 /// <summary>
-/// <see cref="ServiceTypeProxy"/> 拓展
+/// <see cref="ServiceTypeMask"/> 拓展
 /// </summary>
-public static class ServiceTypeProxyExtensions
+public static class ServiceTypeMaskExtensions
 {
     #region 默认代理
     /// <summary>
     /// 默认代理key
     /// </summary>
-    private const string DafeultProxyKey = "microsoft_default";
+    private const string MicrosoftKey = nameof(Microsoft);
 
     /// <summary>
-    /// 默认微软代理类型
+    /// 为类型佩戴默认微软key的面具
     /// </summary>
     /// <param name="type">要代理的类型</param>
     /// <returns></returns>
-    public static Type DefaultProxy(this Type type) => new ServiceTypeProxy(type, DafeultProxyKey);
+    public static Type WearMicrosoftMask(this Type type) => new ServiceTypeMask(type, MicrosoftKey);
 
     /// <summary>
-    /// 创建默认代理类型
+    /// 为类型佩戴默认微软key的面具
     /// </summary>
     /// <typeparam name="T">要代理的类型</typeparam>
     /// <returns>代理后的类型</returns>
-    public static Type CreateDefaultProxyType<T>() => new ServiceTypeProxy(typeof(T), DafeultProxyKey);
+    public static Type WearMicrosoftMask<T>() => new ServiceTypeMask(typeof(T), MicrosoftKey);
     #endregion
     
     /// <summary>
-    /// 代理类型
+    /// 为类型佩戴面具(代理类型)
     /// </summary>
     /// <param name="type">要代理的类型</param>
     /// <param name="key">
@@ -35,10 +35,10 @@ public static class ServiceTypeProxyExtensions
     ///     <br>参与 <see cref="HashCode"/> 计算</br>
     /// </param>
     /// <returns>代理后的类型</returns>
-    public static Type Proxy(this Type type, string? key = null) => new ServiceTypeProxy(type, key);
+    public static Type WearMask(this Type type, string? key = null) => new ServiceTypeMask(type, key);
 
     /// <summary>
-    /// 代理类型
+    /// 为类型佩戴面具(代理类型)
     /// </summary>
     /// <typeparam name="T">要代理的类型</typeparam>
     /// <param name="key">
@@ -46,5 +46,5 @@ public static class ServiceTypeProxyExtensions
     ///     <br>参与 <see cref="HashCode"/> 计算</br>
     /// </param>
     /// <returns>代理后的类型</returns>
-    public static Type CreateProxyType<T>(string? key = null) => new ServiceTypeProxy(typeof(T), key);
+    public static Type WearMask<T>(string? key = null) => new ServiceTypeMask(typeof(T), key);
 }

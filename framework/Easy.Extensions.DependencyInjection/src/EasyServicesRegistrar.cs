@@ -94,7 +94,7 @@ internal sealed class EasyServicesRegistrar
             // 如果没有服务类型可注册，以自己为服务类型注册
             if (serviceTypes.IsNullOrEmpty()) serviceTypes.Add(ImplementationType);
             // 如果使用key(赋过值)，添加代理类型
-            if (RegisterInfo.IsUseKey) serviceTypes.AddRange(serviceTypes.Select(st => st.Proxy(RegisterInfo.ServiceKey)).ToArray());
+            if (RegisterInfo.IsUseKey) serviceTypes.AddRange(serviceTypes.Select(st => st.WearMask(RegisterInfo.ServiceKey)).ToArray());
 
             foreach (Type serviceType in serviceTypes) services.Add(ServiceDescriptor.Describe(serviceType, ImplementationType, RegisterInfo.ServiceLifetime));
         }
@@ -165,7 +165,7 @@ internal sealed class EasyServicesRegistrar
 #endif
 
                 // 使用key注册服务
-                services.Add(ServiceDescriptor.Describe(serviceType.Proxy(serviceKey), useEasyimplementationFactory, serviceLifetime));
+                services.Add(ServiceDescriptor.Describe(serviceType.WearMask(serviceKey), useEasyimplementationFactory, serviceLifetime));
 
 
                 // 使用Easy的服务提供商

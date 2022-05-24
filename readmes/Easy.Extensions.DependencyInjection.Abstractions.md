@@ -37,6 +37,18 @@
   可使用 ServiceLifetimeExtension.GetLifetime(Type); 获取到 ServiceLifetime 类型数据
   ~~~
 
+- [x] 服务类型面具
+
+  ~~~text
+  // 创建类型面具
+  Type.WearMask(string);
+  ServiceTypeMaskExtensions.WearMask(Type,string);
+
+  // 创建微软key的面具
+  Type.WearMicrosoftMask();
+  ServiceTypeMaskExtensions.WearMicrosoftMask(Type);
+  ~~~
+
 ## 更新日志
 
 ### 1.0.0
@@ -45,8 +57,16 @@
 发布第一个正式版
 ~~~
 
-### 1.0.0-beta1
+### 1.0.1-beta1
 
 ~~~text
 1.解决 Easy.Extensions.DependencyInjection 依赖问题
+~~~
+
+### 1.0.1
+
+~~~text
+1.ServiceTypeProxy 类修改成 ServiceTypeMask ,服务类型面具的意思
+2.ServiceTypeProxyExtensions 类修改成 ServiceTypeMaskExtensions
+3.增加服务类型面具功能
 ~~~

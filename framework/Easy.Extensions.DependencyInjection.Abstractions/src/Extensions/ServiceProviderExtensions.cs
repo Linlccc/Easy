@@ -15,7 +15,7 @@ public static class ServiceProviderExtensions
     /// <param name="serviceType">服务类型</param>
     /// <param name="key">服务key</param>
     /// <returns>服务实例</returns>
-    public static object? GetService(this IServiceProvider serviceProvider, Type serviceType, string? key) => serviceProvider.GetService(serviceType.Proxy(key));
+    public static object? GetService(this IServiceProvider serviceProvider, Type serviceType, string? key) => serviceProvider.GetService(serviceType.WearMask(key));
 
     /// <summary>
     /// 根据服务key和服务类型获取服务实例
@@ -37,7 +37,7 @@ public static class ServiceProviderExtensions
     /// <exception cref="InvalidOperationException">服务实例,服务实例不存在抛出<see cref="InvalidOperationException"/>异常</exception>
     public static object GetRequiredService(this IServiceProvider serviceProvider, Type serviceType, string? key)
     {
-        if (serviceProvider is ISupportRequiredService supportRequiredService) return supportRequiredService.GetRequiredService(serviceType.Proxy(key));
+        if (serviceProvider is ISupportRequiredService supportRequiredService) return supportRequiredService.GetRequiredService(serviceType.WearMask(key));
 
         object? result = serviceProvider.GetService(serviceType, key);
         if (result is null) throw new InvalidOperationException(string.Format(Strings.NoServiceRegistered, nameof(serviceType)));
@@ -61,7 +61,7 @@ public static class ServiceProviderExtensions
     /// <param name="serviceType">服务类型</param>
     /// <param name="key">服务key</param>
     /// <returns>服务实例集合</returns>
-    public static IEnumerable<object?> GetServices(this IServiceProvider serviceProvider, Type serviceType, string? key) => serviceProvider.GetServices(serviceType.Proxy(key));
+    public static IEnumerable<object?> GetServices(this IServiceProvider serviceProvider, Type serviceType, string? key) => serviceProvider.GetServices(serviceType.WearMask(key));
 
     /// <summary>
     /// 根据服务key和服务类型获取服务实例集合
