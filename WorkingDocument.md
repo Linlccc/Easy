@@ -261,8 +261,6 @@ MergeJson 生成时会将 Easy.Tool.MergeJson.dll 复制到生成文件
 ### Easy.Extensions.DependencyInjection.Abstractions 项目升级/修改/开发计划
 
 ~~~text
-实现
-1.ServiceTypeProxy 类修改成 ServiceTypeMask ,服务类型面具的意思
 ~~~
 
 ### Easy.Tool.MergeJson 项目升级/修改/开发计划
