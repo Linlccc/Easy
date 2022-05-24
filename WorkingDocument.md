@@ -241,10 +241,6 @@ MergeJson 生成时会将 Easy.Tool.MergeJson.dll 复制到生成文件
 1.修改容器的Dispose方法,主要是看异步处理
 
 
-实现
-1.DI添加多框架版本更换服务容器(实现)
-
-
 后期计划
 1.添加多框架版本更换服务容器
   // 该方式是 IHostBuilder 拓展,直接配置使用 EasyDependencyInjection
