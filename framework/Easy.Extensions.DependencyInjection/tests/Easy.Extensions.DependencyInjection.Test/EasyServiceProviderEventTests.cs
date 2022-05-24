@@ -11,12 +11,8 @@ public class EasyServiceProviderEventTests
     [Fact]
     public void EventTests()
     {
-        IServiceProvider service = new EasyServiceProviderFactory(new EasyServiceProviderOptions()
-        {
-            RegisterScanAssemblys = new Assembly[] { GetType().Assembly },
-            ServiceProviderEventsType = typeof(EasyServiceProviderEventTests_Event)
-
-        }).CreateServiceProvider(new ServiceCollection());
+        // 获取服务提供商
+        IServiceProvider service = new EasyServiceProviderFactory(new EasyServiceProviderOptions(typeof(EasyServiceProviderEventTests_Event)), GetType().Assembly).CreateServiceProvider(new ServiceCollection());
 
         TypeR1 typeR1_1 = service.GetRequiredService<TypeR1>();
         Assert.NotNull(typeR1_1);
@@ -38,13 +34,13 @@ public class EasyServiceProviderEventTests_Event : EasyServiceProviderEvents
     /// <param name="serviceProvider"></param>
     /// <param name="serviceType"></param>
     /// <returns></returns>
-    public override Task BeforeGetService(IServiceProvider serviceProvider,ref Type serviceType)
+    public override Task BeforeGetService(IServiceProvider serviceProvider, ref Type serviceType)
     {
         if (typeof(TypeR1).WearMask("ToTypeR2") == serviceType)
         {
             serviceType = typeof(ITypeR2);
         }
-        return base.BeforeGetService(serviceProvider,ref serviceType);
+        return base.BeforeGetService(serviceProvider, ref serviceType);
     }
 
     /// <summary>
@@ -54,9 +50,9 @@ public class EasyServiceProviderEventTests_Event : EasyServiceProviderEvents
     /// <param name="serviceType"></param>
     /// <param name="instance"></param>
     /// <returns></returns>
-    public override Task AfterGetService(IServiceProvider serviceProvider, Type serviceType,ref object? instance)
+    public override Task AfterGetService(IServiceProvider serviceProvider, Type serviceType, ref object? instance)
     {
-        return base.AfterGetService(serviceProvider, serviceType,ref instance);
+        return base.AfterGetService(serviceProvider, serviceType, ref instance);
     }
 
     /// <summary>
@@ -66,8 +62,8 @@ public class EasyServiceProviderEventTests_Event : EasyServiceProviderEvents
     /// <param name="serviceType"></param>
     /// <param name="instance"></param>
     /// <returns></returns>
-    public override Task GetServiceCompleted(IServiceProvider serviceProvider, Type serviceType,ref object? instance)
+    public override Task GetServiceCompleted(IServiceProvider serviceProvider, Type serviceType, ref object? instance)
     {
-        return base.GetServiceCompleted(serviceProvider, serviceType,ref instance);
+        return base.GetServiceCompleted(serviceProvider, serviceType, ref instance);
     }
 }

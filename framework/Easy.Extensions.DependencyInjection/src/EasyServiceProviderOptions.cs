@@ -8,15 +8,17 @@ namespace Easy.Extensions.DependencyInjection;
 /// </summary>
 public class EasyServiceProviderOptions
 {
+    public EasyServiceProviderOptions() { }
+    /// <summary>
+    /// Easy 服务提供商配置选项
+    /// </summary>
+    /// <param name="serviceProviderEventsType">Easy 服务提供商的事件类型,需继承自 <see cref="EasyServiceProviderEvents"/></param>
+    public EasyServiceProviderOptions(Type serviceProviderEventsType) => ServiceProviderEventsType = serviceProviderEventsType;
+
     /// <summary>
     /// 是否保留默认的服务提供商
     /// </summary>
     public bool HoldDefaultServiceProvider { get; set; } = true;
-
-    /// <summary>
-    /// 注册服务时扫描的程序集
-    /// </summary>
-    public IEnumerable<Assembly> RegisterScanAssemblys { get; set; } = new List<Assembly>();
 
     /// <summary>
     /// 服务提供商的行为配置
@@ -24,7 +26,7 @@ public class EasyServiceProviderOptions
     public ServiceProviderOptions ServiceProviderOptions { get; set; } = new ServiceProviderOptions();
 
     /// <summary>
-    /// Easy 服务提供商的行为配置类型,需继承自 <see cref="EasyServiceProviderEvents"/>
+    /// Easy 服务提供商的事件类型,需继承自 <see cref="EasyServiceProviderEvents"/>
     /// </summary>
     public Type ServiceProviderEventsType { get; set; } = typeof(EasyServiceProviderEvents);
 }
