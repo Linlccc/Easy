@@ -1,4 +1,5 @@
 ﻿using System.Collections.Concurrent;
+using System.Diagnostics;
 using System.Reflection;
 using Easy.Extensions.DependencyInjection.Abstractions.Extensions;
 
@@ -21,9 +22,10 @@ public sealed class EasyServiceProvider : IServiceProvider, ISupportRequiredServ
     private readonly ServiceProvider _realServiceProvider;
 
     /// <summary>
-    /// 真是服务提供商范围的类型
+    /// 真实服务提供商范围类型的构造函数
+    /// <br>ServiceProviderEngineScope 类型的构造函数</br>
     /// </summary>
-    private readonly Type _serviceProviderEngineScopeType;
+    private readonly ConstructorInfo _serviceProviderEngineScopeCtor;
 
     /// <summary>
     /// Easy服务提供商事件
@@ -48,7 +50,7 @@ public sealed class EasyServiceProvider : IServiceProvider, ISupportRequiredServ
         // 注册Easy服务提供商事件类型
         serviceDescriptors.AddSingleton(easyServiceProviderOptions.ServiceProviderEventsType);
         // 注册默认 IServiceProvider
-        serviceDescriptors.AddScoped<IServiceProvider>(service => GetOrCreate( service, false));
+        serviceDescriptors.AddScoped<IServiceProvider>(service => GetOrCreate(service, false));
 #if DEBUG
         // 如果不添加，获取默认的服务商会被 IsService 筛掉(只针对测试环境)
         serviceDescriptors.AddScoped(typeof(IServiceProvider).WearMicrosoftMask(), service => string.Empty);
@@ -62,8 +64,10 @@ public sealed class EasyServiceProvider : IServiceProvider, ISupportRequiredServ
 
         // 设置服务提供商范围
         if (typeof(ServiceProvider).GetProperty("Root", BindingFlags.Instance | BindingFlags.NonPublic)?.GetValue(_realServiceProvider) is not IServiceProvider realServiceProviderScope) throw new InvalidOperationException($"{nameof(realServiceProviderScope)} 永远不应为空");
-        _rootServiceProvider = GetOrCreate( realServiceProviderScope, true);
-        _serviceProviderEngineScopeType = realServiceProviderScope.GetType();
+        _rootServiceProvider = GetOrCreate(realServiceProviderScope, true);
+        // 获取 ServiceProviderEngineScope 类型的构造函数
+        _serviceProviderEngineScopeCtor = realServiceProviderScope.GetType().GetConstructor(new Type[] { typeof(ServiceProvider), typeof(bool) })!;
+        Debug.Assert(_serviceProviderEngineScopeCtor != null);
 
         // 替换默认服务提供商
         ReplaceDefaultProvider(easyServiceProviderOptions.HoldDefaultServiceProvider, realServiceProviderScope);
@@ -87,7 +91,7 @@ public sealed class EasyServiceProvider : IServiceProvider, ISupportRequiredServ
     /// 创建范围
     /// </summary>
     /// <returns></returns>
-    internal IServiceScope CreateScope() => GetOrCreate((IServiceProvider)Activator.CreateInstance(_serviceProviderEngineScopeType, _realServiceProvider, false)!, false);
+    internal IServiceScope CreateScope() => GetOrCreate((IServiceProvider)_serviceProviderEngineScopeCtor.Invoke(new object[] { _realServiceProvider, false }), false);
 
     public void Dispose()
     {
@@ -117,20 +121,20 @@ public sealed class EasyServiceProvider : IServiceProvider, ISupportRequiredServ
     internal object? GetService(IServiceProvider serviceProvider, Type serviceType)
     {
         // 调用获取服务前事件
-        _providerEvents?.BeforeGetService(serviceProvider,ref serviceType);
+        _providerEvents?.BeforeGetService(serviceProvider, ref serviceType);
         // 获取实例
         object? result = serviceProvider.GetService(serviceType);
         // 调用获取服务后事件
-        _providerEvents?.AfterGetService(serviceProvider, serviceType,ref result);
+        _providerEvents?.AfterGetService(serviceProvider, serviceType, ref result);
 
         // 属性注入
         PropertyInject(result, serviceProvider);
         // 字段注入
         FieldInject(result, serviceProvider);
-        
+
         // 调用获取服务完成事件
-        _providerEvents?.GetServiceCompleted(serviceProvider, serviceType,ref result);
-        
+        _providerEvents?.GetServiceCompleted(serviceProvider, serviceType, ref result);
+
         return result;
     }
 
