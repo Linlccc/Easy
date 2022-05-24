@@ -79,6 +79,36 @@ public class EasyServiceProviderTests
         Assert.Equal(0, servicProviderDictionary.Count);
     }
 
+    
+    [Fact(DisplayName = "测试服务提供商处理")]
+    public async Task ServiceProviderDictionaryAsync()
+    {
+        EasyServiceProvider service1 = GetEasyServiceProvider();
+        System.Collections.ICollection servicProviderDictionary = service1._serviceProviders;
+        // 通过反射得到 服务提供商字典
+        Assert.Equal(1, servicProviderDictionary.Count);
+
+        IServiceProvider scopeFastSp1 = service1.CreateScope().ServiceProvider;
+        Assert.Equal(2, servicProviderDictionary.Count);
+        IServiceProvider scopeFastSp2 = service1.CreateScope().ServiceProvider;
+        Assert.Equal(3, servicProviderDictionary.Count);
+        IServiceProvider scopeFastSp3 = service1.CreateScope().ServiceProvider;
+        Assert.Equal(4, servicProviderDictionary.Count);
+        IServiceProvider scopeFastSp4 = service1.CreateScope().ServiceProvider;
+        Assert.Equal(5, servicProviderDictionary.Count);
+
+        await (scopeFastSp1 as IAsyncDisposable)!.DisposeAsync();
+        Assert.Equal(4, servicProviderDictionary.Count);
+        await (scopeFastSp2 as IAsyncDisposable)!.DisposeAsync();
+        Assert.Equal(3, servicProviderDictionary.Count);
+        await (scopeFastSp3 as IAsyncDisposable)!.DisposeAsync();
+        Assert.Equal(2, servicProviderDictionary.Count);
+        await (scopeFastSp4 as IAsyncDisposable)!.DisposeAsync();
+        Assert.Equal(1, servicProviderDictionary.Count);
+        await (service1 as IAsyncDisposable)!.DisposeAsync();
+        Assert.Equal(0, servicProviderDictionary.Count);
+    }
+
     /// <summary>
     /// 测试自动注册
     /// </summary>
