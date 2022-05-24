@@ -193,6 +193,20 @@ MergeJson 生成时会将 Easy.Tool.MergeJson.dll 复制到生成文件
   c.下载 https://github.com/icsharpcode/ILSpy 链接中的工具，反编译动态生成的dll查看源码 (推荐)
 ~~~
 
+## 0523
+
+Easy.Extensions.DependencyInjection 的服务提供商实现AOP
+
+~~~text
+可为 DI 配置 AOP ,每一次获取服务时会触发,获取前/获取后(成员注册前)/注册完成三个事件
+
+使用：
+1.自定义一个类型继承自 Easy.Extensions.DependencyInjection.EasyServiceProviderEvents 类型
+2.重写 BeforeGetService、AfterGetService、GetServiceCompleted 方法
+3.将自定义的类型赋值给 EasyServiceProviderOptions.ServiceProviderEventsType
+4.构建服务提供商 IServiceCollection.BuildEasyServiceProvider(EasyServiceProviderOptions);
+~~~
+
 ## 计划
 
 - [x] 添加自动发布包任务 (研究) [0427]
@@ -205,7 +219,7 @@ MergeJson 生成时会将 Easy.Tool.MergeJson.dll 复制到生成文件
 - [x] 根据不同的sdk添加默认全局 using (实现) [0504]
 - [x] 检查 Type 的 ContainsGenericParameters 属性 是否是判断开放泛型 (实验) [0512]
 - [x] 使用 emit 动态生成dll,然后再反编译 (实验) [0521]
-- [ ] 了解一下动态启停web项目
+- [x] 了解一下动态启停web项目 (在TourCar项目中写了一个web管理,处理web项目启停) [0524]
 - [ ] 了解为什么应该将 IHttpContextAccessor 作为Singleton注入
 
   ~~~text
@@ -231,12 +245,6 @@ MergeJson 生成时会将 Easy.Tool.MergeJson.dll 复制到生成文件
 ### Easy.Extensions.DependencyInjection 项目升级/修改/开发计划
 
 ~~~text
-添加功能
-1.添加获取服务前/后aop功能
-  a.添加抽象类/接口实例
-  b.代理方法
-
-
 修改
 1.修改容器的Dispose方法,主要是看异步处理
 
