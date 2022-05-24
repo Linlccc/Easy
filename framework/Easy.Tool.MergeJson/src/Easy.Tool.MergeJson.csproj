@@ -8,7 +8,7 @@
     <NoWarn>$(NoWarn);CS8618</NoWarn>
     <Description>自动合并json工具</Description>
     <!-- 独立版本 -->
-    <Version Condition="$(AloneVersion)">$(Version)$(BetaSuffix)2</Version>
+    <Version Condition="$(AloneVersion)">$(Version)$(BetaSuffix)1</Version>
     <!-- 本地测试版本 -->
     <!-- <Version>$(Version)-test52</Version> -->
   </PropertyGroup>
