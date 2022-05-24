@@ -110,7 +110,7 @@ public sealed class EasyServiceProvider : IServiceProvider, ISupportRequiredServ
     }
 
 
-    #region 静态方法
+    #region 解析服务
     internal object GetRequiredService(IServiceProvider serviceProvider, Type serviceType)
     {
         object? result = GetService(serviceProvider, serviceType);
@@ -152,6 +152,8 @@ public sealed class EasyServiceProvider : IServiceProvider, ISupportRequiredServ
         IEnumerable<(PropertyInfo Property, InjectAttribute Inject)> injectPropertyInfos = instance.GetType().GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
             .Where(p => (p.PropertyType.IsClass || p.PropertyType.IsInterface) && p.IsDefined(typeof(InjectAttribute), false))
             .Select(p => (p, p.GetAttribute<InjectAttribute>(false)!));
+
+        var a = instance.GetType().GetMembers(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
 
         // 对属性赋值
         foreach ((PropertyInfo Property, InjectAttribute Inject) in injectPropertyInfos)
