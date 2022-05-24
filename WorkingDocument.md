@@ -220,6 +220,14 @@ Easy.Extensions.DependencyInjection 的服务提供商实现AOP
 - [x] 检查 Type 的 ContainsGenericParameters 属性 是否是判断开放泛型 (实验) [0512]
 - [x] 使用 emit 动态生成dll,然后再反编译 (实验) [0521]
 - [x] 了解一下动态启停web项目 (在TourCar项目中写了一个web管理,处理web项目启停) [0524]
+- [ ] 处理一下版本管理问题
+
+  ~~~text
+  1.每个程序自己管理版本(已有)
+  2.每次更新包的时候才去修改版本,避免更新一个包过后其他包有依赖问题
+  3.让版本长期处于正式版本上,而不是预览版本上
+  ~~~
+
 - [ ] 了解为什么应该将 IHttpContextAccessor 作为Singleton注入
 
   ~~~text
