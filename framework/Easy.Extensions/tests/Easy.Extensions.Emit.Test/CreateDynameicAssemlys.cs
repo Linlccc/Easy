@@ -116,6 +116,11 @@
             int less1 = (int)type.InvokeMember("Less1", BindingFlags.InvokeMethod, null, null, new object[] { 123, 123 });
             Assert.Equal(123 < 123 ? 1 : 0, less1);
 
+            // ** 特殊
+            // 调用和定义包含有可变参数的方法
+            object[] arglist_Invoke1 = (object[])type.InvokeMember("Arglist_Invoke1", BindingFlags.InvokeMethod, null, null, new object[] { 2, 3.1F, "5", typeof(int) });
+            Assert.Equal(new object[] { 2, 3.1F, "5", typeof(int) }, arglist_Invoke1);
+
             // ** 类型转换
             // (object)int
             object box1 = (int)type.InvokeMember("Box1", BindingFlags.InvokeMethod, null, null, new object[] { 123 });
@@ -126,9 +131,38 @@
             // (int)obj
             int unBox2 = (int)type.InvokeMember("UnBox2", BindingFlags.InvokeMethod, null, null, new object[] { 123 });
             Assert.Equal(123, unBox2);
-            //float to int
+            // float to int
             int convert1 = (int)type.InvokeMember("ConvertInteger1", BindingFlags.InvokeMethod, null, null, new object[] { 123.999f });
             Assert.Equal((int)123.999, convert1);
+            // as
+            object as1 = type.InvokeMember("AS1", BindingFlags.InvokeMethod, null, null, new object[] { typeof(int) });
+            Assert.Equal(typeof(int), as1);
+
+
+            // ** 调用方法
+            // 普通指令调用虚方法
+            string callVirtual1 = (string)type.InvokeMember("CallVirtual1", BindingFlags.InvokeMethod, null, null, new object[] { "a" });
+            Assert.Equal("a" + "###", callVirtual1);
+            // 普通指令调用虚方法
+            string callVirtual2 = (string)type.InvokeMember("CallVirtual2", BindingFlags.InvokeMethod, null, null, new object[] { "a" });
+            Assert.Equal("a" + "###", callVirtual2);
+            // 使用调用虚方法的指令调用虚方法
+            string callVirtual3 = (string)type.InvokeMember("CallVirtual3", BindingFlags.InvokeMethod, null, null, new object[] { "a" });
+            Assert.Equal("a" + "%%%", callVirtual3);
+
+
+            // 获取数组元素
+            object array1 = type.InvokeMember("Array1", BindingFlags.InvokeMethod, null, null, new object[] { });
+            Assert.Equal(8, array1);
+            // 获取数组元素
+            object array2 = type.InvokeMember("Array2", BindingFlags.InvokeMethod, null, null, new object[] { });
+            Assert.Equal("8", array2);
+            // 获取数组元素的地址的值
+            object array3 = type.InvokeMember("Array3", BindingFlags.InvokeMethod, null, null, new object[] { });
+            Assert.Equal("8", array3);
+            // 获取数组长度
+            object array4 = type.InvokeMember("Array4", BindingFlags.InvokeMethod, null, null, new object[] { });
+            Assert.Equal(99, array4);
 
 
 

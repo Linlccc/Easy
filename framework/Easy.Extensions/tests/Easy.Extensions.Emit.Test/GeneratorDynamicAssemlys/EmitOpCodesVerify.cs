@@ -193,8 +193,9 @@ public static class EmitOpCodesVerifyCreator
 
 
         // ** 特殊
+        // 定义一个执行可变参数的方法，里面包含定义一个有可变参数的方法
         // Arglist 个数不定，类型不定参数
-        DefineMethod_Arglist1(typeBuilder);
+        DefineMethod_Arglist_Invoke1(typeBuilder);
 
 
         // ** 类型转换
@@ -206,6 +207,29 @@ public static class EmitOpCodesVerifyCreator
         DefineMethod_UnBox2(typeBuilder);
         // float to int
         DefineMethod_ConvertInteger1(typeBuilder);
+        // as 
+        DefineMethod_As1(typeBuilder);
+
+
+
+        // ** 调用方法
+        // 普通指令调用虚方法
+        DefineMethod_CallVirtual1(typeBuilder);
+        // 普通指令调用虚方法
+        DefineMethod_CallVirtual2(typeBuilder);
+        // 使用调用虚方法的指令调用虚方法
+        DefineMethod_CallVirtual3(typeBuilder);
+
+
+        // ** 数组
+        // 获取数组元素
+        DefineMethod_Array1(typeBuilder);
+        // 获取数组元素
+        DefineMethod_Array2(typeBuilder);
+        // 返回数组中某个索引的值的地址的值
+        DefineMethod_Array3(typeBuilder);
+        // 返回数组长度
+        DefineMethod_Array4(typeBuilder);
 
 
 
@@ -790,6 +814,30 @@ public static class EmitOpCodesVerifyCreator
         il.Return();
         return methodBuilder;
     }
+
+    // 调用有可变参数的方法
+    public static MethodBuilder DefineMethod_Arglist_Invoke1(TypeBuilder typeBuilder)
+    {
+        // 有可变参数的方法
+        MethodBuilder varargMethod = DefineMethod_Arglist1(typeBuilder);
+
+        MethodBuilder methodBuilder = typeBuilder.DefineMethod("Arglist_Invoke1", MethodAttributes.Public | MethodAttributes.Static, typeof(object[]), new Type[] { typeof(object), typeof(object), typeof(object), typeof(object) });
+        ILGenerator il = methodBuilder.GetILGenerator();
+
+        LocalBuilder l1 = il.DeclareLocal(typeof(object[]));
+
+        il.LoadArg(0);
+        il.LoadArg(1);
+        il.LoadArg(2);
+        il.LoadArg(3);
+        il.Call(varargMethod, typeof(object), typeof(object), typeof(object), typeof(object));
+        il.SetLocal(l1);
+        il.LoadLocal(l1);
+        il.Return();
+
+        return methodBuilder;
+
+    }
     #endregion
 
     #region 类型转换
@@ -843,6 +891,229 @@ public static class EmitOpCodesVerifyCreator
 
         return methodBuilder;
     }
+
+    // as
+    public static MethodBuilder DefineMethod_As1(TypeBuilder typeBuilder)
+    {
+        MethodBuilder methodBuilder = typeBuilder.DefineMethod("AS1", MethodAttributes.Public | MethodAttributes.Static, typeof(Type), new Type[] { typeof(object) });
+        ILGenerator il = methodBuilder.GetILGenerator();
+
+        LocalBuilder l1 = il.DeclareLocal(typeof(Type));
+
+        //il.BreakPoint();
+        il.LoadArg(0);
+        il.As(typeof(Type));
+        il.SetLocal(l1);
+        il.LoadLocal(l1);
+        il.Return();
+
+        return methodBuilder;
+    }
+    #endregion
+
+    #region 调用方法
+    // 使用调用普通方法的指令调用虚方法 编译时类型 EmitTest1 (调用定义的虚方法而不是类型重写的方法)
+    public static MethodBuilder DefineMethod_CallVirtual1(TypeBuilder typeBuilder)
+    {
+        MethodBuilder methodBuilder = typeBuilder.DefineMethod("CallVirtual1", MethodAttributes.Public | MethodAttributes.Static, typeof(string), new Type[] { typeof(string) });
+        ILGenerator il = methodBuilder.GetILGenerator();
+
+        LocalBuilder l1 = il.DeclareLocal(typeof(EmitTest1));
+        LocalBuilder l2 = il.DeclareLocal(typeof(string));
+
+        // l1 = new EmitTest2();
+        il.NewObject(typeof(EmitTest2).GetConstructor(Type.EmptyTypes));
+        il.SetLocal(l1);
+
+        // l2 = l1.T1(arg1);
+        il.LoadLocal(l1);
+        il.LoadArg(0);
+        il.Call(typeof(EmitTest1).GetMethod("T1", new Type[] { typeof(string) }));
+        il.SetLocal(l2);
+        // return l2;
+        il.LoadLocal(l2);
+        il.Return();
+
+        return methodBuilder;
+    }
+
+    // 使用调用普通方法的指令调用虚方法 编译时类型 EmitTest2(调用定义的虚方法而不是类型重写的方法)
+    public static MethodBuilder DefineMethod_CallVirtual2(TypeBuilder typeBuilder)
+    {
+        MethodBuilder methodBuilder = typeBuilder.DefineMethod("CallVirtual2", MethodAttributes.Public | MethodAttributes.Static, typeof(string), new Type[] { typeof(string) });
+        ILGenerator il = methodBuilder.GetILGenerator();
+
+        LocalBuilder l1 = il.DeclareLocal(typeof(EmitTest2));
+        LocalBuilder l2 = il.DeclareLocal(typeof(string));
+
+        // l1 = new EmitTest2();
+        il.NewObject(typeof(EmitTest2).GetConstructor(Type.EmptyTypes));
+        il.SetLocal(l1);
+
+        // l2 = l1.T1(arg1);
+        il.LoadLocal(l1);
+        il.LoadArg(0);
+        il.Call(typeof(EmitTest1).GetMethod("T1", new Type[] { typeof(string) }));
+        il.SetLocal(l2);
+        // return l2;
+        il.LoadLocal(l2);
+        il.Return();
+
+        return methodBuilder;
+    }
+
+    // 使用调用虚方法的指令调用虚方法 编译时类型 EmitTest1(调用类型重写的方法)
+    public static MethodBuilder DefineMethod_CallVirtual3(TypeBuilder typeBuilder)
+    {
+        MethodBuilder methodBuilder = typeBuilder.DefineMethod("CallVirtual3", MethodAttributes.Public | MethodAttributes.Static, typeof(string), new Type[] { typeof(string) });
+        ILGenerator il = methodBuilder.GetILGenerator();
+
+        LocalBuilder l1 = il.DeclareLocal(typeof(EmitTest1));
+        LocalBuilder l2 = il.DeclareLocal(typeof(string));
+
+        // l1 = new EmitTest2();
+        il.NewObject(typeof(EmitTest2).GetConstructor(Type.EmptyTypes));
+        il.SetLocal(l1);
+
+        // l2 = l1.T1(arg1);
+        il.LoadLocal(l1);
+        il.LoadArg(0);
+        il.CallVirtual(typeof(EmitTest1).GetMethod("T1", new Type[] { typeof(string) }));
+        il.SetLocal(l2);
+        // return l2;
+        il.LoadLocal(l2);
+        il.Return();
+
+        return methodBuilder;
+    }
+    #endregion
+
+    #region 数组
+    // 返回数组中某个索引的值
+    public static MethodBuilder DefineMethod_Array1(TypeBuilder typeBuilder)
+    {
+        MethodBuilder methodBuilder = typeBuilder.DefineMethod("Array1", MethodAttributes.Public | MethodAttributes.Static, typeof(object), Type.EmptyTypes);
+        ILGenerator il = methodBuilder.GetILGenerator();
+
+        LocalBuilder l1 = il.DeclareLocal(typeof(int[]));
+
+        // ** l1 = new int[3];
+        // new int[3]
+        il.LoadInt(3);
+        il.NewArray(typeof(int));
+        // int[0] = 3
+        il.Copy();//拷贝一个值是为了让堆栈上一直存在一个数组
+        il.LoadInt(0);
+        il.LoadInt(3);
+        il.SetArray(typeof(int));
+        // int[1] = 5
+        il.Copy();
+        il.LoadInt(1);
+        il.LoadInt(5);
+        il.SetArray(typeof(int));
+        // int[2] = 8
+        il.Copy();
+        il.LoadInt(2);
+        il.LoadInt(8);
+        il.SetArray(typeof(int));
+        // l1 = 赋值了的数组
+        il.SetLocal(l1);
+
+        // return l1[2];
+        il.LoadLocal(l1);
+        il.LoadInt(2);
+        //il.LoadArrayIndexValue(typeof(int));
+        il.GetArrayIndexInteger(typeof(int));
+        il.Box(typeof(int));
+        il.Return();
+        return methodBuilder;
+    }
+
+    // 返回数组中某个索引的值
+    public static MethodBuilder DefineMethod_Array2(TypeBuilder typeBuilder)
+    {
+        MethodBuilder methodBuilder = typeBuilder.DefineMethod("Array2", MethodAttributes.Public | MethodAttributes.Static, typeof(object), Type.EmptyTypes);
+        ILGenerator il = methodBuilder.GetILGenerator();
+
+        LocalBuilder l1 = il.DeclareLocal(typeof(string[]));
+
+        // ** l1 = new string[3];
+        il.LoadInt(3);
+        il.NewArray(typeof(string));
+        il.Copy();//拷贝一个值是为了让堆栈上一直存在一个数组
+        il.LoadInt(0);
+        il.LoadString("3");
+        il.SetArray();
+        il.Copy();
+        il.LoadInt(1);
+        il.LoadString("5");
+        il.SetArray();
+        il.Copy();
+        il.LoadInt(2);
+        il.LoadString("8");
+        il.SetArray();
+        il.SetLocal(l1);
+
+        // return l1[2];
+        il.LoadLocal(l1);
+        il.LoadInt(2);
+        il.LoadArrayIndexValue();
+        il.Return();
+        return methodBuilder;
+    }
+
+    // 返回数组中某个索引的值的地址的值
+    public static MethodBuilder DefineMethod_Array3(TypeBuilder typeBuilder)
+    {
+        MethodBuilder methodBuilder = typeBuilder.DefineMethod("Array3", MethodAttributes.Public | MethodAttributes.Static, typeof(object), Type.EmptyTypes);
+        ILGenerator il = methodBuilder.GetILGenerator();
+
+        LocalBuilder l1 = il.DeclareLocal(typeof(string[]));
+
+        // ** l1 = new string[3];
+        il.LoadInt(3);
+        il.NewArray(typeof(string));
+        il.Copy();//拷贝一个值是为了让堆栈上一直存在一个数组
+        il.LoadInt(0);
+        il.LoadString("3");
+        il.SetArray();
+        il.Copy();
+        il.LoadInt(1);
+        il.LoadString("5");
+        il.SetArray();
+        il.Copy();
+        il.LoadInt(2);
+        il.LoadString("8");
+        il.SetArray();
+        il.SetLocal(l1);
+
+        // return l1[2];
+        il.LoadLocal(l1);
+        il.LoadInt(2);
+        il.LoadArrayIndexAddr(typeof(string));//得到地址
+        il.LoadAddrValue(typeof(string));//从地址得到值
+        il.Return();
+        return methodBuilder;
+    }
+
+    // 返回数组长度
+    public static MethodBuilder DefineMethod_Array4(TypeBuilder typeBuilder)
+    {
+        MethodBuilder methodBuilder = typeBuilder.DefineMethod("Array4", MethodAttributes.Public | MethodAttributes.Static, typeof(object), Type.EmptyTypes);
+        ILGenerator il = methodBuilder.GetILGenerator();
+
+        LocalBuilder l1 = il.DeclareLocal(typeof(string[]));
+
+        il.LoadInt(99);
+        il.NewArray(typeof(string));
+        il.SetLocal(l1);
+
+        il.LoadLocal(l1);
+        il.LoadLength();
+        il.Box(typeof(int));
+        il.Return();
+        return methodBuilder;
+    }
     #endregion
 
 
@@ -853,8 +1124,11 @@ public static class EmitOpCodesVerifyCreator
         MethodBuilder methodBuilder = typeBuilder.DefineMethod("Test1", MethodAttributes.Public | MethodAttributes.Static, typeof(object), Type.EmptyTypes);
         ILGenerator il = methodBuilder.GetILGenerator();
 
-        il.LoadInt(100);
-        //il.Box(typeof(int));
+        il.LoadDouble(10.0);
+        il.LoadDouble(3.0);
+        il.MathDiv();
+        il.Emit(OpCodes.Ckfinite);
+        il.Box(typeof(double));
         il.Return();
         return methodBuilder;
     }
@@ -866,26 +1140,43 @@ public static class EmitOpCodesVerifyCreator
 
     public static string SF2(object o)
     {
-        return (string)o;
+        if (o is string s) return s;
+        else return "";
     }
 
     public static Type SF2_1(object o)
     {
-        return (Type)o;
+        Type type = o as Type;
+        return type;
     }
 
     public static object SF3()
     {
-        return typeof(string);
+        EmitTest1 v1 = new EmitTest1();
+        return v1.T1("a");
     }
 
     public static object SF4()
     {
-        return typeof(Type);
+        int[] s = new int[] { 1, 2, 3 };
+
+        return s[1];
     }
 
     public static object SF5()
     {
-        return typeof(object);
+        string[] s = new string[] { "a", "b", "c" };
+
+        return s[1];
     }
+}
+
+public class EmitTest1
+{
+    public virtual string T1(string s) => s + "###";
+}
+
+public class EmitTest2 : EmitTest1
+{
+    public override string T1(string s) => s + "%%%";
 }
