@@ -5,7 +5,7 @@
     <Nullable>enable</Nullable>
     <Description>依赖注入</Description>
     <!-- 不统一时项目使用该版本 -->
-    <Version Condition="!$(UnifiedVersion)">1.0.2</Version>
+    <Version Condition="!$(UnifiedVersion)">1.0.3</Version>
   </PropertyGroup>
 
   <!--如果是 NETFramework 框架引入包-->
