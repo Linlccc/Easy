@@ -276,6 +276,8 @@ Easy.Extensions.DependencyInjection 的服务提供商实现AOP
 ### Easy.Tool.MergeJson 项目升级/修改/开发计划
 
 ~~~text
+使用 winform 之类的项目引用 web 应用生成后的文件中没有 合并的json
+
 不进行部署可参考
 https://docs.microsoft.com/zh-cn/ef/core/what-is-new/nuget-packages#tools
 Microsoft.EntityFrameworkCore.Design 包的安装方式有所不同，它不会随应用程序一起部署。 这也意味着，其类型不能在其他项目中传递使用
