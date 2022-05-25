@@ -311,3 +311,13 @@ Microsoft.EntityFrameworkCore.Design 包的安装方式有所不同，它不会�
 - [ ] IHostBuilder 添加使用 Easy.Extensions.DependencyInjection 的拓展方法 UseEasyServiceProvider
 
 ---
+
+### 很棒的项目
+
+~~~text
+对系统的集合类型进行 内存、性能 优化(池化处理)
+https://github.com/jtmueller/Collections.Pooled
+
+对文件操作优化 一个为 .NET 对象提供池MemoryStream以提高应用程序性能的库，尤其是在垃圾收集领域
+https://github.com/microsoft/Microsoft.IO.RecyclableMemoryStream
+~~~
