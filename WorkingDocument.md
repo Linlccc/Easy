@@ -276,6 +276,10 @@ Easy.Extensions.DependencyInjection 的服务提供商实现AOP
 ### Easy.Tool.MergeJson 项目升级/修改/开发计划
 
 ~~~text
+不进行部署可参考
+https://docs.microsoft.com/zh-cn/ef/core/what-is-new/nuget-packages#tools
+Microsoft.EntityFrameworkCore.Design 包的安装方式有所不同，它不会随应用程序一起部署。 这也意味着，其类型不能在其他项目中传递使用
+
 实现
 1.使用 FindUnderPath,ConvertToAbsolutePath msbuild 任务处理文件夹路径，在程序中尽量少的处理路径
 ~~~
