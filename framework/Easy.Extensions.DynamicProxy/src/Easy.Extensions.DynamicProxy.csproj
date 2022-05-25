@@ -3,8 +3,8 @@
   <PropertyGroup>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <!-- 会发布包的版本 -->
-    <Version Condition="$(AloneVersion)">$(Version)$(BetaSuffix)1</Version>
+    <!-- 不统一时项目使用该版本 -->
+    <Version Condition="!$(UnifiedVersion)">1.0.1</Version>
   </PropertyGroup>
 
   <ItemGroup Condition="$(TargetFramework) == '$(NetStandard2)'">

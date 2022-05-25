@@ -4,9 +4,9 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <Description>系统类型拓展</Description>
-    <!-- 会发布包的版本 -->
-    <Version Condition="$(AloneVersion)">$(Version)$(BetaSuffix)1</Version>
     <RootNamespace>$(MSBuildProjectName.Replace(" ", "_").Replace("Easy.Extensions", ""))</RootNamespace>
+    <!-- 不统一时项目使用该版本 -->
+    <Version Condition="!$(UnifiedVersion)">1.0.1</Version>
   </PropertyGroup>
 
 

@@ -37,15 +37,12 @@
     <!--补丁版本-->
     <PatchVersion>2</PatchVersion>
 
-    <!--试验品-->
-    <AlphaSuffix>-alpha</AlphaSuffix>
-    <!--下一完整版本，可能存在已知bug-->
-    <BetaSuffix>-beta</BetaSuffix>
-    <!--预发布版本-->
-    <RcSuffix>-rc</RcSuffix>
 
-    <!-- 采用独立版本 -->
-    <AloneVersion>true</AloneVersion>
+    <!-- 预览版本 -->
+    <Preview>-preview</Preview>
+
+    <!-- 统一版本,统一后所有可发布nuget包的项目使用相同的版本 -->
+    <UnifiedVersion>false</UnifiedVersion>
 
     <!--包版本-->
     <Version>$(MajorVersion).$(MinorVersion).$(PatchVersion)</Version>
