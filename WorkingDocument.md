@@ -253,6 +253,8 @@ Easy.Extensions.DependencyInjection 的服务提供商实现AOP
 ### Easy.Extensions.DependencyInjection 项目升级/修改/开发计划
 
 ~~~text
+1.AOP 传递的服务提供商是原服务提供商,替换成Easy服务提供商 (实现)
+
 后期计划
 1.添加多框架版本更换服务容器
   // 该方式是 IHostBuilder 拓展,直接配置使用 EasyDependencyInjection
