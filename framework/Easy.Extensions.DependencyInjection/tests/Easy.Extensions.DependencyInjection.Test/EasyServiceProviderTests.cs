@@ -1,6 +1,4 @@
 ﻿using Easy.Extensions.DependencyInjection.Test.Models;
-using Microsoft.Extensions.DependencyInjection;
-using Xunit;
 
 namespace Easy.Extensions.DependencyInjection.Test;
 
@@ -79,7 +77,7 @@ public class EasyServiceProviderTests
         Assert.Equal(0, servicProviderDictionary.Count);
     }
 
-    
+
     [Fact(DisplayName = "测试服务提供商处理")]
     public async Task ServiceProviderDictionaryAsync()
     {
@@ -206,7 +204,6 @@ public class EasyServiceProviderTests
     public void Project_FieldInject()
     {
         EasyServiceProvider service = GetEasyServiceProvider();
-
         TypeR7<bool> typeR7 = (TypeR7<bool>)service.GetService<ITypeR7<bool>>()!;
         Assert.NotNull(typeR7);
         Assert.NotNull(typeR7.TypeR1_1);

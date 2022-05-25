@@ -216,6 +216,12 @@ Easy.Extensions.DependencyInjection 的服务提供商实现AOP
 2.如果所有项目统一更新时,修改 baseConfigure.props 文件 UnifiedVersion(统一版本) 属性值为true,所有项目就会使用一个版本
 ~~~
 
+修复 Easy.Extensions.DependencyInjection 事件(AOP) 传递的服务提供商类型错误问题
+
+~~~text
+在 1.0.1 版本 Easy.Extensions.DependencyInjection 添加了添加事件(AOP)但是传递的服务提供商类型是默认的 serviceProviderEngineScope 类型,在1.0.2中修复
+~~~
+
 ## 计划
 
 - [x] 添加自动发布包任务 (研究) [0427]

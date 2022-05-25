@@ -57,3 +57,9 @@
 ~~~text
 1.Easy.Extensions.DependencyInjection 的服务提供商实现AOP
 ~~~
+
+### 1.0.2
+
+~~~text
+1.修复事件(AOP)中服务提供商参数类型异常问题
+~~~

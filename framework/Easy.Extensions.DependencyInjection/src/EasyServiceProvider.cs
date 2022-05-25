@@ -1,6 +1,5 @@
 ﻿using System.Collections.Concurrent;
 using System.Diagnostics;
-using System.Reflection;
 using Easy.Extensions.DependencyInjection.Abstractions.Extensions;
 
 
@@ -118,14 +117,23 @@ public sealed class EasyServiceProvider : IServiceProvider, ISupportRequiredServ
         return result;
     }
 
+    /// <summary>
+    /// 真实解析服务
+    /// </summary>
+    /// <param name="serviceProvider">原服务提供商(必须是原服务提供商)</param>
+    /// <param name="serviceType">解析的服务类型</param>
+    /// <returns></returns>
     internal object? GetService(IServiceProvider serviceProvider, Type serviceType)
     {
+        // 获取 serviceProvider 的Easy版,用于传向事件
+        IServiceProvider easyServiceProvider = serviceProvider.GetRequiredService<IServiceProvider>();
+
         // 调用获取服务前事件
-        _providerEvents?.BeforeGetService(serviceProvider, ref serviceType);
+        _providerEvents?.BeforeGetService(easyServiceProvider, ref serviceType);
         // 获取实例
         object? result = serviceProvider.GetService(serviceType);
         // 调用获取服务后事件
-        _providerEvents?.AfterGetService(serviceProvider, serviceType, ref result);
+        _providerEvents?.AfterGetService(easyServiceProvider, serviceType, ref result);
 
         // 属性注入
         PropertyInject(result, serviceProvider);
@@ -133,7 +141,7 @@ public sealed class EasyServiceProvider : IServiceProvider, ISupportRequiredServ
         FieldInject(result, serviceProvider);
 
         // 调用获取服务完成事件
-        _providerEvents?.GetServiceCompleted(serviceProvider, serviceType, ref result);
+        _providerEvents?.GetServiceCompleted(easyServiceProvider, serviceType, ref result);
 
         return result;
     }
@@ -153,7 +161,7 @@ public sealed class EasyServiceProvider : IServiceProvider, ISupportRequiredServ
             .Where(p => (p.PropertyType.IsClass || p.PropertyType.IsInterface) && p.IsDefined(typeof(InjectAttribute), false))
             .Select(p => (p, p.GetAttribute<InjectAttribute>(false)!));
 
-        var a = instance.GetType().GetMembers(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+        MemberInfo[]? a = instance.GetType().GetMembers(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
 
         // 对属性赋值
         foreach ((PropertyInfo Property, InjectAttribute Inject) in injectPropertyInfos)
