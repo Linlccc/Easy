@@ -193,7 +193,7 @@ MergeJson 生成时会将 Easy.Tool.MergeJson.dll 复制到生成文件
   c.下载 https://github.com/icsharpcode/ILSpy 链接中的工具，反编译动态生成的dll查看源码 (推荐)
 ~~~
 
-## 0523
+## 0524
 
 Easy.Extensions.DependencyInjection 的服务提供商实现AOP
 
@@ -205,6 +205,15 @@ Easy.Extensions.DependencyInjection 的服务提供商实现AOP
 2.重写 BeforeGetService、AfterGetService、GetServiceCompleted 方法
 3.将自定义的类型赋值给 EasyServiceProviderOptions.ServiceProviderEventsType
 4.构建服务提供商 IServiceCollection.BuildEasyServiceProvider(EasyServiceProviderOptions);
+~~~
+
+## 0525
+
+处理版本控制问题
+
+~~~text
+1.版本主要在自己项目文件(.csproj)中管理
+2.如果所有项目统一更新时,修改 baseConfigure.props 文件 UnifiedVersion(统一版本) 属性值为true,所有项目就会使用一个版本
 ~~~
 
 ## 计划
@@ -220,14 +229,7 @@ Easy.Extensions.DependencyInjection 的服务提供商实现AOP
 - [x] 检查 Type 的 ContainsGenericParameters 属性 是否是判断开放泛型 (实验) [0512]
 - [x] 使用 emit 动态生成dll,然后再反编译 (实验) [0521]
 - [x] 了解一下动态启停web项目 (在TourCar项目中写了一个web管理,处理web项目启停) [0524]
-- [ ] 处理一下版本管理问题
-
-  ~~~text
-  1.每个程序自己管理版本(已有)
-  2.每次更新包的时候才去修改版本,避免更新一个包过后其他包有依赖问题
-  3.让版本长期处于正式版本上,而不是预览版本上
-  ~~~
-
+- [x] 处理版本控制问题 [0525]
 - [ ] 了解为什么应该将 IHttpContextAccessor 作为Singleton注入
 
   ~~~text
