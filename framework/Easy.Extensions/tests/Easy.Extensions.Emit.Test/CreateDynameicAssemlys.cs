@@ -149,6 +149,8 @@
             // 使用调用虚方法的指令调用虚方法
             string callVirtual3 = (string)type.InvokeMember("CallVirtual3", BindingFlags.InvokeMethod, null, null, new object[] { "a" });
             Assert.Equal("a" + "%%%", callVirtual3);
+            string callVirtual4 = (string)type.InvokeMember("CallVirtual4", BindingFlags.InvokeMethod, null, null, new object[] { "a" });
+            Assert.Equal("a" + "%%%", callVirtual3);
 
 
             // 获取数组元素
@@ -166,7 +168,36 @@
 
 
 
+            // ** 地址
+            // SetValueToAddr
+            object setValueToAddr1 = type.InvokeMember("SetValueToAddr1", BindingFlags.InvokeMethod, null, null, new object[] { });
+            Assert.Equal(10, setValueToAddr1);
+            object setValueToAddr2 = type.InvokeMember("SetValueToAddr2", BindingFlags.InvokeMethod, null, null, new object[] { });
+            Assert.Equal(typeof(object), setValueToAddr2.GetType());
+
+
+            // sizeof
+            object sizeof1 = type.InvokeMember("SizeOf1", BindingFlags.InvokeMethod, null, null, new object[] { });
+            Assert.Equal(new int[] { 1, 2, 4, 8, 8, 16, 4, 4 }, sizeof1);
+
+
+            // set field
+            object field1 = type.InvokeMember("SetField1", BindingFlags.InvokeMethod, null, null, new object[] { });
+            Assert.Equal(3, field1);
+
+
+            // typeof
+            object typeof1 = type.InvokeMember("Typeof1", BindingFlags.InvokeMethod, null, null, new object[] { });
+            Assert.Equal(typeof(string), typeof1);
+
+
+
+
+
+
             object test1 = type.InvokeMember("Test1", BindingFlags.InvokeMethod, null, null, new object[] { });
+            //object test2 = type.InvokeMember("Test2", BindingFlags.InvokeMethod, null, null, new object[] { });
+            object test3 = type.InvokeMember("Test3", BindingFlags.InvokeMethod, null, null, new object[] { });
         }
     }
 }

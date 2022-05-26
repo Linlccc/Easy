@@ -219,6 +219,7 @@ public static class EmitOpCodesVerifyCreator
         DefineMethod_CallVirtual2(typeBuilder);
         // 使用调用虚方法的指令调用虚方法
         DefineMethod_CallVirtual3(typeBuilder);
+        DefineMethod_CallVirtual4(typeBuilder);
 
 
         // ** 数组
@@ -233,7 +234,32 @@ public static class EmitOpCodesVerifyCreator
 
 
 
+        // ** 地址
+        // SetValueToAddr
+        DefineMethod_SetValueToAddr1(typeBuilder);
+        DefineMethod_SetValueToAddr2(typeBuilder);
+
+
+        // sizeof
+        DefineMethod_SizeOf1(typeBuilder);
+
+
+        // set field
+        DefineMethod_SetField1(typeBuilder);
+
+
+        // typeof
+        DefineMethod_Typeof1(typeBuilder);
+
+
+
+
+
+
+
         DefineMethod_Test1(typeBuilder);
+        DefineMethod_Test2(typeBuilder);
+        DefineMethod_Test3(typeBuilder);
 
 
         return typeBuilder.CreateType();
@@ -986,6 +1012,28 @@ public static class EmitOpCodesVerifyCreator
 
         return methodBuilder;
     }
+
+    // 使用调用虚方法的指令调用虚方法 编译时类型 EmitTest1(调用类型重写的方法)
+    public static MethodBuilder DefineMethod_CallVirtual4(TypeBuilder typeBuilder)
+    {
+        MethodBuilder methodBuilder = typeBuilder.DefineMethod("CallVirtual4", MethodAttributes.Public | MethodAttributes.Static, typeof(string), new Type[] { typeof(string) });
+        ILGenerator il = methodBuilder.GetILGenerator();
+
+        LocalBuilder l1 = il.DeclareLocal(typeof(EmitTest1));
+
+        // l1 = new EmitTest2();
+        il.NewObject(typeof(EmitTest2).GetConstructor(Type.EmptyTypes));
+        il.SetLocal(l1);
+
+        // return l1.T1(arg1);
+        il.LoadLocal(l1);
+        il.LoadArg(0);
+        il.TailCall();
+        il.CallVirtual(typeof(EmitTest1).GetMethod("T1", new Type[] { typeof(string) }));
+        il.Return();
+
+        return methodBuilder;
+    }
     #endregion
 
     #region 数组
@@ -1116,6 +1164,136 @@ public static class EmitOpCodesVerifyCreator
     }
     #endregion
 
+    #region 地址
+    // SetValueToAddr
+    public static MethodBuilder DefineMethod_SetValueToAddr1(TypeBuilder typeBuilder)
+    {
+        MethodBuilder methodBuilder = typeBuilder.DefineMethod("SetValueToAddr1", MethodAttributes.Public | MethodAttributes.Static, typeof(int), Type.EmptyTypes);
+        ILGenerator il = methodBuilder.GetILGenerator();
+
+        LocalBuilder l1 = il.DeclareLocal(typeof(int));
+
+        il.LoadLocalAddr(l1.LocalIndex);
+        il.LoadInt(10);
+        il.SetValueToAddr(typeof(int));
+
+        il.LoadLocal(l1);
+        il.Return();
+        return methodBuilder;
+    }
+
+    // SetValueToAddr
+    public static MethodBuilder DefineMethod_SetValueToAddr2(TypeBuilder typeBuilder)
+    {
+        MethodBuilder methodBuilder = typeBuilder.DefineMethod("SetValueToAddr2", MethodAttributes.Public | MethodAttributes.Static, typeof(object), Type.EmptyTypes);
+        ILGenerator il = methodBuilder.GetILGenerator();
+
+        LocalBuilder l1 = il.DeclareLocal(typeof(object));
+
+        il.LoadLocalAddr(l1.LocalIndex);
+        il.NewObject(typeof(object).GetConstructor(Type.EmptyTypes));
+        il.SetValueToAddr(typeof(object));
+
+        il.LoadLocal(l1);
+        il.Return();
+        return methodBuilder;
+    }
+    #endregion
+
+    // sizeof
+    public static MethodBuilder DefineMethod_SizeOf1(TypeBuilder typeBuilder)
+    {
+        MethodBuilder methodBuilder = typeBuilder.DefineMethod("SizeOf1", MethodAttributes.Public | MethodAttributes.Static, typeof(int[]), Type.EmptyTypes);
+        ILGenerator il = methodBuilder.GetILGenerator();
+
+        LocalBuilder l1 = il.DeclareLocal(typeof(int[]));
+
+        il.LoadInt(8);
+        il.NewArray(typeof(int));
+
+        il.Copy();
+        il.LoadInt(0);
+        il.SizeOf(typeof(byte));
+        il.SetArray(typeof(int));
+
+        il.Copy();
+        il.LoadInt(1);
+        il.SizeOf(typeof(Int16));
+        il.SetArray();
+
+        il.Copy();
+        il.LoadInt(2);
+        il.SizeOf(typeof(int));
+        il.SetArray();
+
+        il.Copy();
+        il.LoadInt(3);
+        il.SizeOf(typeof(Int64));
+        il.SetArray();
+
+        il.Copy();
+        il.LoadInt(4);
+        il.SizeOf(typeof(double));
+        il.SetArray();
+
+        il.Copy();
+        il.LoadInt(5);
+        il.SizeOf(typeof(decimal));
+        il.SetArray();
+
+        il.Copy();
+        il.LoadInt(6);
+        il.SizeOf(typeof(string));
+        il.SetArray();
+
+        il.Copy();
+        il.LoadInt(7);
+        il.SizeOf(typeof(object));
+        il.SetArray();
+
+        il.SetLocal(l1);
+        il.LoadLocal(l1);
+        il.Return();
+        return methodBuilder;
+    }
+
+    // set Field
+    public static MethodBuilder DefineMethod_SetField1(TypeBuilder typeBuilder)
+    {
+        FieldBuilder fb = typeBuilder.DefineField("field1", typeof(int), FieldAttributes.Public | FieldAttributes.Static);
+        MethodBuilder methodBuilder = typeBuilder.DefineMethod("SetField1", MethodAttributes.Public | MethodAttributes.Static, typeof(int), Type.EmptyTypes);
+        ILGenerator il = methodBuilder.GetILGenerator();
+
+        il.LoadDouble(10.0);
+        il.LoadDouble(3.0);
+        il.MathDiv();
+        il.ConvertInteger(typeof(int));
+        il.SetField(fb);
+
+        il.LoadField(fb);
+        il.Return();
+        return methodBuilder;
+    }
+
+    // typeof
+    public static MethodBuilder DefineMethod_Typeof1(TypeBuilder typeBuilder)
+    {
+        MethodBuilder methodBuilder = typeBuilder.DefineMethod("Typeof1", MethodAttributes.Public | MethodAttributes.Static, typeof(object), Type.EmptyTypes);
+        ILGenerator il = methodBuilder.GetILGenerator();
+
+        LocalBuilder l1 = il.DeclareLocal(typeof(Type));
+
+        il.LoadRuntimeHandle(typeof(string));
+        il.Call(typeof(Type).GetMethod("GetTypeFromHandle", new Type[] { typeof(RuntimeTypeHandle) }));
+        il.SetLocal(l1);
+
+        il.LoadLocal(l1);
+        il.Return();
+        return methodBuilder;
+    }
+
+
+
 
     public static MethodBuilder DefineMethod_Test1(TypeBuilder typeBuilder)
     {
@@ -1133,9 +1311,60 @@ public static class EmitOpCodesVerifyCreator
         return methodBuilder;
     }
 
+
+    public static MethodBuilder DefineMethod_Test2(TypeBuilder typeBuilder)
+    {
+        // 测试方法
+
+        MethodBuilder methodBuilder = typeBuilder.DefineMethod("Test2", MethodAttributes.Public | MethodAttributes.Static, typeof(object), Type.EmptyTypes);
+        ILGenerator il = methodBuilder.GetILGenerator();
+
+        LocalBuilder lb1 = il.DeclareLocal(typeof(string));
+        LocalBuilder lb2 = il.DeclareLocal(typeof(Exception));
+        Label l1 = il.DefineLabel();
+
+        il.Nop();
+        il.Nop();
+        // lb1 = EmitTest2.T2();
+        il.Call(typeof(EmitTest2).GetMethod("T2"));
+        il.SetLocal(lb1);
+        il.GotoLeave(l1);
+
+        il.SetLocal(lb2);
+        il.Nop();
+        il.Emit(OpCodes.Rethrow);
+
+        //return lb1;
+        il.MarkLabel(l1);
+        il.LoadLocal(lb1);
+        il.Return();
+        return methodBuilder;
+    }
+
+    public static MethodBuilder DefineMethod_Test3(TypeBuilder typeBuilder)
+    {
+        // 测试方法
+
+        MethodBuilder methodBuilder = typeBuilder.DefineMethod("Test3", MethodAttributes.Public | MethodAttributes.Static, typeof(object), Type.EmptyTypes);
+        ILGenerator il = methodBuilder.GetILGenerator();
+
+        il.LoadDouble(10.0);
+        il.LoadDouble(3.0);
+        il.MathDiv();
+        il.Emit(OpCodes.Ckfinite);
+        il.Box(typeof(double));
+
+        il.LoadDouble(10.0);
+        il.Box(typeof(double));
+        il.Pop();
+
+        il.Return();
+        return methodBuilder;
+    }
+
     public static int SF1(object o)
     {
-        return (int)o;
+        return sizeof(int);
     }
 
     public static string SF2(object o)
@@ -1156,18 +1385,21 @@ public static class EmitOpCodesVerifyCreator
         return v1.T1("a");
     }
 
-    public static object SF4()
+    public static object SF4(string a)
     {
-        int[] s = new int[] { 1, 2, 3 };
-
-        return s[1];
+        try
+        {
+            return SF5();
+        }
+        catch (Exception ex)
+        {
+            throw;
+        }
     }
 
     public static object SF5()
     {
-        string[] s = new string[] { "a", "b", "c" };
-
-        return s[1];
+        return typeof(Type);
     }
 }
 
@@ -1179,4 +1411,6 @@ public class EmitTest1
 public class EmitTest2 : EmitTest1
 {
     public override string T1(string s) => s + "%%%";
+
+    public static string T2() => throw new Exception("CCCCCCCs");
 }
