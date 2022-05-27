@@ -5,13 +5,17 @@
 /// </summary>
 public static partial class ILGeneratorExtensions
 {
-    /* 概念
+    /* ** 概念
      * 1.Label:     (标签) 类似于代码中的 goto
      * 2.地址:      (address) 数据值存放的地址(获取p变量的地址 &p),一串数字
      * 3.指针:      (pointer)
      *  3.1. 指针类型,是一种数据类型 比如:int*(int指针类型)
      *  3.2. 指针变量,是一个变量,指针变量的值是一个地址,指针变量也有自己的地址
      * 4.native int 就是C#中的 IntPtr
+     * 
+     * 
+     * ** 问题
+     * 1.不知道怎么使用指令来写try-catch
      */
 
     #region 加载/推送(将指定的值推送到计算堆栈)
@@ -226,8 +230,8 @@ public static partial class ILGeneratorExtensions
 
     #region 地址To值
     /// <summary>
-    /// 推送堆栈顶部地址处的 <paramref name="valueType"/>(值类型) 类型的值
-    /// <br></br>TODO：不确定是否只是值类型可用
+    /// 推送堆栈顶部地址处的 <paramref name="valueType"/>(值类型) 类型的值<br/>
+    /// TODO: 不确定是否只是值类型可用
     /// </summary>
     /// <param name="iLGenerator">中间语言指令生成器</param>
     /// <param name="valueType">值类型</param>
@@ -967,6 +971,17 @@ public static partial class ILGeneratorExtensions
     public static void Copy(this ILGenerator iLGenerator!!) => iLGenerator.Emit(OpCodes.Dup);
 
     /// <summary>
+    /// 复制地址的值到指定地址
+    /// <list type="bullet">
+    ///     <item>1.推送目标地址</item>
+    ///     <item>2.推送原地址</item>
+    ///     <item>3.推送数据的大小(byte 字节)</item>
+    /// </list>
+    /// </summary>
+    /// <param name="iLGenerator">中间语言指令生成器</param>
+    public static void CopyAddrValueToAddr(this ILGenerator iLGenerator!!) => iLGenerator.Emit(OpCodes.Cpblk);
+
+    /// <summary>
     /// 计算 <paramref name="valType"/>(值类型) 类型的大小(byte 字节为单位),并推送结果
     /// </summary>
     /// <param name="iLGenerator">中间语言指令生成器</param>
@@ -1005,6 +1020,20 @@ public static partial class ILGeneratorExtensions
     /// <param name="iLGenerator">中间语言指令生成器</param>
     public static void Nop(this ILGenerator iLGenerator!!) => iLGenerator.Emit(OpCodes.Nop);
 
+    #region 有歧义
+    /// <summary>
+    /// 原：将位于对象地址的值类型（类型 &amp; 或原生 int）复制到目标对象的地址（类型 &amp; 或原生 int）
+    /// 测试:将指定地址的值复制到指定地址,运行成功
+    /// <list type="bullet">
+    ///     <item>1.推送目标地址</item>
+    ///     <item>2.推送原地址</item>
+    /// </list>
+    /// </summary>
+    /// <param name="iLGenerator">中间语言指令生成器</param>
+    /// <param name="type">测试中所有size相同的类型都可以正常运行</param>
+    public static void Cpobj(this ILGenerator iLGenerator!!, Type type) => iLGenerator.Emit(OpCodes.Cpobj, type);
+    #endregion
+
 
 
     public static void FFF() { }
@@ -1012,9 +1041,9 @@ public static partial class ILGeneratorExtensions
 
     /* 未验证方法
      * LoadField
-     * 
+     *
      * SetField
-     * 
+     *
      * NewObject
      */
 
@@ -1055,11 +1084,7 @@ public static partial class ILGeneratorExtensions
 
 
 
-    /// <summary>
-    /// 从源地址复制指定字节数到目标地址
-    /// </summary>
-    /// <param name="iLGenerator">中间语言指令生成器</param>
-    public static void CopyToTargetAddr(this ILGenerator iLGenerator!!) => iLGenerator.Emit(OpCodes.Cpblk);
+
 
 
 
@@ -1118,31 +1143,31 @@ public static partial class ILGeneratorExtensions
      * Constrained  约束对其进行虚拟方法调用的类型。
      *
      * Cpobj        将位于对象地址的值类型（类型 & 或原生 int）复制到目标对象的地址（类型 & 或原生 int）。
-     * 
+     *
      * Endfilter    将控制从异常的过滤子句转移回公共语言基础结构 (CLI) 异常处理程序。
-     * 
+     *
      * Endfinally   将控制从异常块的故障或 finally 子句转移回公共语言基础结构 (CLI) 异常处理程序。
-     * 
+     *
      * Initblk      将特定地址处的指定内存块初始化为给定大小和初始值。
-     * 
+     *
      * Initobj      将指定地址处的值类型的每个字段初始化为空引用或相应原始类型的 0。
-     * 
+     *
      * Jmp          退出当前方法并跳转到指定方法。
-     * 
+     *
      * Mkrefany     将对特定类型的实例的类型化引用推送到评估堆栈上。
-     * 
+     *
      * Nop          如果修补了操作码，则填充空间。 尽管可以消耗一个处理周期，但没有执行任何有意义的操作。
-     * 
+     *
      * Readonly     指定后续的数组地址操作在运行时不执行类型检查，并返回一个可变性受到限制的托管指针。
-     * 
+     *
      * Refanytype   检索嵌入在类型化引用中的类型标记。
-     * 
+     *
      * Rethrow      重新抛出当前异常。
-     * 
+     *
      * Starg        将计算堆栈顶部的值存储在指定索引处的参数槽中。
-     * 
+     *
      * Unaligned    指示当前位于评估堆栈顶部的地址可能未与紧随其后的 ldind、stind、ldfld、stfld、ldobj、stobj、initblk 或 cpblk 指令的自然大小对齐。
-     * 
+     *
      * Volatile     指定当前位于评估堆栈顶部的地址可能是易失的，并且无法缓存读取该位置的结果，或者无法抑制对该位置的多个存储。
      */
     #endregion

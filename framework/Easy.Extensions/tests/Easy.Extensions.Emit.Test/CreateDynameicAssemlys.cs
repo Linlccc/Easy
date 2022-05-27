@@ -192,6 +192,14 @@
             Assert.Equal(typeof(string), typeof1);
 
 
+            // CopyAddrValueToAddr1
+            EmitTest2 copyAddrValueToAddr1 = new EmitTest2() { MyProperty = 9 };
+            EmitTest2 copyAddrValueToAddr2 = (EmitTest2)type.InvokeMember("CopyAddrValueToAddr1", BindingFlags.InvokeMethod, null, null, new object[] { copyAddrValueToAddr1 });
+            Assert.Equal(copyAddrValueToAddr1, copyAddrValueToAddr2);
+            copyAddrValueToAddr1.MyProperty = 99;
+            Assert.Equal(99, copyAddrValueToAddr2.MyProperty);
+
+
 
 
 
@@ -199,6 +207,7 @@
             object test1 = type.InvokeMember("Test1", BindingFlags.InvokeMethod, null, null, new object[] { });
             //object test2 = type.InvokeMember("Test2", BindingFlags.InvokeMethod, null, null, new object[] { });
             object test3 = type.InvokeMember("Test3", BindingFlags.InvokeMethod, null, null, new object[] { });
+            EmitTest2 et1 = (EmitTest2)type.InvokeMember("Test4", BindingFlags.InvokeMethod, null, null, new object[] { copyAddrValueToAddr1 });
         }
     }
 }

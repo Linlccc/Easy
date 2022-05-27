@@ -253,6 +253,11 @@ public static class EmitOpCodesVerifyCreator
 
 
 
+        // CopyAddrValueToAddr1
+        DefineMethod_CopyAddrValueToAddr1(typeBuilder);
+
+
+
 
 
 
@@ -260,6 +265,7 @@ public static class EmitOpCodesVerifyCreator
         DefineMethod_Test1(typeBuilder);
         DefineMethod_Test2(typeBuilder);
         DefineMethod_Test3(typeBuilder);
+        DefineMethod_Test4(typeBuilder);
 
 
         return typeBuilder.CreateType();
@@ -1292,6 +1298,28 @@ public static class EmitOpCodesVerifyCreator
         return methodBuilder;
     }
 
+    // copyAddrValueToAddr
+    public static MethodBuilder DefineMethod_CopyAddrValueToAddr1(TypeBuilder typeBuilder)
+    {
+        // 测试方法
+
+        MethodBuilder methodBuilder = typeBuilder.DefineMethod("CopyAddrValueToAddr1", MethodAttributes.Public | MethodAttributes.Static, typeof(object), new Type[] { typeof(EmitTest2) });
+        ILGenerator il = methodBuilder.GetILGenerator();
+
+        LocalBuilder l1 = il.DeclareLocal(typeof(EmitTest2));
+
+        // l2 = arg1;
+        il.LoadLocalAddr(l1.LocalIndex);
+        il.LoadArgAddr(0);
+        il.SizeOf(typeof(EmitTest2));
+        il.Emit(OpCodes.Cpblk);
+
+        // return l2; 
+        il.LoadLocal(l1);
+        il.Return();
+        return methodBuilder;
+    }
+
 
 
 
@@ -1364,6 +1392,28 @@ public static class EmitOpCodesVerifyCreator
         return methodBuilder;
     }
 
+    public static MethodBuilder DefineMethod_Test4(TypeBuilder typeBuilder)
+    {
+        // 测试方法
+
+        MethodBuilder methodBuilder = typeBuilder.DefineMethod("Test4", MethodAttributes.Public | MethodAttributes.Static, typeof(object), new Type[] { typeof(EmitTest2) });
+        ILGenerator il = methodBuilder.GetILGenerator();
+
+        LocalBuilder l1 = il.DeclareLocal(typeof(EmitTest2));
+
+        // l2 = arg1;
+        il.LoadLocalAddr(l1.LocalIndex);
+        il.LoadArgAddr(0);
+        il.Emit(OpCodes.Cpobj, typeof(int));
+
+        // return l2; 
+        il.LoadLocal(l1);
+        il.Return();
+        return methodBuilder;
+    }
+
+
+
     public static int SF1(object o)
     {
         return sizeof(int);
@@ -1426,6 +1476,7 @@ public class EmitTest1
 
 public class EmitTest2 : EmitTest1
 {
+    public int MyProperty { get; set; }
     public override string T1(string s) => s + "%%%";
 
     public static string T2() => throw new Exception("CCCCCCCs");
