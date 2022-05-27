@@ -1013,7 +1013,7 @@ public static class EmitOpCodesVerifyCreator
         return methodBuilder;
     }
 
-    // 使用调用虚方法的指令调用虚方法 编译时类型 EmitTest1(调用类型重写的方法)
+    // 将方法标记为最后的方法
     public static MethodBuilder DefineMethod_CallVirtual4(TypeBuilder typeBuilder)
     {
         MethodBuilder methodBuilder = typeBuilder.DefineMethod("CallVirtual4", MethodAttributes.Public | MethodAttributes.Static, typeof(string), new Type[] { typeof(string) });
@@ -1323,16 +1323,18 @@ public static class EmitOpCodesVerifyCreator
         LocalBuilder lb2 = il.DeclareLocal(typeof(Exception));
         Label l1 = il.DefineLabel();
 
-        il.Nop();
-        il.Nop();
-        // lb1 = EmitTest2.T2();
-        il.Call(typeof(EmitTest2).GetMethod("T2"));
-        il.SetLocal(lb1);
-        il.GotoLeave(l1);
-
-        il.SetLocal(lb2);
-        il.Nop();
-        il.Emit(OpCodes.Rethrow);
+        try
+        {
+            // lb1 = EmitTest2.T2();
+            il.Call(typeof(EmitTest2).GetMethod("T2"));
+            il.SetLocal(lb1);
+            il.GotoLeave(l1);
+        }
+        catch (Exception)
+        {
+            il.SetLocal(lb2);
+            il.Emit(OpCodes.Rethrow);
+        }
 
         //return lb1;
         il.MarkLabel(l1);
@@ -1381,8 +1383,15 @@ public static class EmitOpCodesVerifyCreator
 
     public static object SF3()
     {
-        EmitTest1 v1 = new EmitTest1();
-        return v1.T1("a");
+        List<string> list1 = new List<string>() { "1", "2", "3", "4", "5" };
+        IEnumerator<string> list2 = list1.GetEnumerator();
+
+        string a = "9";
+        while (list2.MoveNext())
+        {
+            a = list2.Current;
+        }
+        return a;
     }
 
     public static object SF4(string a)
@@ -1399,7 +1408,14 @@ public static class EmitOpCodesVerifyCreator
 
     public static object SF5()
     {
-        return typeof(Type);
+        List<string> list1 = new List<string>() { "1", "2", "3", "4", "5" };
+
+        string a = "9";
+        foreach (string? item in list1)
+        {
+            a = item;
+        }
+        return a;
     }
 }
 

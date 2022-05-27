@@ -149,6 +149,7 @@
             // 使用调用虚方法的指令调用虚方法
             string callVirtual3 = (string)type.InvokeMember("CallVirtual3", BindingFlags.InvokeMethod, null, null, new object[] { "a" });
             Assert.Equal("a" + "%%%", callVirtual3);
+            // 最后的方法指令
             string callVirtual4 = (string)type.InvokeMember("CallVirtual4", BindingFlags.InvokeMethod, null, null, new object[] { "a" });
             Assert.Equal("a" + "%%%", callVirtual3);
 
