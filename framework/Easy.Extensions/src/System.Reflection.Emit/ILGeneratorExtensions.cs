@@ -1080,48 +1080,6 @@ public static partial class ILGeneratorExtensions
 
 
 
-    public static void FFF() { }
-
-
-    /* 未验证方法
-     * LoadField
-     *
-     * SetField
-     *
-     * NewObject
-     */
-
-
-
-
-
-
-
-
-
-
-
-
-    /// <summary>
-    /// 分配空间并推送第一个字节的指针
-    /// </summary>
-    /// <param name="iLGenerator">中间语言指令生成器</param>
-    public static void Localloc(this ILGenerator iLGenerator!!) => iLGenerator.Emit(OpCodes.Localloc);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     #region 暂时不做拓展（不太清楚用法的）
     /* 待验证问题
      * 1.个人感觉好像 IntPtr 就是这里提到的 native int(本地int)
@@ -1130,16 +1088,7 @@ public static partial class ILGeneratorExtensions
     /* https://docs.microsoft.com/zh-cn/dotnet/api/system.reflection.emit.opcodes?view=net-6.0#fields
      *
      * ** 以下是一些不太懂的指令
-     *
-     * Arglist      返回指向当前方法的参数列表的非托管指针。
-     *
-     * Calli        使用调用约定描述的参数调用评估堆栈上指示的方法（作为指向入口点的指针）。
-     *
-     * Callvirt     调用对象的后期绑定方法，将返回值推送到评估堆栈。
-     *
      * Constrained  约束对其进行虚拟方法调用的类型。
-     *
-     * Cpobj        将位于对象地址的值类型（类型 & 或原生 int）复制到目标对象的地址（类型 & 或原生 int）。
      *
      * Endfilter    将控制从异常的过滤子句转移回公共语言基础结构 (CLI) 异常处理程序。
      *
@@ -1152,8 +1101,6 @@ public static partial class ILGeneratorExtensions
      * Jmp          退出当前方法并跳转到指定方法。
      *
      * Mkrefany     将对特定类型的实例的类型化引用推送到评估堆栈上。
-     *
-     * Nop          如果修补了操作码，则填充空间。 尽管可以消耗一个处理周期，但没有执行任何有意义的操作。
      *
      * Readonly     指定后续的数组地址操作在运行时不执行类型检查，并返回一个可变性受到限制的托管指针。
      *
@@ -1168,66 +1115,4 @@ public static partial class ILGeneratorExtensions
      * Volatile     指定当前位于评估堆栈顶部的地址可能是易失的，并且无法缓存读取该位置的结果，或者无法抑制对该位置的多个存储。
      */
     #endregion
-}
-
-/// <summary>
-/// 整型类型
-/// </summary>
-public enum IntegerType
-{
-    /// <summary>
-    /// <see cref="System.SByte"/>(有符号byte/int8) 类型
-    /// </summary>
-    SByte,
-    /// <summary>
-    /// <see cref="System.Byte"/>(无符号byte/int8) 类型
-    /// </summary>
-    Byte,
-    /// <summary>
-    /// <see cref="System.Int16"/>(有符号short) 类型
-    /// </summary>
-    Int16,
-    /// <summary>
-    /// <see cref="System.UInt16"/>(无符号short) 类型
-    /// </summary>
-    UInt16,
-    /// <summary>
-    /// <see cref="System.Int32"/>(有符号int) 类型
-    /// </summary>
-    Int32,
-    /// <summary>
-    /// <see cref="System.UInt32"/>(无符号int) 类型
-    /// </summary>
-    UInt32,
-    /// <summary>
-    /// <see cref="System.Int64"/>(有符号long) 类型
-    /// </summary>
-    Int64,
-    /// <summary>
-    /// <see cref="System.UInt64"/>(无符号long) 类型
-    /// </summary>
-    UInt64,
-    /// <summary>
-    /// 本机int类型
-    /// </summary>
-    NativeInt,
-    /// <summary>
-    /// 无符号本机int类型
-    /// </summary>
-    UNativeInt
-}
-
-/// <summary>
-/// 浮点类型
-/// </summary>
-public enum FloatType
-{
-    /// <summary>
-    /// <see cref="System.Single"/>(单精度浮点) 类型
-    /// </summary>
-    Single,
-    /// <summary>
-    /// <see cref="System.Double"/>(双精度浮点) 类型
-    /// </summary>
-    Double
 }
