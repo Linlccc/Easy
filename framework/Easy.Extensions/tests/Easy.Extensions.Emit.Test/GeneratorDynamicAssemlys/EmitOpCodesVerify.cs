@@ -276,8 +276,6 @@ public static class EmitOpCodesVerifyCreator
 
 
         DefineMethod_Test1(typeBuilder);
-        DefineMethod_Test2(typeBuilder);
-        DefineMethod_Test3(typeBuilder);
 
 
         return typeBuilder.CreateType();
@@ -1453,73 +1451,6 @@ public static class EmitOpCodesVerifyCreator
         il.Box(typeof(double));
         il.Return();
         return methodBuilder;
-    }
-
-
-    public static MethodBuilder DefineMethod_Test2(TypeBuilder typeBuilder)
-    {
-        // 测试方法
-
-        MethodBuilder methodBuilder = typeBuilder.DefineMethod("Test2", MethodAttributes.Public | MethodAttributes.Static, typeof(object), Type.EmptyTypes);
-        ILGenerator il = methodBuilder.GetILGenerator();
-
-        LocalBuilder lb1 = il.DeclareLocal(typeof(string));
-        LocalBuilder lb2 = il.DeclareLocal(typeof(Exception));
-        Label l1 = il.DefineLabel();
-
-        try
-        {
-            // lb1 = EmitTest2.T2();
-            il.Call(typeof(EmitTest2).GetMethod("T2"));
-            il.SetLocal(lb1);
-            il.GotoLeave(l1);
-        }
-        catch (Exception)
-        {
-            il.SetLocal(lb2);
-            il.Emit(OpCodes.Rethrow);
-        }
-
-        //return lb1;
-        il.MarkLabel(l1);
-        il.LoadLocal(lb1);
-        il.Return();
-        return methodBuilder;
-    }
-
-    public static MethodBuilder DefineMethod_Test3(TypeBuilder typeBuilder)
-    {
-        // 测试方法
-
-        MethodBuilder methodBuilder = typeBuilder.DefineMethod("Test3", MethodAttributes.Public | MethodAttributes.Static, typeof(object), Type.EmptyTypes);
-        ILGenerator il = methodBuilder.GetILGenerator();
-
-        il.LoadDouble(10.0);
-        il.LoadDouble(3.0);
-        il.MathDiv();
-        il.Emit(OpCodes.Ckfinite);
-        il.Box(typeof(double));
-
-        il.LoadDouble(10.0);
-        il.Box(typeof(double));
-        il.Pop();
-
-        il.Return();
-        return methodBuilder;
-    }
-
-    public static Func<string> DefineMethod_Test5()
-    {
-        DynamicMethod dm = new DynamicMethod("Test1", typeof(string), new Type[] { });
-        ILGenerator il = dm.GetILGenerator();
-
-        il.Emit(OpCodes.Ldftn, typeof(EmitTest2).GetMethod("T2"));
-        il.EmitCalli(OpCodes.Calli, System.Runtime.InteropServices.CallingConvention.StdCall, typeof(string), new Type[] { });
-        il.Return();
-
-        Func<string> dd = (Func<string>)dm.CreateDelegate(typeof(Func<string>));
-
-        return dd;
     }
 }
 
