@@ -114,7 +114,7 @@ public class DynamicCreateType
         ctor2IL.Emit(OpCodes.Ldarg_0);
         ctor2IL.Emit(OpCodes.Call, typeof(object).GetConstructor(Type.EmptyTypes)!);
 
-        ctor2IL.DebugBreakPoint();
+        //ctor2IL.DebugBreakPoint();
 
         ctor2IL.Emit(OpCodes.Ldarg_0);
         ctor2IL.Emit(OpCodes.Ldarg_1);
@@ -568,9 +568,9 @@ public class DynamicCreateType
             LocalBuilder localBuilder = methIL1.DeclareLocal(typeof(int[]));
             //methIL1.LoadArg(0);
             methIL1.LoadArg(1);
-            methIL1.ConvertFloat();
+            //methIL1.ConvertFloat();
             methIL1.LoadArg(2);
-            methIL1.ConvertFloat();
+            //methIL1.ConvertFloat();
             methIL1.MathDiv();
             methIL1.Box(typeof(float));
             //methIL1.Emit(OpCodes.Unbox_Any,typeof(float));

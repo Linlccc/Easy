@@ -279,6 +279,22 @@ public static partial class ILGeneratorExtensions
     public static void LoadAddrObject(this ILGenerator iLGenerator!!) => iLGenerator.Emit(OpCodes.Ldind_Ref);
     #endregion
 
+    #region 指针
+    /// <summary>
+    /// 推送方法指针
+    /// <list type="bullet">
+    ///     <item>1.推送实例(非虚方法忽略)</item>
+    /// </list>
+    /// </summary>
+    /// <param name="iLGenerator">中间语言指令生成器</param>
+    /// <param name="methodInfo">方法信息</param>
+    public static void LoadMethodPointer(this ILGenerator iLGenerator!!, MethodInfo methodInfo!!)
+    {
+        if (methodInfo.IsVirtual) iLGenerator.Emit(OpCodes.Ldvirtftn, methodInfo);
+        else iLGenerator.Emit(OpCodes.Ldftn, methodInfo);
+    }
+    #endregion
+
     #region 常量
     /// <summary>
     /// 推送 <see cref="Int32"/> / <see cref="Int16"/> / <see cref="byte"/> 数字常量
@@ -630,7 +646,7 @@ public static partial class ILGeneratorExtensions
     /// 调用方法/虚方法,并推送结果
     /// <br>如果使用该方法调用虚方法,表明是使用方法指定的类来解析,而不是被调用的对象动态指定</br>
     /// <list type="bullet">
-    ///     <item>1.如果是实例方法,推送实例,否则跳过</item>
+    ///     <item>1.推送实例(静态方法忽略)</item>
     ///     <item>2.推送方法的参数</item>
     /// </list>
     /// </summary>
@@ -662,6 +678,34 @@ public static partial class ILGeneratorExtensions
     /// </summary>
     /// <param name="iLGenerator">中间语言指令生成器</param>
     public static void TailCall(this ILGenerator iLGenerator!!) => iLGenerator.Emit(OpCodes.Tailcall);
+
+    #region 地址
+    /// <summary>
+    /// 调用指针处的方法,并推送结果
+    /// </summary>
+    /// <param name="iLGenerator">中间语言指令生成器</param>
+    /// <param name="callingConvention">方法调用约定</param>
+    /// <param name="returnType">方法的返回类型</param>
+    /// <param name="parameterTypes">方法的参数类型数组</param>
+    /// <param name="optionalParameterTypes">可变参数类型数组</param>
+    public static void Calli(this ILGenerator iLGenerator!!, CallingConventions callingConvention, Type returnType, Type[] parameterTypes, params Type[] optionalParameterTypes) => iLGenerator.EmitCalli(OpCodes.Calli, callingConvention, returnType, parameterTypes, optionalParameterTypes);
+
+#if !NETSTANDARD2_0
+    /// <summary>
+    /// 调用指针处的方法,并推送结果
+    /// <list type="bullet">
+    ///     <item>1.推送实例(静态方法忽略)</item>
+    ///     <item>2.推送参数</item>
+    ///     <item>2.推送方法指针</item>
+    /// </list>
+    /// </summary>
+    /// <param name="iLGenerator">中间语言指令生成器</param>
+    /// <param name="callingConvention">方法调用约定</param>
+    /// <param name="returnType">方法的返回类型</param>
+    /// <param name="parameterTypes">方法的参数类型数组</param>
+    public static void Calli(this ILGenerator iLGenerator!!, Runtime.InteropServices.CallingConvention callingConvention, Type returnType, params Type[] parameterTypes) => iLGenerator.EmitCalli(OpCodes.Calli, callingConvention, returnType, parameterTypes);
+#endif
+    #endregion
     #endregion
 
     #region Goto
@@ -1046,53 +1090,6 @@ public static partial class ILGeneratorExtensions
      *
      * NewObject
      */
-
-
-
-
-
-
-
-
-
-
-    #region 加载\推送(将指定的值推送到计算堆栈)
-
-
-
-
-
-
-
-
-    /// <summary>
-    /// 推送方法指针
-    /// </summary>
-    /// <param name="iLGenerator">中间语言指令生成器</param>
-    /// <param name="methodInfo">方法信息</param>
-    public static void LoadMethodPointer(this ILGenerator iLGenerator!!, MethodInfo methodInfo!!)
-    {
-        if (methodInfo.IsVirtual) iLGenerator.Emit(OpCodes.Ldvirtftn, methodInfo);
-        else iLGenerator.Emit(OpCodes.Ldftn, methodInfo);
-    }
-    #endregion
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

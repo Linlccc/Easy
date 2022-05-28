@@ -1,4 +1,7 @@
-﻿namespace Easy.Extensions.Emit.Test
+﻿using System.Diagnostics;
+using System.Runtime.InteropServices;
+
+namespace Easy.Extensions.Emit.Test
 {
 
     /// <summary>
@@ -199,6 +202,28 @@
             copyAddrValueToAddr1.MyProperty = 99;
             Assert.Equal(99, copyAddrValueToAddr2.MyProperty);
 
+            // Cpobj1
+            EmitTest2 cpobj1 = new EmitTest2() { MyProperty = 9 };
+            EmitTest2 cpobj2 = (EmitTest2)type.InvokeMember("Cpobj1", BindingFlags.InvokeMethod, null, null, new object[] { cpobj1 });
+            Assert.Equal(cpobj1, cpobj2);
+            cpobj1.MyProperty = 99;
+            Assert.Equal(99, cpobj2.MyProperty);
+
+
+
+            // ** 方法指针调用方法
+            // 方法指针调用方法1
+            int calli_Ldftn1 = (int)type.InvokeMember("Calli_Ldftn1", BindingFlags.InvokeMethod, null, null, new object[] { });
+            Assert.Equal(2, calli_Ldftn1);
+            // 方法指针调用方法2
+            int calli_Ldftn2 = (int)type.InvokeMember("Calli_Ldftn2", BindingFlags.InvokeMethod, null, null, new object[] { });
+            Assert.Equal(3, calli_Ldftn2);
+            // 方法指针调用方法3
+            int calli_Ldftn3 = (int)type.InvokeMember("Calli_Ldftn3", BindingFlags.InvokeMethod, null, null, new object[] { });
+            Assert.Equal(4, calli_Ldftn3);
+            // 方法指针调用方法4
+            int calli_Ldftn4 = (int)type.InvokeMember("Calli_Ldftn4", BindingFlags.InvokeMethod, null, null, new object[] { });
+            Assert.Equal(-4, calli_Ldftn4);
 
 
 
@@ -207,7 +232,72 @@
             object test1 = type.InvokeMember("Test1", BindingFlags.InvokeMethod, null, null, new object[] { });
             //object test2 = type.InvokeMember("Test2", BindingFlags.InvokeMethod, null, null, new object[] { });
             object test3 = type.InvokeMember("Test3", BindingFlags.InvokeMethod, null, null, new object[] { });
-            EmitTest2 et1 = (EmitTest2)type.InvokeMember("Test4", BindingFlags.InvokeMethod, null, null, new object[] { copyAddrValueToAddr1 });
+
+
+            unsafe
+            {
+                //Func<string>? a = EmitOpCodesVerifyCreator.DefineMethod_Test5();
+                //string? b = a.Invoke();
+
+                object et1 = type.InvokeMember("Test4", BindingFlags.InvokeMethod, null, null, new object[] { });
+                object et2 = type.InvokeMember("Test5", BindingFlags.InvokeMethod, null, null, new object[] { });
+                object et3 = type.InvokeMember("Test6", BindingFlags.InvokeMethod, null, null, new object[] { });
+            }
+
         }
+
+
+        const long COUNT = 1 << 22;
+        static readonly byte[] multiply = IntPtr.Size == sizeof(int) ?
+          new byte[] { 0x8B, 0x44, 0x24, 0x04, 0x0F, 0xAF, 0x44, 0x24, 0x08, 0xC3 }
+        : new byte[] { 0x0f, 0xaf, 0xca, 0x8b, 0xc1, 0xc3 };
+
+
+        [Fact]
+        public void Main()
+        {
+            GCHandle handle = GCHandle.Alloc(multiply, GCHandleType.Pinned);
+            try
+            {
+                //使本机方法可执行
+                uint old;
+                VirtualProtect(handle.AddrOfPinnedObject(),
+                    (IntPtr)multiply.Length, 0x40, out old);
+                BinaryOp? mulDelegate = (BinaryOp)Marshal.GetDelegateForFunctionPointer(
+                    handle.AddrOfPinnedObject(), typeof(BinaryOp));
+
+                Type? T = typeof(uint); //避免重复输入
+
+                //生成方法
+                DynamicMethod? method = new DynamicMethod("Mul", T,
+                    new Type[] { T, T }, T.Module);
+                ILGenerator? gen = method.GetILGenerator();
+                gen.Emit(OpCodes.Ldarg_0);
+                gen.Emit(OpCodes.Ldarg_1);
+                gen.Emit(OpCodes.Ldc_I8, (long)handle.AddrOfPinnedObject());
+                gen.Emit(OpCodes.Conv_I);
+                gen.EmitCalli(OpCodes.Calli, CallingConvention.StdCall,
+                    T, new Type[] { T, T });
+                gen.Emit(OpCodes.Ret);
+
+                BinaryOp? mulCalli = (BinaryOp)method.CreateDelegate(typeof(BinaryOp));
+
+                Stopwatch? sw = Stopwatch.StartNew();
+                for (int i = 0; i < COUNT; i++) { mulDelegate(2, 3); }
+                Console.WriteLine("Delegate: {0:N0}", sw.ElapsedMilliseconds);
+                sw.Reset();
+
+                sw.Start();
+                for (int i = 0; i < COUNT; i++) { mulCalli(2, 3); }
+                Console.WriteLine("Calli:    {0:N0}", sw.ElapsedMilliseconds);
+            }
+            finally { handle.Free(); }
+        }
+
+        delegate uint BinaryOp(uint a, uint b);
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        static extern bool VirtualProtect(
+            IntPtr address, IntPtr size, uint protect, out uint oldProtect);
     }
 }

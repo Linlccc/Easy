@@ -256,6 +256,19 @@ public static class EmitOpCodesVerifyCreator
         // CopyAddrValueToAddr1
         DefineMethod_CopyAddrValueToAddr1(typeBuilder);
 
+        // Cpobj1
+        DefineMethod_Cpobj1(typeBuilder);
+
+
+        // ** 方法指针调用方法
+        // 方法指针调用方法1
+        DefineMethod_Calli_Ldftn1(typeBuilder);
+        // 方法指针调用方法2
+        DefineMethod_Calli_Ldftn2(typeBuilder);
+        // 方法指针调用方法3(虚方法)
+        DefineMethod_Calli_Ldftn3(typeBuilder);
+        // 方法指针调用方法3(虚方法)
+        DefineMethod_Calli_Ldftn4(typeBuilder);
 
 
 
@@ -265,7 +278,6 @@ public static class EmitOpCodesVerifyCreator
         DefineMethod_Test1(typeBuilder);
         DefineMethod_Test2(typeBuilder);
         DefineMethod_Test3(typeBuilder);
-        DefineMethod_Test4(typeBuilder);
 
 
         return typeBuilder.CreateType();
@@ -1206,6 +1218,89 @@ public static class EmitOpCodesVerifyCreator
     }
     #endregion
 
+    #region 方法指针调用方法
+    // 方法指针调用方法1
+    public static MethodBuilder DefineMethod_Calli_Ldftn1(TypeBuilder typeBuilder)
+    {
+        MethodBuilder methodBuilder = typeBuilder.DefineMethod("Calli_Ldftn1", MethodAttributes.Public | MethodAttributes.Static, typeof(int), Type.EmptyTypes);
+        ILGenerator il = methodBuilder.GetILGenerator();
+
+        LocalBuilder l1 = il.DeclareLocal(typeof(int));
+
+        // l1 = EmitTest2.T2();
+        il.LoadMethodPointer(typeof(EmitTest2).GetMethod(nameof(EmitTest2.T2)));
+        il.Calli(System.Runtime.InteropServices.CallingConvention.StdCall, typeof(int));
+        il.SetLocal(l1);
+
+        il.LoadLocal(l1);
+        il.Return();
+
+        return methodBuilder;
+    }
+
+    // 方法指针调用方法2(实例方法)
+    public static MethodBuilder DefineMethod_Calli_Ldftn2(TypeBuilder typeBuilder)
+    {
+        MethodBuilder methodBuilder = typeBuilder.DefineMethod("Calli_Ldftn2", MethodAttributes.Public | MethodAttributes.Static, typeof(int), Type.EmptyTypes);
+        ILGenerator il = methodBuilder.GetILGenerator();
+
+        LocalBuilder l1 = il.DeclareLocal(typeof(int));
+
+        // l1 = new EmitTest2().T3();
+        il.NewObject(typeof(EmitTest2).GetConstructor(Type.EmptyTypes));
+        il.LoadMethodPointer(typeof(EmitTest2).GetMethod(nameof(EmitTest2.T3)));
+        il.Calli(System.Runtime.InteropServices.CallingConvention.ThisCall, typeof(int), typeof(EmitTest2));
+        il.SetLocal(l1);
+
+        il.LoadLocal(l1);
+        il.Return();
+
+        return methodBuilder;
+    }
+
+    // 方法指针调用方法3(虚方法)
+    public static MethodBuilder DefineMethod_Calli_Ldftn3(TypeBuilder typeBuilder)
+    {
+        MethodBuilder methodBuilder = typeBuilder.DefineMethod("Calli_Ldftn3", MethodAttributes.Public | MethodAttributes.Static, typeof(int), Type.EmptyTypes);
+        ILGenerator il = methodBuilder.GetILGenerator();
+
+        LocalBuilder l1 = il.DeclareLocal(typeof(int));
+
+        // l1 = new EmitTest2().T4();
+        il.NewObject(typeof(EmitTest2).GetConstructor(Type.EmptyTypes));
+        il.Copy();
+        il.LoadMethodPointer(typeof(EmitTest2).GetMethod(nameof(EmitTest2.T4)));
+        il.Calli(System.Runtime.InteropServices.CallingConvention.ThisCall, typeof(int), typeof(EmitTest2));
+        il.SetLocal(l1);
+
+        il.LoadLocal(l1);
+        il.Return();
+
+        return methodBuilder;
+    }
+
+    // 方法指针调用方法4(虚方法)
+    public static MethodBuilder DefineMethod_Calli_Ldftn4(TypeBuilder typeBuilder)
+    {
+        MethodBuilder methodBuilder = typeBuilder.DefineMethod("Calli_Ldftn4", MethodAttributes.Public | MethodAttributes.Static, typeof(int), Type.EmptyTypes);
+        ILGenerator il = methodBuilder.GetILGenerator();
+
+        LocalBuilder l1 = il.DeclareLocal(typeof(int));
+
+        // l1 = ((EmitTest1)new EmitTest2()).T4();
+        il.NewObject(typeof(EmitTest2).GetConstructor(Type.EmptyTypes));
+        il.NewObject(typeof(EmitTest1).GetConstructor(Type.EmptyTypes));
+        il.LoadMethodPointer(typeof(EmitTest2).GetMethod(nameof(EmitTest2.T4)));
+        il.Calli(System.Runtime.InteropServices.CallingConvention.ThisCall, typeof(int), typeof(EmitTest2));
+        il.SetLocal(l1);
+
+        il.LoadLocal(l1);
+        il.Return();
+
+        return methodBuilder;
+    }
+    #endregion
+
     // sizeof
     public static MethodBuilder DefineMethod_SizeOf1(TypeBuilder typeBuilder)
     {
@@ -1308,13 +1403,34 @@ public static class EmitOpCodesVerifyCreator
 
         LocalBuilder l1 = il.DeclareLocal(typeof(EmitTest2));
 
-        // l2 = arg1;
+        // l1 = arg1;
         il.LoadLocalAddr(l1.LocalIndex);
         il.LoadArgAddr(0);
         il.SizeOf(typeof(EmitTest2));
-        il.Emit(OpCodes.Cpblk);
+        il.CopyAddrValueToAddr();
 
-        // return l2; 
+        // return l1; 
+        il.LoadLocal(l1);
+        il.Return();
+        return methodBuilder;
+    }
+
+    // Cpobj
+    public static MethodBuilder DefineMethod_Cpobj1(TypeBuilder typeBuilder)
+    {
+        // 测试方法
+
+        MethodBuilder methodBuilder = typeBuilder.DefineMethod("Cpobj1", MethodAttributes.Public | MethodAttributes.Static, typeof(object), new Type[] { typeof(EmitTest2) });
+        ILGenerator il = methodBuilder.GetILGenerator();
+
+        LocalBuilder l1 = il.DeclareLocal(typeof(EmitTest2));
+
+        // l1 = arg1;
+        il.LoadLocalAddr(l1.LocalIndex);
+        il.LoadArgAddr(0);
+        il.Cpobj(typeof(int));
+
+        // return l1; 
         il.LoadLocal(l1);
         il.Return();
         return methodBuilder;
@@ -1392,86 +1508,26 @@ public static class EmitOpCodesVerifyCreator
         return methodBuilder;
     }
 
-    public static MethodBuilder DefineMethod_Test4(TypeBuilder typeBuilder)
+    public static Func<string> DefineMethod_Test5()
     {
-        // 测试方法
+        DynamicMethod dm = new DynamicMethod("Test1", typeof(string), new Type[] { });
+        ILGenerator il = dm.GetILGenerator();
 
-        MethodBuilder methodBuilder = typeBuilder.DefineMethod("Test4", MethodAttributes.Public | MethodAttributes.Static, typeof(object), new Type[] { typeof(EmitTest2) });
-        ILGenerator il = methodBuilder.GetILGenerator();
-
-        LocalBuilder l1 = il.DeclareLocal(typeof(EmitTest2));
-
-        // l2 = arg1;
-        il.LoadLocalAddr(l1.LocalIndex);
-        il.LoadArgAddr(0);
-        il.Emit(OpCodes.Cpobj, typeof(int));
-
-        // return l2; 
-        il.LoadLocal(l1);
+        il.Emit(OpCodes.Ldftn, typeof(EmitTest2).GetMethod("T2"));
+        il.EmitCalli(OpCodes.Calli, System.Runtime.InteropServices.CallingConvention.StdCall, typeof(string), new Type[] { });
         il.Return();
-        return methodBuilder;
-    }
 
+        Func<string> dd = (Func<string>)dm.CreateDelegate(typeof(Func<string>));
 
-
-    public static int SF1(object o)
-    {
-        return sizeof(int);
-    }
-
-    public static string SF2(object o)
-    {
-        if (o is string s) return s;
-        else return "";
-    }
-
-    public static Type SF2_1(object o)
-    {
-        Type type = o as Type;
-        return type;
-    }
-
-    public static object SF3()
-    {
-        List<string> list1 = new List<string>() { "1", "2", "3", "4", "5" };
-        IEnumerator<string> list2 = list1.GetEnumerator();
-
-        string a = "9";
-        while (list2.MoveNext())
-        {
-            a = list2.Current;
-        }
-        return a;
-    }
-
-    public static object SF4(string a)
-    {
-        try
-        {
-            return SF5();
-        }
-        catch (Exception ex)
-        {
-            throw;
-        }
-    }
-
-    public static object SF5()
-    {
-        List<string> list1 = new List<string>() { "1", "2", "3", "4", "5" };
-
-        string a = "9";
-        foreach (string? item in list1)
-        {
-            a = item;
-        }
-        return a;
+        return dd;
     }
 }
 
 public class EmitTest1
 {
     public virtual string T1(string s) => s + "###";
+
+    public virtual int T4() => -4;
 }
 
 public class EmitTest2 : EmitTest1
@@ -1479,5 +1535,10 @@ public class EmitTest2 : EmitTest1
     public int MyProperty { get; set; }
     public override string T1(string s) => s + "%%%";
 
-    public static string T2() => throw new Exception("CCCCCCCs");
+
+    public static int T2() => 2;
+
+    public int T3() => 3;
+
+    public override int T4() => 4;
 }
