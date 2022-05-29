@@ -1107,6 +1107,16 @@ public static partial class ILGeneratorExtensions
     public static void BreakPoint(this ILGenerator iLGenerator!!) => iLGenerator.Emit(OpCodes.Break);
 
     /// <summary>
+    /// 将堆栈顶部地址的值引用化,并推送 <see cref="TypedReference"/> 类型的值
+    /// <list type="bullet">
+    ///     <item>1.推送地址</item>
+    /// </list>
+    /// </summary>
+    /// <param name="iLGenerator">中间语言指令生成器</param>
+    /// <param name="type">要执行引用化的类型</param>
+    public static void Mkrefany(this ILGenerator iLGenerator!!, Type type!!) => iLGenerator.Emit(OpCodes.Mkrefany, type);
+
+    /// <summary>
     /// 如果修补了操作码,则填充空间。但是没有执行任何有意义的操作
     /// <br>相当于代码中的 "{" / "}" </br>
     /// </summary>

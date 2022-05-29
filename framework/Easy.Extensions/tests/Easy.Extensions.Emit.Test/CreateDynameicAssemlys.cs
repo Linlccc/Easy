@@ -237,10 +237,24 @@
             int initobj1 = (int)type.InvokeMember("Initobj1", BindingFlags.InvokeMethod, null, null, new object[] { });
             Assert.Equal(default, initobj1);
 
+            // Mkrefany1（值类型引用化）
+            object mkrefany1 = type.InvokeMember("Mkrefany1", BindingFlags.InvokeMethod, null, null, new object[] { });
+            Assert.Equal(new MyStruct("2"), mkrefany1);
+            // Mkrefany2（值类型没有引用化）
+            object mkrefany2 = type.InvokeMember("Mkrefany2", BindingFlags.InvokeMethod, null, null, new object[] { });
+            Assert.Equal(new MyStruct("1"), mkrefany2);
+
+            MyStruct my1 = new("t1");
+            FieldInfo f1 = typeof(MyStruct).GetField("_name", BindingFlags.NonPublic | BindingFlags.Instance);
+            f1.SetValue(my1, "t2");
+            f1.SetValueDirect(__makeref(my1), "t3");
+
+
 
 
             object test1 = type.InvokeMember("Test1", BindingFlags.InvokeMethod, null, null, new object[] { });
-            object test2 = type.InvokeMember("Test2", BindingFlags.InvokeMethod, null, null, new object[] { });
+
+            object test2 = type.InvokeMember("Test2", BindingFlags.InvokeMethod, null, null, new object[] { BindingFlags.NonPublic | BindingFlags.Instance });
         }
     }
 }

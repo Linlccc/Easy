@@ -284,6 +284,12 @@ public static class EmitOpCodesVerifyCreator
         DefineMethod_Initobj1(typeBuilder);
 
 
+        // Mkrefany1（值类型引用化）
+        DefineMethod_Mkrefany1(typeBuilder);
+        // Mkrefany1（值类型没有引用化）
+        DefineMethod_Mkrefany2(typeBuilder);
+
+
 
 
 
@@ -1520,6 +1526,96 @@ public static class EmitOpCodesVerifyCreator
     }
 
 
+    // Mkrefany1（值类型引用化）
+    public static MethodBuilder DefineMethod_Mkrefany1(TypeBuilder typeBuilder)
+    {
+        // 测试方法
+
+        MethodBuilder methodBuilder = typeBuilder.DefineMethod("Mkrefany1", MethodAttributes.Public | MethodAttributes.Static, typeof(MyStruct), new Type[] { });
+        ILGenerator il = methodBuilder.GetILGenerator();
+
+        LocalBuilder l1 = il.DeclareLocal(typeof(MyStruct));
+        LocalBuilder l2 = il.DeclareLocal(typeof(TypedReference));
+        LocalBuilder l3 = il.DeclareLocal(typeof(FieldInfo));
+
+        // l1 = new MyStruct("1");
+        // 初始化结构
+        il.LoadString("1");
+        il.NewObject(typeof(MyStruct).GetConstructor(new Type[] { typeof(string) }));
+        il.SetLocal(l1);
+
+        // l2 = __makeref(l1)
+        // 将结构引用化
+        il.LoadLocalAddr(l1.LocalIndex);
+        il.Mkrefany(typeof(MyStruct));
+        il.SetLocal(l2);
+
+        // l3 = typeof(MyStruct).GetField("_name",BindingFlags.NonPublic | BindingFlags.Instance);
+        // 获取结构的_name字段
+        il.LoadRuntimeHandle(typeof(MyStruct));
+        il.Call(typeof(Type).GetMethod(nameof(Type.GetTypeFromHandle), new Type[] { typeof(RuntimeTypeHandle) }));
+        il.LoadString("_name");
+        il.LoadInt(32 | 4);
+        il.CallVirtual(typeof(Type).GetMethod(nameof(Type.GetField), new Type[] { typeof(string), typeof(BindingFlags) }));
+        il.SetLocal(l3);
+
+        // l3.SetValueDirect(l2,"2");
+        // 设置结构的_name字段值
+        il.LoadLocal(l3);
+        il.LoadLocal(l2);
+        il.LoadString("2");
+        il.CallVirtual(typeof(FieldInfo).GetMethod(nameof(FieldInfo.SetValueDirect), new Type[] { typeof(TypedReference), typeof(object) }));
+
+        // return l1;
+        // 返回结构
+        il.LoadLocal(l1);
+        il.Return();
+        return methodBuilder;
+    }
+
+    // Mkrefany2（值类型没有引用化）
+    public static MethodBuilder DefineMethod_Mkrefany2(TypeBuilder typeBuilder)
+    {
+        // 测试方法
+
+        MethodBuilder methodBuilder = typeBuilder.DefineMethod("Mkrefany2", MethodAttributes.Public | MethodAttributes.Static, typeof(MyStruct), new Type[] { });
+        ILGenerator il = methodBuilder.GetILGenerator();
+
+        LocalBuilder l1 = il.DeclareLocal(typeof(MyStruct));
+        LocalBuilder l2 = il.DeclareLocal(typeof(FieldInfo));
+
+        // l1 = new MyStruct("1");
+        // 初始化结构
+        il.LoadString("1");
+        il.NewObject(typeof(MyStruct).GetConstructor(new Type[] { typeof(string) }));
+        il.SetLocal(l1);
+
+        // l2 = typeof(MyStruct).GetField("_name",BindingFlags.NonPublic | BindingFlags.Instance);
+        // 获取结构的_name字段
+        il.LoadRuntimeHandle(typeof(MyStruct));
+        il.Call(typeof(Type).GetMethod(nameof(Type.GetTypeFromHandle), new Type[] { typeof(RuntimeTypeHandle) }));
+        il.LoadString("_name");
+        il.LoadInt(32 | 4);
+        il.CallVirtual(typeof(Type).GetMethod(nameof(Type.GetField), new Type[] { typeof(string), typeof(BindingFlags) }));
+        il.SetLocal(l2);
+
+        // l2.SetValueDirect(l1,"2");
+        // 设置结构的_name字段值
+        il.LoadLocal(l2);
+        il.LoadLocal(l1);
+        il.Box(typeof(MyStruct));
+        il.LoadString("2");
+        il.CallVirtual(typeof(FieldInfo).GetMethod(nameof(FieldInfo.SetValue), new Type[] { typeof(object), typeof(object) }));
+
+        // return l1;
+        // 返回结构
+        il.LoadLocal(l1);
+        il.Return();
+        return methodBuilder;
+    }
+
+
+
     public static MethodBuilder DefineMethod_Test1(TypeBuilder typeBuilder)
     {
         // 测试方法
@@ -1540,16 +1636,44 @@ public static class EmitOpCodesVerifyCreator
     {
         // 测试方法
 
-        MethodBuilder methodBuilder = typeBuilder.DefineMethod("Test2", MethodAttributes.Public | MethodAttributes.Static, typeof(int), Type.EmptyTypes);
+        MethodBuilder methodBuilder = typeBuilder.DefineMethod("Test2", MethodAttributes.Public | MethodAttributes.Static, typeof(MyStruct), new Type[] { typeof(BindingFlags) });
         ILGenerator il = methodBuilder.GetILGenerator();
 
-        LocalBuilder l1 = il.DeclareLocal(typeof(int));
+        LocalBuilder l1 = il.DeclareLocal(typeof(MyStruct));
+        LocalBuilder l2 = il.DeclareLocal(typeof(TypedReference));
+        LocalBuilder l3 = il.DeclareLocal(typeof(FieldInfo));
 
+        // l1 = new MyStruct("1");
+        // 初始化结构
+        il.LoadString("1");
+        il.NewObject(typeof(MyStruct).GetConstructor(new Type[] { typeof(string) }));
+        il.SetLocal(l1);
+
+        // l2 = __makeref(l1)
+        // 将结构引用化
         il.LoadLocalAddr(l1.LocalIndex);
-        il.Emit(OpCodes.Initobj, typeof(int));
+        il.Mkrefany(typeof(MyStruct));
+        il.SetLocal(l2);
 
+        // l3 = typeof(MyStruct).GetField("_name",BindingFlags.NonPublic | BindingFlags.Instance);
+        // 获取结构的_name字段
+        il.LoadRuntimeHandle(typeof(MyStruct));
+        il.Call(typeof(Type).GetMethod(nameof(Type.GetTypeFromHandle), new Type[] { typeof(RuntimeTypeHandle) }));
+        il.LoadString("_name");
+        il.LoadInt(32 | 4);
+        il.CallVirtual(typeof(Type).GetMethod(nameof(Type.GetField), new Type[] { typeof(string), typeof(BindingFlags) }));
+        il.SetLocal(l3);
+
+        // l3.SetValueDirect(l2,"2");
+        // 设置结构的_name字段值
+        il.LoadLocal(l3);
+        il.LoadLocal(l2);
+        il.LoadString("2");
+        il.CallVirtual(typeof(FieldInfo).GetMethod(nameof(FieldInfo.SetValueDirect), new Type[] { typeof(TypedReference), typeof(object) }));
+
+        // return l1;
+        // 返回结构
         il.LoadLocal(l1);
-
         il.Return();
         return methodBuilder;
     }
@@ -1573,4 +1697,16 @@ public class EmitTest2 : EmitTest1
     public int T3() => 3;
 
     public override int T4() => 4;
+}
+
+public struct MyStruct
+{
+    public MyStruct(string name)
+    {
+        _name = name;
+    }
+
+    private string _name;
+
+    public string Name => _name;
 }
