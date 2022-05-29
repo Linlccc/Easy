@@ -251,6 +251,8 @@ Easy.Extensions.DependencyInjection 的服务提供商实现AOP
 
 ~~~text
 1.检查Emit拓展的参数空检查
+2.整理拓展
+3.拓展根据int值（索引）做操作的核实一下 短格式的最大值和最小值
 
 后期计划
 1.将默认类型的拓展方法分成不同的项目,步骤
