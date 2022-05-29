@@ -1117,10 +1117,17 @@ public static partial class ILGeneratorExtensions
     public static void Mkrefany(this ILGenerator iLGenerator!!, Type type!!) => iLGenerator.Emit(OpCodes.Mkrefany, type);
 
     /// <summary>
-    /// 推送 <see cref="TypedReference"/>(值类型引用化类型) 类型嵌套的值的类型
+    /// 推送堆栈顶部 <see cref="TypedReference"/>(引用化值类型) 类型的值嵌套的值的类型
     /// </summary>
-    /// <param name="iLGenerator"></param>
+    /// <param name="iLGenerator">中间语言指令生成器</param>
     public static void Refanytype(this ILGenerator iLGenerator!!) => iLGenerator.Emit(OpCodes.Refanytype);
+
+    /// <summary>
+    /// 推送堆栈顶部 <see cref="TypedReference"/>(引用化值类型) 类型中嵌套的值的地址
+    /// </summary>
+    /// <param name="iLGenerator">中间语言指令生成器</param>
+    /// <param name="valType">值类型</param>
+    public static void Refanyval(this ILGenerator iLGenerator!!, Type valType!!) => iLGenerator.Emit(OpCodes.Refanyval, valType);
 
     /// <summary>
     /// 如果修补了操作码,则填充空间。但是没有执行任何有意义的操作

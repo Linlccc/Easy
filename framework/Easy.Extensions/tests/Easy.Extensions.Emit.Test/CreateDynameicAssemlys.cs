@@ -250,6 +250,11 @@
             Assert.Equal(typeof(MyStruct), refanytype1);
 
 
+            // Refanytype1 （获取嵌套在引用化类型中的值的类型）
+            object refanyval1 = type.InvokeMember("Refanyval1", BindingFlags.InvokeMethod, null, null, new object[] { });
+            Assert.Equal(new MyStruct("1"), refanyval1);
+
+
 
             object test1 = type.InvokeMember("Test1", BindingFlags.InvokeMethod, null, null, new object[] { });
 

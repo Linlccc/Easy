@@ -294,6 +294,10 @@ public static class EmitOpCodesVerifyCreator
         DefineMethod_Refanytype1(typeBuilder);
 
 
+        // Refanyval1 （获取嵌套在引用化类型中的值的地址）
+        DefineMethod_Refanyval1(typeBuilder);
+
+
 
 
 
@@ -1645,6 +1649,37 @@ public static class EmitOpCodesVerifyCreator
         il.LoadLocal(l2);
         il.Refanytype();
         il.Call(typeof(Type).GetMethod(nameof(Type.GetTypeFromHandle), new Type[] { typeof(RuntimeTypeHandle) }));
+        il.Return();
+        return methodBuilder;
+    }
+
+    // Refanyval1 （获取嵌套在引用化类型中的值的地址）
+    public static MethodBuilder DefineMethod_Refanyval1(TypeBuilder typeBuilder)
+    {
+        // 测试方法
+
+        MethodBuilder methodBuilder = typeBuilder.DefineMethod("Refanyval1", MethodAttributes.Public | MethodAttributes.Static, typeof(MyStruct), new Type[] { });
+        ILGenerator il = methodBuilder.GetILGenerator();
+
+        LocalBuilder l1 = il.DeclareLocal(typeof(MyStruct));
+        LocalBuilder l2 = il.DeclareLocal(typeof(TypedReference));
+
+        // l1 = new MyStruct("1");
+        // 初始化结构
+        il.LoadString("1");
+        il.NewObject(typeof(MyStruct).GetConstructor(new Type[] { typeof(string) }));
+        il.SetLocal(l1);
+
+        // l2 = __makeref(l1)
+        // 将结构引用化
+        il.LoadLocalAddr(l1.LocalIndex);
+        il.Mkrefany(typeof(MyStruct));
+        il.SetLocal(l2);
+
+        // 获取值类型的地址，再从地址获取值
+        il.LoadLocal(l2);
+        il.Refanyval(typeof(MyStruct));
+        il.LoadAddrValue(typeof(MyStruct));
         il.Return();
         return methodBuilder;
     }
