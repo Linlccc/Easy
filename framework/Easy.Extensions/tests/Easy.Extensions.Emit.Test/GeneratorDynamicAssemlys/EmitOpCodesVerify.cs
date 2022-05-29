@@ -219,7 +219,10 @@ public static class EmitOpCodesVerifyCreator
         DefineMethod_CallVirtual2(typeBuilder);
         // 使用调用虚方法的指令调用虚方法
         DefineMethod_CallVirtual3(typeBuilder);
+        // 尾方法
         DefineMethod_CallVirtual4(typeBuilder);
+        // 使用调用虚方法的指令调用虚方法 调用前进行约束
+        DefineMethod_CallVirtual5(typeBuilder);
 
 
         // ** 数组
@@ -970,7 +973,7 @@ public static class EmitOpCodesVerifyCreator
         // l2 = l1.T1(arg1);
         il.LoadLocal(l1);
         il.LoadArg(0);
-        il.Call(typeof(EmitTest1).GetMethod("T1", new Type[] { typeof(string) }));
+        il.Call(typeof(EmitTest1).GetMethod(nameof(EmitTest1.T1), new Type[] { typeof(string) }));
         il.SetLocal(l2);
         // return l2;
         il.LoadLocal(l2);
@@ -995,7 +998,7 @@ public static class EmitOpCodesVerifyCreator
         // l2 = l1.T1(arg1);
         il.LoadLocal(l1);
         il.LoadArg(0);
-        il.Call(typeof(EmitTest1).GetMethod("T1", new Type[] { typeof(string) }));
+        il.Call(typeof(EmitTest1).GetMethod(nameof(EmitTest1.T1), new Type[] { typeof(string) }));
         il.SetLocal(l2);
         // return l2;
         il.LoadLocal(l2);
@@ -1020,7 +1023,7 @@ public static class EmitOpCodesVerifyCreator
         // l2 = l1.T1(arg1);
         il.LoadLocal(l1);
         il.LoadArg(0);
-        il.CallVirtual(typeof(EmitTest1).GetMethod("T1", new Type[] { typeof(string) }));
+        il.CallVirtual(typeof(EmitTest1).GetMethod(nameof(EmitTest1.T1), new Type[] { typeof(string) }));
         il.SetLocal(l2);
         // return l2;
         il.LoadLocal(l2);
@@ -1045,7 +1048,34 @@ public static class EmitOpCodesVerifyCreator
         il.LoadLocal(l1);
         il.LoadArg(0);
         il.TailCall();
-        il.CallVirtual(typeof(EmitTest1).GetMethod("T1", new Type[] { typeof(string) }));
+        il.CallVirtual(typeof(EmitTest1).GetMethod(nameof(EmitTest1.T1), new Type[] { typeof(string) }));
+        il.Return();
+
+        return methodBuilder;
+    }
+
+    // 使用调用虚方法的指令调用虚方法 调用前进行约束
+    public static MethodBuilder DefineMethod_CallVirtual5(TypeBuilder typeBuilder)
+    {
+        MethodBuilder methodBuilder = typeBuilder.DefineMethod("CallVirtual5", MethodAttributes.Public | MethodAttributes.Static, typeof(string), new Type[] { typeof(string) });
+        ILGenerator il = methodBuilder.GetILGenerator();
+
+        LocalBuilder l1 = il.DeclareLocal(typeof(EmitTest1));
+        LocalBuilder l2 = il.DeclareLocal(typeof(string));
+
+        // l1 = new EmitTest2();
+        il.NewObject(typeof(EmitTest2).GetConstructor(Type.EmptyTypes));
+        il.SetLocal(l1);
+
+        // l2 = l1.T1(arg1);
+        il.LoadLocalAddr(l1.LocalIndex);
+        il.LoadArg(0);
+        il.Constrained(typeof(EmitTest1));
+        il.CallVirtual(typeof(EmitTest1).GetMethod(nameof(EmitTest1.T1), new Type[] { typeof(string) }));
+        il.SetLocal(l2);
+
+        // return l2;
+        il.LoadLocal(l2);
         il.Return();
 
         return methodBuilder;
@@ -1216,7 +1246,7 @@ public static class EmitOpCodesVerifyCreator
     }
     #endregion
 
-    #region 方法指针调用方法
+    #region 方法指针调用方法(如果设置返回类型为string的话,没办法测试)
     // 方法指针调用方法1
     public static MethodBuilder DefineMethod_Calli_Ldftn1(TypeBuilder typeBuilder)
     {

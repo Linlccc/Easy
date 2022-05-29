@@ -151,7 +151,11 @@
             Assert.Equal("a" + "%%%", callVirtual3);
             // 最后的方法指令
             string callVirtual4 = (string)type.InvokeMember("CallVirtual4", BindingFlags.InvokeMethod, null, null, new object[] { "a" });
-            Assert.Equal("a" + "%%%", callVirtual3);
+            Assert.Equal("a" + "%%%", callVirtual4);
+            // 使用调用虚方法的指令调用虚方法 调用前进行约束
+            string callVirtual5 = (string)type.InvokeMember("CallVirtual5", BindingFlags.InvokeMethod, null, null, new object[] { "a" });
+            Assert.Equal("a" + "%%%", callVirtual5);
+
 
 
             // 获取数组元素

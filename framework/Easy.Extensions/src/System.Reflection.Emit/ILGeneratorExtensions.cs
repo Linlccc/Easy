@@ -662,6 +662,10 @@ public static partial class ILGeneratorExtensions
     /// <summary>
     /// 调用虚方法,并推送结果
     /// <br>方法是被调用的对象动态指定的,而不是根据编译时类型指定</br>
+    /// <list type="bullet">
+    ///     <item>1.推送实例</item>
+    ///     <item>2.推送方法的参数</item>
+    /// </list>
     /// </summary>
     /// <param name="iLGenerator">中间语言指令生成器</param>
     /// <param name="methodInfo">方法信息</param>
@@ -678,6 +682,20 @@ public static partial class ILGeneratorExtensions
     /// </summary>
     /// <param name="iLGenerator">中间语言指令生成器</param>
     public static void TailCall(this ILGenerator iLGenerator!!) => iLGenerator.Emit(OpCodes.Tailcall);
+
+    /// <summary>
+    /// 对虚方法的实例类型进行约束
+    /// <br>只能在 <see cref="OpCodes.Callvirt"/> 指令之前使用</br>
+    /// <list type="bullet">
+    ///     <item>1.推送实例指针</item>
+    ///     <item>2.推送方法的参数</item>
+    ///     <item>3.使用该方法进行约束</item>
+    ///     <item>4.使用 <see cref="OpCodes.Callvirt"/> 指令进行调用</item>
+    /// </list>
+    /// </summary>
+    /// <param name="iLGenerator">中间语言指令生成器</param>
+    /// <param name="constrainedType">约束类型</param>
+    public static void Constrained(this ILGenerator iLGenerator!!, Type constrainedType!!) => iLGenerator.Emit(OpCodes.Constrained, constrainedType);
 
     #region 地址
     /// <summary>
