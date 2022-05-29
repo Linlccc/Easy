@@ -1117,6 +1117,12 @@ public static partial class ILGeneratorExtensions
     public static void Mkrefany(this ILGenerator iLGenerator!!, Type type!!) => iLGenerator.Emit(OpCodes.Mkrefany, type);
 
     /// <summary>
+    /// 推送 <see cref="TypedReference"/>(值类型引用化类型) 类型嵌套的值的类型
+    /// </summary>
+    /// <param name="iLGenerator"></param>
+    public static void Refanytype(this ILGenerator iLGenerator!!) => iLGenerator.Emit(OpCodes.Refanytype);
+
+    /// <summary>
     /// 如果修补了操作码,则填充空间。但是没有执行任何有意义的操作
     /// <br>相当于代码中的 "{" / "}" </br>
     /// </summary>

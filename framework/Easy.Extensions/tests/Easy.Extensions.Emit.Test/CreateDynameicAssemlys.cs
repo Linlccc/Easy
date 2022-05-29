@@ -244,11 +244,10 @@
             object mkrefany2 = type.InvokeMember("Mkrefany2", BindingFlags.InvokeMethod, null, null, new object[] { });
             Assert.Equal(new MyStruct("1"), mkrefany2);
 
-            MyStruct my1 = new("t1");
-            FieldInfo f1 = typeof(MyStruct).GetField("_name", BindingFlags.NonPublic | BindingFlags.Instance);
-            f1.SetValue(my1, "t2");
-            f1.SetValueDirect(__makeref(my1), "t3");
 
+            // Refanytype1 （获取嵌套在引用化类型中的值的类型）
+            object refanytype1 = type.InvokeMember("Refanytype1", BindingFlags.InvokeMethod, null, null, new object[] { });
+            Assert.Equal(typeof(MyStruct), refanytype1);
 
 
 

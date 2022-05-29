@@ -290,6 +290,10 @@ public static class EmitOpCodesVerifyCreator
         DefineMethod_Mkrefany2(typeBuilder);
 
 
+        // Refanytype1 （获取嵌套在引用化类型中的值的类型）
+        DefineMethod_Refanytype1(typeBuilder);
+
+
 
 
 
@@ -1614,6 +1618,37 @@ public static class EmitOpCodesVerifyCreator
         return methodBuilder;
     }
 
+    // Refanytype1 （获取嵌套在引用化类型中的值的类型）
+    public static MethodBuilder DefineMethod_Refanytype1(TypeBuilder typeBuilder)
+    {
+        // 测试方法
+
+        MethodBuilder methodBuilder = typeBuilder.DefineMethod("Refanytype1", MethodAttributes.Public | MethodAttributes.Static, typeof(Type), new Type[] { });
+        ILGenerator il = methodBuilder.GetILGenerator();
+
+        LocalBuilder l1 = il.DeclareLocal(typeof(MyStruct));
+        LocalBuilder l2 = il.DeclareLocal(typeof(TypedReference));
+
+        // l1 = new MyStruct("1");
+        // 初始化结构
+        il.LoadString("1");
+        il.NewObject(typeof(MyStruct).GetConstructor(new Type[] { typeof(string) }));
+        il.SetLocal(l1);
+
+        // l2 = __makeref(l1)
+        // 将结构引用化
+        il.LoadLocalAddr(l1.LocalIndex);
+        il.Mkrefany(typeof(MyStruct));
+        il.SetLocal(l2);
+
+        // __reftype(l2);
+        il.LoadLocal(l2);
+        il.Refanytype();
+        il.Call(typeof(Type).GetMethod(nameof(Type.GetTypeFromHandle), new Type[] { typeof(RuntimeTypeHandle) }));
+        il.Return();
+        return methodBuilder;
+    }
+
 
 
     public static MethodBuilder DefineMethod_Test1(TypeBuilder typeBuilder)
@@ -1636,7 +1671,7 @@ public static class EmitOpCodesVerifyCreator
     {
         // 测试方法
 
-        MethodBuilder methodBuilder = typeBuilder.DefineMethod("Test2", MethodAttributes.Public | MethodAttributes.Static, typeof(MyStruct), new Type[] { typeof(BindingFlags) });
+        MethodBuilder methodBuilder = typeBuilder.DefineMethod("Test2", MethodAttributes.Public | MethodAttributes.Static, typeof(object), new Type[] { typeof(BindingFlags) });
         ILGenerator il = methodBuilder.GetILGenerator();
 
         LocalBuilder l1 = il.DeclareLocal(typeof(MyStruct));
@@ -1655,25 +1690,10 @@ public static class EmitOpCodesVerifyCreator
         il.Mkrefany(typeof(MyStruct));
         il.SetLocal(l2);
 
-        // l3 = typeof(MyStruct).GetField("_name",BindingFlags.NonPublic | BindingFlags.Instance);
-        // 获取结构的_name字段
-        il.LoadRuntimeHandle(typeof(MyStruct));
-        il.Call(typeof(Type).GetMethod(nameof(Type.GetTypeFromHandle), new Type[] { typeof(RuntimeTypeHandle) }));
-        il.LoadString("_name");
-        il.LoadInt(32 | 4);
-        il.CallVirtual(typeof(Type).GetMethod(nameof(Type.GetField), new Type[] { typeof(string), typeof(BindingFlags) }));
-        il.SetLocal(l3);
-
-        // l3.SetValueDirect(l2,"2");
-        // 设置结构的_name字段值
-        il.LoadLocal(l3);
         il.LoadLocal(l2);
-        il.LoadString("2");
-        il.CallVirtual(typeof(FieldInfo).GetMethod(nameof(FieldInfo.SetValueDirect), new Type[] { typeof(TypedReference), typeof(object) }));
+        il.Emit(OpCodes.Refanytype);
+        //il.Call(typeof(Type).GetMethod(nameof(Type.GetTypeFromHandle), new Type[] { typeof(RuntimeTypeHandle) }));
 
-        // return l1;
-        // 返回结构
-        il.LoadLocal(l1);
         il.Return();
         return methodBuilder;
     }
