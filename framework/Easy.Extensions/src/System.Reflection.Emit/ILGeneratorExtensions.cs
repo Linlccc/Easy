@@ -1070,6 +1070,26 @@ public static partial class ILGeneratorExtensions
     public static void Pop(this ILGenerator iLGenerator!!) => iLGenerator.Emit(OpCodes.Pop);
 
     /// <summary>
+    /// 在本地动态内存池分配指定数目的字节,并推送第一个字节的地址
+    /// <list type="bullet">
+    ///     <item>1.推送要分配的字节数</item>
+    /// </list>
+    /// </summary>
+    /// <param name="iLGenerator">中间语言指令生成器</param>
+    public static void Localloc(this ILGenerator iLGenerator!!) => iLGenerator.Emit(OpCodes.Localloc);
+
+    /// <summary>
+    /// 为指定地址开始的字节数设置初始值(每一个字节最大值是255)
+    /// <list type="bullet">
+    ///     <item>1.推送起始地址</item>
+    ///     <item>2.推送初始值(最大255)</item>
+    ///     <item>3.推送要设置初始值的字节数</item>
+    /// </list>
+    /// </summary>
+    /// <param name="iLGenerator">中间语言指令生成器</param>
+    public static void Initblk(this ILGenerator iLGenerator!!) => iLGenerator.Emit(OpCodes.Initblk);
+
+    /// <summary>
     /// 不执行任何堆栈操作,通知调试器碰撞一个断点
     /// </summary>
     /// <param name="iLGenerator">中间语言指令生成器</param>

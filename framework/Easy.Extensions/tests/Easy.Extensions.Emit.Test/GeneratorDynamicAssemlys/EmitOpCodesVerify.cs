@@ -243,6 +243,17 @@ public static class EmitOpCodesVerifyCreator
         DefineMethod_SetValueToAddr2(typeBuilder);
 
 
+        // ** 方法指针调用方法
+        // 方法指针调用方法1
+        DefineMethod_Calli_Ldftn1(typeBuilder);
+        // 方法指针调用方法2
+        DefineMethod_Calli_Ldftn2(typeBuilder);
+        // 方法指针调用方法3(虚方法)
+        DefineMethod_Calli_Ldftn3(typeBuilder);
+        // 方法指针调用方法3(虚方法)
+        DefineMethod_Calli_Ldftn4(typeBuilder);
+
+
         // sizeof
         DefineMethod_SizeOf1(typeBuilder);
 
@@ -259,26 +270,21 @@ public static class EmitOpCodesVerifyCreator
         // CopyAddrValueToAddr1
         DefineMethod_CopyAddrValueToAddr1(typeBuilder);
 
+
         // Cpobj1
         DefineMethod_Cpobj1(typeBuilder);
 
 
-        // ** 方法指针调用方法
-        // 方法指针调用方法1
-        DefineMethod_Calli_Ldftn1(typeBuilder);
-        // 方法指针调用方法2
-        DefineMethod_Calli_Ldftn2(typeBuilder);
-        // 方法指针调用方法3(虚方法)
-        DefineMethod_Calli_Ldftn3(typeBuilder);
-        // 方法指针调用方法3(虚方法)
-        DefineMethod_Calli_Ldftn4(typeBuilder);
 
+        // Localloc_Initblk
+        DefineMethod_Localloc_Initblk1(typeBuilder);
 
 
 
 
 
         DefineMethod_Test1(typeBuilder);
+        DefineMethod_Test2(typeBuilder);
 
 
         return typeBuilder.CreateType();
@@ -1465,6 +1471,30 @@ public static class EmitOpCodesVerifyCreator
     }
 
 
+    // Localloc_Initblk
+    public static MethodBuilder DefineMethod_Localloc_Initblk1(TypeBuilder typeBuilder)
+    {
+        // 测试方法
+
+        MethodBuilder methodBuilder = typeBuilder.DefineMethod("Localloc_Initblk1", MethodAttributes.Public | MethodAttributes.Static, typeof(uint), Type.EmptyTypes);
+        ILGenerator il = methodBuilder.GetILGenerator();
+
+        // 开辟一个 4 字节的空间
+        il.SizeOf(typeof(uint));
+        il.Localloc();
+        il.Copy();// 复制一个地址待会直接取值
+
+        // 为刚刚开辟的空间设置初始值(将4个字节的值都初始化为255，也是11111111)
+        il.LoadInt(byte.MaxValue);
+        il.SizeOf(typeof(uint));
+        il.Initblk();
+
+        // 从地址取值,返回
+        il.LoadAddrInteger(typeof(uint));
+        il.Return();
+        return methodBuilder;
+    }
+
 
 
     public static MethodBuilder DefineMethod_Test1(TypeBuilder typeBuilder)
@@ -1479,6 +1509,27 @@ public static class EmitOpCodesVerifyCreator
         il.MathDiv();
         il.Emit(OpCodes.Ckfinite);
         il.Box(typeof(double));
+        il.Return();
+        return methodBuilder;
+    }
+
+    public static MethodBuilder DefineMethod_Test2(TypeBuilder typeBuilder)
+    {
+        // 测试方法
+
+        MethodBuilder methodBuilder = typeBuilder.DefineMethod("Test2", MethodAttributes.Public | MethodAttributes.Static, typeof(long), Type.EmptyTypes);
+        ILGenerator il = methodBuilder.GetILGenerator();
+
+
+        il.LoadInt(8);
+        il.Emit(OpCodes.Localloc);
+        il.Copy();
+        il.LoadInt(255);
+        il.LoadInt(4);
+        il.Emit(OpCodes.Initblk);
+
+        il.LoadAddrInteger(typeof(long));
+
         il.Return();
         return methodBuilder;
     }

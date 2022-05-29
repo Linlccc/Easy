@@ -228,10 +228,14 @@
             Assert.Equal(99, cpobj2.MyProperty);
 
 
+            // Localloc_Initblk
+            uint localloc_Initblk1 = (uint)type.InvokeMember("Localloc_Initblk1", BindingFlags.InvokeMethod, null, null, new object[] { });
+            Assert.Equal(uint.MaxValue, localloc_Initblk1);
 
 
 
             object test1 = type.InvokeMember("Test1", BindingFlags.InvokeMethod, null, null, new object[] { });
+            object test2 = type.InvokeMember("Test2", BindingFlags.InvokeMethod, null, null, new object[] { });
         }
     }
 }
