@@ -1174,27 +1174,13 @@ public static partial class ILGeneratorExtensions
     /* https://docs.microsoft.com/zh-cn/dotnet/api/system.reflection.emit.opcodes?view=net-6.0#fields
      *
      * ** 以下是一些不太懂的指令
-     * Constrained  约束对其进行虚拟方法调用的类型。
-     *
      * Endfilter    将控制从异常的过滤子句转移回公共语言基础结构 (CLI) 异常处理程序。
      *
      * Endfinally   将控制从异常块的故障或 finally 子句转移回公共语言基础结构 (CLI) 异常处理程序。
      *
-     * Initblk      将特定地址处的指定内存块初始化为给定大小和初始值。
-     *
-     * Initobj      将指定地址处的值类型的每个字段初始化为空引用或相应原始类型的 0。
-     *
      * Jmp          退出当前方法并跳转到指定方法。
      *
-     * Mkrefany     将对特定类型的实例的类型化引用推送到评估堆栈上。
-     *
-     * Readonly     指定后续的数组地址操作在运行时不执行类型检查，并返回一个可变性受到限制的托管指针。
-     *
-     * Refanytype   检索嵌入在类型化引用中的类型标记。
-     *
      * Rethrow      重新抛出当前异常。
-     *
-     * Starg        将计算堆栈顶部的值存储在指定索引处的参数槽中。
      *
      * Unaligned    指示当前位于评估堆栈顶部的地址可能未与紧随其后的 ldind、stind、ldfld、stfld、ldobj、stobj、initblk 或 cpblk 指令的自然大小对齐。
      *
