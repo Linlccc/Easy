@@ -255,10 +255,18 @@
             Assert.Equal(new MyStruct("1"), refanyval1);
 
 
+            // 参数赋值
+            object setArg1 = type.InvokeMember("SetArg1", BindingFlags.InvokeMethod, null, null, new object[] { 1, 2 });
+            Assert.Equal(999, setArg1);
+
+
+
 
             object test1 = type.InvokeMember("Test1", BindingFlags.InvokeMethod, null, null, new object[] { });
 
             object test2 = type.InvokeMember("Test2", BindingFlags.InvokeMethod, null, null, new object[] { BindingFlags.NonPublic | BindingFlags.Instance });
+
+
         }
     }
 }

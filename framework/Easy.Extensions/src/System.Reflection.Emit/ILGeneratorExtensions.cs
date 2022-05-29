@@ -380,6 +380,20 @@ public static partial class ILGeneratorExtensions
 
     #region 赋值
     /// <summary>
+    /// 将堆栈顶部的值赋值给指定索引处的参数
+    /// </summary>
+    /// <param name="iLGenerator">中间语言指令生成器</param>
+    /// <param name="index">参数索引</param>
+    public static void SetArg(this ILGenerator iLGenerator!!, int index = 0)
+    {
+        switch (index)
+        {
+            case <= byte.MaxValue: iLGenerator.Emit(OpCodes.Starg_S, index); return;
+            default: iLGenerator.Emit(OpCodes.Starg, index); return;
+        }
+    }
+
+    /// <summary>
     /// 将堆栈顶部的值赋值给指定的局部变量
     /// </summary>
     /// <param name="iLGenerator">中间语言指令生成器</param>

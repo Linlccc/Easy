@@ -298,6 +298,9 @@ public static class EmitOpCodesVerifyCreator
         DefineMethod_Refanyval1(typeBuilder);
 
 
+        // 参数赋值
+        DefineMethod_SetArg1(typeBuilder);
+
 
 
 
@@ -1681,6 +1684,20 @@ public static class EmitOpCodesVerifyCreator
         il.Refanyval(typeof(MyStruct));
         il.LoadAddrValue(typeof(MyStruct));
         il.Return();
+        return methodBuilder;
+    }
+
+    // 参数赋值
+    public static MethodBuilder DefineMethod_SetArg1(TypeBuilder typeBuilder)
+    {
+        MethodBuilder methodBuilder = typeBuilder.DefineMethod("SetArg1", MethodAttributes.Public | MethodAttributes.Static, typeof(int), new Type[] { typeof(int), typeof(int) });
+        ILGenerator il = methodBuilder.GetILGenerator();
+
+        il.LoadInt(999);
+        il.SetArg();
+        il.LoadArg();
+        il.Return();
+
         return methodBuilder;
     }
 
