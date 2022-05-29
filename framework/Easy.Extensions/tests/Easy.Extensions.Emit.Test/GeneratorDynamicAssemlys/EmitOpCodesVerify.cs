@@ -280,6 +280,10 @@ public static class EmitOpCodesVerifyCreator
         DefineMethod_Localloc_Initblk1(typeBuilder);
 
 
+        // Initobj
+        DefineMethod_Initobj1(typeBuilder);
+
+
 
 
 
@@ -1496,6 +1500,25 @@ public static class EmitOpCodesVerifyCreator
     }
 
 
+    // Initobj
+    public static MethodBuilder DefineMethod_Initobj1(TypeBuilder typeBuilder)
+    {
+        // 测试方法
+
+        MethodBuilder methodBuilder = typeBuilder.DefineMethod("Initobj1", MethodAttributes.Public | MethodAttributes.Static, typeof(int), Type.EmptyTypes);
+        ILGenerator il = methodBuilder.GetILGenerator();
+
+        LocalBuilder l1 = il.DeclareLocal(typeof(int));
+
+        il.LoadLocalAddr(l1.LocalIndex);
+        il.Emit(OpCodes.Initobj, typeof(int));
+
+        il.LoadLocal(l1);
+
+        il.Return();
+        return methodBuilder;
+    }
+
 
     public static MethodBuilder DefineMethod_Test1(TypeBuilder typeBuilder)
     {
@@ -1517,18 +1540,15 @@ public static class EmitOpCodesVerifyCreator
     {
         // 测试方法
 
-        MethodBuilder methodBuilder = typeBuilder.DefineMethod("Test2", MethodAttributes.Public | MethodAttributes.Static, typeof(long), Type.EmptyTypes);
+        MethodBuilder methodBuilder = typeBuilder.DefineMethod("Test2", MethodAttributes.Public | MethodAttributes.Static, typeof(int), Type.EmptyTypes);
         ILGenerator il = methodBuilder.GetILGenerator();
 
+        LocalBuilder l1 = il.DeclareLocal(typeof(int));
 
-        il.LoadInt(8);
-        il.Emit(OpCodes.Localloc);
-        il.Copy();
-        il.LoadInt(255);
-        il.LoadInt(4);
-        il.Emit(OpCodes.Initblk);
+        il.LoadLocalAddr(l1.LocalIndex);
+        il.Emit(OpCodes.Initobj, typeof(int));
 
-        il.LoadAddrInteger(typeof(long));
+        il.LoadLocal(l1);
 
         il.Return();
         return methodBuilder;

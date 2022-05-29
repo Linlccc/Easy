@@ -233,6 +233,11 @@
             Assert.Equal(uint.MaxValue, localloc_Initblk1);
 
 
+            // Initobj1
+            int initobj1 = (int)type.InvokeMember("Initobj1", BindingFlags.InvokeMethod, null, null, new object[] { });
+            Assert.Equal(default, initobj1);
+
+
 
             object test1 = type.InvokeMember("Test1", BindingFlags.InvokeMethod, null, null, new object[] { });
             object test2 = type.InvokeMember("Test2", BindingFlags.InvokeMethod, null, null, new object[] { });

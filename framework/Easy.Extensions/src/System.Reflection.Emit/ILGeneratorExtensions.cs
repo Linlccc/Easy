@@ -1090,6 +1090,17 @@ public static partial class ILGeneratorExtensions
     public static void Initblk(this ILGenerator iLGenerator!!) => iLGenerator.Emit(OpCodes.Initblk);
 
     /// <summary>
+    /// 为指定地址的设置默认值
+    /// <br>相当于 default(<paramref name="type"/>)</br>
+    /// <list type="bullet">
+    ///     <item>1.推送地址</item>
+    /// </list>
+    /// </summary>
+    /// <param name="iLGenerator"></param>
+    /// <param name="type"></param>
+    public static void Initobj(this ILGenerator iLGenerator!!, Type type!!) => iLGenerator.Emit(OpCodes.Initobj, type);
+
+    /// <summary>
     /// 不执行任何堆栈操作,通知调试器碰撞一个断点
     /// </summary>
     /// <param name="iLGenerator">中间语言指令生成器</param>
