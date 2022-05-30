@@ -1192,6 +1192,7 @@ public static partial class ILGeneratorExtensions
      * Rethrow      重新抛出当前异常。
      *
      * Unaligned    指示当前位于评估堆栈顶部的地址可能未与紧随其后的 ldind、stind、ldfld、stfld、ldobj、stobj、initblk 或 cpblk 指令的自然大小对齐。
+     *  还有一个 ILGenerator.Emit(OpCodes.Unaligned, Label) 用法
      *
      * Volatile     指定当前位于评估堆栈顶部的地址可能是易失的，并且无法缓存读取该位置的结果，或者无法抑制对该位置的多个存储。
      */
