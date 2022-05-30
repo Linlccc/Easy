@@ -1144,6 +1144,15 @@ public static partial class ILGeneratorExtensions
     public static void Refanyval(this ILGenerator iLGenerator!!, Type valType!!) => iLGenerator.Emit(OpCodes.Refanyval, valType);
 
     /// <summary>
+    /// 指示当前位于计算堆栈的地址可能没有与紧接的 ldind, stind, ldfld, stfld, ldobj, stobj, initblk, cpblk 指令的自然大小对其
+    /// <br>在必要的时候执行 ldind, stind, ldfld, stfld, ldobj, stobj, initblk, cpblk 指令前先进行对其</br>
+    /// <br>理论上来说 sizeof(T) % 8 != 0 的都因使用此指令对其</br>
+    /// </summary>
+    /// <param name="iLGenerator">中间语言指令生成器</param>
+    /// <param name="alignment">对其值 1, 2, 4</param>
+    public static void Unaligned(this ILGenerator iLGenerator!!, byte alignment) => iLGenerator.Emit(OpCodes.Unaligned, alignment);
+
+    /// <summary>
     /// 如果修补了操作码,则填充空间。但是没有执行任何有意义的操作
     /// <br>相当于代码中的 "{" / "}" </br>
     /// </summary>

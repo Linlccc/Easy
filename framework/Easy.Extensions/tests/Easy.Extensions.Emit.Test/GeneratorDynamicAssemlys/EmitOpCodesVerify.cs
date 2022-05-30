@@ -303,6 +303,11 @@ public static class EmitOpCodesVerifyCreator
 
 
 
+        // 使用对其操作
+        DefineMethod_Unaligned1(typeBuilder);
+
+
+
 
         DefineMethod_Test1(typeBuilder);
         DefineMethod_Test2(typeBuilder);
@@ -1702,6 +1707,28 @@ public static class EmitOpCodesVerifyCreator
     }
 
 
+    // 使用对其操作
+    public static MethodBuilder DefineMethod_Unaligned1(TypeBuilder typeBuilder)
+    {
+        MethodBuilder methodBuilder = typeBuilder.DefineMethod("Unaligned1", MethodAttributes.Public | MethodAttributes.Static, typeof(void), new Type[] { typeof(byte).MakeByRefType(), typeof(byte).MakeByRefType(), typeof(int) });
+        ILGenerator il = methodBuilder.GetILGenerator();
+
+        il.LoadArg(1); // 目标地址
+        il.LoadArg(0); // 原地址
+
+        // 复制的长度 
+        il.LoadArg(2);
+
+        // 因为字节的大小是 1 所以要执行对其
+        // sizeof(T) % 8 不是0的都应该执行对其 see https://stackoverflow.com/questions/24122973/what-should-i-pin-when-working-on-arrays/47128947#47128947
+        il.Unaligned(sizeof(byte));
+        il.CopyAddrValueToAddr();
+
+        il.Return();
+        return methodBuilder;
+    }
+
+
 
     public static MethodBuilder DefineMethod_Test1(TypeBuilder typeBuilder)
     {
@@ -1748,6 +1775,36 @@ public static class EmitOpCodesVerifyCreator
 
         il.Return();
         return methodBuilder;
+    }
+
+    static Action<byte[], int, int, byte[]> Init()
+    {
+        DynamicMethod? dmethod = new DynamicMethod("copy", typeof(void), new[] { typeof(object), typeof(byte[]), typeof(int), typeof(int), typeof(byte[]) }, typeof(object), true);
+        ILGenerator? il = dmethod.GetILGenerator();
+
+        il.DeclareLocal(typeof(byte).MakeByRefType(), true);
+        il.DeclareLocal(typeof(byte).MakeByRefType(), true);
+        // pin the source
+        il.Emit(OpCodes.Ldarg_1);
+        il.Emit(OpCodes.Ldarg_2);
+        il.Emit(OpCodes.Ldelema, typeof(byte));
+        il.Emit(OpCodes.Stloc_0);
+        // pin the target
+        il.Emit(OpCodes.Ldarg_S, (byte)4);
+        il.Emit(OpCodes.Ldc_I4_0);
+        il.Emit(OpCodes.Ldelema, typeof(byte));
+        il.Emit(OpCodes.Stloc_1);
+
+        il.Emit(OpCodes.Ldloc_1);
+        il.Emit(OpCodes.Ldloc_0);
+        // load the length
+        il.Emit(OpCodes.Ldarg_3);
+        // perform the memcpy
+        il.Emit(OpCodes.Unaligned, (byte)1);
+        il.Emit(OpCodes.Cpblk);
+
+        il.Emit(OpCodes.Ret);
+        return dmethod.CreateDelegate(typeof(Action<byte[], int, int, byte[]>)) as Action<byte[], int, int, byte[]>;
     }
 }
 

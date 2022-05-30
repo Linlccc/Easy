@@ -260,6 +260,13 @@
             Assert.Equal(999, setArg1);
 
 
+            // 使用对其操作
+            byte[] bytes1 = { 1, 2, 3, 4, 5, 6 };
+            byte[] bytes2 = new byte[7];
+            Unaligned1 unaligned1 = (Unaligned1)type.GetMethod("Unaligned1").CreateDelegate(typeof(Unaligned1));
+            unaligned1(ref bytes1[1], ref bytes2[2], 3);
+            Assert.Equal(new byte[] { 0, 0, 2, 3, 4, 0, 0 }, bytes2);
+
 
 
             object test1 = type.InvokeMember("Test1", BindingFlags.InvokeMethod, null, null, new object[] { });
@@ -268,5 +275,6 @@
 
 
         }
+        delegate void Unaligned1(ref byte bs1, ref byte bs2, int length);
     }
 }
