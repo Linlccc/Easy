@@ -1708,6 +1708,7 @@ public static class EmitOpCodesVerifyCreator
 
 
     // 使用对其操作
+    // 该方法创建的方法 可以用来复制byte数组
     public static MethodBuilder DefineMethod_Unaligned1(TypeBuilder typeBuilder)
     {
         MethodBuilder methodBuilder = typeBuilder.DefineMethod("Unaligned1", MethodAttributes.Public | MethodAttributes.Static, typeof(void), new Type[] { typeof(byte).MakeByRefType(), typeof(byte).MakeByRefType(), typeof(int) });
@@ -1722,6 +1723,7 @@ public static class EmitOpCodesVerifyCreator
         // 因为字节的大小是 1 所以要执行对其
         // sizeof(T) % 8 不是0的都应该执行对其 see https://stackoverflow.com/questions/24122973/what-should-i-pin-when-working-on-arrays/47128947#47128947
         il.Unaligned(sizeof(byte));
+        // 从原地址将指定的长度的值复制到目标地址
         il.CopyAddrValueToAddr();
 
         il.Return();
