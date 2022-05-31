@@ -307,10 +307,18 @@ public static class EmitOpCodesVerifyCreator
         DefineMethod_Unaligned1(typeBuilder);
 
 
+        // Volatile1
+        DefineMethod_Volatile1(typeBuilder);
+
+
+        // Readonly1
+        // 该方法用于测试只读，不过只读没有用，设置了只读,还是可以设置值和修改值
+        DefineMethod_Readonly1(typeBuilder);
+
+
 
 
         DefineMethod_Test1(typeBuilder);
-        DefineMethod_Test2(typeBuilder);
 
 
         return typeBuilder.CreateType();
@@ -1730,6 +1738,72 @@ public static class EmitOpCodesVerifyCreator
         return methodBuilder;
     }
 
+    // Volatile1
+    // 表示指定地址是易失的,当多线程修改同时操作值时不会排列对该值的读取和写入
+    public static MethodBuilder DefineMethod_Volatile1(TypeBuilder typeBuilder)
+    {
+        // 声明一个易失的字段
+        FieldBuilder _volatile1 = typeBuilder.DefineField("_volatile1", typeof(int), new Type[] { typeof(System.Runtime.CompilerServices.IsVolatile) }, new Type[] { }, FieldAttributes.Static);
+
+        // 声明方法
+        MethodBuilder methodBuilder = typeBuilder.DefineMethod("Volatile1", MethodAttributes.Public | MethodAttributes.Static, typeof(int), new Type[] { });
+        ILGenerator il = methodBuilder.GetILGenerator();
+
+        LocalBuilder l1 = il.DeclareLocal(typeof(int));
+
+        // 为易失字段赋值
+        il.LoadInt(1);
+        il.Volatile();
+        il.SetField(_volatile1);
+
+        // 获取易失字段值
+        il.Volatile();
+        il.LoadField(_volatile1);
+        il.SetLocal(l1);
+
+        il.LoadLocal(l1);
+        il.Return();
+        return methodBuilder;
+    }
+
+    // Readonly1
+    // 该方法用于测试只读，不过只读没有用，设置了只读,还是可以设置值和修改值
+    public static MethodBuilder DefineMethod_Readonly1(TypeBuilder typeBuilder)
+    {
+        MethodBuilder methodBuilder = typeBuilder.DefineMethod("Readonly1", MethodAttributes.Public | MethodAttributes.Static, typeof(object), new Type[] { });
+        ILGenerator il = methodBuilder.GetILGenerator();
+
+        LocalBuilder l1 = il.DeclareLocal(typeof(EmitTest2[]));
+
+        // l1 = new EmitTest2[10];
+        il.LoadInt(10);
+        il.NewArray(typeof(EmitTest2));
+        il.SetLocal(l1);
+
+        // l1[1] = new EmitTest2();
+        il.LoadLocal(l1);
+        il.LoadInt(1);
+        il.Readonly();
+        il.LoadArrayIndexAddr(typeof(EmitTest2));
+        il.NewObject(typeof(EmitTest2).GetConstructor(Type.EmptyTypes));
+        il.SetValueToAddr();
+
+        // l1[1].MyInt1 = 5;
+        il.LoadLocal(l1);
+        il.LoadInt(1);
+        il.Readonly();
+        il.LoadArrayIndexAddr(typeof(EmitTest2));
+        il.LoadAddrValue(typeof(EmitTest2));
+        il.LoadInt(5);
+        il.Unaligned(sizeof(int));
+        il.SetField(typeof(EmitTest2).GetField("MyInt1"));
+
+
+        il.LoadLocal(l1);
+        il.Return();
+        return methodBuilder;
+    }
+
 
 
     public static MethodBuilder DefineMethod_Test1(TypeBuilder typeBuilder)
@@ -1747,67 +1821,6 @@ public static class EmitOpCodesVerifyCreator
         il.Return();
         return methodBuilder;
     }
-
-    public static MethodBuilder DefineMethod_Test2(TypeBuilder typeBuilder)
-    {
-        // 测试方法
-
-        MethodBuilder methodBuilder = typeBuilder.DefineMethod("Test2", MethodAttributes.Public | MethodAttributes.Static, typeof(object), new Type[] { typeof(BindingFlags) });
-        ILGenerator il = methodBuilder.GetILGenerator();
-
-        LocalBuilder l1 = il.DeclareLocal(typeof(MyStruct));
-        LocalBuilder l2 = il.DeclareLocal(typeof(TypedReference));
-        LocalBuilder l3 = il.DeclareLocal(typeof(FieldInfo));
-
-        // l1 = new MyStruct("1");
-        // 初始化结构
-        il.LoadString("1");
-        il.NewObject(typeof(MyStruct).GetConstructor(new Type[] { typeof(string) }));
-        il.SetLocal(l1);
-
-        // l2 = __makeref(l1)
-        // 将结构引用化
-        il.LoadLocalAddr(l1.LocalIndex);
-        il.Mkrefany(typeof(MyStruct));
-        il.SetLocal(l2);
-
-        il.LoadLocal(l2);
-        il.Emit(OpCodes.Refanytype);
-        //il.Call(typeof(Type).GetMethod(nameof(Type.GetTypeFromHandle), new Type[] { typeof(RuntimeTypeHandle) }));
-
-        il.Return();
-        return methodBuilder;
-    }
-
-    static Action<byte[], int, int, byte[]> Init()
-    {
-        DynamicMethod? dmethod = new DynamicMethod("copy", typeof(void), new[] { typeof(object), typeof(byte[]), typeof(int), typeof(int), typeof(byte[]) }, typeof(object), true);
-        ILGenerator? il = dmethod.GetILGenerator();
-
-        il.DeclareLocal(typeof(byte).MakeByRefType(), true);
-        il.DeclareLocal(typeof(byte).MakeByRefType(), true);
-        // pin the source
-        il.Emit(OpCodes.Ldarg_1);
-        il.Emit(OpCodes.Ldarg_2);
-        il.Emit(OpCodes.Ldelema, typeof(byte));
-        il.Emit(OpCodes.Stloc_0);
-        // pin the target
-        il.Emit(OpCodes.Ldarg_S, (byte)4);
-        il.Emit(OpCodes.Ldc_I4_0);
-        il.Emit(OpCodes.Ldelema, typeof(byte));
-        il.Emit(OpCodes.Stloc_1);
-
-        il.Emit(OpCodes.Ldloc_1);
-        il.Emit(OpCodes.Ldloc_0);
-        // load the length
-        il.Emit(OpCodes.Ldarg_3);
-        // perform the memcpy
-        il.Emit(OpCodes.Unaligned, (byte)1);
-        il.Emit(OpCodes.Cpblk);
-
-        il.Emit(OpCodes.Ret);
-        return dmethod.CreateDelegate(typeof(Action<byte[], int, int, byte[]>)) as Action<byte[], int, int, byte[]>;
-    }
 }
 
 public class EmitTest1
@@ -1819,6 +1832,7 @@ public class EmitTest1
 
 public class EmitTest2 : EmitTest1
 {
+    public int MyInt1;
     public int MyProperty { get; set; }
     public override string T1(string s) => s + "%%%";
 

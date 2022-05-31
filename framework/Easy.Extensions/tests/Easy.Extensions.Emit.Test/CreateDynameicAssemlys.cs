@@ -268,10 +268,19 @@
             Assert.Equal(new byte[] { 0, 0, 2, 3, 4, 0, 0 }, bytes2);
 
 
+            // Volatile1
+            int volatile1 = (int)type.InvokeMember("Volatile1", BindingFlags.InvokeMethod, null, null, new object[] { });
+            Assert.Equal(1, volatile1);
+
+
+            // Readonly1
+            EmitTest2[] readonly1 = (EmitTest2[])type.InvokeMember("Readonly1", BindingFlags.InvokeMethod, null, null, new object[] { });
+            Assert.Equal(5, readonly1[1].MyInt1);
+
 
             object test1 = type.InvokeMember("Test1", BindingFlags.InvokeMethod, null, null, new object[] { });
 
-            object test2 = type.InvokeMember("Test2", BindingFlags.InvokeMethod, null, null, new object[] { BindingFlags.NonPublic | BindingFlags.Instance });
+            object test2 = type.InvokeMember("Test2", BindingFlags.InvokeMethod, null, null, new object[] { });
 
 
         }

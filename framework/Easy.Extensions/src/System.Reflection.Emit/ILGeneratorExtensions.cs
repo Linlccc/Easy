@@ -1153,6 +1153,14 @@ public static partial class ILGeneratorExtensions
     public static void Unaligned(this ILGenerator iLGenerator!!, byte alignment) => iLGenerator.Emit(OpCodes.Unaligned, alignment);
 
     /// <summary>
+    /// 表示后面要执行的指令操作的值是易失,在 ldind, stind, ldfld, stfld, ldobj, stobj, initblk, cpblk 指令前使用
+    /// <br>如果声明的变量有 volatile 关键字,在操作该变量之前都要使用该指令</br>
+    /// <br>使用 <see cref="Emit"/> 声明变量添加 <see cref="System.Runtime.CompilerServices.IsVolatile"/> 类型到必选修饰符</br>
+    /// </summary>
+    /// <param name="iLGenerator">中间语言指令生成器</param>
+    public static void Volatile(this ILGenerator iLGenerator!!) => iLGenerator.Emit(OpCodes.Volatile);
+
+    /// <summary>
     /// 如果修补了操作码,则填充空间。但是没有执行任何有意义的操作
     /// <br>相当于代码中的 "{" / "}" </br>
     /// </summary>
@@ -1171,6 +1179,19 @@ public static partial class ILGeneratorExtensions
     /// <param name="iLGenerator">中间语言指令生成器</param>
     /// <param name="type">测试中所有size相同的类型都可以正常运行</param>
     public static void Cpobj(this ILGenerator iLGenerator!!, Type type) => iLGenerator.Emit(OpCodes.Cpobj, type);
+
+    /// <summary>
+    /// 原：指定后面的数组地址不执行类型检查,并且推送可变性受限的指针 <see href="https://docs.microsoft.com/zh-cn/dotnet/api/system.reflection.emit.opcodes.readonly?view=net-6.0"/>
+    /// <br>测试：标记了这个过后还可以可以设置指针的值,和修改值</br>
+    /// <list type="bullet">
+    ///     <item>1.推送数组</item>
+    ///     <item>2.推送索引</item>
+    ///     <item>3.使用该指令</item>
+    ///     <item>4.使用 <see cref="OpCodes.Ldelema"/> 指令获取地址</item>
+    /// </list>
+    /// </summary>
+    /// <param name="iLGenerator"></param>
+    public static void Readonly(this ILGenerator iLGenerator!!) => iLGenerator.Emit(OpCodes.Readonly);
     #endregion
 
 
@@ -1193,8 +1214,6 @@ public static partial class ILGeneratorExtensions
      *
      * Unaligned    指示当前位于评估堆栈顶部的地址可能未与紧随其后的 ldind、stind、ldfld、stfld、ldobj、stobj、initblk 或 cpblk 指令的自然大小对齐。
      *  还有一个 ILGenerator.Emit(OpCodes.Unaligned, Label) 用法
-     *
-     * Volatile     指定当前位于评估堆栈顶部的地址可能是易失的，并且无法缓存读取该位置的结果，或者无法抑制对该位置的多个存储。
      */
     #endregion
 }
