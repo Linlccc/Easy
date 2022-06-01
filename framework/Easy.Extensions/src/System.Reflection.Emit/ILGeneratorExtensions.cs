@@ -1047,6 +1047,14 @@ public static partial class ILGeneratorExtensions
     public static void Copy(this ILGenerator iLGenerator!!) => iLGenerator.Emit(OpCodes.Dup);
 
     /// <summary>
+    /// 推出当前方法并跳至指定方法
+    /// <br>直接转移到指定方法,要求跳转的方法和当前方法有相同的签名</br>
+    /// </summary>
+    /// <param name="iLGenerator">中间语言指令生成器</param>
+    /// <param name="methodInfo">要跳转的方法,和当前方法签名一致</param>
+    public static void Jmp(this ILGenerator iLGenerator!!, MethodInfo methodInfo!!) => iLGenerator.Emit(OpCodes.Jmp, methodInfo);
+
+    /// <summary>
     /// 复制地址的值到指定地址
     /// <list type="bullet">
     ///     <item>1.推送目标地址</item>

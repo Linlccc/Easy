@@ -1,4 +1,6 @@
-﻿namespace Easy.Extensions.Emit.Test.GeneratorDynamicAssemlys;
+﻿using System.Runtime.InteropServices;
+
+namespace Easy.Extensions.Emit.Test.GeneratorDynamicAssemlys;
 
 /// <summary>
 /// 这是以下代码动态创建的类
@@ -315,6 +317,11 @@ public static class EmitOpCodesVerifyCreator
         // 该方法用于测试只读，不过只读没有用，设置了只读,还是可以设置值和修改值
         DefineMethod_Readonly1(typeBuilder);
 
+
+        // Jmp1
+        DefineMethod_Jmp1(typeBuilder);
+        // Jmp2 外部方法
+        DefineMethod_Jmp2(typeBuilder);
 
 
 
@@ -1804,6 +1811,25 @@ public static class EmitOpCodesVerifyCreator
         return methodBuilder;
     }
 
+    // Jmp1
+    public static MethodBuilder DefineMethod_Jmp1(TypeBuilder typeBuilder)
+    {
+        MethodBuilder methodBuilder = typeBuilder.DefineMethod("Jmp1", MethodAttributes.Public | MethodAttributes.Static, typeof(string), new Type[] { typeof(int) });
+        ILGenerator il = methodBuilder.GetILGenerator();
+
+        il.Jmp(typeof(EmitTest2).GetMethod("T5"));
+        return methodBuilder;
+    }
+
+    // Jmp2 外部方法
+    public static MethodBuilder DefineMethod_Jmp2(TypeBuilder typeBuilder)
+    {
+        MethodBuilder methodBuilder = typeBuilder.DefineMethod("Jmp2", MethodAttributes.Public | MethodAttributes.Static, typeof(int), new Type[] { typeof(int), typeof(string), typeof(string), typeof(int) });
+        ILGenerator il = methodBuilder.GetILGenerator();
+
+        il.Jmp(typeof(EmitTest1).GetMethod(nameof(EmitTest1.MsgBox)));
+        return methodBuilder;
+    }
 
 
     public static MethodBuilder DefineMethod_Test1(TypeBuilder typeBuilder)
@@ -1828,6 +1854,13 @@ public class EmitTest1
     public virtual string T1(string s) => s + "###";
 
     public virtual int T4() => -4;
+
+
+    /// <summary>
+    /// 这是一个弹出消息框的外部方法
+    /// </summary>
+    [DllImport("user32.dll", EntryPoint = "MessageBoxA")]
+    public static extern int MsgBox(int hWnd, string msg, string caption, int type);
 }
 
 public class EmitTest2 : EmitTest1
@@ -1842,6 +1875,8 @@ public class EmitTest2 : EmitTest1
     public int T3() => 3;
 
     public override int T4() => 4;
+
+    public static string T5(int i) => i.ToString();
 }
 
 public struct MyStruct

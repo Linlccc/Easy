@@ -277,13 +277,20 @@
             EmitTest2[] readonly1 = (EmitTest2[])type.InvokeMember("Readonly1", BindingFlags.InvokeMethod, null, null, new object[] { });
             Assert.Equal(5, readonly1[1].MyInt1);
 
+            // Jmp1
+            object jmp1 = type.InvokeMember("Jmp1", BindingFlags.InvokeMethod, null, null, new object[] { 9999 });
+            Assert.Equal("9999", jmp1);
+            // Jmp2
+            object jmp2 = type.InvokeMember("Jmp2", BindingFlags.InvokeMethod, null, null, new object[] { 0, "这是一个消息", "这个一个titil", 1 });
+            Assert.Equal(1, jmp2);
+
+
+
 
             object test1 = type.InvokeMember("Test1", BindingFlags.InvokeMethod, null, null, new object[] { });
 
-            object test2 = type.InvokeMember("Test2", BindingFlags.InvokeMethod, null, null, new object[] { });
-
-
         }
+        // 使用对其操作 代理类型声明
         delegate void Unaligned1(ref byte bs1, ref byte bs2, int length);
     }
 }
