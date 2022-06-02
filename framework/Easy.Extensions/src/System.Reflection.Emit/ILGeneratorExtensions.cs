@@ -620,7 +620,7 @@ public static partial class ILGeneratorExtensions
     public static void CompareEqual(this ILGenerator iLGenerator!!) => iLGenerator.Emit(OpCodes.Ceq);
 
     /// <summary>
-    /// 比较堆栈顶部两个值,如果<c>value1 > value2</c>推送 1,否则推送 0
+    /// 比较堆栈顶部两个值,如果 value1 > value2 推送 1,否则推送 0
     /// </summary>
     /// <param name="iLGenerator">中间语言指令生成器</param>
     /// <param name="isUnsigned">是否是无符号的或未经排序的值</param>
@@ -1032,6 +1032,12 @@ public static partial class ILGeneratorExtensions
     /// </summary>
     /// <param name="iLGenerator">中间语言指令生成器</param>
     public static void Throw(this ILGenerator iLGenerator!!) => iLGenerator.Emit(OpCodes.Throw);
+
+    /// <summary>
+    /// 再次抛出异常在 Catch 中使用
+    /// </summary>
+    /// <param name="iLGenerator">中间语言指令生成器</param>
+    public static void ReThrow(this ILGenerator iLGenerator!!) => iLGenerator.Emit(OpCodes.Rethrow);
     #endregion
 
     /// <summary>
@@ -1175,6 +1181,13 @@ public static partial class ILGeneratorExtensions
     /// <param name="iLGenerator">中间语言指令生成器</param>
     public static void Nop(this ILGenerator iLGenerator!!) => iLGenerator.Emit(OpCodes.Nop);
 
+    /// <summary>
+    /// Finally 块完成
+    /// <br>其实这个不是必须的,没有也不会有异常</br>
+    /// </summary>
+    /// <param name="iLGenerator"></param>
+    public static void EndFinally(this ILGenerator iLGenerator!!) => iLGenerator.Emit(OpCodes.Endfinally);
+
     #region 有歧义
     /// <summary>
     /// 原：将位于对象地址的值类型（类型 &amp; 或原生 int）复制到目标对象的地址（类型 &amp; 或原生 int）
@@ -1215,8 +1228,6 @@ public static partial class ILGeneratorExtensions
      * Endfilter    将控制从异常的过滤子句转移回公共语言基础结构 (CLI) 异常处理程序。
      *
      * Endfinally   将控制从异常块的故障或 finally 子句转移回公共语言基础结构 (CLI) 异常处理程序。
-     *
-     * Jmp          退出当前方法并跳转到指定方法。
      *
      * Rethrow      重新抛出当前异常。
      *

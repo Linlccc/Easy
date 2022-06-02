@@ -198,6 +198,22 @@
 
 
 
+            // ** Try Catch Finally
+            // Try_Catch1
+            //Assert.Throws<TargetInvocationException>(() => type.InvokeMember("Try_Catch1", BindingFlags.InvokeMethod, null, null, new object[] { }));
+            // Try_Catch2
+            object try_Catch2 = type.InvokeMember("Try_Catch2", BindingFlags.InvokeMethod, null, null, new object[] { });
+            Assert.Equal("Try_Catch2 测试 异常", try_Catch2);
+            // Try_Catch3
+            object try_Catch3 = type.InvokeMember("Try_Catch3", BindingFlags.InvokeMethod, null, null, new object[] { });
+            Assert.Equal("进入了一个不判断类型的异常捕捉", try_Catch3);
+            // Try_Catch4（还需要验证，实现）
+            //object try_Catch4 = type.InvokeMember("Try_Catch4", BindingFlags.InvokeMethod, null, null, new object[] { });
+            //Assert.Equal("进入了一个不判断类型的异常捕捉", try_Catch4);
+            // Try_Catch_Finally1
+            object Tty_Catch_Finally1 = type.InvokeMember("Try_Catch_Finally1", BindingFlags.InvokeMethod, null, null, new object[] { });
+            Assert.Equal("进入了 Try      触发了 Exception 类型异常      进入了 Finally      开始返回", Tty_Catch_Finally1);
+
             // sizeof
             object sizeof1 = type.InvokeMember("SizeOf1", BindingFlags.InvokeMethod, null, null, new object[] { });
             Assert.Equal(new int[] { 1, 2, 4, 8, 8, 16, 4, 4 }, sizeof1);
@@ -280,14 +296,15 @@
             // Jmp1
             object jmp1 = type.InvokeMember("Jmp1", BindingFlags.InvokeMethod, null, null, new object[] { 9999 });
             Assert.Equal("9999", jmp1);
-            // Jmp2
-            object jmp2 = type.InvokeMember("Jmp2", BindingFlags.InvokeMethod, null, null, new object[] { 0, "这是一个消息", "这个一个titil", 1 });
-            Assert.Equal(1, jmp2);
+            // Jmp2 以下方法会显示一个弹窗
+            //object jmp2 = type.InvokeMember("Jmp2", BindingFlags.InvokeMethod, null, null, new object[] { 0, "这是一个消息", "这个一个titil", 1 });
+            //Assert.Equal(1, jmp2);
 
 
 
 
             object test1 = type.InvokeMember("Test1", BindingFlags.InvokeMethod, null, null, new object[] { });
+            //object test2 = type.InvokeMember("Test2", BindingFlags.InvokeMethod, null, null, new object[] { });
 
         }
         // 使用对其操作 代理类型声明

@@ -256,6 +256,20 @@ public static class EmitOpCodesVerifyCreator
         DefineMethod_Calli_Ldftn4(typeBuilder);
 
 
+
+        // ** Try Catch Finally
+        // Try_Catch1
+        DefineMethod_Try_Catch1(typeBuilder);
+        // Try_Catch2
+        DefineMethod_Try_Catch2(typeBuilder);
+        // Try_Catch3
+        DefineMethod_Try_Catch3(typeBuilder);
+        // Try_Catch4
+        DefineMethod_Try_Catch4(typeBuilder);
+        // Try_Catch_Finally1
+        DefineMethod_Try_Catch_Finally1(typeBuilder);
+
+
         // sizeof
         DefineMethod_SizeOf1(typeBuilder);
 
@@ -1376,6 +1390,287 @@ public static class EmitOpCodesVerifyCreator
     }
     #endregion
 
+    #region Try Catch Finally
+    // Try_Catch1
+    public static MethodBuilder DefineMethod_Try_Catch1(TypeBuilder typeBuilder)
+    {
+        MethodBuilder methodBuilder = typeBuilder.DefineMethod("Try_Catch1", MethodAttributes.Public | MethodAttributes.Static, typeof(void), Type.EmptyTypes);
+        ILGenerator il = methodBuilder.GetILGenerator();
+
+        // try{
+        il.BeginExceptionBlock();
+
+        // throw new Exception("Try_Catch1 测试 异常");
+        il.LoadString("Try_Catch1 测试 异常");
+        il.NewObject(typeof(Exception).GetConstructor(new Type[] { typeof(string) }));
+        il.Throw();
+
+        // }catch (Exception){
+        il.BeginCatchBlock(typeof(Exception));
+
+        // throw;
+        il.ReThrow();
+
+        // }
+        il.EndExceptionBlock();
+
+        il.Return();
+        return methodBuilder;
+    }
+
+    // Try_Catch2
+    public static MethodBuilder DefineMethod_Try_Catch2(TypeBuilder typeBuilder)
+    {
+        MethodBuilder methodBuilder = typeBuilder.DefineMethod("Try_Catch2", MethodAttributes.Public | MethodAttributes.Static, typeof(string), Type.EmptyTypes);
+        ILGenerator il = methodBuilder.GetILGenerator();
+
+        // try{
+        il.BeginExceptionBlock();
+
+        // throw new Exception("Try_Catch1 测试 异常");
+        il.LoadString("Try_Catch2 测试 异常");
+        il.NewObject(typeof(Exception).GetConstructor(new Type[] { typeof(string) }));
+        il.Throw();
+
+        // }catch (Exception){
+        il.BeginCatchBlock(typeof(Exception));
+
+        il.Call(typeof(Exception).GetMethod("get_Message"));
+        il.Return();
+
+        // }
+        il.EndExceptionBlock();
+
+        il.LoadString("没有异常");
+        il.Return();
+        return methodBuilder;
+    }
+
+    // Try_Catch3
+    public static MethodBuilder DefineMethod_Try_Catch3(TypeBuilder typeBuilder)
+    {
+        MethodBuilder methodBuilder = typeBuilder.DefineMethod("Try_Catch3", MethodAttributes.Public | MethodAttributes.Static, typeof(string), Type.EmptyTypes);
+        ILGenerator il = methodBuilder.GetILGenerator();
+
+        // try{
+        il.BeginExceptionBlock();
+
+        // throw new Exception("Try_Catch1 测试 异常");
+        il.LoadString("Try_Catch3 测试 异常");
+        il.NewObject(typeof(Exception).GetConstructor(new Type[] { typeof(string) }));
+        il.Throw();
+
+        // }catch{
+        il.BeginFaultBlock();
+
+        il.LoadString("进入了一个不判断类型的异常捕捉");
+        il.Return();
+
+        // }
+        il.EndExceptionBlock();
+
+        il.LoadString("没有异常");
+        il.Return();
+        return methodBuilder;
+    }
+
+    // Try_Catch4(还需要验证)
+    public static MethodBuilder DefineMethod_Try_Catch4(TypeBuilder typeBuilder)
+    {
+        MethodBuilder methodBuilder = typeBuilder.DefineMethod("Try_Catch4", MethodAttributes.Public | MethodAttributes.Static, typeof(string), Type.EmptyTypes);
+        ILGenerator il = methodBuilder.GetILGenerator();
+
+        LocalBuilder l1 = il.DeclareLocal(typeof(string));
+        LocalBuilder l2 = il.DeclareLocal(typeof(Exception));
+        LocalBuilder l3 = il.DeclareLocal(typeof(bool));
+        LocalBuilder l4 = il.DeclareLocal(typeof(string));
+
+        Label ll1 = il.DefineLabel();
+        Label ll2 = il.DefineLabel();
+        Label ll3 = il.DefineLabel();
+        Label ll4 = il.DefineLabel();
+
+        // l1 = "1";
+        il.Emit(OpCodes.Nop);
+        il.Emit(OpCodes.Ldstr, "1");
+        il.Emit(OpCodes.Stloc_0);
+
+        il.BeginExceptionBlock();
+        il.Emit(OpCodes.Nop);
+        il.Emit(OpCodes.Ldstr, "2");
+        il.Emit(OpCodes.Stloc_0);
+        il.Emit(OpCodes.Nop);
+        il.Emit(OpCodes.Leave_S, ll1);
+
+        //il.BeginExceptFilterBlock();
+        //il.Emit(OpCodes.Isinst, typeof(Exception));
+        //il.Emit(OpCodes.Dup);
+        //il.Emit(OpCodes.Brtrue_S, ll2);
+
+        //il.Emit(OpCodes.Pop);
+        //il.Emit(OpCodes.Ldc_I4_0);
+        //il.Emit(OpCodes.Br_S, ll3);
+
+        //il.MarkLabel(ll2);
+        //il.Emit(OpCodes.Stloc_1);
+        //il.Emit(OpCodes.Ldloc_1);
+        //il.Emit(OpCodes.Callvirt, typeof(Exception).GetMethod("get_Message"));
+        //il.Emit(OpCodes.Ldstr, "123");
+        //il.Emit(OpCodes.Call, typeof(string).GetMethod("op_Equality", new Type[] { typeof(string), typeof(string) }));
+        //il.Emit(OpCodes.Stloc_2);
+        //il.Emit(OpCodes.Ldloc_2);
+        //il.Emit(OpCodes.Ldc_I4_0);
+        //il.Emit(OpCodes.Cgt_Un);
+
+        //il.MarkLabel(ll3);
+        //il.Emit(OpCodes.Endfilter);
+
+        il.BeginFaultBlock();
+        //il.Emit(OpCodes.Pop);
+        il.Emit(OpCodes.Nop);
+        il.Emit(OpCodes.Ldstr, "3");
+        il.Emit(OpCodes.Stloc_0);
+        il.Emit(OpCodes.Ldloc_0);
+        il.Emit(OpCodes.Stloc_3);
+        //il.Emit(OpCodes.Leave_S, ll4);
+
+        il.EndExceptionBlock();
+
+        il.MarkLabel(ll1);
+        il.Emit(OpCodes.Ldstr, "4");
+        il.Emit(OpCodes.Stloc_0);
+        il.Emit(OpCodes.Ldloc_0);
+        il.Emit(OpCodes.Stloc_3);
+        il.Emit(OpCodes.Br_S, ll4);
+
+        il.MarkLabel(ll4);
+        il.Emit(OpCodes.Ldloc_3);
+        il.Emit(OpCodes.Ret);
+
+
+
+
+
+
+
+
+        //Label ll1 = il.DefineLabel();
+        //Label ll2 = il.DefineLabel();
+        //Label ll3 = il.DefineLabel();
+
+        //// try{
+        //il.BeginExceptionBlock();
+
+        //// throw new Exception("Try_Catch1 测试 异常");
+        //il.LoadString("Try_Catch4 测试 异常");
+        //il.NewObject(typeof(Exception).GetConstructor(new Type[] { typeof(string) }));
+        //il.Throw();
+        //il.GotoLeave(ll3);
+
+        //// }catch(Exception ex) when(ex.Message == "Try_Catch4 测试 异常"){
+        //// 的筛选部分
+        //il.BeginExceptFilterBlock();
+        //il.As(typeof(Exception));
+        //il.Copy();
+        //il.GotoIfTrue(ll1);
+
+        //il.Pop();
+        //il.LoadInt(0);
+        //il.Goto(ll2);
+
+        //il.MarkLabel(ll1);
+        //il.CallVirtual(typeof(Exception).GetMethod("get_Message"));
+        //il.LoadString("Try_Catch4 测试 异常");
+        //il.Call(typeof(string).GetMethod("op_Equality", new Type[] { typeof(string), typeof(string) }));
+        //il.LoadInt(0);
+        //il.CompareGreater(true);
+
+        //// 筛选完成
+        //il.MarkLabel(ll2);
+        //il.Emit(OpCodes.Endfilter);
+
+        //// 这里才是真正进入异常捕捉的部分
+        //il.BeginFaultBlock();
+
+        //il.Pop();
+        //il.LoadString("进入了一个不判断类型的异常捕捉");
+        //il.Return();
+        //il.GotoLeave(ll3);
+
+        //// }
+        //il.EndExceptionBlock();
+
+        //il.MarkLabel(ll3);
+        //il.LoadString("没有异常");
+        //il.Return();
+        return methodBuilder;
+    }
+
+    // Try_Catch_Finally1
+    public static MethodBuilder DefineMethod_Try_Catch_Finally1(TypeBuilder typeBuilder)
+    {
+        MethodBuilder methodBuilder = typeBuilder.DefineMethod("Try_Catch_Finally1", MethodAttributes.Public | MethodAttributes.Static, typeof(string), Type.EmptyTypes);
+        ILGenerator il = methodBuilder.GetILGenerator();
+
+        LocalBuilder l1 = il.DeclareLocal(typeof(string));
+
+        // try{
+        il.BeginExceptionBlock();
+
+        // l1 += "进入了 Try"; 
+        il.LoadLocal(l1);
+        il.LoadString("进入了 Try      ");
+        il.Call(typeof(string).GetMethod(nameof(string.Concat), new Type[] { typeof(string), typeof(string) }));
+        il.SetLocal(l1);
+        // throw new Exception("Try_Catch1 测试 异常");
+        il.LoadString("Try_Catch_Finally1 测试 异常");
+        il.NewObject(typeof(Exception).GetConstructor(new Type[] { typeof(string) }));
+        il.Throw();
+
+        // }catch (Exception){
+        il.BeginCatchBlock(typeof(Exception));
+
+        // l1 += "触发了 Exception 类型异常";
+        il.LoadLocal(l1);
+        il.LoadString("触发了 Exception 类型异常      ");
+        il.Call(typeof(string).GetMethod(nameof(string.Concat), new Type[] { typeof(string), typeof(string) }));
+        il.SetLocal(l1);
+
+        // }catch (ArgumentNullException){
+        il.BeginCatchBlock(typeof(ArgumentNullException));
+
+        // l1 += "触发了 ArgumentNullException 类型异常";
+        il.LoadLocal(l1);
+        il.LoadString("触发了 ArgumentNullException 类型异常      ");
+        il.Call(typeof(string).GetMethod(nameof(string.Concat), new Type[] { typeof(string), typeof(string) }));
+        il.SetLocal(l1);
+
+        // } Finally{
+        il.BeginFinallyBlock();
+
+        // l1 += "进入了 Finally"
+        il.LoadLocal(l1);
+        il.LoadString("进入了 Finally      ");
+        il.Call(typeof(string).GetMethod(nameof(string.Concat), new Type[] { typeof(string), typeof(string) }));
+        il.SetLocal(l1);
+
+        il.EndFinally(); // Finally 块结束,非必须,没有该指令也不会报错
+
+        // }
+        il.EndExceptionBlock();
+
+        // l1 += "开始返回"
+        il.LoadLocal(l1);
+        il.LoadString("开始返回");
+        il.Call(typeof(string).GetMethod(nameof(string.Concat), new Type[] { typeof(string), typeof(string) }));
+        il.SetLocal(l1);
+
+        il.LoadLocal(l1);
+        il.Return();
+        return methodBuilder;
+    }
+    #endregion
+
     // sizeof
     public static MethodBuilder DefineMethod_SizeOf1(TypeBuilder typeBuilder)
     {
@@ -1817,7 +2112,7 @@ public static class EmitOpCodesVerifyCreator
         MethodBuilder methodBuilder = typeBuilder.DefineMethod("Jmp1", MethodAttributes.Public | MethodAttributes.Static, typeof(string), new Type[] { typeof(int) });
         ILGenerator il = methodBuilder.GetILGenerator();
 
-        il.Jmp(typeof(EmitTest2).GetMethod("T5"));
+        il.Jmp(typeof(EmitTest2).GetMethod(nameof(EmitTest2.T5)));
         return methodBuilder;
     }
 
@@ -1830,6 +2125,9 @@ public static class EmitOpCodesVerifyCreator
         il.Jmp(typeof(EmitTest1).GetMethod(nameof(EmitTest1.MsgBox)));
         return methodBuilder;
     }
+
+
+
 
 
     public static MethodBuilder DefineMethod_Test1(TypeBuilder typeBuilder)
@@ -1846,6 +2144,22 @@ public static class EmitOpCodesVerifyCreator
         il.Box(typeof(double));
         il.Return();
         return methodBuilder;
+    }
+
+    public static string T1()
+    {
+        string a = "1";
+        try
+        {
+            a = "2";
+        }
+        catch (Exception ex) when (ex.Message == "123")
+        {
+            a = "3";
+            return a;
+        }
+        a = "4";
+        return a;
     }
 }
 
@@ -1877,6 +2191,8 @@ public class EmitTest2 : EmitTest1
     public override int T4() => 4;
 
     public static string T5(int i) => i.ToString();
+
+    public static string T6() => throw new Exception("T6 测试异常");
 }
 
 public struct MyStruct
