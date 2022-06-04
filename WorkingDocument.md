@@ -278,7 +278,7 @@ Easy.Extensions.DependencyInjection 的服务提供商实现AOP
   }
 
 2.看看 https://github.com/autofac/Autofac.AspNetCore.Multitenant 项目
-  Di 的租户
+  DI的多租户
 ~~~
 
 ### Easy.Extensions.DependencyInjection.Abstractions 项目升级/修改/开发计划
