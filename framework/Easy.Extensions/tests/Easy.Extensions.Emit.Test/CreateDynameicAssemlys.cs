@@ -208,7 +208,7 @@
             object try_Catch3 = type.InvokeMember("Try_Catch3", BindingFlags.InvokeMethod, null, null, new object[] { });
             Assert.Equal("进入了一个不判断类型的异常捕捉", try_Catch3);
             // Try_Catch4（还需要验证，实现）
-            //object try_Catch4 = type.InvokeMember("Try_Catch4", BindingFlags.InvokeMethod, null, null, new object[] { });
+            object try_Catch4 = type.InvokeMember("Try_Catch4", BindingFlags.InvokeMethod, null, null, new object[] { });
             //Assert.Equal("进入了一个不判断类型的异常捕捉", try_Catch4);
             // Try_Catch_Finally1
             object Tty_Catch_Finally1 = type.InvokeMember("Try_Catch_Finally1", BindingFlags.InvokeMethod, null, null, new object[] { });

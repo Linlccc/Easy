@@ -1505,11 +1505,11 @@ public static class EmitOpCodesVerifyCreator
         //il.BeginExceptFilterBlock();
         //il.Emit(OpCodes.Isinst, typeof(Exception));
         //il.Emit(OpCodes.Dup);
-        //il.Emit(OpCodes.Brtrue_S, ll2);
+        //il.Emit(OpCodes.Brtrue, ll2);
 
         //il.Emit(OpCodes.Pop);
         //il.Emit(OpCodes.Ldc_I4_0);
-        //il.Emit(OpCodes.Br_S, ll3);
+        //il.Emit(OpCodes.Br, ll3);
 
         //il.MarkLabel(ll2);
         //il.Emit(OpCodes.Stloc_1);
@@ -1526,13 +1526,12 @@ public static class EmitOpCodesVerifyCreator
         //il.Emit(OpCodes.Endfilter);
 
         il.BeginFaultBlock();
-        //il.Emit(OpCodes.Pop);
         il.Emit(OpCodes.Nop);
         il.Emit(OpCodes.Ldstr, "3");
         il.Emit(OpCodes.Stloc_0);
         il.Emit(OpCodes.Ldloc_0);
         il.Emit(OpCodes.Stloc_3);
-        //il.Emit(OpCodes.Leave_S, ll4);
+        il.Emit(OpCodes.Br, ll4);
 
         il.EndExceptionBlock();
 
