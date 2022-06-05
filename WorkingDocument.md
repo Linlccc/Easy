@@ -257,7 +257,7 @@ Easy.Extensions.DependencyInjection 的服务提供商实现AOP
 5.将方法精简一下
 
 后期计划
-1.将默认类型的拓展方法分成不同的项目,步骤
+1.将默认类型的拓展方法分成不同的项目,步骤(在拓展面广的时候再是实现)
   a.拆分成多个项目,如：Easy.Extensions.System/Easy.Extensions.Microsoft 等等
   b.Easy.Extensions 项目只需引入所有默认类型拓展项目,这样就可按需引入和全部引入
 ~~~
