@@ -257,6 +257,8 @@ Easy.Extensions.DependencyInjection 的服务提供商实现AOP
 5.将方法精简一下
 6.先不管EndFilter 异常筛选,直接开始整理拓展
 
+!!!又开始犯懒了....躺
+
 后期计划
 1.将默认类型的拓展方法分成不同的项目,步骤(在拓展面广的时候再是实现)
   a.拆分成多个项目,如：Easy.Extensions.System/Easy.Extensions.Microsoft 等等
