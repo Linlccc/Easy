@@ -257,7 +257,6 @@ Easy.Extensions.DependencyInjection 的服务提供商实现AOP
 5.将方法精简一下
 6.先不管EndFilter 异常筛选,直接开始整理拓展
 
-!!!又开始犯懒了....躺
 
 后期计划
 1.将默认类型的拓展方法分成不同的项目,步骤(在拓展面广的时候再是实现)
@@ -336,4 +335,11 @@ https://github.com/jtmueller/Collections.Pooled
 
 对文件操作优化 一个为 .NET 对象提供池MemoryStream以提高应用程序性能的库，尤其是在垃圾收集领域
 https://github.com/microsoft/Microsoft.IO.RecyclableMemoryStream
+~~~
+
+### 躺
+
+~~~text
+0607  !!!又开始犯懒了....躺
+0608  躺
 ~~~
