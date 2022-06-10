@@ -1523,7 +1523,7 @@ public static class EmitOpCodesVerifyCreator
         il.Emit(OpCodes.Cgt_Un);
 
         il.MarkLabel(ll3);
-        il.Emit(OpCodes.Endfilter);
+        //il.Emit(OpCodes.Endfilter);
 
         il.BeginFaultBlock();
         il.Emit(OpCodes.Pop);
