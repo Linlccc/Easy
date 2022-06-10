@@ -193,6 +193,8 @@ MergeJson 生成时会将 Easy.Tool.MergeJson.dll 复制到生成文件
   c.下载 https://github.com/icsharpcode/ILSpy 链接中的工具，反编译动态生成的dll查看源码 (推荐)
 ~~~
 
+---
+
 ## 0524
 
 Easy.Extensions.DependencyInjection 的服务提供商实现AOP
@@ -206,6 +208,8 @@ Easy.Extensions.DependencyInjection 的服务提供商实现AOP
 3.将自定义的类型赋值给 EasyServiceProviderOptions.ServiceProviderEventsType
 4.构建服务提供商 IServiceCollection.BuildEasyServiceProvider(EasyServiceProviderOptions);
 ~~~
+
+---
 
 ## 0525
 
@@ -222,6 +226,8 @@ Easy.Extensions.DependencyInjection 的服务提供商实现AOP
 在 1.0.1 版本 Easy.Extensions.DependencyInjection 添加了添加事件(AOP)但是传递的服务提供商类型是默认的 serviceProviderEngineScope 类型,在1.0.2中修复
 ~~~
 
+---
+
 ## 计划
 
 - [x] 添加自动发布包任务 (研究) [0427]
@@ -236,6 +242,7 @@ Easy.Extensions.DependencyInjection 的服务提供商实现AOP
 - [x] 使用 emit 动态生成dll,然后再反编译 (实验) [0521]
 - [x] 了解一下动态启停web项目 (在TourCar项目中写了一个web管理,处理web项目启停) [0524]
 - [x] 处理版本控制问题 [0525]
+- [ ] 看看。HttpRequestRewindExtensions.EnableBuffering 的源码
 - [ ] 了解为什么应该将 IHttpContextAccessor 作为Singleton注入
 
   ~~~text
