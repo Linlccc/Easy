@@ -1502,36 +1502,37 @@ public static class EmitOpCodesVerifyCreator
         il.Emit(OpCodes.Nop);
         il.Emit(OpCodes.Leave_S, ll1);
 
-        //il.BeginExceptFilterBlock();
-        //il.Emit(OpCodes.Isinst, typeof(Exception));
-        //il.Emit(OpCodes.Dup);
-        //il.Emit(OpCodes.Brtrue, ll2);
+        il.BeginExceptFilterBlock();
+        il.Emit(OpCodes.Isinst, typeof(Exception));
+        il.Emit(OpCodes.Dup);
+        il.Emit(OpCodes.Brtrue, ll2);
 
-        //il.Emit(OpCodes.Pop);
-        //il.Emit(OpCodes.Ldc_I4_0);
-        //il.Emit(OpCodes.Br, ll3);
+        il.Emit(OpCodes.Pop);
+        il.Emit(OpCodes.Ldc_I4_0);
+        il.Emit(OpCodes.Br, ll3);
 
-        //il.MarkLabel(ll2);
-        //il.Emit(OpCodes.Stloc_1);
-        //il.Emit(OpCodes.Ldloc_1);
-        //il.Emit(OpCodes.Callvirt, typeof(Exception).GetMethod("get_Message"));
-        //il.Emit(OpCodes.Ldstr, "123");
-        //il.Emit(OpCodes.Call, typeof(string).GetMethod("op_Equality", new Type[] { typeof(string), typeof(string) }));
-        //il.Emit(OpCodes.Stloc_2);
-        //il.Emit(OpCodes.Ldloc_2);
-        //il.Emit(OpCodes.Ldc_I4_0);
-        //il.Emit(OpCodes.Cgt_Un);
+        il.MarkLabel(ll2);
+        il.Emit(OpCodes.Stloc_1);
+        il.Emit(OpCodes.Ldloc_1);
+        il.Emit(OpCodes.Callvirt, typeof(Exception).GetMethod("get_Message"));
+        il.Emit(OpCodes.Ldstr, "123");
+        il.Emit(OpCodes.Call, typeof(string).GetMethod("op_Equality", new Type[] { typeof(string), typeof(string) }));
+        il.Emit(OpCodes.Stloc_2);
+        il.Emit(OpCodes.Ldloc_2);
+        il.Emit(OpCodes.Ldc_I4_0);
+        il.Emit(OpCodes.Cgt_Un);
 
-        //il.MarkLabel(ll3);
-        //il.Emit(OpCodes.Endfilter);
+        il.MarkLabel(ll3);
+        il.Emit(OpCodes.Endfilter);
 
         il.BeginFaultBlock();
+        il.Emit(OpCodes.Pop);
         il.Emit(OpCodes.Nop);
         il.Emit(OpCodes.Ldstr, "3");
         il.Emit(OpCodes.Stloc_0);
         il.Emit(OpCodes.Ldloc_0);
         il.Emit(OpCodes.Stloc_3);
-        il.Emit(OpCodes.Br, ll4);
+        il.Emit(OpCodes.Leave_S, ll4);
 
         il.EndExceptionBlock();
 
@@ -1546,62 +1547,6 @@ public static class EmitOpCodesVerifyCreator
         il.Emit(OpCodes.Ldloc_3);
         il.Emit(OpCodes.Ret);
 
-
-
-
-
-
-
-
-        //Label ll1 = il.DefineLabel();
-        //Label ll2 = il.DefineLabel();
-        //Label ll3 = il.DefineLabel();
-
-        //// try{
-        //il.BeginExceptionBlock();
-
-        //// throw new Exception("Try_Catch1 测试 异常");
-        //il.LoadString("Try_Catch4 测试 异常");
-        //il.NewObject(typeof(Exception).GetConstructor(new Type[] { typeof(string) }));
-        //il.Throw();
-        //il.GotoLeave(ll3);
-
-        //// }catch(Exception ex) when(ex.Message == "Try_Catch4 测试 异常"){
-        //// 的筛选部分
-        //il.BeginExceptFilterBlock();
-        //il.As(typeof(Exception));
-        //il.Copy();
-        //il.GotoIfTrue(ll1);
-
-        //il.Pop();
-        //il.LoadInt(0);
-        //il.Goto(ll2);
-
-        //il.MarkLabel(ll1);
-        //il.CallVirtual(typeof(Exception).GetMethod("get_Message"));
-        //il.LoadString("Try_Catch4 测试 异常");
-        //il.Call(typeof(string).GetMethod("op_Equality", new Type[] { typeof(string), typeof(string) }));
-        //il.LoadInt(0);
-        //il.CompareGreater(true);
-
-        //// 筛选完成
-        //il.MarkLabel(ll2);
-        //il.Emit(OpCodes.Endfilter);
-
-        //// 这里才是真正进入异常捕捉的部分
-        //il.BeginFaultBlock();
-
-        //il.Pop();
-        //il.LoadString("进入了一个不判断类型的异常捕捉");
-        //il.Return();
-        //il.GotoLeave(ll3);
-
-        //// }
-        //il.EndExceptionBlock();
-
-        //il.MarkLabel(ll3);
-        //il.LoadString("没有异常");
-        //il.Return();
         return methodBuilder;
     }
 
