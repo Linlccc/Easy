@@ -208,11 +208,12 @@
             object try_Catch3 = type.InvokeMember("Try_Catch3", BindingFlags.InvokeMethod, null, null, new object[] { });
             Assert.Equal("进入了一个不判断类型的异常捕捉", try_Catch3);
 
-            // Try_Catch4（还需要验证，实现）
-            //object try_Catch4 = type.InvokeMember("Try_Catch4", BindingFlags.InvokeMethod, null, null, new object[] { });
+            // Try_Catch4
+            object try_Catch4 = type.InvokeMember("Try_Catch4", BindingFlags.InvokeMethod, null, null, new object[] { });
+            Assert.Equal("123", try_Catch4);
             // 可以运行但是不能命中有筛选的异常
             object try_Catch5 = type.InvokeMember("Try_Catch5", BindingFlags.InvokeMethod, null, null, new object[] { 1, 20 });
-            //Assert.Equal("进入了一个不判断类型的异常捕捉", try_Catch4);
+            Assert.Equal(-1, try_Catch5);
             // Try_Catch_Finally1
             object Tty_Catch_Finally1 = type.InvokeMember("Try_Catch_Finally1", BindingFlags.InvokeMethod, null, null, new object[] { });
             Assert.Equal("进入了 Try      触发了 Exception 类型异常      进入了 Finally      开始返回", Tty_Catch_Finally1);

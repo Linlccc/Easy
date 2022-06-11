@@ -1475,7 +1475,7 @@ public static class EmitOpCodesVerifyCreator
         return methodBuilder;
     }
 
-    // Try_Catch4(il翻译的来的，但是不能正常运行)
+    // Try_Catch4(有筛选的try catch 块不能直接使用il翻译的)
     public static MethodBuilder DefineMethod_Try_Catch4(TypeBuilder typeBuilder)
     {
         MethodBuilder methodBuilder = typeBuilder.DefineMethod("Try_Catch4", MethodAttributes.Public | MethodAttributes.Static, typeof(string), Type.EmptyTypes);
@@ -1501,6 +1501,9 @@ public static class EmitOpCodesVerifyCreator
         il.Emit(OpCodes.Ldstr, "2");
         il.Emit(OpCodes.Stloc_0);
         il.Emit(OpCodes.Nop);
+        il.Emit(OpCodes.Ldstr, "123");
+        il.Emit(OpCodes.Newobj, typeof(Exception).GetConstructor(new Type[] { typeof(string) }));
+        il.Emit(OpCodes.Throw);
         il.Emit(OpCodes.Leave_S, ll1);
 
         il.BeginExceptFilterBlock();
@@ -1524,25 +1527,14 @@ public static class EmitOpCodesVerifyCreator
         il.Emit(OpCodes.Cgt_Un);
 
         il.MarkLabel(ll3);
-        //il.Emit(OpCodes.Endfilter);
+        //il.Emit(OpCodes.Endfilter);//不能添加该指令，会出错
 
-        il.BeginFaultBlock();
-        il.Emit(OpCodes.Pop);
-        il.Emit(OpCodes.Nop);
-        il.Emit(OpCodes.Ldstr, "3");
+        il.BeginCatchBlock(null);
+        il.Emit(OpCodes.Callvirt, typeof(Exception).GetMethod("get_Message"));
         il.Emit(OpCodes.Stloc_0);
         il.Emit(OpCodes.Ldloc_0);
         il.Emit(OpCodes.Stloc_3);
-        il.Emit(OpCodes.Leave_S, ll4);
-
-        il.BeginFaultBlock();
-        il.Emit(OpCodes.Pop);
-        il.Emit(OpCodes.Nop);
-        il.Emit(OpCodes.Ldstr, "5");
-        il.Emit(OpCodes.Stloc_0);
-        il.Emit(OpCodes.Ldloc_0);
-        il.Emit(OpCodes.Stloc_3);
-        il.Emit(OpCodes.Leave_S, ll4);
+        il.Emit(OpCodes.Br, ll4);
 
         il.EndExceptionBlock();
 
