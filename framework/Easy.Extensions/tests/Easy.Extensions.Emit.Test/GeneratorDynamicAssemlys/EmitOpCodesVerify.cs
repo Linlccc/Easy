@@ -266,6 +266,7 @@ public static class EmitOpCodesVerifyCreator
         DefineMethod_Try_Catch3(typeBuilder);
         // Try_Catch4
         DefineMethod_Try_Catch4(typeBuilder);
+        DefineMethod_Try_Catch5(typeBuilder);
         // Try_Catch_Finally1
         DefineMethod_Try_Catch_Finally1(typeBuilder);
 
@@ -1474,7 +1475,7 @@ public static class EmitOpCodesVerifyCreator
         return methodBuilder;
     }
 
-    // Try_Catch4(还需要验证)
+    // Try_Catch4(il翻译的来的，但是不能正常运行)
     public static MethodBuilder DefineMethod_Try_Catch4(TypeBuilder typeBuilder)
     {
         MethodBuilder methodBuilder = typeBuilder.DefineMethod("Try_Catch4", MethodAttributes.Public | MethodAttributes.Static, typeof(string), Type.EmptyTypes);
@@ -1534,6 +1535,15 @@ public static class EmitOpCodesVerifyCreator
         il.Emit(OpCodes.Stloc_3);
         il.Emit(OpCodes.Leave_S, ll4);
 
+        il.BeginFaultBlock();
+        il.Emit(OpCodes.Pop);
+        il.Emit(OpCodes.Nop);
+        il.Emit(OpCodes.Ldstr, "5");
+        il.Emit(OpCodes.Stloc_0);
+        il.Emit(OpCodes.Ldloc_0);
+        il.Emit(OpCodes.Stloc_3);
+        il.Emit(OpCodes.Leave_S, ll4);
+
         il.EndExceptionBlock();
 
         il.MarkLabel(ll1);
@@ -1548,6 +1558,92 @@ public static class EmitOpCodesVerifyCreator
         il.Emit(OpCodes.Ret);
 
         return methodBuilder;
+    }
+
+    // 虽然可以正常运行，但是不能命中有筛选的错误
+    public static MethodBuilder DefineMethod_Try_Catch5(TypeBuilder typeBuilder)
+    {
+        // Define method to add two numbers.
+        MethodBuilder myMethodBuilder = typeBuilder.DefineMethod("Try_Catch5", MethodAttributes.Public | MethodAttributes.Static, typeof(int), new Type[] { typeof(int), typeof(int) });
+        ILGenerator myAdderIL = myMethodBuilder.GetILGenerator();
+
+        // Create constructor.
+        ConstructorInfo myConstructorInfo = typeof(OverflowException).GetConstructor(
+           new Type[] { typeof(string) });
+        MethodInfo myExToStrMI = typeof(OverflowException).GetMethod("ToString");
+        MethodInfo myWriteLineMI = typeof(Console).GetMethod("WriteLine", new Type[]
+           {typeof(string),typeof(object)});
+
+        // Declare local variable.
+        LocalBuilder myLocalBuilder1 = myAdderIL.DeclareLocal(typeof(int));
+        LocalBuilder myLocalBuilder2 = myAdderIL.DeclareLocal(typeof(OverflowException));
+
+        // Define label.
+        Label myFailedLabel = myAdderIL.DefineLabel();
+        Label myEndOfMethodLabel = myAdderIL.DefineLabel();
+
+        // Begin exception block.
+        Label myLabel = myAdderIL.BeginExceptionBlock();
+
+        myAdderIL.Emit(OpCodes.Ldarg_0);
+        myAdderIL.Emit(OpCodes.Ldc_I4_S, 10);
+        myAdderIL.Emit(OpCodes.Bgt_S, myFailedLabel);
+
+        myAdderIL.Emit(OpCodes.Ldarg_1);
+        myAdderIL.Emit(OpCodes.Ldc_I4_S, 10);
+        myAdderIL.Emit(OpCodes.Bgt_S, myFailedLabel);
+
+        myAdderIL.Emit(OpCodes.Ldarg_0);
+        myAdderIL.Emit(OpCodes.Ldarg_1);
+        myAdderIL.Emit(OpCodes.Add_Ovf_Un);
+        myAdderIL.Emit(OpCodes.Stloc_S, myLocalBuilder1);
+        myAdderIL.Emit(OpCodes.Br_S, myEndOfMethodLabel);
+
+        myAdderIL.MarkLabel(myFailedLabel);
+        myAdderIL.Emit(OpCodes.Ldstr, "Cannot accept values over 10 for add.");
+        myAdderIL.Emit(OpCodes.Newobj, myConstructorInfo);
+
+        myAdderIL.Emit(OpCodes.Stloc_S, myLocalBuilder2);
+        myAdderIL.Emit(OpCodes.Ldloc_S, myLocalBuilder2);
+
+        // Throw the exception.
+        myAdderIL.ThrowException(typeof(OverflowException));
+
+        // Call 'BeginExceptFilterBlock'.
+        myAdderIL.BeginExceptFilterBlock();
+        myAdderIL.EmitWriteLine("Except filter block called.");
+        myAdderIL.Emit(OpCodes.Ldc_I4_1);
+
+        // Call catch block.
+        myAdderIL.BeginCatchBlock(null);
+        myAdderIL.Emit(OpCodes.Ldarg_0);
+        myAdderIL.Emit(OpCodes.Ldarg_1);
+        myAdderIL.Emit(OpCodes.Sub);
+        myAdderIL.Emit(OpCodes.Stloc_S, myLocalBuilder1);
+        myAdderIL.Emit(OpCodes.Leave, myEndOfMethodLabel);
+
+        // Call other catch block.
+        myAdderIL.BeginCatchBlock(typeof(OverflowException));
+
+        myAdderIL.Emit(OpCodes.Ldstr, "{0}");
+        myAdderIL.Emit(OpCodes.Ldloc_S, myLocalBuilder2);
+        myAdderIL.EmitCall(OpCodes.Callvirt, myExToStrMI, null);
+        myAdderIL.EmitCall(OpCodes.Call, myWriteLineMI, null);
+        myAdderIL.Emit(OpCodes.Ldc_I4_M1);
+        myAdderIL.Emit(OpCodes.Stloc_S, myLocalBuilder1);
+
+        // Call finally block.
+        myAdderIL.BeginFinallyBlock();
+        myAdderIL.EmitWriteLine("Finally block called.");
+
+        // End the exception block.
+        myAdderIL.EndExceptionBlock();
+
+        myAdderIL.MarkLabel(myEndOfMethodLabel);
+        myAdderIL.Emit(OpCodes.Ldloc_S, myLocalBuilder1);
+        myAdderIL.Emit(OpCodes.Ret);
+
+        return myMethodBuilder;
     }
 
     // Try_Catch_Finally1
