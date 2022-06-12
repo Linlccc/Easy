@@ -12,11 +12,9 @@ public static partial class ILGeneratorExtensions
      *  3.1. 指针类型,是一种数据类型 比如:int*(int指针类型)
      *  3.2. 指针变量,是一个变量,指针变量的值是一个地址,指针变量也有自己的地址
      * 4.native int 就是C#中的 IntPtr
-     * 
-     * 
-     * ** 问题
-     * 1.不知道怎么使用指令来写try-catch
      */
+
+
 
     #region 加载/推送(将指定的值推送到计算堆栈)
     #region 变量
@@ -26,18 +24,17 @@ public static partial class ILGeneratorExtensions
     /// <param name="iLGenerator">中间语言指令生成器</param>
     /// <param name="index">
     /// <list type="bullet">
-    /// 参数索引
+    ///     <item>参数索引 </item>
     ///     <item>
     ///         <term>实例方法</term>
-    ///         <description>0是当前实例,1是第一个参数</description>
-    ///     </item>
-    ///     <item>
+    ///         <description>0是当前实例,1是第一个参数</description><br/>
+    ///         
     ///         <term>静态方法</term>
     ///         <description>0是第一个参数</description>
     ///     </item>
     /// </list>
     /// </param>
-    public static void LoadArg(this ILGenerator iLGenerator!!, int index = 0)
+    public static void LoadArg(this ILGenerator iLGenerator!!, UInt16 index = 0)
     {
         switch (index)
         {
@@ -45,7 +42,7 @@ public static partial class ILGeneratorExtensions
             case 1: iLGenerator.Emit(OpCodes.Ldarg_1); return;
             case 2: iLGenerator.Emit(OpCodes.Ldarg_2); return;
             case 3: iLGenerator.Emit(OpCodes.Ldarg_3); return;
-            case <= byte.MaxValue: iLGenerator.Emit(OpCodes.Ldarg_S, index); return;
+            case <= byte.MaxValue: iLGenerator.Emit(OpCodes.Ldarg_S, (byte)index); return;
             default: iLGenerator.Emit(OpCodes.Ldarg, index); return;
         }
     }
@@ -61,7 +58,7 @@ public static partial class ILGeneratorExtensions
     /// 推送局部变量
     /// </summary>
     /// <param name="iLGenerator">中间语言指令生成器</param>
-    /// <param name="localBuilder">局部变量</param>
+    /// <param name="localBuilder">局部变量构建器</param>
     public static void LoadLocal(this ILGenerator iLGenerator!!, LocalBuilder localBuilder!!)
     {
         switch (localBuilder.LocalIndex)
@@ -78,24 +75,24 @@ public static partial class ILGeneratorExtensions
     /// 推送索引处局部变量
     /// </summary>
     /// <param name="iLGenerator">中间语言指令生成器</param>
-    /// <param name="localIndex">局部变量索引</param>
-    public static void LoadLocal(this ILGenerator iLGenerator!!, int localIndex)
+    /// <param name="index">局部变量索引</param>
+    public static void LoadLocal(this ILGenerator iLGenerator!!, UInt16 index)
     {
-        switch (localIndex)
+        switch (index)
         {
             case 0: iLGenerator.Emit(OpCodes.Ldloc_0); return;
             case 1: iLGenerator.Emit(OpCodes.Ldloc_1); return;
             case 2: iLGenerator.Emit(OpCodes.Ldloc_2); return;
             case 3: iLGenerator.Emit(OpCodes.Ldloc_3); return;
-            case <= byte.MaxValue: iLGenerator.Emit(OpCodes.Ldloc_S, localIndex); return;
-            default: iLGenerator.Emit(OpCodes.Ldloc, localIndex); return;
+            case <= byte.MaxValue: iLGenerator.Emit(OpCodes.Ldloc_S, (byte)index); return;
+            default: iLGenerator.Emit(OpCodes.Ldloc, index); return;
         }
     }
 
     /// <summary>
     /// 推送字段
     /// <list type="bullet">
-    ///     <item>1.推送字段的对象引用/指针(静态字段忽略)</item>
+    ///     <item>1.推送字段的对象引用(或指针)【静态字段忽略】</item>
     /// </list>
     /// </summary>
     /// <param name="iLGenerator">中间语言指令生成器</param>
@@ -109,7 +106,7 @@ public static partial class ILGeneratorExtensions
     /// <summary>
     /// 推送堆栈顶部值的长度
     /// <list type="bullet">
-    ///     <item>1.推送 <see cref="Array"/>\<see cref="String"/> 等有 Length 的值</item>
+    ///     <item>1.推送 <see cref="Array"/>\<see cref="String"/> 等有"Length"属性的值</item>
     /// </list>
     /// </summary>
     /// <param name="iLGenerator">中间语言指令生成器</param>
@@ -118,66 +115,46 @@ public static partial class ILGeneratorExtensions
 
     #region 数组
     /// <summary>
-    /// 推送 <paramref name="arrayType"/> 类型数组中索引处的值
+    /// 推送 <paramref name="type"/> 类型数组中索引处的值
     /// <list type="bullet">
     ///     <item>1.推送数组</item>
     ///     <item>2.推送索引</item>
     /// </list>
     /// </summary>
     /// <param name="iLGenerator">中间语言指令生成器</param>
-    /// <param name="arrayType">数组类型,如果是引用类型可以忽略该参数</param>
-    public static void LoadArrayIndexValue(this ILGenerator iLGenerator!!, Type? arrayType = null)
+    /// <param name="type">数组类型,如果是引用类型可以忽略该参数</param>
+    public static void LoadArrayIndexValue(this ILGenerator iLGenerator!!, Type? type = null)
     {
-        if (arrayType is null) iLGenerator.Emit(OpCodes.Ldelem_Ref);
-        else iLGenerator.Emit(OpCodes.Ldelem, arrayType);
+        // 整数
+        if (type == typeof(IntPtr)) iLGenerator.Emit(OpCodes.Ldelem_I);
 
-    }
+        else if (type == typeof(SByte)) iLGenerator.Emit(OpCodes.Ldelem_I1);
+        else if (type == typeof(Byte)) iLGenerator.Emit(OpCodes.Ldelem_U1);
 
-    /// <summary>
-    /// 推送 <paramref name="integerType"/> 类型数组中索引处的值
-    /// <list type="bullet">
-    ///     <item>1.推送数组</item>
-    ///     <item>1.推送索引</item>
-    /// </list>
-    /// </summary>
-    /// <param name="iLGenerator">中间语言指令生成器</param>
-    /// <param name="integerType">整数类型</param>
-    public static void GetArrayIndexInteger(this ILGenerator iLGenerator!!, Type integerType!!)
-    {
-        if (integerType == typeof(IntPtr)) iLGenerator.Emit(OpCodes.Ldelem_I);
+        else if (type == typeof(Int16)) iLGenerator.Emit(OpCodes.Ldelem_I2);
+        else if (type == typeof(UInt16)) iLGenerator.Emit(OpCodes.Ldelem_U2);
 
-        else if (integerType == typeof(SByte)) iLGenerator.Emit(OpCodes.Ldelem_I1);
-        else if (integerType == typeof(Byte)) iLGenerator.Emit(OpCodes.Ldelem_U1);
+        else if (type == typeof(Int32)) iLGenerator.Emit(OpCodes.Ldelem_I4);
+        else if (type == typeof(UInt32)) iLGenerator.Emit(OpCodes.Ldelem_U4);
 
-        else if (integerType == typeof(Int16)) iLGenerator.Emit(OpCodes.Ldelem_I2);
-        else if (integerType == typeof(UInt16)) iLGenerator.Emit(OpCodes.Ldelem_U2);
+        else if (type == typeof(Int64)) iLGenerator.Emit(OpCodes.Ldelem_I8);
 
-        else if (integerType == typeof(Int32)) iLGenerator.Emit(OpCodes.Ldelem_I4);
-        else if (integerType == typeof(UInt32)) iLGenerator.Emit(OpCodes.Ldelem_U4);
+        // 浮点数
+        else if (type == typeof(Single)) iLGenerator.Emit(OpCodes.Ldelem_R4);
+        else if (type == typeof(Double)) iLGenerator.Emit(OpCodes.Ldelem_R8);
 
-        else if (integerType == typeof(Int64)) iLGenerator.Emit(OpCodes.Ldelem_I8);
-        else throw new ArgumentException(Strings.InvalidParameter, nameof(integerType));
+        // 应用类型
+        else if (type is null) iLGenerator.Emit(OpCodes.Ldelem_Ref);
+        else iLGenerator.Emit(OpCodes.Ldelem, type);
 
-    }
-
-    /// <summary>
-    /// 推送 <paramref name="floatType"/> 类型数组中索引处的值
-    /// <list type="bullet">
-    ///     <item>1.推送数组</item>
-    ///     <item>1.推送索引</item>
-    /// </list>
-    /// </summary>
-    /// <param name="iLGenerator">中间语言指令生成器</param>
-    /// <param name="floatType">浮点类型</param>
-    public static void GetArrayIndexFloat(this ILGenerator iLGenerator!!, Type floatType!!)
-    {
-        if (floatType == typeof(Single)) iLGenerator.Emit(OpCodes.Ldelem_R4);
-        else if (floatType == typeof(Double)) iLGenerator.Emit(OpCodes.Ldelem_R8);
-        else throw new ArgumentException(Strings.InvalidParameter, nameof(floatType));
     }
 
     /// <summary>
     /// 推送 <paramref name="arrayType"/> 类型数组中索引处值的地址
+    /// <list type="bullet">
+    ///     <item>1.推送数组</item>
+    ///     <item>2.推送索引</item>
+    /// </list>
     /// </summary>
     /// <param name="iLGenerator">中间语言指令生成器</param>
     /// <param name="arrayType">数组类型</param>
@@ -190,11 +167,11 @@ public static partial class ILGeneratorExtensions
     /// </summary>
     /// <param name="iLGenerator">中间语言指令生成器</param>
     /// <param name="index">参数索引</param>
-    public static void LoadArgAddr(this ILGenerator iLGenerator!!, int index)
+    public static void LoadArgAddr(this ILGenerator iLGenerator!!, UInt16 index)
     {
         switch (index)
         {
-            case <= byte.MaxValue: iLGenerator.Emit(OpCodes.Ldarga_S, index); return;
+            case <= byte.MaxValue: iLGenerator.Emit(OpCodes.Ldarga_S, (byte)index); return;
             default: iLGenerator.Emit(OpCodes.Ldarga, index); return;
         }
     }
@@ -204,11 +181,11 @@ public static partial class ILGeneratorExtensions
     /// </summary>
     /// <param name="iLGenerator">中间语言指令生成器</param>
     /// <param name="index">局部变量索引</param>
-    public static void LoadLocalAddr(this ILGenerator iLGenerator!!, int index)
+    public static void LoadLocalAddr(this ILGenerator iLGenerator!!, UInt16 index)
     {
         switch (index)
         {
-            case <= byte.MaxValue: iLGenerator.Emit(OpCodes.Ldloca_S, index); return;
+            case <= byte.MaxValue: iLGenerator.Emit(OpCodes.Ldloca_S, (byte)index); return;
             default: iLGenerator.Emit(OpCodes.Ldloca, index); return;
         }
     }
@@ -216,7 +193,7 @@ public static partial class ILGeneratorExtensions
     /// <summary>
     /// 推送字段地址
     /// <list type="bullet">
-    ///     <item>1.推送字段的对象引用/指针(静态字段忽略)</item>
+    ///     <item>1.推送字段的对象引用(或指针)【静态字段忽略】</item>
     /// </list>
     /// </summary>
     /// <param name="iLGenerator">中间语言指令生成器</param>
@@ -230,60 +207,41 @@ public static partial class ILGeneratorExtensions
 
     #region 地址To值
     /// <summary>
-    /// 推送堆栈顶部地址处的 <paramref name="valueType"/>(值类型) 类型的值<br/>
-    /// TODO: 不确定是否只是值类型可用
+    /// 推送堆栈顶部地址处 <paramref name="type"/> 类型的值<br/>
     /// </summary>
     /// <param name="iLGenerator">中间语言指令生成器</param>
-    /// <param name="valueType">值类型</param>
-    public static void LoadAddrValue(this ILGenerator iLGenerator!!, Type valueType!!) => iLGenerator.Emit(OpCodes.Ldobj, valueType);
-
-    /// <summary>
-    /// 推送堆栈顶部地址处的 <paramref name="intererType"/>(整数类型) 类型的值
-    /// </summary>
-    /// <param name="iLGenerator">中间语言指令生成器</param>
-    /// <param name="intererType">整数类型</param>
-    public static void LoadAddrInteger(this ILGenerator iLGenerator!!, Type intererType!!)
+    /// <param name="type">数据类型,如果是引用类型可以忽略该参数</param>
+    public static void LoadAddrValue(this ILGenerator iLGenerator!!, Type? type = null)
     {
-        if (intererType == typeof(IntPtr)) iLGenerator.Emit(OpCodes.Ldind_I);
+        // 整数
+        if (type == typeof(IntPtr)) iLGenerator.Emit(OpCodes.Ldind_I);
 
-        else if (intererType == typeof(SByte)) iLGenerator.Emit(OpCodes.Ldind_I1);
-        else if (intererType == typeof(Byte)) iLGenerator.Emit(OpCodes.Ldind_U1);
+        else if (type == typeof(SByte)) iLGenerator.Emit(OpCodes.Ldind_I1);
+        else if (type == typeof(Byte)) iLGenerator.Emit(OpCodes.Ldind_U1);
 
-        else if (intererType == typeof(Int16)) iLGenerator.Emit(OpCodes.Ldind_I2);
-        else if (intererType == typeof(UInt16)) iLGenerator.Emit(OpCodes.Ldind_U2);
+        else if (type == typeof(Int16)) iLGenerator.Emit(OpCodes.Ldind_I2);
+        else if (type == typeof(UInt16)) iLGenerator.Emit(OpCodes.Ldind_U2);
 
-        else if (intererType == typeof(Int32)) iLGenerator.Emit(OpCodes.Ldind_I4);
-        else if (intererType == typeof(UInt32)) iLGenerator.Emit(OpCodes.Ldind_U4);
+        else if (type == typeof(Int32)) iLGenerator.Emit(OpCodes.Ldind_I4);
+        else if (type == typeof(UInt32)) iLGenerator.Emit(OpCodes.Ldind_U4);
 
-        else if (intererType == typeof(Int64)) iLGenerator.Emit(OpCodes.Ldind_I8);
+        else if (type == typeof(Int64)) iLGenerator.Emit(OpCodes.Ldind_I8);
 
-        else throw new ArgumentException(Strings.InvalidParameter, nameof(intererType));
+        // 浮点数
+        else if (type == typeof(Single)) iLGenerator.Emit(OpCodes.Ldind_R4);
+        else if (type == typeof(Double)) iLGenerator.Emit(OpCodes.Ldind_R8);
+
+        // 引用类型
+        else if (type is null) iLGenerator.Emit(OpCodes.Ldind_Ref);
+        else iLGenerator.Emit(OpCodes.Ldobj, type);
     }
-
-    /// <summary>
-    /// 推送堆栈顶部地址处的 <paramref name="floatType"/>(浮点类型) 类型的值
-    /// </summary>
-    /// <param name="iLGenerator">中间语言指令生成器</param>
-    /// <param name="floatType">浮点类型</param>
-    public static void LoadAddrFloat(this ILGenerator iLGenerator!!, Type floatType!!)
-    {
-        if (floatType == typeof(Single)) iLGenerator.Emit(OpCodes.Ldind_R4);
-        else if (floatType == typeof(Double)) iLGenerator.Emit(OpCodes.Ldind_R8);
-        else throw new ArgumentException(Strings.InvalidParameter, nameof(floatType));
-    }
-
-    /// <summary>
-    /// 推送堆栈顶部地址处的引用类型的对象
-    /// </summary>
-    /// <param name="iLGenerator">中间语言指令生成器</param>
-    public static void LoadAddrObject(this ILGenerator iLGenerator!!) => iLGenerator.Emit(OpCodes.Ldind_Ref);
     #endregion
 
     #region 指针
     /// <summary>
     /// 推送方法指针
     /// <list type="bullet">
-    ///     <item>1.推送实例(非虚方法忽略)</item>
+    ///     <item>1.推送虚方法的对象引用【非虚方法忽略】</item>
     /// </list>
     /// </summary>
     /// <param name="iLGenerator">中间语言指令生成器</param>
@@ -297,12 +255,18 @@ public static partial class ILGeneratorExtensions
 
     #region 常量
     /// <summary>
-    /// 推送 <see cref="Int32"/> / <see cref="Int16"/> / <see cref="byte"/> 数字常量
+    /// 推送 <see cref="Int32"/> / <see cref="Int16"/> / <see cref="SByte"/> 数字常量
     /// </summary>
     /// <param name="iLGenerator">中间语言指令生成器</param>
     /// <param name="value">要推送的数字常量</param>
     public static void LoadInt(this ILGenerator iLGenerator!!, int value)
     {
+        if (value >= sbyte.MinValue && value <= sbyte.MaxValue)
+        {
+            iLGenerator.Emit(OpCodes.Ldc_I4_S, (sbyte)value);
+            return;
+        }
+
         switch (value)
         {
             case -1: iLGenerator.Emit(OpCodes.Ldc_I4_M1); return;
@@ -315,7 +279,6 @@ public static partial class ILGeneratorExtensions
             case 6: iLGenerator.Emit(OpCodes.Ldc_I4_6); return;
             case 7: iLGenerator.Emit(OpCodes.Ldc_I4_7); return;
             case 8: iLGenerator.Emit(OpCodes.Ldc_I4_8); return;
-            case <= byte.MaxValue: iLGenerator.Emit(OpCodes.Ldc_I4_S, value); return;
             default: iLGenerator.Emit(OpCodes.Ldc_I4, value); return;
         }
     }
@@ -384,11 +347,11 @@ public static partial class ILGeneratorExtensions
     /// </summary>
     /// <param name="iLGenerator">中间语言指令生成器</param>
     /// <param name="index">参数索引</param>
-    public static void SetArg(this ILGenerator iLGenerator!!, int index = 0)
+    public static void SetArg(this ILGenerator iLGenerator!!, UInt16 index = 0)
     {
         switch (index)
         {
-            case <= byte.MaxValue: iLGenerator.Emit(OpCodes.Starg_S, index); return;
+            case <= byte.MaxValue: iLGenerator.Emit(OpCodes.Starg_S, (byte)index); return;
             default: iLGenerator.Emit(OpCodes.Starg, index); return;
         }
     }
@@ -415,7 +378,7 @@ public static partial class ILGeneratorExtensions
     /// </summary>
     /// <param name="iLGenerator">中间语言指令生成器</param>
     /// <param name="localIndex">局部变量索引</param>
-    public static void SetLocal(this ILGenerator iLGenerator!!, int localIndex)
+    public static void SetLocal(this ILGenerator iLGenerator!!, UInt16 localIndex)
     {
         switch (localIndex)
         {
@@ -423,7 +386,7 @@ public static partial class ILGeneratorExtensions
             case 1: iLGenerator.Emit(OpCodes.Stloc_1); return;
             case 2: iLGenerator.Emit(OpCodes.Stloc_2); return;
             case 3: iLGenerator.Emit(OpCodes.Stloc_3); return;
-            case <= byte.MaxValue: iLGenerator.Emit(OpCodes.Stloc_S, localIndex); return;
+            case <= byte.MaxValue: iLGenerator.Emit(OpCodes.Stloc_S, (byte)localIndex); return;
             default: iLGenerator.Emit(OpCodes.Stloc, localIndex); return;
         }
     }
@@ -431,7 +394,7 @@ public static partial class ILGeneratorExtensions
     /// <summary>
     /// 将堆栈顶部的值赋值给指定的字段
     /// <list type="bullet">
-    ///     <item>1.推送字段的对象引用/指针(静态字段忽略)</item>
+    ///     <item>1.推送字段的对象引用(或指针)【静态字段忽略】</item>
     ///     <item>2.推送值</item>
     /// </list>
     /// </summary>
@@ -455,7 +418,7 @@ public static partial class ILGeneratorExtensions
     /// <param name="valueType">值类型,如果是引用类型可以忽略</param>
     public static void SetArray(this ILGenerator iLGenerator!!, Type? valueType = null)
     {
-        if (valueType is null) iLGenerator.Emit(OpCodes.Stelem_Ref);// 值支持引用类型
+        if (valueType is null) iLGenerator.Emit(OpCodes.Stelem_Ref);// 只支持引用类型
         else if (valueType == typeof(IntPtr)) iLGenerator.Emit(OpCodes.Stelem_I);// native int
         else if (valueType == typeof(SByte)) iLGenerator.Emit(OpCodes.Stelem_I1);// int8
         else if (valueType == typeof(Int16)) iLGenerator.Emit(OpCodes.Stelem_I2);
@@ -478,7 +441,7 @@ public static partial class ILGeneratorExtensions
     /// <param name="valueType">值类型,如果是引用类型可以忽略</param>
     public static void SetValueToAddr(this ILGenerator iLGenerator!!, Type? valueType = null)
     {
-        if (valueType is null) iLGenerator.Emit(OpCodes.Stind_Ref);// 值支持引用类型
+        if (valueType is null) iLGenerator.Emit(OpCodes.Stind_Ref);// 只支持引用类型
         else if (valueType == typeof(IntPtr)) iLGenerator.Emit(OpCodes.Stind_I);// native int
         else if (valueType == typeof(SByte)) iLGenerator.Emit(OpCodes.Stind_I1);// int8
         else if (valueType == typeof(Int16)) iLGenerator.Emit(OpCodes.Stind_I2);
@@ -720,7 +683,7 @@ public static partial class ILGeneratorExtensions
     /// <param name="returnType">方法的返回类型</param>
     /// <param name="parameterTypes">方法的参数类型数组</param>
     /// <param name="optionalParameterTypes">可变参数类型数组</param>
-    public static void Calli(this ILGenerator iLGenerator!!, CallingConventions callingConvention, Type returnType, Type[] parameterTypes, params Type[] optionalParameterTypes) => iLGenerator.EmitCalli(OpCodes.Calli, callingConvention, returnType, parameterTypes, optionalParameterTypes);
+    public static void Calli(this ILGenerator iLGenerator!!, CallingConventions callingConvention, Type returnType!!, Type[] parameterTypes, params Type[] optionalParameterTypes) => iLGenerator.EmitCalli(OpCodes.Calli, callingConvention, returnType, parameterTypes, optionalParameterTypes);
 
 #if !NETSTANDARD2_0
     /// <summary>
@@ -735,7 +698,7 @@ public static partial class ILGeneratorExtensions
     /// <param name="callingConvention">方法调用约定</param>
     /// <param name="returnType">方法的返回类型</param>
     /// <param name="parameterTypes">方法的参数类型数组</param>
-    public static void Calli(this ILGenerator iLGenerator!!, Runtime.InteropServices.CallingConvention callingConvention, Type returnType, params Type[] parameterTypes) => iLGenerator.EmitCalli(OpCodes.Calli, callingConvention, returnType, parameterTypes);
+    public static void Calli(this ILGenerator iLGenerator!!, Runtime.InteropServices.CallingConvention callingConvention, Type returnType!!, params Type[] parameterTypes) => iLGenerator.EmitCalli(OpCodes.Calli, callingConvention, returnType, parameterTypes);
 #endif
     #endregion
     #endregion
@@ -899,7 +862,7 @@ public static partial class ILGeneratorExtensions
     /// </summary>
     /// <param name="iLGenerator">中间语言指令生成器</param>
     /// <param name="labels">跳转标签集合</param>
-    public static void Switch(this ILGenerator iLGenerator!!, Label[] labels) => iLGenerator.Emit(OpCodes.Switch, labels);
+    public static void Switch(this ILGenerator iLGenerator!!, Label[] labels!!) => iLGenerator.Emit(OpCodes.Switch, labels);
     #endregion
 
     #region 类型转换
@@ -952,7 +915,7 @@ public static partial class ILGeneratorExtensions
     /// <param name="iLGenerator">中间语言指令生成器</param>
     /// <param name="integerType">整数类型</param>
     /// <param name="isOverflowCheck">是否检查溢出,如果 <paramref name="integerType"/> 是无符号类型,将自动启用溢出检查</param>
-    public static void ConvertInteger(this ILGenerator iLGenerator!!, Type integerType, bool isOverflowCheck = false)
+    public static void ConvertInteger(this ILGenerator iLGenerator!!, Type integerType!!, bool isOverflowCheck = false)
     {
         if (integerType == typeof(IntPtr)) { if (!isOverflowCheck) iLGenerator.Emit(OpCodes.Conv_I); else iLGenerator.Emit(OpCodes.Conv_Ovf_I); } // 有符号转有符号
         else if (integerType == typeof(UIntPtr)) iLGenerator.Emit(OpCodes.Conv_Ovf_I_Un); //无符号转有符号
@@ -978,7 +941,7 @@ public static partial class ILGeneratorExtensions
     /// <param name="iLGenerator">中间语言指令生成器</param>
     /// <param name="integerType">整数类型</param>
     /// <param name="isOverflowCheck">是否检查溢出,如果 <paramref name="integerType"/> 是无符号类型,将自动启用溢出检查</param>
-    public static void ConvertUnsignedInteger(this ILGenerator iLGenerator!!, Type integerType, bool isOverflowCheck = false)
+    public static void ConvertUnsignedInteger(this ILGenerator iLGenerator!!, Type integerType!!, bool isOverflowCheck = false)
     {
         if (integerType == typeof(IntPtr)) { if (!isOverflowCheck) iLGenerator.Emit(OpCodes.Conv_U); else iLGenerator.Emit(OpCodes.Conv_Ovf_U); } // 有符号转无符号
         else if (integerType == typeof(UIntPtr)) iLGenerator.Emit(OpCodes.Conv_Ovf_U_Un); //无符号转无符号
@@ -1040,25 +1003,28 @@ public static partial class ILGeneratorExtensions
     public static void ReThrow(this ILGenerator iLGenerator!!) => iLGenerator.Emit(OpCodes.Rethrow);
     #endregion
 
+    #region Try Catch Finally
     /// <summary>
-    /// 方法结束，如果有返回值推送返回值
+    /// 异常筛选完成
+    /// <br>该指令不应自己添加,<see cref="ILGenerator.BeginCatchBlock(Type)"/> 方法中自动添加,手动添加会又异常</br>
     /// </summary>
-    /// <param name="iLGenerator">中间语言指令生成器</param>
-    public static void Return(this ILGenerator iLGenerator!!) => iLGenerator.Emit(OpCodes.Ret);
+    /// <param name="iLGenerator"></param>
+    public static void EndFilter(this ILGenerator iLGenerator!!) => iLGenerator.Emit(OpCodes.Endfilter);
 
+    /// <summary>
+    /// Finally 块完成
+    /// <br>该指令可以忽略</br>
+    /// </summary>
+    /// <param name="iLGenerator"></param>
+    public static void EndFinally(this ILGenerator iLGenerator!!) => iLGenerator.Emit(OpCodes.Endfinally);
+    #endregion
+
+    #region 复制
     /// <summary>
     /// 复制堆栈顶部的值,并推送原值和副本
     /// </summary>
     /// <param name="iLGenerator">中间语言指令生成器</param>
     public static void Copy(this ILGenerator iLGenerator!!) => iLGenerator.Emit(OpCodes.Dup);
-
-    /// <summary>
-    /// 推出当前方法并跳至指定方法
-    /// <br>直接转移到指定方法,要求跳转的方法和当前方法有相同的签名</br>
-    /// </summary>
-    /// <param name="iLGenerator">中间语言指令生成器</param>
-    /// <param name="methodInfo">要跳转的方法,和当前方法签名一致</param>
-    public static void Jmp(this ILGenerator iLGenerator!!, MethodInfo methodInfo!!) => iLGenerator.Emit(OpCodes.Jmp, methodInfo);
 
     /// <summary>
     /// 复制地址的值到指定地址
@@ -1070,70 +1036,9 @@ public static partial class ILGeneratorExtensions
     /// </summary>
     /// <param name="iLGenerator">中间语言指令生成器</param>
     public static void CopyAddrValueToAddr(this ILGenerator iLGenerator!!) => iLGenerator.Emit(OpCodes.Cpblk);
+    #endregion
 
-    /// <summary>
-    /// 计算 <paramref name="valType"/>(值类型) 类型的大小(byte 字节为单位),并推送结果
-    /// </summary>
-    /// <param name="iLGenerator">中间语言指令生成器</param>
-    /// <param name="valType">值类型</param>
-    public static void SizeOf(this ILGenerator iLGenerator!!, Type valType!!) => iLGenerator.Emit(OpCodes.Sizeof, valType);
-
-    /// <summary>
-    /// 推送 <paramref name="token"/> 的运行时句柄
-    /// </summary>
-    /// <typeparam name="T"><see cref="Type"/> / <seealso cref="FieldInfo"/> / <seealso cref="MethodInfo"/></typeparam>
-    /// <param name="iLGenerator">中间语言指令生成器</param>
-    /// <param name="token">获取运行时句柄的token</param>
-    public static void LoadRuntimeHandle<T>(this ILGenerator iLGenerator!!, T token!!) where T : MemberInfo
-    {
-        if (typeof(T) == typeof(Type)) iLGenerator.Emit(OpCodes.Ldtoken, (token as Type)!);
-        else if (typeof(T) == typeof(FieldInfo)) iLGenerator.Emit(OpCodes.Ldtoken, (token as FieldInfo)!);
-        else if (typeof(T) == typeof(MethodInfo)) iLGenerator.Emit(OpCodes.Ldtoken, (token as MethodInfo)!);
-    }
-
-    /// <summary>
-    /// 移除堆栈顶部的值
-    /// </summary>
-    /// <param name="iLGenerator">中间语言指令生成器</param>
-    public static void Pop(this ILGenerator iLGenerator!!) => iLGenerator.Emit(OpCodes.Pop);
-
-    /// <summary>
-    /// 在本地动态内存池分配指定数目的字节,并推送第一个字节的地址
-    /// <list type="bullet">
-    ///     <item>1.推送要分配的字节数</item>
-    /// </list>
-    /// </summary>
-    /// <param name="iLGenerator">中间语言指令生成器</param>
-    public static void Localloc(this ILGenerator iLGenerator!!) => iLGenerator.Emit(OpCodes.Localloc);
-
-    /// <summary>
-    /// 为指定地址开始的字节数设置初始值(每一个字节最大值是255)
-    /// <list type="bullet">
-    ///     <item>1.推送起始地址</item>
-    ///     <item>2.推送初始值(最大255)</item>
-    ///     <item>3.推送要设置初始值的字节数</item>
-    /// </list>
-    /// </summary>
-    /// <param name="iLGenerator">中间语言指令生成器</param>
-    public static void Initblk(this ILGenerator iLGenerator!!) => iLGenerator.Emit(OpCodes.Initblk);
-
-    /// <summary>
-    /// 为指定地址的设置默认值
-    /// <br>相当于 default(<paramref name="type"/>)</br>
-    /// <list type="bullet">
-    ///     <item>1.推送地址</item>
-    /// </list>
-    /// </summary>
-    /// <param name="iLGenerator"></param>
-    /// <param name="type"></param>
-    public static void Initobj(this ILGenerator iLGenerator!!, Type type!!) => iLGenerator.Emit(OpCodes.Initobj, type);
-
-    /// <summary>
-    /// 不执行任何堆栈操作,通知调试器碰撞一个断点
-    /// </summary>
-    /// <param name="iLGenerator">中间语言指令生成器</param>
-    public static void BreakPoint(this ILGenerator iLGenerator!!) => iLGenerator.Emit(OpCodes.Break);
-
+    #region 引用化
     /// <summary>
     /// 将堆栈顶部地址的值引用化,并推送 <see cref="TypedReference"/> 类型的值
     /// <list type="bullet">
@@ -1156,6 +1061,85 @@ public static partial class ILGeneratorExtensions
     /// <param name="iLGenerator">中间语言指令生成器</param>
     /// <param name="valType">值类型</param>
     public static void Refanyval(this ILGenerator iLGenerator!!, Type valType!!) => iLGenerator.Emit(OpCodes.Refanyval, valType);
+    #endregion
+
+    #region 未分类
+    /// <summary>
+    /// 方法结束，如果有返回值推送返回值
+    /// </summary>
+    /// <param name="iLGenerator">中间语言指令生成器</param>
+    public static void Return(this ILGenerator iLGenerator!!) => iLGenerator.Emit(OpCodes.Ret);
+
+    /// <summary>
+    /// 推出当前方法并跳至指定方法
+    /// <br>直接转移到指定方法,要求跳转的方法和当前方法有相同的签名</br>
+    /// </summary>
+    /// <param name="iLGenerator">中间语言指令生成器</param>
+    /// <param name="methodInfo">要跳转的方法,和当前方法签名一致</param>
+    public static void Jmp(this ILGenerator iLGenerator!!, MethodInfo methodInfo!!) => iLGenerator.Emit(OpCodes.Jmp, methodInfo);
+
+    /// <summary>
+    /// 移除堆栈顶部的值
+    /// </summary>
+    /// <param name="iLGenerator">中间语言指令生成器</param>
+    public static void Pop(this ILGenerator iLGenerator!!) => iLGenerator.Emit(OpCodes.Pop);
+
+    /// <summary>
+    /// 计算 <paramref name="valType"/>(值类型) 类型的大小(byte 字节为单位),并推送结果
+    /// </summary>
+    /// <param name="iLGenerator">中间语言指令生成器</param>
+    /// <param name="valType">值类型</param>
+    public static void SizeOf(this ILGenerator iLGenerator!!, Type valType!!) => iLGenerator.Emit(OpCodes.Sizeof, valType);
+
+    /// <summary>
+    /// 推送 <paramref name="token"/> 的运行时句柄
+    /// </summary>
+    /// <typeparam name="T"><see cref="Type"/> / <seealso cref="FieldInfo"/> / <seealso cref="MethodInfo"/></typeparam>
+    /// <param name="iLGenerator">中间语言指令生成器</param>
+    /// <param name="token">获取运行时句柄的token</param>
+    public static void LoadRuntimeHandle<T>(this ILGenerator iLGenerator!!, T token!!) where T : MemberInfo
+    {
+        if (typeof(T) == typeof(Type)) iLGenerator.Emit(OpCodes.Ldtoken, (token as Type)!);
+        else if (typeof(T) == typeof(FieldInfo)) iLGenerator.Emit(OpCodes.Ldtoken, (token as FieldInfo)!);
+        else if (typeof(T) == typeof(MethodInfo)) iLGenerator.Emit(OpCodes.Ldtoken, (token as MethodInfo)!);
+    }
+
+    /// <summary>
+    /// 为指定地址的设置默认值
+    /// <br>相当于 default(<paramref name="type"/>)</br>
+    /// <list type="bullet">
+    ///     <item>1.推送地址</item>
+    /// </list>
+    /// </summary>
+    /// <param name="iLGenerator">中间语言指令生成器</param>
+    /// <param name="type">数据类型</param>
+    public static void Initobj(this ILGenerator iLGenerator!!, Type type!!) => iLGenerator.Emit(OpCodes.Initobj, type);
+
+    /// <summary>
+    /// 在本地动态内存池分配指定数目的字节,并推送第一个字节的地址
+    /// <list type="bullet">
+    ///     <item>1.推送要分配的字节数</item>
+    /// </list>
+    /// </summary>
+    /// <param name="iLGenerator">中间语言指令生成器</param>
+    public static void Localloc(this ILGenerator iLGenerator!!) => iLGenerator.Emit(OpCodes.Localloc);
+
+    /// <summary>
+    /// 为指定地址开始的字节数设置初始值(每一个字节最大值是255)
+    /// <list type="bullet">
+    ///     <item>1.推送起始地址</item>
+    ///     <item>2.推送初始值(最大255)</item>
+    ///     <item>3.推送要设置初始值的字节数</item>
+    /// </list>
+    /// </summary>
+    /// <param name="iLGenerator">中间语言指令生成器</param>
+    public static void Initblk(this ILGenerator iLGenerator!!) => iLGenerator.Emit(OpCodes.Initblk);
+
+    /// <summary>
+    /// 不执行任何堆栈操作,通知调试器碰撞一个断点
+    /// </summary>
+    /// <param name="iLGenerator">中间语言指令生成器</param>
+    public static void BreakPoint(this ILGenerator iLGenerator!!) => iLGenerator.Emit(OpCodes.Break);
 
     /// <summary>
     /// 指示当前位于计算堆栈的地址可能没有与紧接的 ldind, stind, ldfld, stfld, ldobj, stobj, initblk, cpblk 指令的自然大小对其
@@ -1176,17 +1160,10 @@ public static partial class ILGeneratorExtensions
 
     /// <summary>
     /// 如果修补了操作码,则填充空间。但是没有执行任何有意义的操作
-    /// <br>相当于代码中的 "{" / "}" </br>
     /// </summary>
     /// <param name="iLGenerator">中间语言指令生成器</param>
     public static void Nop(this ILGenerator iLGenerator!!) => iLGenerator.Emit(OpCodes.Nop);
-
-    /// <summary>
-    /// Finally 块完成
-    /// <br>其实这个不是必须的,没有也不会有异常</br>
-    /// </summary>
-    /// <param name="iLGenerator"></param>
-    public static void EndFinally(this ILGenerator iLGenerator!!) => iLGenerator.Emit(OpCodes.Endfinally);
+    #endregion
 
     #region 有歧义
     /// <summary>
@@ -1199,7 +1176,7 @@ public static partial class ILGeneratorExtensions
     /// </summary>
     /// <param name="iLGenerator">中间语言指令生成器</param>
     /// <param name="type">测试中所有size相同的类型都可以正常运行</param>
-    public static void Cpobj(this ILGenerator iLGenerator!!, Type type) => iLGenerator.Emit(OpCodes.Cpobj, type);
+    public static void Cpobj(this ILGenerator iLGenerator!!, Type type!!) => iLGenerator.Emit(OpCodes.Cpobj, type);
 
     /// <summary>
     /// 原：指定后面的数组地址不执行类型检查,并且推送可变性受限的指针 <see href="https://docs.microsoft.com/zh-cn/dotnet/api/system.reflection.emit.opcodes.readonly?view=net-6.0"/>
@@ -1213,26 +1190,5 @@ public static partial class ILGeneratorExtensions
     /// </summary>
     /// <param name="iLGenerator"></param>
     public static void Readonly(this ILGenerator iLGenerator!!) => iLGenerator.Emit(OpCodes.Readonly);
-    #endregion
-
-
-
-    #region 暂时不做拓展（不太清楚用法的）
-    /* 待验证问题
-     * 1.个人感觉好像 IntPtr 就是这里提到的 native int(本地int)
-     */
-
-    /* https://docs.microsoft.com/zh-cn/dotnet/api/system.reflection.emit.opcodes?view=net-6.0#fields
-     *
-     * ** 以下是一些不太懂的指令
-     * Endfilter    将控制从异常的过滤子句转移回公共语言基础结构 (CLI) 异常处理程序。
-     *
-     * Endfinally   将控制从异常块的故障或 finally 子句转移回公共语言基础结构 (CLI) 异常处理程序。
-     *
-     * Rethrow      重新抛出当前异常。
-     *
-     * Unaligned    指示当前位于评估堆栈顶部的地址可能未与紧随其后的 ldind、stind、ldfld、stfld、ldobj、stobj、initblk 或 cpblk 指令的自然大小对齐。
-     *  还有一个 ILGenerator.Emit(OpCodes.Unaligned, Label) 用法
-     */
     #endregion
 }

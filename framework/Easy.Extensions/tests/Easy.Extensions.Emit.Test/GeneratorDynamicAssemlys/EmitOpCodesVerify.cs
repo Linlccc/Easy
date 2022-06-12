@@ -7,6 +7,10 @@ namespace Easy.Extensions.Emit.Test.GeneratorDynamicAssemlys;
 /// </summary>
 public class EmitOpCodesVerify
 {
+    public static int field1;
+
+    private static volatile int _volatile1;
+
     public static int[] Add1(int P_0, int P_1)
     {
         int[] array = new int[3];
@@ -143,7 +147,414 @@ public class EmitOpCodesVerify
         }
         return array;
     }
+
+    public static object[] Arglist_Invoke1(object P_0, object P_1, object P_2, object P_3)
+    {
+        return Arglist1(__arglist(P_0, P_1, P_2, P_3));
+    }
+
+    public static object Box1(int P_0)
+    {
+        //Error decoding local variables: Signature type sequence must have at least one element.
+        return P_0;
+    }
+
+    public static int UnBox1(object P_0)
+    {
+        //Error decoding local variables: Signature type sequence must have at least one element.
+        return (int)P_0;
+    }
+
+    public static int UnBox2(object P_0)
+    {
+        //Error decoding local variables: Signature type sequence must have at least one element.
+        return (int)P_0;
+    }
+
+    public static int ConvertInteger1(float P_0)
+    {
+        //Error decoding local variables: Signature type sequence must have at least one element.
+        return (int)P_0;
+    }
+
+    public static Type AS1(object P_0)
+    {
+        return P_0 as Type;
+    }
+
+    public static string CallVirtual1(string P_0)
+    {
+        EmitTest1 emitTest = new EmitTest2();
+        return emitTest.T1(P_0);
+    }
+
+    public static string CallVirtual2(string P_0)
+    {
+        EmitTest2 emitTest = new EmitTest2();
+        return emitTest.T1(P_0);
+    }
+
+    public static string CallVirtual3(string P_0)
+    {
+        EmitTest1 emitTest = new EmitTest2();
+        return emitTest.T1(P_0);
+    }
+
+    public static string CallVirtual4(string P_0)
+    {
+        EmitTest1 emitTest = new EmitTest2();
+        return emitTest.T1(P_0);
+    }
+
+    //public unsafe static string CallVirtual5(string P_0)
+    //{
+    //    //IL_0014: Expected O, but got Ref
+    //    EmitTest1 emitTest = new EmitTest2();
+    //    return ((EmitTest1)(&emitTest)).T1(P_0);
+    //}
+
+    public static object Array1()
+    {
+        int[] array = new int[3] { 3, 5, 8 };
+        return array[2];
+    }
+
+    public static object Array2()
+    {
+        string[] array = new string[3] { "3", "5", "8" };
+        return array[2];
+    }
+
+    public static object Array3()
+    {
+        string[] array = new string[3] { "3", "5", "8" };
+        return array[2];
+    }
+
+    public static object Array4()
+    {
+        string[] array = new string[99];
+        return array.Length;
+    }
+
+    public static int SetValueToAddr1()
+    {
+        return 10;
+    }
+
+    public static object SetValueToAddr2()
+    {
+        return new object();
+    }
+
+    public unsafe static int Calli_Ldftn1()
+    {
+        return ((delegate* unmanaged[Stdcall]<int>)(delegate*<int>)(&EmitTest2.T2))();
+    }
+
+    //public unsafe static int Calli_Ldftn2()
+    //{
+    //    return ((delegate* unmanaged[Thiscall]<EmitTest2, int>)__ldftn(EmitTest2.T3))(new EmitTest2());
+    //}
+
+    //public unsafe static int Calli_Ldftn3()
+    //{
+    //    EmitTest2 emitTest = new EmitTest2();
+    //    return ((delegate* unmanaged[Thiscall]<EmitTest2, int>)__ldvirtftn(EmitTest2.T4))(emitTest);
+    //}
+
+    //public unsafe static int Calli_Ldftn4()
+    //{
+    //    EmitTest2 emitTest = new EmitTest2();
+    //    return ((delegate* unmanaged[Thiscall]<EmitTest2, int>)__ldvirtftn(EmitTest2.T4))(emitTest);
+    //}
+
+    public static void Try_Catch1()
+    {
+        //Discarded unreachable code: IL_000b, IL_0012, IL_0017
+        //Error decoding local variables: Signature type sequence must have at least one element.
+        try
+        {
+            throw new Exception("Try_Catch1 测试 异常");
+        }
+        catch (Exception)
+        {
+            throw;
+        }
+    }
+
+    public static string Try_Catch2()
+    {
+        //Discarded unreachable code: IL_000b, IL_0016, IL_001b
+        //Error decoding local variables: Signature type sequence must have at least one element.
+        try
+        {
+            throw new Exception("Try_Catch2 测试 异常");
+        }
+        catch (Exception ex)
+        {
+            return ex.Message;
+        }
+    }
+
+    public static string Try_Catch3()
+    {
+        //Discarded unreachable code: IL_000b, IL_0016, IL_0017
+        //Error decoding local variables: Signature type sequence must have at least one element.
+        try
+        {
+            throw new Exception("Try_Catch3 测试 异常");
+        }
+        catch
+        {
+            //try-fault
+            return "进入了一个不判断类型的异常捕捉";
+            throw;
+        }
+    }
+
+    public static string Try_Catch4()
+    {
+        //Discarded unreachable code: IL_001a, IL_001c, IL_0058, IL_005d
+        string text = "1";
+        try
+        {
+            text = "2";
+            throw new Exception("123");
+        }
+        catch (Exception ex) when (ex.Message == "123")
+        {
+            return ex.Message;
+        }
+    }
+
+    public static string Try_Catch4_Extension()
+    {
+        //Discarded unreachable code: IL_0017, IL_0019, IL_0044, IL_0049
+        string text = "1";
+        try
+        {
+            text = "2";
+            throw new Exception("123");
+        }
+        catch (Exception ex) when (ex.Message == "123")
+        {
+            return ex.Message;
+        }
+    }
+
+    public static int Try_Catch5(int P_0, int P_1)
+    {
+        //Discarded unreachable code: IL_002b, IL_0047
+        OverflowException ex = default(OverflowException);
+        try
+        {
+            if (P_0 <= 10 && P_1 <= 10)
+            {
+                return (int)checked(unchecked((uint)P_0) + unchecked((uint)P_1));
+            }
+            ex = new OverflowException("Cannot accept values over 10 for add.");
+            throw new OverflowException();
+        }
+        catch when (((Func<bool>)delegate
+        {
+            // Could not convert BlockContainer to single expression
+            Console.WriteLine("Except filter block called.");
+            return true;
+        }).Invoke())
+        {
+            return P_0 - P_1;
+        }
+        catch (OverflowException)
+        {
+            Console.WriteLine("{0}", ex.ToString());
+            return -1;
+        }
+        finally
+        {
+            Console.WriteLine("Finally block called.");
+        }
+    }
+
+    public static string Try_Catch_Finally1()
+    {
+        //Discarded unreachable code: IL_0017, IL_0050
+        string text = default(string);
+        try
+        {
+            text += "进入了 Try      ";
+            throw new Exception("Try_Catch_Finally1 测试 异常");
+        }
+        catch (Exception)
+        {
+            text += "触发了 Exception 类型异常      ";
+        }
+        //catch (ArgumentNullException)
+        //{
+        //    text += "触发了 ArgumentNullException 类型异常      ";
+        //}
+        finally
+        {
+            text += "进入了 Finally      ";
+        }
+        return text + "开始返回";
+    }
+
+    //public unsafe static int[] SizeOf1()
+    //{
+    //    //IL_001b: Expected O, but got I4
+    //    //IL_0025: Expected O, but got I4
+    //    //IL_002f: Expected O, but got I4
+    //    //IL_0039: Expected O, but got I4
+    //    //IL_0043: Expected O, but got I4
+    //    //IL_004d: Expected O, but got I4
+    //    //IL_0057: Expected O, but got I4
+    //    return new int[8]
+    //    {
+    //        sizeof(byte),
+    //        (int)(object)sizeof(short),
+    //        (int)(object)sizeof(int),
+    //        (int)(object)sizeof(long),
+    //        (int)(object)sizeof(double),
+    //        (int)(object)sizeof(decimal),
+    //        (int)(object)sizeof(string),
+    //        (int)(object)sizeof(object)
+    //    };
+    //}
+
+    public static int SetField1()
+    {
+        //Error decoding local variables: Signature type sequence must have at least one element.
+        field1 = 3;
+        return field1;
+    }
+
+    public static object Typeof1()
+    {
+        return typeof(string);
+    }
+
+    //public unsafe static object CopyAddrValueToAddr1(EmitTest2 P_0)
+    //{
+    //    EmitTest2 result = default(EmitTest2);
+    //    // IL cpblk instruction
+    //    System.Runtime.CompilerServices.Unsafe.CopyBlock(ref result, ref P_0, sizeof(EmitTest2));
+    //    return result;
+    //}
+
+    //public unsafe static object Cpobj1(EmitTest2 P_0)
+    //{
+    //    EmitTest2 result = default(EmitTest2);
+    //    *(int*)(&result) = *(int*)(&P_0);
+    //    return result;
+    //}
+
+    //public unsafe static uint Localloc_Initblk1()
+    //{
+    //    //Error decoding local variables: Signature type sequence must have at least one element.
+    //    byte* intPtr = stackalloc byte[sizeof(uint)];
+    //    // IL initblk instruction
+    //    System.Runtime.CompilerServices.Unsafe.InitBlock(intPtr, 255, sizeof(uint));
+    //    return *(uint*)intPtr;
+    //}
+
+    public static int Initobj1()
+    {
+        return default(int);
+    }
+
+    public static MyStruct Mkrefany1()
+    {
+        MyStruct result = new MyStruct("1");
+        TypedReference obj = __makeref(result);
+        FieldInfo field = typeof(MyStruct).GetField("_name", BindingFlags.Instance | BindingFlags.NonPublic);
+        field.SetValueDirect(obj, "2");
+        return result;
+    }
+
+    public static MyStruct Mkrefany2()
+    {
+        MyStruct myStruct = new MyStruct("1");
+        FieldInfo field = typeof(MyStruct).GetField("_name", BindingFlags.Instance | BindingFlags.NonPublic);
+        field.SetValue(myStruct, "2");
+        return myStruct;
+    }
+
+    public static Type Refanytype1()
+    {
+        MyStruct myStruct = new MyStruct("1");
+        TypedReference typedReference = __makeref(myStruct);
+        return __reftype(typedReference);
+    }
+
+    public static MyStruct Refanyval1()
+    {
+        MyStruct myStruct = new MyStruct("1");
+        TypedReference typedReference = __makeref(myStruct);
+        return __refvalue(typedReference, MyStruct);
+    }
+
+    public static int SetArg1(int P_0, int P_1)
+    {
+        //Error decoding local variables: Signature type sequence must have at least one element.
+        P_0 = 999;
+        return P_0;
+    }
+
+    //public static void Unaligned1(ref byte P_0, ref byte P_1, int P_2)
+    //{
+    //    //Error decoding local variables: Signature type sequence must have at least one element.
+    //    // IL cpblk instruction
+    //    System.Runtime.CompilerServices.Unsafe.CopyBlockUnaligned(ref P_1, ref P_0, P_2);
+    //}
+
+    public static int Volatile1()
+    {
+        _volatile1 = 1;
+        return _volatile1;
+    }
+
+    //public static object Readonly1()
+    //{
+    //    EmitTest2[] array = new EmitTest2[10]
+    //    {
+    //        null,
+    //        new EmitTest2(),
+    //        null,
+    //        null,
+    //        null,
+    //        null,
+    //        null,
+    //        null,
+    //        null,
+    //        null
+    //    };
+    //    System.Runtime.CompilerServices.Unsafe.WriteUnaligned(ref System.Runtime.CompilerServices.Unsafe.As<int, byte>(ref array[1].MyInt1), 5);
+    //    return array;
+    //}
+
+    public static string Jmp1(int P_0)
+    {
+        //Error decoding local variables: Signature type sequence must have at least one element.
+        return EmitTest2.T5(P_0);
+    }
+
+    public static int Jmp2(int P_0, string P_1, string P_2, int P_3)
+    {
+        //Error decoding local variables: Signature type sequence must have at least one element.
+        return EmitTest1.MsgBox(P_0, P_1, P_2, P_3);
+    }
+
+    public static double Ckfinite1()
+    {
+        //Error decoding local variables: Signature type sequence must have at least one element.
+        double num = 10.0 / 3.0;
+        /*OpCode not supported: Ckfinite*/
+        ;
+        return num;
+    }
 }
+
 
 
 /// <summary>
@@ -266,6 +677,9 @@ public static class EmitOpCodesVerifyCreator
         DefineMethod_Try_Catch3(typeBuilder);
         // Try_Catch4
         DefineMethod_Try_Catch4(typeBuilder);
+        // 拓展版
+        DefineMethod_Try_Catch4_Extension(typeBuilder);
+        // 无法命中筛选异常
         DefineMethod_Try_Catch5(typeBuilder);
         // Try_Catch_Finally1
         DefineMethod_Try_Catch_Finally1(typeBuilder);
@@ -338,9 +752,8 @@ public static class EmitOpCodesVerifyCreator
         // Jmp2 外部方法
         DefineMethod_Jmp2(typeBuilder);
 
-
-
-        DefineMethod_Test1(typeBuilder);
+        // Ckfinite1
+        DefineMethod_Ckfinite1(typeBuilder);
 
 
         return typeBuilder.CreateType();
@@ -881,19 +1294,19 @@ public static class EmitOpCodesVerifyCreator
         il.SetLocal(lb_currentIndex);
 
         // lb_varargs = new ArgIterator(__arglist);
-        il.LoadLocalAddr(lb_varargs.LocalIndex); // 因为构造 ArgIterator 类型返回的是地址，所以加载地址去接收
+        il.LoadLocalAddr((UInt16)lb_varargs.LocalIndex); // 因为构造 ArgIterator 类型返回的是地址，所以加载地址去接收
         il.LoadVarArgs();
         il.Call(typeof(ArgIterator).GetConstructor(new Type[] { typeof(RuntimeArgumentHandle) }));
 
         // lb_result = new object[lb_varargs.GetRemainingCount()];
-        il.LoadLocalAddr(lb_varargs.LocalIndex);
+        il.LoadLocalAddr((UInt16)lb_varargs.LocalIndex);
         il.Call(typeof(ArgIterator).GetMethod("GetRemainingCount"));
         il.NewArray(typeof(object));
         il.SetLocal(lb_result);
 
         // if(lb_havearg = lb_varargs.GetRemainingCount() < 0) return lb_result;
         il.MarkLabel(haveValueL);
-        il.LoadLocalAddr(lb_varargs.LocalIndex);
+        il.LoadLocalAddr((UInt16)lb_varargs.LocalIndex);
         il.Call(typeof(ArgIterator).GetMethod("GetRemainingCount"));
         il.LoadInt(0);
         il.CompareGreater();
@@ -903,7 +1316,7 @@ public static class EmitOpCodesVerifyCreator
         il.Nop();
         il.LoadLocal(lb_result);
         il.LoadLocal(lb_currentIndex);
-        il.LoadLocalAddr(lb_varargs.LocalIndex);
+        il.LoadLocalAddr((UInt16)lb_varargs.LocalIndex);
         il.Call(typeof(ArgIterator).GetMethod("GetNextArg", Type.EmptyTypes));
         il.Call(typeof(TypedReference).GetMethod("ToObject"));
         il.SetArray(typeof(object));
@@ -1130,7 +1543,7 @@ public static class EmitOpCodesVerifyCreator
         il.SetLocal(l1);
 
         // l2 = l1.T1(arg1);
-        il.LoadLocalAddr(l1.LocalIndex);
+        il.LoadLocalAddr((UInt16)l1.LocalIndex);
         il.LoadArg(0);
         il.Constrained(typeof(EmitTest1));
         il.CallVirtual(typeof(EmitTest1).GetMethod(nameof(EmitTest1.T1), new Type[] { typeof(string) }));
@@ -1178,8 +1591,7 @@ public static class EmitOpCodesVerifyCreator
         // return l1[2];
         il.LoadLocal(l1);
         il.LoadInt(2);
-        //il.LoadArrayIndexValue(typeof(int));
-        il.GetArrayIndexInteger(typeof(int));
+        il.LoadArrayIndexValue(typeof(int));
         il.Box(typeof(int));
         il.Return();
         return methodBuilder;
@@ -1281,7 +1693,7 @@ public static class EmitOpCodesVerifyCreator
 
         LocalBuilder l1 = il.DeclareLocal(typeof(int));
 
-        il.LoadLocalAddr(l1.LocalIndex);
+        il.LoadLocalAddr((UInt16)l1.LocalIndex);
         il.LoadInt(10);
         il.SetValueToAddr(typeof(int));
 
@@ -1298,7 +1710,7 @@ public static class EmitOpCodesVerifyCreator
 
         LocalBuilder l1 = il.DeclareLocal(typeof(object));
 
-        il.LoadLocalAddr(l1.LocalIndex);
+        il.LoadLocalAddr((UInt16)l1.LocalIndex);
         il.NewObject(typeof(object).GetConstructor(Type.EmptyTypes));
         il.SetValueToAddr(typeof(object));
 
@@ -1548,6 +1960,72 @@ public static class EmitOpCodesVerifyCreator
         il.MarkLabel(ll4);
         il.Emit(OpCodes.Ldloc_3);
         il.Emit(OpCodes.Ret);
+
+        return methodBuilder;
+    }
+
+    // Try_Catch4 拓展版
+    public static MethodBuilder DefineMethod_Try_Catch4_Extension(TypeBuilder typeBuilder)
+    {
+        MethodBuilder methodBuilder = typeBuilder.DefineMethod("Try_Catch4_Extension", MethodAttributes.Public | MethodAttributes.Static, typeof(string), Type.EmptyTypes);
+        ILGenerator il = methodBuilder.GetILGenerator();
+
+        LocalBuilder l1 = il.DeclareLocal(typeof(string));
+
+        Label ll1 = il.DefineLabel();
+        Label ll2 = il.DefineLabel();
+        Label ll3 = il.DefineLabel();
+        Label ll4 = il.DefineLabel();
+
+        // l1 = "1";
+        il.LoadString("1");
+        il.SetLocal(l1);
+
+        // try{
+        // l1 = "2";
+        // throw new Exception("123");
+        il.BeginExceptionBlock();
+        il.LoadString("2");
+        il.SetLocal(l1);
+        il.LoadString("123");
+        il.NewObject(typeof(Exception).GetConstructor(new Type[] { typeof(string) }));
+        il.Throw();
+        il.GotoLeave(ll1);
+
+        // }catch(Exception e) then(e.Message == "123"){
+        il.BeginExceptFilterBlock();
+        il.As(typeof(Exception));
+        il.Copy();
+        il.GotoIfTrue(ll2);
+
+        il.Pop();
+        il.LoadInt(0);
+        il.Goto(ll3);
+
+        il.MarkLabel(ll2);
+        il.CallVirtual(typeof(Exception).GetMethod("get_Message"));
+        il.LoadString("123");
+        il.Call(typeof(string).GetMethod("op_Equality", new Type[] { typeof(string), typeof(string) }));
+
+        // l1 = e.Message;
+        il.MarkLabel(ll3);
+        il.BeginCatchBlock(null);
+        il.CallVirtual(typeof(Exception).GetMethod("get_Message"));
+        il.SetLocal(l1);
+        il.GotoLeave(ll4);
+
+        // }
+        il.EndExceptionBlock();
+
+        // l1 = "4";
+        il.MarkLabel(ll1);
+        il.LoadString("4");
+        il.SetLocal(l1);
+
+        // return l4;
+        il.MarkLabel(ll4);
+        il.LoadLocal(l1);
+        il.Return();
 
         return methodBuilder;
     }
@@ -1806,7 +2284,7 @@ public static class EmitOpCodesVerifyCreator
         LocalBuilder l1 = il.DeclareLocal(typeof(EmitTest2));
 
         // l1 = arg1;
-        il.LoadLocalAddr(l1.LocalIndex);
+        il.LoadLocalAddr((UInt16)l1.LocalIndex);
         il.LoadArgAddr(0);
         il.SizeOf(typeof(EmitTest2));
         il.CopyAddrValueToAddr();
@@ -1828,7 +2306,7 @@ public static class EmitOpCodesVerifyCreator
         LocalBuilder l1 = il.DeclareLocal(typeof(EmitTest2));
 
         // l1 = arg1;
-        il.LoadLocalAddr(l1.LocalIndex);
+        il.LoadLocalAddr((UInt16)l1.LocalIndex);
         il.LoadArgAddr(0);
         il.Cpobj(typeof(int));
 
@@ -1858,7 +2336,7 @@ public static class EmitOpCodesVerifyCreator
         il.Initblk();
 
         // 从地址取值,返回
-        il.LoadAddrInteger(typeof(uint));
+        il.LoadAddrValue(typeof(uint));
         il.Return();
         return methodBuilder;
     }
@@ -1874,7 +2352,7 @@ public static class EmitOpCodesVerifyCreator
 
         LocalBuilder l1 = il.DeclareLocal(typeof(int));
 
-        il.LoadLocalAddr(l1.LocalIndex);
+        il.LoadLocalAddr((UInt16)l1.LocalIndex);
         il.Emit(OpCodes.Initobj, typeof(int));
 
         il.LoadLocal(l1);
@@ -1904,7 +2382,7 @@ public static class EmitOpCodesVerifyCreator
 
         // l2 = __makeref(l1)
         // 将结构引用化
-        il.LoadLocalAddr(l1.LocalIndex);
+        il.LoadLocalAddr((UInt16)l1.LocalIndex);
         il.Mkrefany(typeof(MyStruct));
         il.SetLocal(l2);
 
@@ -1991,7 +2469,7 @@ public static class EmitOpCodesVerifyCreator
 
         // l2 = __makeref(l1)
         // 将结构引用化
-        il.LoadLocalAddr(l1.LocalIndex);
+        il.LoadLocalAddr((UInt16)l1.LocalIndex);
         il.Mkrefany(typeof(MyStruct));
         il.SetLocal(l2);
 
@@ -2022,7 +2500,7 @@ public static class EmitOpCodesVerifyCreator
 
         // l2 = __makeref(l1)
         // 将结构引用化
-        il.LoadLocalAddr(l1.LocalIndex);
+        il.LoadLocalAddr((UInt16)l1.LocalIndex);
         il.Mkrefany(typeof(MyStruct));
         il.SetLocal(l2);
 
@@ -2158,40 +2636,18 @@ public static class EmitOpCodesVerifyCreator
         return methodBuilder;
     }
 
-
-
-
-
-    public static MethodBuilder DefineMethod_Test1(TypeBuilder typeBuilder)
+    // Ckfinite1
+    public static MethodBuilder DefineMethod_Ckfinite1(TypeBuilder typeBuilder)
     {
-        // 测试方法
-
-        MethodBuilder methodBuilder = typeBuilder.DefineMethod("Test1", MethodAttributes.Public | MethodAttributes.Static, typeof(object), Type.EmptyTypes);
+        MethodBuilder methodBuilder = typeBuilder.DefineMethod("Ckfinite1", MethodAttributes.Public | MethodAttributes.Static, typeof(double), new Type[] { });
         ILGenerator il = methodBuilder.GetILGenerator();
 
         il.LoadDouble(10.0);
         il.LoadDouble(3.0);
         il.MathDiv();
-        il.Emit(OpCodes.Ckfinite);
-        il.Box(typeof(double));
+        il.Ckfinite();
         il.Return();
         return methodBuilder;
-    }
-
-    public static string T1()
-    {
-        string a = "1";
-        try
-        {
-            a = "2";
-        }
-        catch (Exception ex) when (ex.Message == "123")
-        {
-            a = "3";
-            return a;
-        }
-        a = "4";
-        return a;
     }
 }
 

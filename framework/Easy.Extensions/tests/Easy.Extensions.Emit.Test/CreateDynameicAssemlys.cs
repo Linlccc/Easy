@@ -211,6 +211,9 @@
             // Try_Catch4
             object try_Catch4 = type.InvokeMember("Try_Catch4", BindingFlags.InvokeMethod, null, null, new object[] { });
             Assert.Equal("123", try_Catch4);
+            // Try_Catch4 拓展版
+            object try_Catch4_Extension = type.InvokeMember("Try_Catch4_Extension", BindingFlags.InvokeMethod, null, null, new object[] { });
+            Assert.Equal("123", try_Catch4_Extension);
             // 可以运行但是不能命中有筛选的异常
             object try_Catch5 = type.InvokeMember("Try_Catch5", BindingFlags.InvokeMethod, null, null, new object[] { 1, 20 });
             Assert.Equal(-1, try_Catch5);
@@ -304,12 +307,8 @@
             //object jmp2 = type.InvokeMember("Jmp2", BindingFlags.InvokeMethod, null, null, new object[] { 0, "这是一个消息", "这个一个titil", 1 });
             //Assert.Equal(1, jmp2);
 
-
-
-
-            object test1 = type.InvokeMember("Test1", BindingFlags.InvokeMethod, null, null, new object[] { });
-            //object test2 = type.InvokeMember("Test2", BindingFlags.InvokeMethod, null, null, new object[] { });
-
+            object ckfinite1 = type.InvokeMember("Ckfinite1", BindingFlags.InvokeMethod, null, null, new object[] { });
+            Assert.Equal(10.0 / 3.0, ckfinite1);
         }
         // 使用对其操作 代理类型声明
         delegate void Unaligned1(ref byte bs1, ref byte bs2, int length);
