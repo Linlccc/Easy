@@ -509,7 +509,7 @@ public class DynamicCreateType
             ILGenerator il = dynamicType.DefineMethod("TestLoaclVar20", MethodAttributes.Public, typeof(int), new Type[] { typeof(int), typeof(int) }).GetILGenerator();
 
             LocalBuilder l1 = il.DeclareLocal(typeof(int));
-            il.LoadLocalAddr(l1.LocalIndex);
+            il.LoadLocalAddr((UInt16)l1.LocalIndex);
             il.LoadArg(1);
             il.Emit(OpCodes.Stind_I4);
 
@@ -521,7 +521,7 @@ public class DynamicCreateType
             ILGenerator il = dynamicType.DefineMethod("TestLoaclVar21", MethodAttributes.Public, typeof(object), new Type[] { typeof(object), typeof(object) }).GetILGenerator();
 
             LocalBuilder l1 = il.DeclareLocal(typeof(object));
-            il.LoadLocalAddr(l1.LocalIndex);
+            il.LoadLocalAddr((UInt16)l1.LocalIndex);
             il.LoadArg(1);
             il.Emit(OpCodes.Stind_Ref);
 
@@ -533,7 +533,7 @@ public class DynamicCreateType
             ILGenerator il = dynamicType.DefineMethod("TestLoaclVar22", MethodAttributes.Public, typeof(object), new Type[] { typeof(object), typeof(object) }).GetILGenerator();
 
             LocalBuilder l1 = il.DeclareLocal(typeof(object));
-            il.LoadLocalAddr(l1.LocalIndex);
+            il.LoadLocalAddr((UInt16)l1.LocalIndex);
             il.LoadArg(1);
             il.Emit(OpCodes.Stobj, typeof(object));
 
