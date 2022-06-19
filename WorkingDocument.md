@@ -228,6 +228,19 @@ Easy.Extensions.DependencyInjection 的服务提供商实现AOP
 
 ---
 
+## 0619
+
+解除特性继承疑惑
+
+- 只要特性可以搜索到,该特性的基类一定可以搜索到
+- 不管特性是否可以继承,(方法，属性 不重写)(字段 不覆盖)都可以搜索到
+- 特性可继承时：
+  - 类只能从继承链上搜索到
+  - 方法重写后只能从继承链上搜索到
+  - (属性 重写)(字段 覆盖)后不能搜索到
+
+---
+
 ## 计划
 
 - [x] 添加自动发布包任务 (研究) [0427]
@@ -242,6 +255,7 @@ Easy.Extensions.DependencyInjection 的服务提供商实现AOP
 - [x] 使用 emit 动态生成dll,然后再反编译 (实验) [0521]
 - [x] 了解一下动态启停web项目 (在TourCar项目中写了一个web管理,处理web项目启停) [0524]
 - [x] 处理版本控制问题 [0525]
+- [x] 解除特性继承疑惑 [0619]
 - [ ] 看看。HttpRequestRewindExtensions.EnableBuffering 的源码
 - [ ] 了解为什么应该将 IHttpContextAccessor 作为Singleton注入
 
