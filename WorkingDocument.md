@@ -256,6 +256,7 @@ Easy.Extensions.DependencyInjection 的服务提供商实现AOP
 - [x] 了解一下动态启停web项目 (在TourCar项目中写了一个web管理,处理web项目启停) [0524]
 - [x] 处理版本控制问题 [0525]
 - [x] 解除特性继承疑惑 [0619]
+- [ ] 看看 DynamicallyAccessedMembers 特性的约束力 (测试)
 - [ ] 看看。HttpRequestRewindExtensions.EnableBuffering 的源码
 - [ ] 了解为什么应该将 IHttpContextAccessor 作为Singleton注入
 
