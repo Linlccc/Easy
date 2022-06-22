@@ -256,7 +256,6 @@ Easy.Extensions.DependencyInjection 的服务提供商实现AOP
 - [x] 了解一下动态启停web项目 (在TourCar项目中写了一个web管理,处理web项目启停) [0524]
 - [x] 处理版本控制问题 [0525]
 - [x] 解除特性继承疑惑 [0619]
-- [ ] 看看 DynamicallyAccessedMembers 特性的约束力 (测试)
 - [ ] 看看。HttpRequestRewindExtensions.EnableBuffering 的源码
 - [ ] 了解为什么应该将 IHttpContextAccessor 作为Singleton注入
 
@@ -333,6 +332,7 @@ Microsoft.EntityFrameworkCore.Design 包的安装方式有所不同，它不会�
 2.https://github.com/Jishun/RoslynWeave(编译时注入 C# 代码的目标，通过使用原始 C# 代码而不是 IL 进行编织)
 3.https://github.com/vescon/MethodBoundaryAspect.Fody
 4.https://github.com/htrlq/NCoreCoder.Framework(动态代理)
+5.https://github.com/castleproject/Core
 ~~~
 
 ### 暂时不处理
