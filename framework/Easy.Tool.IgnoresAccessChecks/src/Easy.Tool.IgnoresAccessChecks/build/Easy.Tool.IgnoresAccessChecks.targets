@@ -1,0 +1,20 @@
+﻿<Project>
+  <PropertyGroup>
+    <!-- 公开的程序集默认使用空方法体 -->
+    <UseEmptyMethodBody Condition="$(UseExptyMethodBody) == ''">true</UseEmptyMethodBody>
+  </PropertyGroup>
+  
+  <!--清理合并的json，在清理过后执行-->
+  <Target Name="MakePublicInternal" AfterTargets="AfterResolveReferences">
+    <MakePublicInternal IntermediateOutputPath="$(IntermediateOutputPath)" SourceRefs="@(ReferencePath)"  IgnoresAccessChecksAssemblyNames="$(IgnoresAccessChecksAssemblyNames)" ExcludeTypeFullNames="$(ExcludeTypeFullNames)" UseEmptyMethodBody ="$(UseEmptyMethodBody)">
+      <!-- 这里将我们生成的程序集添加到引用 -->
+      <Output ItemName="ReferencePath" TaskParameter="MakePublicRefs" />
+      <Output ItemName="Easy_Tool_IgnoresAccessChecks_RemoveRefs" TaskParameter="RemoveRefs" />
+      <Output ItemName="Compile" TaskParameter="GeneratedCodeFiles" />
+    </MakePublicInternal>
+    <!-- 移除原来的引用 -->
+    <ItemGroup>
+      <ReferencePath Remove="@(Easy_Tool_IgnoresAccessChecks_RemoveRefs)" />
+    </ItemGroup>
+  </Target>
+</Project>

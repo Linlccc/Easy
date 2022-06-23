@@ -1,0 +1,42 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.0</TargetFrameworks>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <Description>实现"MSBuild"构建使用[IgnoresAccessChecksToAttribute]特性的程序集</Description>
+    <!-- 不统一时项目使用该版本 -->
+    <Version Condition="!$(UnifiedVersion)">1.0.0</Version>
+    <!-- 本地测试版本 -->
+     <Version>0.0.1-test8</Version>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Build.Utilities.Core" Version="17.2.0" PrivateAssets="all" ExcludeAssets="runtime" />
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.2">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Mono.Cecil" Version="0.11.4" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <Content Include="build\$(MSBuildThisFileName).props" PackagePath="build\" />
+    <Content Include="build\$(MSBuildThisFileName).targets" PackagePath="build\" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <!--会自动将需要的依赖项复制到输出路径-->
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+    <!--将指定文件打入包-->
+    <TargetsForTfmSpecificBuildOutput>$(TargetsForTfmSpecificBuildOutput);CopyProjectReferencesToPackage</TargetsForTfmSpecificBuildOutput>
+  </PropertyGroup>
+
+  <!--将项目引用文件复制到包-->
+  <Target Name="CopyProjectReferencesToPackage" DependsOnTargets="ResolveReferences">
+    <ItemGroup>
+      <!-- 你的 MSBuild 任务的依赖必须打包在包里面，不能用普通的 PackageReferences 表示 -->
+      <BuildOutputInPackage Include="$(OutputPath)*.dll" Exclude="$(OutputPath)$(MSBuildThisFileName).dll" />
+    </ItemGroup>
+  </Target>
+</Project>
