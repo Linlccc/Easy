@@ -16,31 +16,21 @@ public class MakePublicInternal : Task
     /// </summary>
     private readonly char[] _separates = { ';', ',' };
     /// <summary>
-    /// 源代码文件夹(项目所在文件夹)
+    /// 程序集解析器
     /// </summary>
-    private readonly string _sourceDir = Directory.GetCurrentDirectory();
-
     private readonly AssemblyResolver _resolver = new();
 
-    #region 排除的类型名称集合
-    private string[] _excludeTypeNames;
+    #region 参数处理结果
     /// <summary>
-    /// 
+    /// 排除类型完全限定名称集
     /// </summary>
-    private string[] ExcludeTypeNames
-    {
-        get
-        {
-            _excludeTypeNames ??= ExcludeTypeFullNames is null ? Array.Empty<string>() : ExcludeTypeFullNames.Split(_separates);
-            return _excludeTypeNames;
-        }
-    }
+    private string[] _excludeTypeFullNames = Array.Empty<string>();
+
+    /// <summary>
+    /// 忽略访问检查的程序集名称集
+    /// </summary>
+    private HashSet<string> _ignoresAccessChecksAssemblyNames = new();
     #endregion
-
-
-
-
-
 
     #region 输入(变量)
     /// <summary>
@@ -60,12 +50,12 @@ public class MakePublicInternal : Task
     /// 忽略访问检查的程序集名称集<br />
     /// 使用 <see cref="_separates"/> 中的符号分隔
     /// </summary>
-    public string IgnoresAccessChecksAssemblyNames { get; set; }
+    public string IgnoresAccessChecksAssemblyNames { set { if (!string.IsNullOrEmpty(value)) _ignoresAccessChecksAssemblyNames = new(value.Split(_separates, StringSplitOptions.RemoveEmptyEntries), StringComparer.OrdinalIgnoreCase); } }
 
     /// <summary>
     /// 排除类型完全限定名称集
     /// </summary>
-    public string ExcludeTypeFullNames { get; set; }
+    public string ExcludeTypeFullNames { set { if (!string.IsNullOrEmpty(value)) _excludeTypeFullNames = value.Split(_separates); } }
 
     /// <summary>
     /// 使用空方法体
@@ -96,32 +86,33 @@ public class MakePublicInternal : Task
 
     public override bool Execute()
     {
-        if (SourceRefs is null || SourceRefs.Length == 0) return !Log.HasLoggedErrors;
-
-        HashSet<string> iACANames = new((IgnoresAccessChecksAssemblyNames ?? string.Empty).Split(_separates, StringSplitOptions.RemoveEmptyEntries), StringComparer.OrdinalIgnoreCase);
-        if (iACANames.Count == 0) return !Log.HasLoggedErrors;
+        // 没有原引用程序集 || 没有要忽略访问检查的程序集
+        if (SourceRefs is null || SourceRefs.Length == 0 || _ignoresAccessChecksAssemblyNames.Count == 0) return !Log.HasLoggedErrors;
 
         // 生成访问忽略类型
-        GenerateIgnoresAccessChecksToAttribute(iACANames);
+        GenerateIgnoresAccessChecksToAttribute(_ignoresAccessChecksAssemblyNames);
 
-        foreach (string sourceDir in SourceRefs.Select(s => Path.GetDirectoryName(GetFullPath(s.ItemSpec)))) _resolver.AddSearchDir(sourceDir);
+        foreach (string sourceDir in SourceRefs.Select(s => Path.GetDirectoryName(Path.GetFullPath(s.ItemSpec)))) _resolver.AddSearchDir(sourceDir);
 
         List<ITaskItem> makePublicRefs = new();
         List<ITaskItem> removeRefs = new();
 
         foreach (ITaskItem assembly in SourceRefs)
         {
-            string assemblyFullName = GetFullPath(assembly.ItemSpec);
+            string assemblyFullName = Path.GetFullPath(assembly.ItemSpec);
             string assemblyWithoutExtensionName = Path.GetFileNameWithoutExtension(assemblyFullName);
-            if (!iACANames.Contains(assemblyWithoutExtensionName)) continue;
+            if (!_ignoresAccessChecksAssemblyNames.Contains(assemblyWithoutExtensionName)) continue;
 
             // 生成的公开程序集完全名称
             string makePublicRefFullName = Path.Combine(IntermediateOutputPath, Path.GetFileName(assemblyFullName));
             FileInfo makePublicRefAssemblyFile = new(makePublicRefFullName);
             if (!makePublicRefAssemblyFile.Exists || makePublicRefAssemblyFile.Length == 0)
             {
-                MakePublicAssembly(assemblyFullName, makePublicRefFullName);
-                Log.LogMessageFromText($"成功创建公开程序集：{makePublicRefFullName}", MessageImportance.Normal);
+                // 生成公开程序集
+                try { MakePublicAssembly(assemblyFullName, makePublicRefFullName); }
+                catch (Exception ex) { Log.LogMessageFromText($"生成'{assemblyFullName}'公开程序集时产生异常： {ex.Message}", MessageImportance.High); continue; }
+
+                Log.LogMessageFromText($"成功生成公开程序集：{makePublicRefFullName}", MessageImportance.Normal);
             }
             else Log.LogMessageFromText($"公开程序集已存在：{makePublicRefFullName}", MessageImportance.Low);
 
@@ -162,10 +153,15 @@ namespace System.Runtime.CompilerServices
         Log.LogMessageFromText($"成功创建'System.Runtime.CompilerServices.IgnoresAccessChecksToAttribute.cs'文件：{IgnoresAccessChecksToAttributeFileFullName}", MessageImportance.Normal);
     }
 
+    /// <summary>
+    /// 生成公开程序集
+    /// </summary>
+    /// <param name="sourceFile"></param>
+    /// <param name="makePublicFile"></param>
     private void MakePublicAssembly(string sourceFile, string makePublicFile)
     {
         AssemblyDefinition assembly = AssemblyDefinition.ReadAssembly(sourceFile, new ReaderParameters() { AssemblyResolver = _resolver });
-        IEnumerable<TypeDefinition> types = assembly.Modules.SelectMany(m => m.GetTypes()).Where(t => !ExcludeTypeNames.Contains(t.FullName));
+        IEnumerable<TypeDefinition> types = assembly.Modules.SelectMany(m => m.GetTypes()).Where(t => !_excludeTypeFullNames.Contains(t.FullName));
         foreach (TypeDefinition type in types)
         {
             if (!type.IsNested && type.IsNotPublic) type.IsPublic = true;
@@ -187,17 +183,11 @@ namespace System.Runtime.CompilerServices
         }
         assembly.Write(makePublicFile);
     }
-
-
-    private string GetFullPath(string path)
-    {
-        if (!Path.IsPathRooted(path)) path = Path.Combine(_sourceDir, path);
-        path = Path.GetFullPath(path);
-        return path;
-    }
 }
 
-
+/// <summary>
+/// 程序集解析器
+/// </summary>
 class AssemblyResolver : IAssemblyResolver
 {
     // 程序集的文件夹集合
