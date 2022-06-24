@@ -249,6 +249,7 @@ Easy.Extensions.DependencyInjection 的服务提供商实现AOP
   - 制作Nuget包时设置属性"BuildOutputTargetFolder"为lib以外的任何文件名
   - 制作Nuget包时设置属性"IsTool"为true
   - 一定要忽略"NU5128;Nu5100"警告,否者会打包失败
+- 制作Nuget包详细可看：<https://docs.microsoft.com/zh-cn/nuget/reference/msbuild-targets>
 
 ---
 
