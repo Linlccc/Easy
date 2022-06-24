@@ -20,7 +20,29 @@ namespace Easy.Tool.IgnoresAccessChecks.Test
                 {
                     new TaskItem(Assembly.Load("System.Runtime").Location),
                 },
-                IntermediateOutputPath = Directory.GetCurrentDirectory(),
+                IntermediateOutputPath = Path.Combine(Directory.GetCurrentDirectory(), "IgnoresAccessChecks"),
+                UseEmptyMethodBody = false,
+                BuildEngine = new Mock<IBuildEngine>().Object,
+            };
+
+            bool result = make.Execute();
+        }
+
+        /// <summary>
+        /// 生成公开程序集测试
+        /// </summary>
+        [Fact]
+        public void MakePublicTest_DI()
+        {
+            MakePublicInternal make = new()
+            {
+                IgnoresAccessChecksAssemblyNames = "Microsoft.Extensions.DependencyInjection",
+                SourceRefs = new ITaskItem[]
+                {
+                    new TaskItem(@"C:\Users\safetech3\.nuget\packages\microsoft.extensions.dependencyinjection\6.0.0\lib\net6.0\Microsoft.Extensions.DependencyInjection.dll"),
+                    new TaskItem(@"C:\Program Files\dotnet\packs\Microsoft.NETCore.App.Ref\6.0.5\ref\net6.0\System.Runtime.dll")
+                },
+                IntermediateOutputPath = Path.Combine(Directory.GetCurrentDirectory(), "IgnoresAccessChecks"),
                 UseEmptyMethodBody = false,
                 BuildEngine = new Mock<IBuildEngine>().Object,
             };
