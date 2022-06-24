@@ -1,7 +1,7 @@
 ﻿<Project>
   <PropertyGroup>
-    <!--任务程序集,目前都是使用netstandard2.0版本，其他版本有依赖问题（当前文件位置\..\lib\netstandard2.0\程序集）-->
-    <TaskAssembly>$(MSBuildThisFileDirectory)..\lib\netstandard2.0\$(MSBuildThisFileName).dll</TaskAssembly>
+    <!--任务程序集,目前都是使用netstandard2.0版本，其他版本有依赖问题（当前文件位置\..\task\netstandard2.0\程序集）-->
+    <TaskAssembly>$(MSBuildThisFileDirectory)..\task\netstandard2.0\$(MSBuildThisFileName).dll</TaskAssembly>
   </PropertyGroup>
   <!--注册合并任务-->
   <UsingTask TaskName="$(MSBuildThisFileName).MakePublicInternal" AssemblyFile="$(TaskAssembly)" />

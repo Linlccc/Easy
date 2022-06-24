@@ -4,7 +4,7 @@
     <UseEmptyMethodBody Condition="$(UseExptyMethodBody) == ''">true</UseEmptyMethodBody>
   </PropertyGroup>
   
-  <!--清理合并的json，在清理过后执行-->
+  <!-- 生成公开的程序集 -->
   <Target Name="MakePublicInternal" AfterTargets="AfterResolveReferences">
     <MakePublicInternal IntermediateOutputPath="$(IntermediateOutputPath)" SourceRefs="@(ReferencePath)"  IgnoresAccessChecksAssemblyNames="$(IgnoresAccessChecksAssemblyNames)" ExcludeTypeFullNames="$(ExcludeTypeFullNames)" UseEmptyMethodBody ="$(UseEmptyMethodBody)">
       <!-- 这里将我们生成的程序集添加到引用 -->

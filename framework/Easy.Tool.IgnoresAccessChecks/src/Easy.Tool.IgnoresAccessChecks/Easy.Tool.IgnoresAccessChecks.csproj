@@ -1,5 +1,4 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0</TargetFrameworks>
     <ImplicitUsings>enable</ImplicitUsings>
@@ -8,16 +7,23 @@
     <!-- 不统一时项目使用该版本 -->
     <Version Condition="!$(UnifiedVersion)">1.0.0</Version>
     <!-- 本地测试版本 -->
-     <Version>0.0.1-test8</Version>
+    <Version>0.0.1-test16</Version>
+  </PropertyGroup>
+  
+  <!-- 当前项目制作nuget包的特殊设置,因为是工具所以不需要lib包,see https://docs.microsoft.com/zh-cn/nuget/reference/msbuild-targets#istool -->
+  <PropertyGroup>
+    <!-- 忽略打包时的警告 -->
+    <NoWarn>$(NoWarn);NU5128;Nu5100</NoWarn>
+    
+    <!-- 如果是工具直接用这个 -->
+    <!--<IsTool>true</IsTool>-->
+    <!-- 自定义目录名 -->
+    <BuildOutputTargetFolder>task</BuildOutputTargetFolder>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Build.Utilities.Core" Version="17.2.0" PrivateAssets="all" ExcludeAssets="runtime" />
-    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.2">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="Mono.Cecil" Version="0.11.4" />
+    <PackageReference Include="Mono.Cecil" Version="0.11.4" PrivateAssets="all" />
   </ItemGroup>
   
   <ItemGroup>
@@ -35,7 +41,7 @@
   <!--将项目引用文件复制到包-->
   <Target Name="CopyProjectReferencesToPackage" DependsOnTargets="ResolveReferences">
     <ItemGroup>
-      <!-- 你的 MSBuild 任务的依赖必须打包在包里面，不能用普通的 PackageReferences 表示 -->
+      <!-- MSBuild 任务的依赖需要打包到Nuget里面,不能用PackageReferences,加载任务会失败 -->
       <BuildOutputInPackage Include="$(OutputPath)*.dll" Exclude="$(OutputPath)$(MSBuildThisFileName).dll" />
     </ItemGroup>
   </Target>
