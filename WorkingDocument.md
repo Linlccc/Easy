@@ -241,6 +241,17 @@ Easy.Extensions.DependencyInjection 的服务提供商实现AOP
 
 ---
 
+## 0624
+
+解决Nuget包会生成到项目debug文件中问题
+
+- 不想Nuget包中的内容生成到项目的Debug文件中(或一起被发布)
+  - 制作Nuget包时设置属性"BuildOutputTargetFolder"为lib以外的任何文件名
+  - 制作Nuget包时设置属性"IsTool"为true
+  - 一定要忽略"NU5128;Nu5100"警告,否者会打包失败
+
+---
+
 ## 计划
 
 - [x] 添加自动发布包任务 (研究) [0427]
@@ -256,6 +267,7 @@ Easy.Extensions.DependencyInjection 的服务提供商实现AOP
 - [x] 了解一下动态启停web项目 (在TourCar项目中写了一个web管理,处理web项目启停) [0524]
 - [x] 处理版本控制问题 [0525]
 - [x] 解除特性继承疑惑 [0619]
+- [x] 解决Nuget包会生成到项目debug文件中问题 [0624]
 - [ ] 看看。HttpRequestRewindExtensions.EnableBuffering 的源码
 - [ ] 了解为什么应该将 IHttpContextAccessor 作为Singleton注入
 
