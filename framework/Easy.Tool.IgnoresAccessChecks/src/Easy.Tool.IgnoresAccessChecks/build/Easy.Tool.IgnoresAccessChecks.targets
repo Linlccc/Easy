@@ -1,14 +1,14 @@
 ﻿<Project>
   <PropertyGroup>
     <!-- 制作的公开程序集存放的文件夹名 -->
-    <MakeFolderName>IgnoresAccessChecks</MakeFolderName>
+    <Easy_Tool_IgnoresAccessChecks_MakeFolderName>IgnoresAccessChecks</Easy_Tool_IgnoresAccessChecks_MakeFolderName>
     <!-- 公开的程序集默认使用空方法体 -->
     <UseEmptyMethodBody Condition="$(UseEmptyMethodBody) == ''">true</UseEmptyMethodBody>
   </PropertyGroup>
   
   <!-- 生成公开的程序集 -->
   <Target Name="MakePublicInternal" AfterTargets="AfterResolveReferences">
-    <MakePublicInternal IntermediateOutputPath="$([MSBuild]::NormalizeDirectory($(IntermediateOutputPath),$(MakeFolderName)))" SourceRefs="@(ReferencePath)"  IgnoresAccessChecksAssemblyNames="$(IgnoresAccessChecksAssemblyNames)" ExcludeTypeFullNames="$(ExcludeTypeFullNames)" UseEmptyMethodBody ="$(UseEmptyMethodBody)">
+    <MakePublicInternal IntermediateOutputPath="$([MSBuild]::NormalizeDirectory($(IntermediateOutputPath),$(Easy_Tool_IgnoresAccessChecks_MakeFolderName)))" SourceRefs="@(ReferencePath)"  IgnoresAccessChecksAssemblyNames="$(IgnoresAccessChecksAssemblyNames)" ExcludeTypeFullNames="$(ExcludeTypeFullNames)" UseEmptyMethodBody ="$(UseEmptyMethodBody)">
       <!-- 这里将我们生成的程序集添加到引用 -->
       <Output ItemName="ReferencePath" TaskParameter="MakePublicRefs" />
       <Output ItemName="Easy_Tool_IgnoresAccessChecks_RemoveRefs" TaskParameter="RemoveRefs" />
@@ -22,6 +22,6 @@
 
   <!-- 清理项目时清理生成的公开程序集 -->
   <Target Name="CleanMakePublicInternal" AfterTargets="Clean">
-    <RemoveDir Directories="$([MSBuild]::NormalizeDirectory($(IntermediateOutputPath),$(MakeFolderName)))" />
+    <RemoveDir Directories="$([MSBuild]::NormalizeDirectory($(IntermediateOutputPath),$(Easy_Tool_IgnoresAccessChecks_MakeFolderName)))" />
   </Target>
 </Project>
