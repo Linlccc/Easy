@@ -22,17 +22,6 @@ public class MakePublicInternal : Task
 
     private readonly AssemblyResolver _resolver = new();
 
-    #region 本程序生成的程序集和代码的输出目录
-    private string _ignoresAccessChecksOutputDir;
-    private string IgnoresAccessChecksOutputDir
-    {
-        get
-        {
-            if (string.IsNullOrEmpty(_ignoresAccessChecksOutputDir)) _ignoresAccessChecksOutputDir = Path.Combine(IntermediateOutputPath, nameof(IgnoresAccessChecks));
-            return _ignoresAccessChecksOutputDir;
-        }
-    }
-    #endregion
     #region 排除的类型名称集合
     private string[] _excludeTypeNames;
     /// <summary>
@@ -127,7 +116,7 @@ public class MakePublicInternal : Task
             if (!iACANames.Contains(assemblyWithoutExtensionName)) continue;
 
             // 生成的公开程序集完全名称
-            string makePublicRefFullName = Path.Combine(IgnoresAccessChecksOutputDir, Path.GetFileName(assemblyFullName));
+            string makePublicRefFullName = Path.Combine(IntermediateOutputPath, Path.GetFileName(assemblyFullName));
             FileInfo makePublicRefAssemblyFile = new(makePublicRefFullName);
             if (!makePublicRefAssemblyFile.Exists || makePublicRefAssemblyFile.Length == 0)
             {
@@ -164,8 +153,8 @@ namespace System.Runtime.CompilerServices
         }
     }
 }";
-        string IgnoresAccessChecksToAttributeFileFullName = Path.Combine(IgnoresAccessChecksOutputDir, "System.Runtime.CompilerServices.IgnoresAccessChecksToAttribute.cs");
-        if (!Directory.Exists(IgnoresAccessChecksOutputDir)) Directory.CreateDirectory(IgnoresAccessChecksOutputDir);
+        string IgnoresAccessChecksToAttributeFileFullName = Path.Combine(IntermediateOutputPath, "System.Runtime.CompilerServices.IgnoresAccessChecksToAttribute.cs");
+        if (!Directory.Exists(IntermediateOutputPath)) Directory.CreateDirectory(IntermediateOutputPath);
         File.WriteAllText(IgnoresAccessChecksToAttributeFileFullName, content);
 
         GeneratedCodeFiles = new ITaskItem[] { new TaskItem(IgnoresAccessChecksToAttributeFileFullName) };
