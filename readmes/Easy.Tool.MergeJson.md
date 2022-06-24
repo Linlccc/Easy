@@ -6,7 +6,7 @@
 ## 最快使用
 
 ~~~~text
-只需要对项目根目录的 appsetting*.json 添加一下json即可
+只需要对项目根目录的 appsetting*.json 添加以下json即可
 
 // 自定义配置信息
 "CustomConfigInfo": {
