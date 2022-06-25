@@ -328,6 +328,11 @@ Microsoft.EntityFrameworkCore.Design 包的安装方式有所不同，它不会�
 1.使用 FindUnderPath,ConvertToAbsolutePath msbuild 任务处理文件夹路径，在程序中尽量少的处理路径
 ~~~
 
+### Easy.Tool.IgnoresAccessChecks 项目升级/修改/开发计划
+
+~~~text
+~~~
+
 ### Easy.Extensions.DynamicProxy 项目升级/修改/开发计划
 
 ~~~text
