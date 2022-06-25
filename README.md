@@ -10,6 +10,7 @@
   * [依赖注入-抽象](./readmes/Easy.Extensions.DependencyInjection.Abstractions.md)
 * 工具
   * [Json合并工具](./readmes/Easy.Tool.MergeJson.md)
+  * [忽略访问检查工具](./readmes/Easy.Tool.IgnoresAccessChecks.md)
 
 ## 发布包任务
 
