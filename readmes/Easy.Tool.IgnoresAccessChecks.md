@@ -12,7 +12,7 @@
 - 在"IgnoresAccessChecksAssemblyNames"属性中写入程序集名即可,支持多个使用';'/','分割
 - 默认  null,不会生成任何忽略检查的程序集
 
- ~~~text
+ ~~~xml
 <PropertyGroup>
   <IgnoresAccessChecksAssemblyNames>Assembly1;Assembly2</IgnoresAccessChecksAssemblyNames>
 </PropertyGroup>
@@ -23,7 +23,7 @@
 - 在"ExcludeTypeFullNames"属性中写入类型完全限定名即可,支持多个使用';'/','分割
 - 默认  null,不排除任何类型
 
- ~~~text
+ ~~~xml
 <PropertyGroup>
   <ExcludeTypeFullNames>Type1;Type2</ExcludeTypeFullNames>
 </PropertyGroup>
@@ -34,7 +34,7 @@
 - 在"UseEmptyMethodBody"属性中写入true/false即可
 - 默认  true,生成的程序集都是空方法体
 
- ~~~text
+ ~~~xml
 <PropertyGroup>
   <UseEmptyMethodBody>true</UseEmptyMethodBody>
 </PropertyGroup>
