@@ -8,16 +8,20 @@
     <NoWarn>$(NoWarn);CS8618</NoWarn>
     <Description>自动合并json工具</Description>
     <!-- 不统一时项目使用该版本 -->
-    <Version Condition="!$(UnifiedVersion)">1.0.1</Version>
+    <Version Condition="!$(UnifiedVersion)">1.0.2</Version>
     <!-- 本地测试版本 -->
-    <!-- <Version>$(Version)-test52</Version> -->
+     <!--<Version>0.0.1-test1</Version>--> 
   </PropertyGroup>
 
+  <!-- 当前项目制作nuget包的特殊设置,因为是工具所以不需要lib包,see https://docs.microsoft.com/zh-cn/nuget/reference/msbuild-targets#istool -->
   <PropertyGroup>
-    <!--会自动将需要的依赖项复制到输出路径-->
-    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
-    <!--将指定文件打入包-->
-    <TargetsForTfmSpecificBuildOutput>$(TargetsForTfmSpecificBuildOutput);CopyProjectReferencesToPackage</TargetsForTfmSpecificBuildOutput>
+    <!-- 忽略打包时的警告 -->
+    <NoWarn>$(NoWarn);NU5128;Nu5100</NoWarn>
+
+    <!-- 如果是工具直接用这个 -->
+    <!--<IsTool>true</IsTool>-->
+    <!-- 自定义目录名 -->
+    <BuildOutputTargetFolder>task</BuildOutputTargetFolder>
   </PropertyGroup>
 
   <ItemGroup>
@@ -30,10 +34,17 @@
     <Content Include="build\Easy.Tool.MergeJson.targets" PackagePath="build\" />
   </ItemGroup>
 
+  <PropertyGroup>
+    <!--会自动将需要的依赖项复制到输出路径-->
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+    <!--将指定文件打入包-->
+    <TargetsForTfmSpecificBuildOutput>$(TargetsForTfmSpecificBuildOutput);CopyProjectReferencesToPackage</TargetsForTfmSpecificBuildOutput>
+  </PropertyGroup>
+  
   <!--将项目引用文件复制到包-->
   <Target Name="CopyProjectReferencesToPackage" DependsOnTargets="ResolveReferences">
     <ItemGroup>
-      <!-- 你的 MSBuild 任务的依赖必须打包在包里面，不能用普通的 PackageReferences 表示 -->
+      <!-- MSBuild 任务的依赖需要打包到Nuget里面,不能用PackageReferences,加载任务会失败 -->
       <BuildOutputInPackage Include="$(OutputPath)*.dll" Exclude="$(OutputPath)$(MSBuildThisFileName).dll" />
     </ItemGroup>
   </Target>

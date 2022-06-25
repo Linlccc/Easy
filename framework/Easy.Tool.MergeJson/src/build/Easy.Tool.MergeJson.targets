@@ -1,20 +1,9 @@
 ﻿<Project>
   <ItemGroup>
-    <!--指定不将当前NuGet包构建到debug-->
-    <PackageReference Update="$(MSBuildThisFileName)" ExcludeAssets="runtime" />
     <!--所有导入的文件从内容中移除,添加到什么操作也不做（不复制）-->
     <Content Remove="@(JsonItems)" />
-    <None Include="@(JsonItems)">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </None>
+    <None Include="@(JsonItems)"><CopyToOutputDirectory>Never</CopyToOutputDirectory></None>
   </ItemGroup>
-  
-  <!-- Easy.Tool.MergeJson.dll 不复制到项目文件 在解析包(ResolvePackageAssets)过后执行 -->
-  <Target Name="MergeJsonNotCopyLocal" AfterTargets="ResolvePackageAssets">
-    <ItemGroup>
-      <RuntimeCopyLocalItems Update="@(RuntimeCopyLocalItems)" Condition="%(NuGetPackageId) == $(MSBuildThisFileName)"  CopyLocal="false" />
-    </ItemGroup>
-  </Target>
 
   <!--合并json任务，在构建之前执行-->
   <Target Name="MergeJson" BeforeTargets="Build">
