@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <!-- 忽略访问检查的程序集 -->
+    <IgnoresAccessChecksAssemblyNames>Microsoft.Extensions.DependencyInjection</IgnoresAccessChecksAssemblyNames>
+    <!-- 排除的类型(不忽略检查的类型) -->
+    <ExcludeTypeFullNames></ExcludeTypeFullNames>
+    <!-- 生成的公开程序集包含方法体 -->
+    <UseEmptyMethodBody>false</UseEmptyMethodBody>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Easy.Tool.IgnoresAccessChecks" Version="1.0.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="6.0.0" />
+  </ItemGroup>
+
+</Project>
