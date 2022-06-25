@@ -39,3 +39,13 @@
   <UseEmptyMethodBody>true</UseEmptyMethodBody>
 </PropertyGroup>
 ~~~
+
+## 更新日志
+
+### 1.0.0
+
+- 项目发布
+
+### 1.0.1
+
+- 修改项目readme文档
