@@ -217,4 +217,24 @@ public class EasyServiceProviderTests
         Assert.NotNull(typeR7.TypeR6_2);
         Assert.NotEqual(typeR7.TypeR6_1, typeR7.TypeR6_2);
     }
+
+    /// <summary>
+    /// 测试生命周期(这个测试时为了表现处一个bug)
+    /// </summary>
+    [Fact]
+    public void Lift_Test()
+    {
+        EasyServiceProvider service = GetEasyServiceProvider();
+        TypeR7<bool> typeR7_1 = (TypeR7<bool>)service.GetService<ITypeR7<bool>>()!;
+        TypeR1? typeR1_1 = typeR7_1.TypeR1_1;
+
+        TypeR7<bool> typeR7_2 = (TypeR7<bool>)service.GetService<ITypeR7<bool>>()!;
+        TypeR1? typeR1_2 = typeR7_1.TypeR1_1;
+
+        // 因为 Easy.DI 的问题会出现以下问题
+        // 1.从服务中获取的两个对象时相等
+        // 2.但是两次获取都截取一个瞬时注册的字段，两个字段却不相等
+        Assert.Equal(typeR7_1, typeR7_2);
+        Assert.NotEqual(typeR1_1, typeR1_2);
+    }
 }

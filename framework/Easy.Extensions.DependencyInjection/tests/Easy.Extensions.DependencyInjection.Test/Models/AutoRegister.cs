@@ -9,7 +9,7 @@ namespace Easy.Extensions.DependencyInjection.Test.Models;
 /// 将自己为服务类型注册
 /// 同时使用 null 作为服务key注册
 /// </summary>
-[Register(ServiceKey = null)]
+[Register(ServiceKey = null, ServiceLifetime = ServiceLifetime.Transient)]
 public class TypeR1 { }
 #endregion
 
@@ -187,7 +187,7 @@ public class FacotryR2 : IFacotryR2, IRegisterFactory<IFacotryR2, ILifetimeScope
 {
     public object ImplementationFactory(IServiceProvider serviceProvider)
     {
-        var v1 = serviceProvider.GetService<IServiceProvider>();
+        IServiceProvider? v1 = serviceProvider.GetService<IServiceProvider>();
         return new FacotryR2();
     }
 
