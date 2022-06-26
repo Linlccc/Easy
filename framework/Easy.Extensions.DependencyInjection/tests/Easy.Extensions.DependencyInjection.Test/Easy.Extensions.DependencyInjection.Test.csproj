@@ -4,6 +4,7 @@
     <Nullable>enable</Nullable>
     <IsPackable>false</IsPackable>
     <IsNuGetTest>false</IsNuGetTest>
+    <NoWarn>$(NoWarn);xUnit2013</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
