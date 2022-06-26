@@ -269,6 +269,7 @@ Easy.Extensions.DependencyInjection 的服务提供商实现AOP
 - [x] 处理版本控制问题 [0525]
 - [x] 解除特性继承疑惑 [0619]
 - [x] 解决Nuget包会生成到项目debug文件中问题 [0624]
+- [ ] 将发布包的脚本的环境设置为发布 (实现)
 - [ ] 看看。HttpRequestRewindExtensions.EnableBuffering 的源码
 - [ ] 了解为什么应该将 IHttpContextAccessor 作为Singleton注入
 
@@ -294,6 +295,9 @@ Easy.Extensions.DependencyInjection 的服务提供商实现AOP
 ### Easy.Extensions.DependencyInjection 项目升级/修改/开发计划
 
 ~~~text
+bug
+1.字段注入和属性每一次都会去获取新对象
+
 后期计划
 1.添加多框架版本更换服务容器
   // 该方式是 IHostBuilder 拓展,直接配置使用 EasyDependencyInjection
