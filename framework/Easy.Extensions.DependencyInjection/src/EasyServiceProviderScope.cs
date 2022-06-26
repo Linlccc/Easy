@@ -1,7 +1,4 @@
-﻿using System.Collections.Concurrent;
-using Microsoft.Extensions.DependencyInjection;
-
-namespace Easy.Extensions.DependencyInjection;
+﻿namespace Easy.Extensions.DependencyInjection;
 
 /// <summary>
 /// 服务提供商范围
@@ -18,7 +15,7 @@ internal class EasyServiceProviderScope : IServiceScopeFactory, IServiceScope, I
     /// 真实服务提供商
     /// 存放 <c>ServiceProviderEngineScope</c> 类型对象
     /// </summary>
-    private readonly IServiceProvider _realServiceProvider;
+    private readonly ServiceProviderEngineScope _realServiceProvider;
 
     /// <summary>
     /// 是否是根服务提供商
@@ -33,7 +30,7 @@ internal class EasyServiceProviderScope : IServiceScopeFactory, IServiceScope, I
     /// <param name="easyServiceProvider">原始服务提供商容器</param>
     /// <param name="realServiceProvider">真实服务提供商范围</param>
     /// <param name="isRoot">是否是root</param>
-    internal EasyServiceProviderScope(EasyServiceProvider easyServiceProvider, IServiceProvider realServiceProvider, bool isRoot)
+    internal EasyServiceProviderScope(EasyServiceProvider easyServiceProvider, ServiceProviderEngineScope realServiceProvider, bool isRoot)
     {
         _rootServiceProvider = easyServiceProvider;
         _realServiceProvider = realServiceProvider;
@@ -54,14 +51,14 @@ internal class EasyServiceProviderScope : IServiceScopeFactory, IServiceScope, I
         if (_disposed) return;
         _disposed = true;
         _rootServiceProvider._serviceProviders.TryRemove(_realServiceProvider, out _);
-        (_realServiceProvider as IDisposable)!.Dispose();
+        _realServiceProvider.Dispose();
     }
 
-    public ValueTask DisposeAsync()
+    public async ValueTask DisposeAsync()
     {
-        if (_disposed) return default;
+        if (_disposed) return;
         _disposed = true;
         _rootServiceProvider._serviceProviders.TryRemove(_realServiceProvider, out _);
-        return (_realServiceProvider as IAsyncDisposable)!.DisposeAsync();
+        await _realServiceProvider.DisposeAsync();
     }
 }

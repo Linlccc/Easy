@@ -1,7 +1,5 @@
 ﻿using System.Collections.Concurrent;
-using System.Diagnostics;
 using Easy.Extensions.DependencyInjection.Abstractions.Extensions;
-
 
 namespace Easy.Extensions.DependencyInjection;
 
@@ -21,12 +19,6 @@ public sealed class EasyServiceProvider : IServiceProvider, ISupportRequiredServ
     private readonly ServiceProvider _realServiceProvider;
 
     /// <summary>
-    /// 真实服务提供商范围类型的构造函数
-    /// <br>ServiceProviderEngineScope 类型的构造函数</br>
-    /// </summary>
-    private readonly ConstructorInfo _serviceProviderEngineScopeCtor;
-
-    /// <summary>
     /// Easy服务提供商事件
     /// </summary>
     private readonly EasyServiceProviderEvents? _providerEvents;
@@ -34,7 +26,7 @@ public sealed class EasyServiceProvider : IServiceProvider, ISupportRequiredServ
     /// <summary>
     /// 服务提供商字典
     /// </summary>
-    internal readonly ConcurrentDictionary<IServiceProvider, EasyServiceProviderScope> _serviceProviders = new();
+    internal readonly ConcurrentDictionary<ServiceProviderEngineScope, EasyServiceProviderScope> _serviceProviders = new();
 
     private bool _disposed;
 
@@ -49,7 +41,7 @@ public sealed class EasyServiceProvider : IServiceProvider, ISupportRequiredServ
         // 注册Easy服务提供商事件类型
         serviceDescriptors.AddSingleton(easyServiceProviderOptions.ServiceProviderEventsType);
         // 注册默认 IServiceProvider
-        serviceDescriptors.AddScoped<IServiceProvider>(service => GetOrCreate(service, false));
+        serviceDescriptors.AddScoped<IServiceProvider>(service => GetOrCreate((service as ServiceProviderEngineScope)!, false));
 #if DEBUG
         // 如果不添加，获取默认的服务商会被 IsService 筛掉(只针对测试环境)
         serviceDescriptors.AddScoped(typeof(IServiceProvider).WearMicrosoftMask(), service => string.Empty);
@@ -57,19 +49,15 @@ public sealed class EasyServiceProvider : IServiceProvider, ISupportRequiredServ
 #endif
         // 得到真实服务提供商
         _realServiceProvider = serviceDescriptors.BuildServiceProvider(easyServiceProviderOptions.ServiceProviderOptions ?? new ServiceProviderOptions());
-        // 得到Easy服务提供商事件实例
-        _providerEvents = _realServiceProvider.GetService(easyServiceProviderOptions.ServiceProviderEventsType) as EasyServiceProviderEvents;
 
 
         // 设置服务提供商范围
-        if (typeof(ServiceProvider).GetProperty("Root", BindingFlags.Instance | BindingFlags.NonPublic)?.GetValue(_realServiceProvider) is not IServiceProvider realServiceProviderScope) throw new InvalidOperationException($"{nameof(realServiceProviderScope)} 永远不应为空");
-        _rootServiceProvider = GetOrCreate(realServiceProviderScope, true);
-        // 获取 ServiceProviderEngineScope 类型的构造函数
-        _serviceProviderEngineScopeCtor = realServiceProviderScope.GetType().GetConstructor(new Type[] { typeof(ServiceProvider), typeof(bool) })!;
-        Debug.Assert(_serviceProviderEngineScopeCtor != null);
+        _rootServiceProvider = GetOrCreate(_realServiceProvider.Root, true);
 
         // 替换默认服务提供商
-        ReplaceDefaultProvider(easyServiceProviderOptions.HoldDefaultServiceProvider, realServiceProviderScope);
+        ReplaceDefaultProvider(easyServiceProviderOptions.HoldDefaultServiceProvider, _realServiceProvider.Root);
+        // 得到Easy服务提供商事件实例s
+        _providerEvents = GetService(easyServiceProviderOptions.ServiceProviderEventsType) as EasyServiceProviderEvents;
     }
 
     /// <summary>
@@ -90,7 +78,7 @@ public sealed class EasyServiceProvider : IServiceProvider, ISupportRequiredServ
     /// 创建范围
     /// </summary>
     /// <returns></returns>
-    internal IServiceScope CreateScope() => GetOrCreate((IServiceProvider)_serviceProviderEngineScopeCtor.Invoke(new object[] { _realServiceProvider, false }), false);
+    internal IServiceScope CreateScope() => GetOrCreate(new ServiceProviderEngineScope(_realServiceProvider, false), false);
 
     public void Dispose()
     {
@@ -100,12 +88,12 @@ public sealed class EasyServiceProvider : IServiceProvider, ISupportRequiredServ
         _rootServiceProvider.Dispose();
     }
 
-    public ValueTask DisposeAsync()
+    public async ValueTask DisposeAsync()
     {
-        if (_disposed) return default;
+        if (_disposed) return;
         _disposed = true;
-        _realServiceProvider.DisposeAsync().GetAwaiter();
-        return _rootServiceProvider.DisposeAsync();
+        await _realServiceProvider.DisposeAsync();
+        await _rootServiceProvider.DisposeAsync();
     }
 
 
@@ -211,7 +199,8 @@ public sealed class EasyServiceProvider : IServiceProvider, ISupportRequiredServ
     /// </summary>
     /// <param name="holdDefaultServiceProvider">是否保留默认服务提供商</param>
     /// <param name="originalRoot">原Root服务提供商范围</param>
-    private void ReplaceDefaultProvider(bool holdDefaultServiceProvider, IServiceProvider originalRoot)
+    [Obsolete("旧版")]
+    private void Old_ReplaceDefaultProvider(bool holdDefaultServiceProvider, IServiceProvider originalRoot)
     {
         Type serviceProviderType = typeof(ServiceProvider);
         Assembly dIAssembly = serviceProviderType.Assembly;
@@ -265,11 +254,39 @@ public sealed class EasyServiceProvider : IServiceProvider, ISupportRequiredServ
     }
 
     /// <summary>
+    /// 替换默认服务提供商
+    /// <br>因为默认 IServiceProvider 和 IServiceScopeFactory 直接加入缓存,所以直接修改缓存即可</br>
+    /// </summary>
+    /// <param name="holdDefaultServiceProvider">是否保留默认服务提供商</param>
+    /// <param name="originalRoot">原Root服务提供商范围</param>
+    private void ReplaceDefaultProvider(bool holdDefaultServiceProvider, ServiceProviderEngineScope originalRoot)
+    {
+        // 获取站点(服务)缓存字典
+        IDictionary<ServiceCacheKey, ServiceCallSite> callSiteCashe = (IDictionary<ServiceCacheKey, ServiceCallSite>)typeof(CallSiteFactory).GetField("_callSiteCache", BindingFlags.Instance | BindingFlags.NonPublic)!.GetValue(_realServiceProvider.CallSiteFactory)!;
+
+        // 创建默认 Key
+        ServiceCacheKey defaultIServiceScopeFactoryKey = new(typeof(IServiceScopeFactory), 0);
+        // 删除默认 IServiceProvider 和 IServiceScopeFactory 缓存
+        callSiteCashe.Remove(new(typeof(IServiceProvider), 0));
+        callSiteCashe.Remove(defaultIServiceScopeFactoryKey);
+
+        // 添加 Easy 容器（IServiceProvider 不用添加正常注册）
+        callSiteCashe.Add(defaultIServiceScopeFactoryKey, new ConstantCallSite(typeof(IServiceScopeFactory), _rootServiceProvider));
+
+        // 添加默认服务提供商
+        if (holdDefaultServiceProvider)
+        {
+            callSiteCashe.Add(new(typeof(IServiceProvider).WearMicrosoftMask(), 0), new ServiceProviderCallSite());
+            callSiteCashe.Add(new(typeof(IServiceScopeFactory).WearMicrosoftMask(), 0), new ConstantCallSite(typeof(IServiceScopeFactory), originalRoot));
+        }
+    }
+
+    /// <summary>
     /// 获取或创建服务提供商范围容器
     /// </summary>
     /// <param name="realServiceProvider">真实服务提供商范围</param>
     /// <param name="isRoot">是否是root</param>
     /// <returns></returns>
-    private EasyServiceProviderScope GetOrCreate(IServiceProvider realServiceProvider, bool isRoot) => _serviceProviders.GetOrAdd(realServiceProvider, rsp => new EasyServiceProviderScope(this, rsp, isRoot));
+    private EasyServiceProviderScope GetOrCreate(ServiceProviderEngineScope realServiceProvider, bool isRoot) => _serviceProviders.GetOrAdd(realServiceProvider, rsp => new EasyServiceProviderScope(this, rsp, isRoot));
     #endregion
 }
