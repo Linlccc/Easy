@@ -297,6 +297,7 @@ Easy.Extensions.DependencyInjection 的服务提供商实现AOP
 ~~~text
 bug
 1.字段注入和属性每一次都会去获取新对象
+2.构造函数注入的参数没有属性和字段注入
 
 后期计划
 1.添加多框架版本更换服务容器
