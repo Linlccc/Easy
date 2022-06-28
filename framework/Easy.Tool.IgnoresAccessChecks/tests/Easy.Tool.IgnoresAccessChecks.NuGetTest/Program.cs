@@ -1,5 +1,4 @@
-﻿// See https://aka.ms/new-console-template for more information
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.ServiceLookup;
 
 Console.WriteLine("使用DI的内部类型");
