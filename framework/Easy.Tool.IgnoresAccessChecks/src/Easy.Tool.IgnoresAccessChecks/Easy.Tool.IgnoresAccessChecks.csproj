@@ -5,9 +5,9 @@
     <Nullable>enable</Nullable>
     <Description>实现"MSBuild"构建使用[IgnoresAccessChecksToAttribute]特性的程序集</Description>
     <!-- 不统一时项目使用该版本 -->
-    <Version Condition="!$(UnifiedVersion)">1.0.2</Version>
+    <Version Condition="!$(UnifiedVersion)">1.0.3</Version>
     <!-- 本地测试版本 -->
-    <!--<Version>0.0.1-test22</Version>-->
+    <!--<Version>0.0.1-test23</Version>-->
   </PropertyGroup>
 
   <!-- 当前项目制作nuget包的特殊设置,因为是工具所以不需要lib包,see https://docs.microsoft.com/zh-cn/nuget/reference/msbuild-targets#istool -->

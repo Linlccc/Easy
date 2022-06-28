@@ -165,9 +165,8 @@ namespace System.Runtime.CompilerServices
         foreach (TypeDefinition type in types)
         {
             // 公开类型
-            if(type.IsNotPublic) type.IsPublic = true;
-            // 公开嵌套类型
-            if (!type.IsNestedPublic) type.IsNestedPublic = true;
+            if (!type.IsNested && type.IsNotPublic) type.IsPublic = true;
+            if (type.IsNested && !type.IsNestedPublic) type.IsNestedPublic = true;
 
             // 公开字段
             foreach (FieldDefinition field in type.Fields.Where(f => !f.IsPublic)) field.IsPublic = true;
