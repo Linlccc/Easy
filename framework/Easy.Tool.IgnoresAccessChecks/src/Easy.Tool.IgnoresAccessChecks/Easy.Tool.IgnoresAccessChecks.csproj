@@ -5,7 +5,7 @@
     <Nullable>enable</Nullable>
     <Description>实现"MSBuild"构建使用[IgnoresAccessChecksToAttribute]特性的程序集</Description>
     <!-- 不统一时项目使用该版本 -->
-    <Version Condition="!$(UnifiedVersion)">1.0.1</Version>
+    <Version Condition="!$(UnifiedVersion)">1.0.2</Version>
     <!-- 本地测试版本 -->
     <!--<Version>0.0.1-test22</Version>-->
   </PropertyGroup>
