@@ -164,11 +164,15 @@ namespace System.Runtime.CompilerServices
         IEnumerable<TypeDefinition> types = assembly.Modules.SelectMany(m => m.GetTypes()).Where(t => !_excludeTypeFullNames.Contains(t.FullName));
         foreach (TypeDefinition type in types)
         {
-            if (!type.IsNested && type.IsNotPublic) type.IsPublic = true;
-            else if (type.IsNestedAssembly || type.IsNestedFamilyOrAssembly || type.IsNestedFamilyAndAssembly) type.IsNestedPublic = true;
+            // 公开类型
+            if(type.IsNotPublic) type.IsPublic = true;
+            // 公开嵌套类型
+            if (!type.IsNestedPublic) type.IsNestedPublic = true;
 
-            foreach (FieldDefinition field in type.Fields.Where(f => f.IsAssembly || f.IsFamilyOrAssembly || f.IsFamilyAndAssembly)) field.IsPublic = true;
+            // 公开字段
+            foreach (FieldDefinition field in type.Fields.Where(f => !f.IsPublic)) field.IsPublic = true;
 
+            // 公开方法
             foreach (MethodDefinition method in type.Methods)
             {
                 if (UseEmptyMethodBody && method.HasBody)
@@ -178,7 +182,7 @@ namespace System.Runtime.CompilerServices
                     method.Body.Instructions.Add(Instruction.Create(OpCodes.Throw));
                 }
 
-                if (method.IsAssembly || method.IsFamilyOrAssembly || method.IsFamilyAndAssembly) method.IsPublic = true;
+                if (!method.IsPublic) method.IsPublic = true;
             }
         }
         assembly.Write(makePublicFile);
