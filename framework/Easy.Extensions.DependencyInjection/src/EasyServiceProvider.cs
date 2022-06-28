@@ -262,7 +262,7 @@ public sealed class EasyServiceProvider : IServiceProvider, ISupportRequiredServ
     private void ReplaceDefaultProvider(bool holdDefaultServiceProvider, ServiceProviderEngineScope originalRoot)
     {
         // 获取站点(服务)缓存字典
-        IDictionary<ServiceCacheKey, ServiceCallSite> callSiteCashe = (IDictionary<ServiceCacheKey, ServiceCallSite>)typeof(CallSiteFactory).GetField("_callSiteCache", BindingFlags.Instance | BindingFlags.NonPublic)!.GetValue(_realServiceProvider.CallSiteFactory)!;
+        IDictionary<ServiceCacheKey, ServiceCallSite> callSiteCashe = _realServiceProvider.CallSiteFactory._callSiteCache;
 
         // 创建默认 Key
         ServiceCacheKey defaultIServiceScopeFactoryKey = new(typeof(IServiceScopeFactory), 0);
