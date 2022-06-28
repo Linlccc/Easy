@@ -34,12 +34,13 @@ namespace Easy.Tool.IgnoresAccessChecks.Test
         [Fact]
         public void MakePublicTest_DI()
         {
+            string userDir = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
             MakePublicInternal make = new()
             {
                 IgnoresAccessChecksAssemblyNames = "Microsoft.Extensions.DependencyInjection",
                 SourceRefs = new ITaskItem[]
                 {
-                    new TaskItem(@"C:\Users\safetech3\.nuget\packages\microsoft.extensions.dependencyinjection\6.0.0\lib\net6.0\Microsoft.Extensions.DependencyInjection.dll"),
+                    new TaskItem(Path.Combine(userDir,@".nuget\packages\microsoft.extensions.dependencyinjection\6.0.0\lib\net6.0\Microsoft.Extensions.DependencyInjection.dll")),
                     new TaskItem(@"C:\Program Files\dotnet\packs\Microsoft.NETCore.App.Ref\6.0.5\ref\net6.0\System.Runtime.dll")
                 },
                 IntermediateOutputPath = Path.Combine(Directory.GetCurrentDirectory(), "IgnoresAccessChecks"),
