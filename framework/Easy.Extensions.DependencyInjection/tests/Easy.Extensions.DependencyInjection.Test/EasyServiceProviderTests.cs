@@ -1,4 +1,5 @@
-﻿using Easy.Extensions.DependencyInjection.Test.Models;
+﻿using Easy.Extensions.DependencyInjection.Abstractions.Extensions;
+using Easy.Extensions.DependencyInjection.Test.Models;
 
 namespace Easy.Extensions.DependencyInjection.Test;
 
@@ -236,5 +237,15 @@ public class EasyServiceProviderTests
         // 2.但是两次获取都截取一个瞬时注册的字段，两个字段却不相等
         Assert.Equal(typeR7_1, typeR7_2);
         Assert.NotEqual(typeR1_1, typeR1_2);
+    }
+
+
+    [Fact]
+    public void Test1()
+    {
+        IServiceProvider service = new ServiceCollection().AutoRegister(GetType().Assembly).EnablePropertyInject().BuildServiceProvider();
+        ITypeR9<string> typeR9 = service.GetService<ITypeR9<string>>();
+        FacotryR2 facotryR2 = service.GetService<FacotryR2>();
+        ITypeR7<bool> typeR7 = service.GetService<ITypeR7<bool>>();
     }
 }
