@@ -1,5 +1,4 @@
-﻿using System.Reflection;
-using Easy.Extensions.DependencyInjection;
+﻿using Easy.Extensions.DependencyInjection;
 
 namespace Microsoft.Extensions.DependencyInjection;
 
