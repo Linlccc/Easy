@@ -18,7 +18,7 @@ namespace Easy.Extensions.DependencyInjection;
 /// </list>
 /// </typeparam>
 /// <typeparam name="TServiceLifetime">生命周期</typeparam>
-public interface IRegisterFactory<TService, TServiceLifetime> where TService : class where TServiceLifetime : IServiceLifetime 
+public interface IRegisterFactory<TService, TServiceLifetime> where TService : class where TServiceLifetime : IServiceLifetime
 {
     /// <summary>
     /// 实例对象的创建工厂

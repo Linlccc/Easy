@@ -14,7 +14,7 @@ public class EasyServiceProviderFactory : IServiceProviderFactory<IServiceCollec
     /// </summary>
     /// <param name="easyServiceProviderOptions">easy 服务提供商配置</param>
     /// <param name="assemblies">自动注册要扫描的程序集(如果不提供会去获取当前程序域中所有程序集)</param>
-    public EasyServiceProviderFactory(EasyServiceProviderOptions easyServiceProviderOptions,params Assembly[] assemblies)
+    public EasyServiceProviderFactory(EasyServiceProviderOptions easyServiceProviderOptions, params Assembly[] assemblies)
     {
         _easyServiceProviderOptions = easyServiceProviderOptions;
         _registerScanAssemblies = assemblies;

@@ -25,7 +25,7 @@ public static class ServiceTypeMaskExtensions
     /// <returns>代理后的类型</returns>
     public static Type WearMicrosoftMask<T>() => new ServiceTypeMask(typeof(T), MicrosoftKey);
     #endregion
-    
+
     /// <summary>
     /// 为类型佩戴面具(代理类型)
     /// </summary>
