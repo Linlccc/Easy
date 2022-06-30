@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Nullable>enable</Nullable>
     <IsPackable>false</IsPackable>
-    <IsNuGetTest>true</IsNuGetTest>
+    <IsNuGetTest>false</IsNuGetTest>
     <NoWarn>$(NoWarn);xUnit2013</NoWarn>
   </PropertyGroup>
 
