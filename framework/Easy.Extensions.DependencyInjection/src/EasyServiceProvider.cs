@@ -30,6 +30,60 @@ public sealed class EasyServiceProvider : IServiceProvider, ISupportRequiredServ
 
     private bool _disposed;
 
+
+    #region 重写获取服务
+    /// <summary>
+    /// 构造函数
+    /// </summary>
+    /// <param name="serviceDescriptors">服务描述集合</param>
+    /// <param name="easyServiceProviderOptions">Easy 服务提供商配置</param>
+    /// <param name="i">没用</param>
+    /// <exception cref="InvalidOperationException">永远不该出现的错误</exception>
+    internal EasyServiceProvider(IServiceCollection serviceDescriptors, EasyServiceProviderOptions easyServiceProviderOptions, int i)
+    {
+        // 注册Easy服务提供商事件类型
+        serviceDescriptors.AddSingleton(easyServiceProviderOptions.ServiceProviderEventsType);
+        // 注册默认 IServiceProvider
+        serviceDescriptors.AddScoped<IServiceProvider>(service => GetOrCreate((service as ServiceProviderEngineScope)!, false));
+#if DEBUG
+        // 如果不添加，获取默认的服务商会被 IsService 筛掉(只针对测试环境)
+        serviceDescriptors.AddScoped(typeof(IServiceProvider).WearMicrosoftMask(), service => string.Empty);
+        serviceDescriptors.AddSingleton(typeof(IServiceScopeFactory).WearMicrosoftMask(), service => string.Empty);
+#endif
+        // 得到真实服务提供商
+        _realServiceProvider = serviceDescriptors.BuildServiceProvider(easyServiceProviderOptions.ServiceProviderOptions ?? new ServiceProviderOptions());
+
+        //typeof(ServiceProvider)
+
+        // 设置服务提供商范围
+        _rootServiceProvider = GetOrCreate(_realServiceProvider.Root, true);
+
+        // 替换默认服务提供商
+        ReplaceDefaultProvider(easyServiceProviderOptions.HoldDefaultServiceProvider, _realServiceProvider.Root);
+        // 得到Easy服务提供商事件实例s
+        _providerEvents = GetService(easyServiceProviderOptions.ServiceProviderEventsType) as EasyServiceProviderEvents;
+    }
+
+    public Func<ServiceProviderEngineScope, object?> CreateServiceAccessor(Type serviceType)
+    {
+        ServiceCallSite callSite = _realServiceProvider.CallSiteFactory.GetCallSite(serviceType, new CallSiteChain());
+        if (callSite != null)
+        {
+            DependencyInjectionEventSource.Log.CallSiteBuilt(_realServiceProvider, serviceType, callSite);
+            _realServiceProvider.OnCreate(callSite);
+            if (callSite.Cache.Location == CallSiteResultCacheLocation.Root)
+            {
+                object value = CallSiteRuntimeResolver.Instance.Resolve(callSite, _realServiceProvider.Root);
+                return (ServiceProviderEngineScope scope) => value;
+            }
+
+            return _realServiceProvider._engine.RealizeService(callSite);
+        }
+
+        return _ => null;
+    }
+    #endregion
+
     /// <summary>
     /// 构造函数
     /// </summary>
@@ -50,6 +104,7 @@ public sealed class EasyServiceProvider : IServiceProvider, ISupportRequiredServ
         // 得到真实服务提供商
         _realServiceProvider = serviceDescriptors.BuildServiceProvider(easyServiceProviderOptions.ServiceProviderOptions ?? new ServiceProviderOptions());
 
+        //typeof(ServiceProvider).
 
         // 设置服务提供商范围
         _rootServiceProvider = GetOrCreate(_realServiceProvider.Root, true);
