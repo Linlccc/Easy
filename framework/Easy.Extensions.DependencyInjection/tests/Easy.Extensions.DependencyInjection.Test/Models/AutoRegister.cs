@@ -106,6 +106,10 @@ public class TypeR7<T> : ITypeR7<T>
     /// </summary>
     [Inject]
     public TypeR3? ITypeR4_1 { get; set; }
+    /// <summary>
+    /// null
+    /// </summary>
+    public TypeR3? ITypeR4_Interface { get; set; }
 
     /// <summary>
     /// not null
@@ -133,7 +137,14 @@ public class TypeR7<T> : ITypeR7<T>
     #endregion
 }
 
-public interface ITypeR7<T> { }
+public interface ITypeR7<T>
+{
+    /// <summary>
+    /// not null
+    /// </summary>
+    [Inject]
+    public TypeR3? ITypeR4_Interface { get; set; }
+}
 #endregion
 
 #region 8
