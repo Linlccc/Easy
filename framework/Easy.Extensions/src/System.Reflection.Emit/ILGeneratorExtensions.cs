@@ -12,6 +12,8 @@ public static partial class ILGeneratorExtensions
      *  3.1. 指针类型,是一种数据类型 比如:int*(int指针类型)
      *  3.2. 指针变量,是一个变量,指针变量的值是一个地址,指针变量也有自己的地址
      * 4.native int 就是C#中的 IntPtr
+     * 
+     * see https://docs.microsoft.com/zh-cn/dotnet/api/system.reflection.emit.opcodes?view=net-6.0
      */
 
 
