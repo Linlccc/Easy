@@ -393,4 +393,5 @@ https://github.com/microsoft/Microsoft.IO.RecyclableMemoryStream
 0702  躺
 0703  躺
 0704  躺
+0706  躺
 ~~~
