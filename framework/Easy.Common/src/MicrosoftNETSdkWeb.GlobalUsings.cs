@@ -1,4 +1,4 @@
-// Microsoft.NET.Sdk.Web 全局 using
+﻿// Microsoft.NET.Sdk.Web 全局 using
 global using global::Microsoft.AspNetCore.Builder;
 global using global::Microsoft.AspNetCore.Hosting;
 global using global::Microsoft.AspNetCore.Http;

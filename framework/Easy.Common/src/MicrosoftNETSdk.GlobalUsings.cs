@@ -8,5 +8,5 @@ global using global::System.Threading.Tasks;
 
 // 下面根据版本 using
 #if !NET462 && !NET472
-global using System.Net.Http;
+global using global::System.Net.Http;
 #endif
