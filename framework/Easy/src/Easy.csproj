@@ -1,0 +1,35 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <Description>Easy</Description>
+    <RootNamespace>$(MSBuildProjectName.Replace(" ", "_").Replace("Easy.Extensions", ""))</RootNamespace>
+    <!-- 不统一时项目使用该版本 -->
+    <Version Condition="!$(UnifiedVersion)">0.0.1</Version>
+  </PropertyGroup>
+
+
+  <ItemGroup Condition="$(TargetFramework) == '$(NetStandard2)'">
+    <PackageReference Include="System.Reflection.Emit" Version="4.7.0" />
+  </ItemGroup>
+
+
+  <ItemGroup>
+    <Compile Update="Resources\Strings.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Strings.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+
+  <ItemGroup>
+    <EmbeddedResource Update="Resources\Strings.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Strings.Designer.cs</LastGenOutput>
+      <CustomToolNamespace>System</CustomToolNamespace>
+    </EmbeddedResource>
+  </ItemGroup>
+
+</Project>

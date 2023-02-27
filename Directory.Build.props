@@ -8,7 +8,7 @@
     <IsTestProject>False</IsTestProject>
     <IsTestProject Condition="$(MSBuildProjectName.EndsWith('.Test')) or $(MSBuildProjectName.EndsWith('.NuGetTest'))">True</IsTestProject>
   </PropertyGroup>
-  
+
   <!--计算默认路径(0)-->
   <PropertyGroup Label="计算基本目录">
     <!--Easy 根目录-->
@@ -16,19 +16,19 @@
 
     <!-- nuget.exe 程序 -->
     <NuGetExe>$(MSBuildThisFileDirectory)nuget.exe</NuGetExe>
-    
+
     <!-- Readme 文件目录 -->
     <EasyReadmeDir>$([MSBuild]::NormalizeDirectory($(EasyRootDir),'readmes'))</EasyReadmeDir>
     <!--Easy 框架目录-->
     <EasyFrameworkDir>$([MSBuild]::NormalizeDirectory($(EasyRootDir),'framework'))</EasyFrameworkDir>
     <!--Easy 公共目录-->
     <EasyCommonDir>$([MSBuild]::NormalizeDirectory($(EasyFrameworkDir),'Easy.Common','src'))</EasyCommonDir>
-    
+
     <!--Easy msbuild 导入目录-->
     <EasyMSBuildImportDir>$([MSBuild]::NormalizeDirectory($(EasyRootDir),'easyMSBuildImport'))</EasyMSBuildImportDir>
     <!--Easy 自动导入目录(设置成属性后msbuild自动导入)-->
-    <EasyAutoImportDir>$([MSBuild]::NormalizeDirectory($(EasyMSBuildImportDir),'easyAutoImport'))</EasyAutoImportDir>
-    
+    <EasyAutoImportDir>$([MSBuild]::NormalizeDirectory($(EasyMSBuildImportDir),'autoImport'))</EasyAutoImportDir>
+
     <!--生成文件目录-->
     <GenerateDir>$([MSBuild]::NormalizeDirectory($(EasyRootDir),'artifacts'))</GenerateDir>
     <!--bin 目录-->
@@ -47,14 +47,14 @@
   <!-- <Import Project="$(EasyMSBuildImportDir)calculateArch.props" /> -->
   <!-- 用作构建的框架（0） -->
   <Import Project="$(EasyMSBuildImportDir)useFramework.props" />
-  
+
   <!-- 项目基础配置（1） -->
   <Import Project="$(EasyMSBuildImportDir)baseConfigure.props" />
   <!-- NuGet 包配置，非测试（2） -->
   <Import Project="$(EasyMSBuildImportDir)nonTestConfigure.props"  Condition="!$(IsTestProject)"/>
   <!-- 测试配置，测试（2） -->
   <Import Project="$(EasyMSBuildImportDir)testConfigure.props" Condition="$(IsTestProject)"/>
-  
+
   <!-- 导入 自动导入文件属性（随意） -->
   <Import Project="$(EasyMSBuildImportDir)autoImport.props" />
 
