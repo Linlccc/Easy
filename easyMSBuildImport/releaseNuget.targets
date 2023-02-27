@@ -57,6 +57,12 @@
 $(NuGetExe) setapikey [key] -src https://api.nuget.org/v3/index.json" Condition="$(ReleaseToRemoteOutputProp.Contains('No API Key was provided'))">
         <NoKey>true</NoKey>
       </ReleaseToRemoteOutput>
+      <!-- 密钥过期/无效 -->
+      <!-- NUGET 包apikey默认文件夹在 C:\Users\[username]\AppData\Roaming\NuGet\NuGet.Config -->
+      <ReleaseToRemoteOutput Include="当前 ApiKey 无效或过期 建议执行以下命名设置新秘钥:
+$(NuGetExe) setapikey [key] -src https://api.nuget.org/v3/index.json" Condition="$(ReleaseToRemoteOutputProp.Contains('The specified API key is invalid, has expired, or does not have permission to access the specified package.'))">
+        <InvalidKey>true</InvalidKey>
+      </ReleaseToRemoteOutput>
       <ReleaseToRemoteOutput Include="-------------------------------------" />
     </ItemGroup>
 
@@ -66,5 +72,6 @@ $(NuGetExe) setapikey [key] -src https://api.nuget.org/v3/index.json" Condition=
     <Message Importance="high" Text="已成功将包推送到远程NuGet服务器(https://api.nuget.org/v3/index.json)" Condition="%(ReleaseToRemoteOutput.Success) == 'true'" />
     <Message Importance="high" Text="$(NuGetPackageName) 以发布,请修改版本后再上传" Condition="%(ReleaseToRemoteOutput.Existed) == 'true'" />
     <Message Importance="high" Text="没有设置秘钥,请查看日志($(NuGetLogDir)$(NuGetPackageName).log)" Condition="%(ReleaseToRemoteOutput.NoKey) == 'true'" />
+    <Message Importance="high" Text="秘钥无效或过期,请查看日志($(NuGetLogDir)$(NuGetPackageName).log)" Condition="%(ReleaseToRemoteOutput.InvalidKey) == 'true'" />
   </Target>
 </Project>

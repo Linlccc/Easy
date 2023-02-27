@@ -5,7 +5,7 @@
     <Nullable>enable</Nullable>
     <Description>Easy</Description>
     <RootNamespace>$(MSBuildProjectName.Replace(" ", "_").Replace("Easy.Extensions", ""))</RootNamespace>
-    <!-- 不统一时项目使用该版本 -->
+    <!-- 不统一时项目使用该版本(nuget 上有这个包) -->
     <Version Condition="!$(UnifiedVersion)">0.0.1</Version>
   </PropertyGroup>
 
