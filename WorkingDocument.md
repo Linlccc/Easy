@@ -382,3 +382,4 @@ https://github.com/microsoft/Microsoft.IO.RecyclableMemoryStream
 - [ ] 将 Easy 项目的文档都整理一下，梳理一下思路
 - [ ] 修改 props/targets 文件，让包只支持 .net462 / netstandard2.0 即可
       仔细了解一下 netstandard2.0/2.1 规范
+- [ ] 添加 Easy.Console 项目
