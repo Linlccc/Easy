@@ -1,23 +1,25 @@
 ﻿namespace System.Reflection.Emit;
 
+/* ** 概念
+* 1. Label:     (标签) 类似于代码中的 goto
+* 2. 地址:      (address) 数据值存放的地址(获取p变量的地址 &p),一串数字
+* 3. 指针:      (pointer)
+*  3.1. 指针类型,是一种数据类型 比如:int*(int指针类型)
+*  3.2. 指针变量,是一个变量,指针变量的值是一个地址,指针变量也有自己的地址
+* 4. nativa int : 表示一个与平台相关的整数类型
+*  4.1. 32位系统上,是4字节。64位系统上,是8字节
+*  4.2. 主要用于与本机代码交互或进行低级操作，比如 P/Invoke（平台调用）
+*  4.3. 可以用于表示指针或句柄
+*  4.4. 在 C# 中，可以使用 IntPtr/nint 类型来表示 native int
+* 
+* see https://docs.microsoft.com/zh-cn/dotnet/api/system.reflection.emit.opcodes
+*/
+
 /// <summary>
 /// <see cref="ILGenerator"/>(Microsoft 中间语言指令生成器) 拓展
 /// </summary>
 public static partial class ILGeneratorExtensions
 {
-    /* ** 概念
-     * 1.Label:     (标签) 类似于代码中的 goto
-     * 2.地址:      (address) 数据值存放的地址(获取p变量的地址 &p),一串数字
-     * 3.指针:      (pointer)
-     *  3.1. 指针类型,是一种数据类型 比如:int*(int指针类型)
-     *  3.2. 指针变量,是一个变量,指针变量的值是一个地址,指针变量也有自己的地址
-     * 4.native int 就是C#中的 IntPtr
-     * 
-     * see https://docs.microsoft.com/zh-cn/dotnet/api/system.reflection.emit.opcodes?view=net-6.0
-     */
-
-
-
     #region 加载/推送(将指定的值推送到计算堆栈)
     #region 变量
     /// <summary>
