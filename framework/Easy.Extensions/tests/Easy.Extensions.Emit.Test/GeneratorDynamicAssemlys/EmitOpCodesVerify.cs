@@ -1,4 +1,5 @@
-﻿using System.Runtime.InteropServices;
+﻿using System.Reflection.Emit;
+using System.Runtime.InteropServices;
 
 namespace Easy.Extensions.Emit.Test.GeneratorDynamicAssemlys;
 
@@ -138,7 +139,7 @@ public class EmitOpCodesVerify
     public static object[] Arglist1(__arglist)
     {
         int num = 0;
-        ArgIterator argIterator = new ArgIterator(__arglist);
+        ArgIterator argIterator = new(__arglist);
         object[] array = new object[argIterator.GetRemainingCount()];
         while (argIterator.GetRemainingCount() > 0)
         {
@@ -190,7 +191,7 @@ public class EmitOpCodesVerify
 
     public static string CallVirtual2(string P_0)
     {
-        EmitTest2 emitTest = new EmitTest2();
+        EmitTest2 emitTest = new();
         return emitTest.T1(P_0);
     }
 
@@ -247,7 +248,7 @@ public class EmitOpCodesVerify
         return new object();
     }
 
-    public unsafe static int Calli_Ldftn1()
+    public static unsafe int Calli_Ldftn1()
     {
         return ((delegate* unmanaged[Stdcall]<int>)(delegate*<int>)(&EmitTest2.T2))();
     }
@@ -346,7 +347,7 @@ public class EmitOpCodesVerify
     public static int Try_Catch5(int P_0, int P_1)
     {
         //Discarded unreachable code: IL_002b, IL_0047
-        OverflowException ex = default(OverflowException);
+        OverflowException ex = default;
         try
         {
             if (P_0 <= 10 && P_1 <= 10)
@@ -379,7 +380,7 @@ public class EmitOpCodesVerify
     public static string Try_Catch_Finally1()
     {
         //Discarded unreachable code: IL_0017, IL_0050
-        string text = default(string);
+        string text = default;
         try
         {
             text += "进入了 Try      ";
@@ -460,12 +461,12 @@ public class EmitOpCodesVerify
 
     public static int Initobj1()
     {
-        return default(int);
+        return default;
     }
 
     public static MyStruct Mkrefany1()
     {
-        MyStruct result = new MyStruct("1");
+        MyStruct result = new("1");
         TypedReference obj = __makeref(result);
         FieldInfo field = typeof(MyStruct).GetField("_name", BindingFlags.Instance | BindingFlags.NonPublic);
         field.SetValueDirect(obj, "2");
@@ -474,7 +475,7 @@ public class EmitOpCodesVerify
 
     public static MyStruct Mkrefany2()
     {
-        MyStruct myStruct = new MyStruct("1");
+        MyStruct myStruct = new("1");
         FieldInfo field = typeof(MyStruct).GetField("_name", BindingFlags.Instance | BindingFlags.NonPublic);
         field.SetValue(myStruct, "2");
         return myStruct;
@@ -482,14 +483,14 @@ public class EmitOpCodesVerify
 
     public static Type Refanytype1()
     {
-        MyStruct myStruct = new MyStruct("1");
+        MyStruct myStruct = new("1");
         TypedReference typedReference = __makeref(myStruct);
         return __reftype(typedReference);
     }
 
     public static MyStruct Refanyval1()
     {
-        MyStruct myStruct = new MyStruct("1");
+        MyStruct myStruct = new("1");
         TypedReference typedReference = __makeref(myStruct);
         return __refvalue(typedReference, MyStruct);
     }
@@ -566,6 +567,10 @@ public static class EmitOpCodesVerifyCreator
     {
         // 定义类型构建器
         TypeBuilder typeBuilder = moduleBuilder.DefineType("EmitOpCodesVerify", TypeAttributes.Public);
+
+        // 默认构造函数
+        DefineDefaultConstructor(typeBuilder);
+
         // +
         DefineMethod_Add1(typeBuilder);
         DefineMethod_Add2(typeBuilder);
@@ -677,10 +682,8 @@ public static class EmitOpCodesVerifyCreator
         DefineMethod_Try_Catch3(typeBuilder);
         // Try_Catch4
         DefineMethod_Try_Catch4(typeBuilder);
-        // 拓展版
-        DefineMethod_Try_Catch4_Extension(typeBuilder);
         // 无法命中筛选异常
-        DefineMethod_Try_Catch5(typeBuilder);
+        DefineMethod_Try_Catch_Finally2(typeBuilder);
         // Try_Catch_Finally1
         DefineMethod_Try_Catch_Finally1(typeBuilder);
 
@@ -759,6 +762,32 @@ public static class EmitOpCodesVerifyCreator
         return typeBuilder.CreateType();
     }
 
+    // 默认构造函数
+    public static ConstructorBuilder DefineDefaultConstructor(TypeBuilder typeBuilder)
+    {
+        ConstructorBuilder methodBuilder = typeBuilder.DefineConstructor(MethodAttributes.Public, CallingConventions.Standard, Type.EmptyTypes);
+        ILGenerator il = methodBuilder.GetILGenerator();
+
+        // 声明一个局部变量
+        LocalBuilder v1 = il.DeclareLocal(typeof(int));
+        // 创建一个字段
+        FieldBuilder f2 = typeBuilder.DefineField("field2", typeof(int), FieldAttributes.Public);
+
+        // v1 = 100;
+        il.LoadInt(100);
+        il.SetLocal(v1);
+        // this.field2 = 10;
+        il.LoadArg(0);
+        il.LoadInt(10);
+        il.SetField(f2);
+        // base..ctor(); == object()
+        il.LoadArg(0);
+        il.Call(typeof(object).GetConstructor(Type.EmptyTypes));
+        il.Return();
+
+        return methodBuilder;
+    }
+
     #region 数学
     #region Add
     /// <summary>
@@ -767,6 +796,8 @@ public static class EmitOpCodesVerifyCreator
     /// <returns></returns>
     public static MethodBuilder DefineMethod_Add1(TypeBuilder typeBuilder)
     {
+
+
         MethodBuilder methodBuilder = typeBuilder.DefineMethod("Add1", MethodAttributes.Public | MethodAttributes.Static, typeof(int[]), new Type[] { typeof(int), typeof(int) });
         ILGenerator il = methodBuilder.GetILGenerator();
         // 声明本地变量数组
@@ -1294,19 +1325,19 @@ public static class EmitOpCodesVerifyCreator
         il.SetLocal(lb_currentIndex);
 
         // lb_varargs = new ArgIterator(__arglist);
-        il.LoadLocalAddr((UInt16)lb_varargs.LocalIndex); // 因为构造 ArgIterator 类型返回的是地址，所以加载地址去接收
+        il.LoadLocalAddr((ushort)lb_varargs.LocalIndex); // 因为构造 ArgIterator 类型返回的是地址，所以加载地址去接收
         il.LoadVarArgs();
         il.Call(typeof(ArgIterator).GetConstructor(new Type[] { typeof(RuntimeArgumentHandle) }));
 
         // lb_result = new object[lb_varargs.GetRemainingCount()];
-        il.LoadLocalAddr((UInt16)lb_varargs.LocalIndex);
+        il.LoadLocalAddr((ushort)lb_varargs.LocalIndex);
         il.Call(typeof(ArgIterator).GetMethod("GetRemainingCount"));
         il.NewArray(typeof(object));
         il.SetLocal(lb_result);
 
         // if(lb_havearg = lb_varargs.GetRemainingCount() < 0) return lb_result;
         il.MarkLabel(haveValueL);
-        il.LoadLocalAddr((UInt16)lb_varargs.LocalIndex);
+        il.LoadLocalAddr((ushort)lb_varargs.LocalIndex);
         il.Call(typeof(ArgIterator).GetMethod("GetRemainingCount"));
         il.LoadInt(0);
         il.CompareGreater();
@@ -1316,7 +1347,7 @@ public static class EmitOpCodesVerifyCreator
         il.Nop();
         il.LoadLocal(lb_result);
         il.LoadLocal(lb_currentIndex);
-        il.LoadLocalAddr((UInt16)lb_varargs.LocalIndex);
+        il.LoadLocalAddr((ushort)lb_varargs.LocalIndex);
         il.Call(typeof(ArgIterator).GetMethod("GetNextArg", Type.EmptyTypes));
         il.Call(typeof(TypedReference).GetMethod("ToObject"));
         il.SetArray(typeof(object));
@@ -1367,8 +1398,13 @@ public static class EmitOpCodesVerifyCreator
         MethodBuilder methodBuilder = typeBuilder.DefineMethod("Box1", MethodAttributes.Public | MethodAttributes.Static, typeof(object), new Type[] { typeof(int) });
         ILGenerator il = methodBuilder.GetILGenerator();
 
+        // 声明本地变量
+        LocalBuilder i1 = il.DeclareLocal(typeof(object));
+
         il.LoadArg(0);
         il.Box(typeof(int));
+        il.SetLocal(i1);
+        il.LoadLocal(i1);
         il.Return();
 
         return methodBuilder;
@@ -1543,7 +1579,7 @@ public static class EmitOpCodesVerifyCreator
         il.SetLocal(l1);
 
         // l2 = l1.T1(arg1);
-        il.LoadLocalAddr((UInt16)l1.LocalIndex);
+        il.LoadLocalAddr((ushort)l1.LocalIndex);
         il.LoadArg(0);
         il.Constrained(typeof(EmitTest1));
         il.CallVirtual(typeof(EmitTest1).GetMethod(nameof(EmitTest1.T1), new Type[] { typeof(string) }));
@@ -1693,7 +1729,7 @@ public static class EmitOpCodesVerifyCreator
 
         LocalBuilder l1 = il.DeclareLocal(typeof(int));
 
-        il.LoadLocalAddr((UInt16)l1.LocalIndex);
+        il.LoadLocalAddr((ushort)l1.LocalIndex);
         il.LoadInt(10);
         il.SetValueToAddr(typeof(int));
 
@@ -1710,7 +1746,7 @@ public static class EmitOpCodesVerifyCreator
 
         LocalBuilder l1 = il.DeclareLocal(typeof(object));
 
-        il.LoadLocalAddr((UInt16)l1.LocalIndex);
+        il.LoadLocalAddr((ushort)l1.LocalIndex);
         il.NewObject(typeof(object).GetConstructor(Type.EmptyTypes));
         il.SetValueToAddr(typeof(object));
 
@@ -1837,25 +1873,33 @@ public static class EmitOpCodesVerifyCreator
         MethodBuilder methodBuilder = typeBuilder.DefineMethod("Try_Catch2", MethodAttributes.Public | MethodAttributes.Static, typeof(string), Type.EmptyTypes);
         ILGenerator il = methodBuilder.GetILGenerator();
 
+        // 声明本地变量
+        LocalBuilder l1 = il.DeclareLocal(typeof(string));
+        LocalBuilder l2 = il.DeclareLocal(typeof(Exception));
+
         // try{
         il.BeginExceptionBlock();
-
-        // throw new Exception("Try_Catch1 测试 异常");
+        // l1 = "没有异常";
+        il.LoadString("没有异常");
+        il.SetLocal(l1);
+        // throw new Exception("Try_Catch2 测试 异常");
         il.LoadString("Try_Catch2 测试 异常");
-        il.NewObject(typeof(Exception).GetConstructor(new Type[] { typeof(string) }));
+        il.NewObject(typeof(Exception).GetConstructor([typeof(string)]));
         il.Throw();
-
-        // }catch (Exception){
+        // }catch (Exception e){
         il.BeginCatchBlock(typeof(Exception));
-
+        // l2 = e;
+        il.SetLocal(l2);
+        // l1 = l2.Message;
+        il.LoadLocal(l2);
         il.Call(typeof(Exception).GetMethod("get_Message"));
-        il.Return();
-
+        il.SetLocal(l1);
         // }
         il.EndExceptionBlock();
-
-        il.LoadString("没有异常");
+        // return l1;
+        il.LoadLocal(l1);
         il.Return();
+
         return methodBuilder;
     }
 
@@ -1865,255 +1909,83 @@ public static class EmitOpCodesVerifyCreator
         MethodBuilder methodBuilder = typeBuilder.DefineMethod("Try_Catch3", MethodAttributes.Public | MethodAttributes.Static, typeof(string), Type.EmptyTypes);
         ILGenerator il = methodBuilder.GetILGenerator();
 
+        // 声明本地变量
+        LocalBuilder l1 = il.DeclareLocal(typeof(string));
+
         // try{
         il.BeginExceptionBlock();
-
-        // throw new Exception("Try_Catch1 测试 异常");
+        // throw new Exception("Try_Catch3 测试 异常");
         il.LoadString("Try_Catch3 测试 异常");
-        il.NewObject(typeof(Exception).GetConstructor(new Type[] { typeof(string) }));
+        il.NewObject(typeof(Exception).GetConstructor([typeof(string)]));
         il.Throw();
-
         // }catch{
-        il.BeginFaultBlock();
-
+        il.BeginCatchBlock(typeof(object));
+        // l1 = "进入了一个不判断类型的异常捕捉";
         il.LoadString("进入了一个不判断类型的异常捕捉");
-        il.Return();
-
+        il.SetLocal(l1);
         // }
         il.EndExceptionBlock();
-
-        il.LoadString("没有异常");
-        il.Return();
-        return methodBuilder;
-    }
-
-    // Try_Catch4(有筛选的try catch 块不能直接使用il翻译的)
-    public static MethodBuilder DefineMethod_Try_Catch4(TypeBuilder typeBuilder)
-    {
-        MethodBuilder methodBuilder = typeBuilder.DefineMethod("Try_Catch4", MethodAttributes.Public | MethodAttributes.Static, typeof(string), Type.EmptyTypes);
-        ILGenerator il = methodBuilder.GetILGenerator();
-
-        LocalBuilder l1 = il.DeclareLocal(typeof(string));
-        LocalBuilder l2 = il.DeclareLocal(typeof(Exception));
-        LocalBuilder l3 = il.DeclareLocal(typeof(bool));
-        LocalBuilder l4 = il.DeclareLocal(typeof(string));
-
-        Label ll1 = il.DefineLabel();
-        Label ll2 = il.DefineLabel();
-        Label ll3 = il.DefineLabel();
-        Label ll4 = il.DefineLabel();
-
-        // l1 = "1";
-        il.Emit(OpCodes.Nop);
-        il.Emit(OpCodes.Ldstr, "1");
-        il.Emit(OpCodes.Stloc_0);
-
-        il.BeginExceptionBlock();
-        il.Emit(OpCodes.Nop);
-        il.Emit(OpCodes.Ldstr, "2");
-        il.Emit(OpCodes.Stloc_0);
-        il.Emit(OpCodes.Nop);
-        il.Emit(OpCodes.Ldstr, "123");
-        il.Emit(OpCodes.Newobj, typeof(Exception).GetConstructor(new Type[] { typeof(string) }));
-        il.Emit(OpCodes.Throw);
-        il.Emit(OpCodes.Leave_S, ll1);
-
-        il.BeginExceptFilterBlock();
-        il.Emit(OpCodes.Isinst, typeof(Exception));
-        il.Emit(OpCodes.Dup);
-        il.Emit(OpCodes.Brtrue, ll2);
-
-        il.Emit(OpCodes.Pop);
-        il.Emit(OpCodes.Ldc_I4_0);
-        il.Emit(OpCodes.Br, ll3);
-
-        il.MarkLabel(ll2);
-        il.Emit(OpCodes.Stloc_1);
-        il.Emit(OpCodes.Ldloc_1);
-        il.Emit(OpCodes.Callvirt, typeof(Exception).GetMethod("get_Message"));
-        il.Emit(OpCodes.Ldstr, "123");
-        il.Emit(OpCodes.Call, typeof(string).GetMethod("op_Equality", new Type[] { typeof(string), typeof(string) }));
-        il.Emit(OpCodes.Stloc_2);
-        il.Emit(OpCodes.Ldloc_2);
-        il.Emit(OpCodes.Ldc_I4_0);
-        il.Emit(OpCodes.Cgt_Un);
-
-        il.MarkLabel(ll3);
-        //il.Emit(OpCodes.Endfilter);//不能添加该指令，会出错
-
-        il.BeginCatchBlock(null);
-        il.Emit(OpCodes.Callvirt, typeof(Exception).GetMethod("get_Message"));
-        il.Emit(OpCodes.Stloc_0);
-        il.Emit(OpCodes.Ldloc_0);
-        il.Emit(OpCodes.Stloc_3);
-        il.Emit(OpCodes.Br, ll4);
-
-        il.EndExceptionBlock();
-
-        il.MarkLabel(ll1);
-        il.Emit(OpCodes.Ldstr, "4");
-        il.Emit(OpCodes.Stloc_0);
-        il.Emit(OpCodes.Ldloc_0);
-        il.Emit(OpCodes.Stloc_3);
-        il.Emit(OpCodes.Br_S, ll4);
-
-        il.MarkLabel(ll4);
-        il.Emit(OpCodes.Ldloc_3);
-        il.Emit(OpCodes.Ret);
-
-        return methodBuilder;
-    }
-
-    // Try_Catch4 拓展版
-    public static MethodBuilder DefineMethod_Try_Catch4_Extension(TypeBuilder typeBuilder)
-    {
-        MethodBuilder methodBuilder = typeBuilder.DefineMethod("Try_Catch4_Extension", MethodAttributes.Public | MethodAttributes.Static, typeof(string), Type.EmptyTypes);
-        ILGenerator il = methodBuilder.GetILGenerator();
-
-        LocalBuilder l1 = il.DeclareLocal(typeof(string));
-
-        Label ll1 = il.DefineLabel();
-        Label ll2 = il.DefineLabel();
-        Label ll3 = il.DefineLabel();
-        Label ll4 = il.DefineLabel();
-
-        // l1 = "1";
-        il.LoadString("1");
-        il.SetLocal(l1);
-
-        // try{
-        // l1 = "2";
-        // throw new Exception("123");
-        il.BeginExceptionBlock();
-        il.LoadString("2");
-        il.SetLocal(l1);
-        il.LoadString("123");
-        il.NewObject(typeof(Exception).GetConstructor(new Type[] { typeof(string) }));
-        il.Throw();
-        il.GotoLeave(ll1);
-
-        // }catch(Exception e) then(e.Message == "123"){
-        il.BeginExceptFilterBlock();
-        il.As(typeof(Exception));
-        il.Copy();
-        il.GotoIfTrue(ll2);
-
-        il.Pop();
-        il.LoadInt(0);
-        il.Goto(ll3);
-
-        il.MarkLabel(ll2);
-        il.CallVirtual(typeof(Exception).GetMethod("get_Message"));
-        il.LoadString("123");
-        il.Call(typeof(string).GetMethod("op_Equality", new Type[] { typeof(string), typeof(string) }));
-
-        // l1 = e.Message;
-        il.MarkLabel(ll3);
-        il.BeginCatchBlock(null);
-        il.CallVirtual(typeof(Exception).GetMethod("get_Message"));
-        il.SetLocal(l1);
-        il.GotoLeave(ll4);
-
-        // }
-        il.EndExceptionBlock();
-
-        // l1 = "4";
-        il.MarkLabel(ll1);
-        il.LoadString("4");
-        il.SetLocal(l1);
-
-        // return l4;
-        il.MarkLabel(ll4);
+        // return l1;
         il.LoadLocal(l1);
         il.Return();
 
         return methodBuilder;
     }
 
-    // 虽然可以正常运行，但是不能命中有筛选的错误
-    public static MethodBuilder DefineMethod_Try_Catch5(TypeBuilder typeBuilder)
+    // 有筛选的try catch
+    public static MethodBuilder DefineMethod_Try_Catch4(TypeBuilder typeBuilder)
     {
-        // Define method to add two numbers.
-        MethodBuilder myMethodBuilder = typeBuilder.DefineMethod("Try_Catch5", MethodAttributes.Public | MethodAttributes.Static, typeof(int), new Type[] { typeof(int), typeof(int) });
-        ILGenerator myAdderIL = myMethodBuilder.GetILGenerator();
+        MethodBuilder methodBuilder = typeBuilder.DefineMethod("Try_Catch4", MethodAttributes.Public | MethodAttributes.Static, typeof(string), Type.EmptyTypes);
+        ILGenerator il = methodBuilder.GetILGenerator();
 
-        // Create constructor.
-        ConstructorInfo myConstructorInfo = typeof(OverflowException).GetConstructor(
-           new Type[] { typeof(string) });
-        MethodInfo myExToStrMI = typeof(OverflowException).GetMethod("ToString");
-        MethodInfo myWriteLineMI = typeof(Console).GetMethod("WriteLine", new Type[]
-           {typeof(string),typeof(object)});
+        // 声明本地变量
+        LocalBuilder v1 = il.DeclareLocal(typeof(string));
+        // 声明标签
+        Label l1 = il.DefineLabel();
+        Label l2 = il.DefineLabel();
 
-        // Declare local variable.
-        LocalBuilder myLocalBuilder1 = myAdderIL.DeclareLocal(typeof(int));
-        LocalBuilder myLocalBuilder2 = myAdderIL.DeclareLocal(typeof(OverflowException));
+        // try{
+        il.BeginExceptionBlock();
+        // v1 = "没有异常";
+        il.LoadString("没有异常");
+        il.SetLocal(v1);
+        // throw new Exception("123");
+        il.LoadString("123");
+        il.NewObject(typeof(Exception).GetConstructor([typeof(string)]));
+        il.Throw();
+        // } catch (Exception ex) 
+        il.BeginExceptFilterBlock();
+        il.As(typeof(Exception));
+        il.Copy();
+        il.GotoIfTrue(l1);
+        // 如果异常类型检查未通过
+        il.Pop();
+        il.LoadInt(0);
+        il.Goto(l2);
+        // when (ex.Message == "123"){
+        il.MarkLabel(l1);
+        il.Call(typeof(Exception).GetProperty("Message").GetGetMethod());
+        il.LoadString("123");
+        il.Call(typeof(string).GetMethod("op_Equality", [typeof(string), typeof(string)]));
+        il.MarkLabel(l2);
+        il.BeginCatchBlock(null);
+        // v1 = ex.Message;
+        il.Call(typeof(Exception).GetProperty("Message").GetGetMethod());
+        il.SetLocal(v1);
+        // } catch(Exception ex) {
+        il.BeginCatchBlock(typeof(Exception));
+        // v1 = ex.Message + "----";
+        il.Call(typeof(Exception).GetProperty("Message").GetGetMethod());
+        il.LoadString("----");
+        il.Call(typeof(string).GetMethod("Concat", [typeof(string), typeof(string)]));
+        il.SetLocal(v1);
+        // }
+        il.EndExceptionBlock();
+        // return v1;
+        il.LoadLocal(v1);
+        il.Return();
 
-        // Define label.
-        Label myFailedLabel = myAdderIL.DefineLabel();
-        Label myEndOfMethodLabel = myAdderIL.DefineLabel();
-
-        // Begin exception block.
-        Label myLabel = myAdderIL.BeginExceptionBlock();
-
-        myAdderIL.Emit(OpCodes.Ldarg_0);
-        myAdderIL.Emit(OpCodes.Ldc_I4_S, 10);
-        myAdderIL.Emit(OpCodes.Bgt_S, myFailedLabel);
-
-        myAdderIL.Emit(OpCodes.Ldarg_1);
-        myAdderIL.Emit(OpCodes.Ldc_I4_S, 10);
-        myAdderIL.Emit(OpCodes.Bgt_S, myFailedLabel);
-
-        myAdderIL.Emit(OpCodes.Ldarg_0);
-        myAdderIL.Emit(OpCodes.Ldarg_1);
-        myAdderIL.Emit(OpCodes.Add_Ovf_Un);
-        myAdderIL.Emit(OpCodes.Stloc_S, myLocalBuilder1);
-        myAdderIL.Emit(OpCodes.Br_S, myEndOfMethodLabel);
-
-        myAdderIL.MarkLabel(myFailedLabel);
-        myAdderIL.Emit(OpCodes.Ldstr, "Cannot accept values over 10 for add.");
-        myAdderIL.Emit(OpCodes.Newobj, myConstructorInfo);
-
-        myAdderIL.Emit(OpCodes.Stloc_S, myLocalBuilder2);
-        myAdderIL.Emit(OpCodes.Ldloc_S, myLocalBuilder2);
-
-        // Throw the exception.
-        myAdderIL.ThrowException(typeof(OverflowException));
-
-        // Call 'BeginExceptFilterBlock'.
-        myAdderIL.BeginExceptFilterBlock();
-        myAdderIL.EmitWriteLine("Except filter block called.");
-        myAdderIL.Emit(OpCodes.Ldc_I4_1);
-
-        // Call catch block.
-        myAdderIL.BeginCatchBlock(null);
-        myAdderIL.Emit(OpCodes.Ldarg_0);
-        myAdderIL.Emit(OpCodes.Ldarg_1);
-        myAdderIL.Emit(OpCodes.Sub);
-        myAdderIL.Emit(OpCodes.Stloc_S, myLocalBuilder1);
-        myAdderIL.Emit(OpCodes.Leave, myEndOfMethodLabel);
-
-        // Call other catch block.
-        myAdderIL.BeginCatchBlock(typeof(OverflowException));
-
-        myAdderIL.Emit(OpCodes.Ldstr, "{0}");
-        myAdderIL.Emit(OpCodes.Ldloc_S, myLocalBuilder2);
-        myAdderIL.EmitCall(OpCodes.Callvirt, myExToStrMI, null);
-        myAdderIL.EmitCall(OpCodes.Call, myWriteLineMI, null);
-        myAdderIL.Emit(OpCodes.Ldc_I4_M1);
-        myAdderIL.Emit(OpCodes.Stloc_S, myLocalBuilder1);
-
-        // Call finally block.
-        myAdderIL.BeginFinallyBlock();
-        myAdderIL.EmitWriteLine("Finally block called.");
-
-        // End the exception block.
-        myAdderIL.EndExceptionBlock();
-
-        myAdderIL.MarkLabel(myEndOfMethodLabel);
-        myAdderIL.Emit(OpCodes.Ldloc_S, myLocalBuilder1);
-        myAdderIL.Emit(OpCodes.Ret);
-
-        return myMethodBuilder;
+        return methodBuilder;
     }
 
     // Try_Catch_Finally1
@@ -2179,6 +2051,71 @@ public static class EmitOpCodesVerifyCreator
         il.Return();
         return methodBuilder;
     }
+
+    // Try_Catch_Finally2
+    public static MethodBuilder DefineMethod_Try_Catch_Finally2(TypeBuilder typeBuilder)
+    {
+        MethodBuilder methodBuilder = typeBuilder.DefineMethod("Try_Catch_Finally2", MethodAttributes.Public | MethodAttributes.Static, typeof(int), [typeof(int), typeof(int)]);
+        ILGenerator il = methodBuilder.GetILGenerator();
+
+        // 声明本地变量
+        LocalBuilder v1 = il.DeclareLocal(typeof(int));
+        // 声明标签
+        Label l1 = il.DefineLabel();
+        Label l2 = il.DefineLabel();
+
+        // try{
+        il.BeginExceptionBlock();
+        // v1 = 1;
+        il.LoadInt(1);
+        il.SetLocal(v1);
+        // throw new Exception("123");
+        il.LoadString("123");
+        il.NewObject(typeof(Exception).GetConstructor([typeof(string)]));
+        il.Throw();
+        // } catch (Exception ex) 
+        il.BeginExceptFilterBlock();
+        il.As(typeof(Exception));
+        il.Copy();
+        il.GotoIfTrue(l1);
+        // 如果异常类型检查未通过
+        il.Pop();
+        il.LoadInt(0);
+        il.Goto(l2);
+        // when (ex.Message == "123"){
+        il.MarkLabel(l1);
+        il.Call(typeof(Exception).GetProperty("Message").GetGetMethod());
+        il.LoadString("123");
+        il.Call(typeof(string).GetMethod("op_Equality", [typeof(string), typeof(string)]));
+        il.MarkLabel(l2);
+        il.BeginCatchBlock(null);
+        // v1 = v1 + arg0;
+        il.LoadLocal(v1);
+        il.LoadArg(0);
+        il.MathAdd();
+        il.SetLocal(v1);
+        // } catch(Exception ex) {
+        il.BeginCatchBlock(typeof(Exception));
+        // v1 = v1 + arg1;
+        il.LoadLocal(v1);
+        il.LoadArg(1);
+        il.MathAdd();
+        il.SetLocal(v1);
+        // } finally {
+        il.BeginFinallyBlock();
+        // v1 = v1 + 10;
+        il.LoadLocal(v1);
+        il.LoadInt(10);
+        il.MathAdd();
+        il.SetLocal(v1);
+        // }
+        il.EndExceptionBlock();
+        // return v1;
+        il.LoadLocal(v1);
+        il.Return();
+
+        return methodBuilder;
+    }
     #endregion
 
     // sizeof
@@ -2191,48 +2128,48 @@ public static class EmitOpCodesVerifyCreator
 
         il.LoadInt(8);
         il.NewArray(typeof(int));
+        il.SetLocal(l1);
 
-        il.Copy();
+        il.LoadLocal(l1);
         il.LoadInt(0);
         il.SizeOf(typeof(byte));
         il.SetArray(typeof(int));
 
-        il.Copy();
+        il.LoadLocal(l1);
         il.LoadInt(1);
-        il.SizeOf(typeof(Int16));
-        il.SetArray();
+        il.SizeOf(typeof(short));
+        il.SetArray(typeof(int));
 
-        il.Copy();
+        il.LoadLocal(l1);
         il.LoadInt(2);
         il.SizeOf(typeof(int));
-        il.SetArray();
+        il.SetArray(typeof(int));
 
-        il.Copy();
+        il.LoadLocal(l1);
         il.LoadInt(3);
-        il.SizeOf(typeof(Int64));
-        il.SetArray();
+        il.SizeOf(typeof(long));
+        il.SetArray(typeof(int));
 
-        il.Copy();
+        il.LoadLocal(l1);
         il.LoadInt(4);
         il.SizeOf(typeof(double));
-        il.SetArray();
+        il.SetArray(typeof(int));
 
-        il.Copy();
+        il.LoadLocal(l1);
         il.LoadInt(5);
         il.SizeOf(typeof(decimal));
-        il.SetArray();
+        il.SetArray(typeof(int));
 
-        il.Copy();
+        il.LoadLocal(l1);
         il.LoadInt(6);
         il.SizeOf(typeof(string));
-        il.SetArray();
+        il.SetArray(typeof(int));
 
-        il.Copy();
+        il.LoadLocal(l1);
         il.LoadInt(7);
         il.SizeOf(typeof(object));
-        il.SetArray();
+        il.SetArray(typeof(int));
 
-        il.SetLocal(l1);
         il.LoadLocal(l1);
         il.Return();
         return methodBuilder;
@@ -2284,7 +2221,7 @@ public static class EmitOpCodesVerifyCreator
         LocalBuilder l1 = il.DeclareLocal(typeof(EmitTest2));
 
         // l1 = arg1;
-        il.LoadLocalAddr((UInt16)l1.LocalIndex);
+        il.LoadLocalAddr((ushort)l1.LocalIndex);
         il.LoadArgAddr(0);
         il.SizeOf(typeof(EmitTest2));
         il.CopyAddrValueToAddr();
@@ -2306,9 +2243,9 @@ public static class EmitOpCodesVerifyCreator
         LocalBuilder l1 = il.DeclareLocal(typeof(EmitTest2));
 
         // l1 = arg1;
-        il.LoadLocalAddr((UInt16)l1.LocalIndex);
+        il.LoadLocalAddr((ushort)l1.LocalIndex);
         il.LoadArgAddr(0);
-        il.Cpobj(typeof(int));
+        il.Cpobj(typeof(EmitTest2));
 
         // return l1; 
         il.LoadLocal(l1);
@@ -2352,7 +2289,7 @@ public static class EmitOpCodesVerifyCreator
 
         LocalBuilder l1 = il.DeclareLocal(typeof(int));
 
-        il.LoadLocalAddr((UInt16)l1.LocalIndex);
+        il.LoadLocalAddr((ushort)l1.LocalIndex);
         il.Emit(OpCodes.Initobj, typeof(int));
 
         il.LoadLocal(l1);
@@ -2382,7 +2319,7 @@ public static class EmitOpCodesVerifyCreator
 
         // l2 = __makeref(l1)
         // 将结构引用化
-        il.LoadLocalAddr((UInt16)l1.LocalIndex);
+        il.LoadLocalAddr((ushort)l1.LocalIndex);
         il.Mkrefany(typeof(MyStruct));
         il.SetLocal(l2);
 
@@ -2469,7 +2406,7 @@ public static class EmitOpCodesVerifyCreator
 
         // l2 = __makeref(l1)
         // 将结构引用化
-        il.LoadLocalAddr((UInt16)l1.LocalIndex);
+        il.LoadLocalAddr((ushort)l1.LocalIndex);
         il.Mkrefany(typeof(MyStruct));
         il.SetLocal(l2);
 
@@ -2500,7 +2437,7 @@ public static class EmitOpCodesVerifyCreator
 
         // l2 = __makeref(l1)
         // 将结构引用化
-        il.LoadLocalAddr((UInt16)l1.LocalIndex);
+        il.LoadLocalAddr((ushort)l1.LocalIndex);
         il.Mkrefany(typeof(MyStruct));
         il.SetLocal(l2);
 

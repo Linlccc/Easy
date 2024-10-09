@@ -15,6 +15,6 @@ public static class StringExtensions
 #if NET462 || NETSTANDARD2_0
     public static bool IsNullOrEmpty(this string? value) => string.IsNullOrEmpty(value);
 #else
-    public static bool IsNullOrEmpty([NotNullWhen(false)]this string? value) => string.IsNullOrEmpty(value);
+    public static bool IsNullOrEmpty([NotNullWhen(false)] this string? value) => string.IsNullOrEmpty(value);
 #endif
 }

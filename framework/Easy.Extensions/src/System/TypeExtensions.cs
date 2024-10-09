@@ -42,9 +42,7 @@ public static class TypeExtensions
         while (type != null && type != typeof(object))
         {
             if (type.GetTypeDefinition() == baseType) return true;
-#pragma warning disable CS8600 // 将 null 字面量或可能为 null 的值转换为非 null 类型。
-            type = type.BaseType;
-#pragma warning restore CS8600 // 将 null 字面量或可能为 null 的值转换为非 null 类型。
+            type = type.BaseType!;
         }
 
         return false;
