@@ -1038,6 +1038,17 @@ public static partial class ILGeneratorExtensions
     /// </summary>
     /// <param name="iLGenerator">中间语言指令生成器</param>
     public static void CopyAddrValueToAddr(this ILGenerator iLGenerator) => iLGenerator.Emit(OpCodes.Cpblk);
+
+    /// <summary>
+    /// 原：将位于对象地址的值（类型 &amp; 或 native int）复制到目标对象的地址（类型 &amp; 或 native int）
+    /// <list type="bullet">
+    ///     <item>1.推送目标地址</item>
+    ///     <item>2.推送原地址</item>
+    /// </list>
+    /// </summary>
+    /// <param name="iLGenerator">中间语言指令生成器</param>
+    /// <param name="type">测试中所有size相同的类型都可以正常运行</param>
+    public static void Cpobj(this ILGenerator iLGenerator, Type type) => iLGenerator.Emit(OpCodes.Cpobj, type);
     #endregion
 
     #region 引用化
@@ -1170,19 +1181,7 @@ public static partial class ILGeneratorExtensions
 
     #region 有歧义
     /// <summary>
-    /// 原：将位于对象地址的值类型（类型 &amp; 或原生 int）复制到目标对象的地址（类型 &amp; 或原生 int）
-    /// 测试:将指定地址的值复制到指定地址,运行成功
-    /// <list type="bullet">
-    ///     <item>1.推送目标地址</item>
-    ///     <item>2.推送原地址</item>
-    /// </list>
-    /// </summary>
-    /// <param name="iLGenerator">中间语言指令生成器</param>
-    /// <param name="type">测试中所有size相同的类型都可以正常运行</param>
-    public static void Cpobj(this ILGenerator iLGenerator, Type type) => iLGenerator.Emit(OpCodes.Cpobj, type);
-
-    /// <summary>
-    /// 原：指定后面的数组地址不执行类型检查,并且推送可变性受限的指针 <see href="https://docs.microsoft.com/zh-cn/dotnet/api/system.reflection.emit.opcodes.readonly?view=net-6.0"/>
+    /// 原：指定后面的数组地址不执行类型检查,并且推送可变性受限的指针 <see href="https://docs.microsoft.com/zh-cn/dotnet/api/system.reflection.emit.opcodes.readonly"/>
     /// <br>测试：标记了这个过后还可以可以设置指针的值,和修改值</br>
     /// <list type="bullet">
     ///     <item>1.推送数组</item>
