@@ -20,6 +20,7 @@ public class CreateDynameicAssemlys
         module.DefineType_HelloWorld();
         module.DefineType_EmitOpCodesVerify();
 
+        // 保存程序集
         assembly.Save($"{assemblyName}.dll");
     }
 

@@ -1,5 +1,4 @@
-﻿using System.Reflection.Emit;
-using System.Runtime.InteropServices;
+﻿using System.Runtime.InteropServices;
 
 namespace Easy.Extensions.Emit.Test.GeneratorDynamicAssemlys;
 
@@ -762,6 +761,7 @@ public static class EmitOpCodesVerifyCreator
         return typeBuilder.CreateType();
     }
 
+    #region 构造函数
     // 默认构造函数
     public static ConstructorBuilder DefineDefaultConstructor(TypeBuilder typeBuilder)
     {
@@ -787,6 +787,7 @@ public static class EmitOpCodesVerifyCreator
 
         return methodBuilder;
     }
+    #endregion
 
     #region 数学
     #region Add
