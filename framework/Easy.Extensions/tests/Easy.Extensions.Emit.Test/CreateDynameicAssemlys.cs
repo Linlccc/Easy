@@ -1,6 +1,4 @@
-﻿using System.Linq;
-
-namespace Easy.Extensions.Emit.Test;
+﻿namespace Easy.Extensions.Emit.Test;
 
 
 /// <summary>
@@ -8,34 +6,21 @@ namespace Easy.Extensions.Emit.Test;
 /// </summary>
 public class CreateDynameicAssemlys
 {
-    #region 动态程序集基础
-    /// <summary>
-    /// 动态程序集名称
-    /// </summary>
-    private static readonly string _assemblyName = nameof(CreateDynameicAssemlys);
-    /// <summary>
-    /// 动态程序集构建器
-    /// </summary>
-    private static readonly AssemblyBuilder _assemblyBuilder = AssemblyBuilder.DefineDynamicAssembly(new AssemblyName(_assemblyName), AssemblyBuilderAccess.RunAndSave);
-    /// <summary>
-    /// 模块构建器
-    /// </summary>
-    private static readonly ModuleBuilder _moduleBuilder = _assemblyBuilder.DefineDynamicModule(_assemblyName, $"{_assemblyName}.dll");
-    /// <summary>
-    /// 创建动态程序集
-    /// </summary>
-    private void CreateCynameicAssemlys() => _assemblyBuilder.Save($"{_assemblyName}.dll");
-    #endregion
-
     /// <summary>
     /// 创建程序集
     /// </summary>
     [Fact]
     public void CreateAssemlys()
     {
-        _moduleBuilder.DefineType_HelloWorld();
-        _moduleBuilder.DefineType_EmitOpCodesVerify();
-        CreateCynameicAssemlys();
+        string assemblyName = nameof(CreateDynameicAssemlys);
+        AssemblyBuilder assembly = AssemblyBuilder.DefineDynamicAssembly(new AssemblyName(assemblyName), AssemblyBuilderAccess.RunAndSave);
+        ModuleBuilder module = assembly.DefineDynamicModule(assemblyName, $"{assemblyName}.dll");
+
+        // 定义类型
+        module.DefineType_HelloWorld();
+        module.DefineType_EmitOpCodesVerify();
+
+        assembly.Save($"{assemblyName}.dll");
     }
 
     /// <summary>
@@ -44,15 +29,29 @@ public class CreateDynameicAssemlys
     [Fact]
     public void Create_HelloWorld()
     {
-        Type type = _moduleBuilder.DefineType_HelloWorld();
+        string assemblyName = nameof(CreateDynameicAssemlys);
+        AssemblyBuilder assembly = AssemblyBuilder.DefineDynamicAssembly(new AssemblyName(assemblyName), AssemblyBuilderAccess.RunAndSave);
+        ModuleBuilder module = assembly.DefineDynamicModule(assemblyName, $"{assemblyName}.dll");
+
+        // 定义类型
+        Type type = module.DefineType_HelloWorld();
 
         // 创建实例
         object instance = Activator.CreateInstance(type, 100, "abc");
 
-        // 验证
-        Assert.Equal(100, type.GetProperty("Number").GetValue(instance));
-        Assert.Equal("abc", type.GetField("m_number2", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(instance));
-        Assert.Equal(20 * 100, type.InvokeMember("Mul", BindingFlags.InvokeMethod, null, instance, new object[] { 20 }));
+        // 验证字段
+        Assert.Equal("abc", type.GetField("_text", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(instance));
+        Assert.Equal(100, type.GetField("_num", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(instance));
+
+        // 验证属性
+        Assert.Equal("abc - 100", type.GetProperty("Txt").GetValue(instance));
+
+        // 验证方法
+        Assert.Equal(20 * 100, type.InvokeMember("Mul", BindingFlags.InvokeMethod, null, instance, [20]));
+
+        // 验证控制台输出
+        type.InvokeMember("WriteHello", BindingFlags.InvokeMethod, null, null, []);
+        type.InvokeMember("WriteTxt", BindingFlags.InvokeMethod, null, instance, []);
     }
 
     /// <summary>
@@ -61,7 +60,12 @@ public class CreateDynameicAssemlys
     [Fact]
     public void Create_EmitOpCodesVerify()
     {
-        Type type = _moduleBuilder.DefineType_EmitOpCodesVerify();
+        string assemblyName = nameof(CreateDynameicAssemlys);
+        AssemblyBuilder assembly = AssemblyBuilder.DefineDynamicAssembly(new AssemblyName(assemblyName), AssemblyBuilderAccess.RunAndSave);
+        ModuleBuilder module = assembly.DefineDynamicModule(assemblyName, $"{assemblyName}.dll");
+
+        // 定义类型
+        Type type = module.DefineType_EmitOpCodesVerify();
 
         // ** 数学
         // +

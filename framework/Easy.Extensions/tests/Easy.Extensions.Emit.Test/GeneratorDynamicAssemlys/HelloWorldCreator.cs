@@ -1,59 +1,22 @@
 ﻿namespace Easy.Extensions.Emit.Test.GeneratorDynamicAssemlys;
 
 /// <summary>
-/// 这是以下代码动态创建的类
-/// </summary>
-public class HelloWorld
-{
-    private int m_number1;
-
-    private string m_number2;
-
-    public int Number
-    {
-        get
-        {
-            return m_number1;
-        }
-        set
-        {
-            m_number1 = value;
-        }
-    }
-
-    public HelloWorld(int P_0)
-    {
-        m_number1 = P_0;
-    }
-
-    public HelloWorld()
-        : this(42)
-    {
-    }
-
-
-    public HelloWorld(int P_0, string P_1)
-        : this(P_0)
-    {
-        m_number2 = P_1;
-    }
-
-    public static void Main()
-    {
-        Console.WriteLine("Hello World!");
-    }
-
-    public int Mul(int P_0)
-    {
-        return m_number1 * P_0;
-    }
-}
-
-/// <summary>
 /// HelloWorld 类型创建器
 /// </summary>
 public static class HelloWorldCreator
 {
+    // 类型
+    private static TypeBuilder _type_HelloWorld;
+    // 字段
+    private static FieldBuilder _field_num;
+    private static FieldBuilder _field_text;
+    // 属性
+    private static PropertyBuilder _prop_Txt;
+    // 构造函数
+    private static ConstructorBuilder _ctor_2arg;
+    private static ConstructorBuilder _ctor_1arg;
+    private static ConstructorBuilder _ctor_0arg;
+
     /// <summary>
     /// 添加HelloWorld类
     /// </summary>
@@ -61,138 +24,228 @@ public static class HelloWorldCreator
     /// <returns>HelloWorld类型</returns>
     public static Type DefineType_HelloWorld(this ModuleBuilder moduleBuilder)
     {
-        // 定义类型构建器
-        TypeBuilder typeBuilder = moduleBuilder.DefineType("HelloWorld", TypeAttributes.Public);
-
+        // 定义类型
+        _type_HelloWorld = moduleBuilder.DefineType("HelloWorld", TypeAttributes.Public);
         // 定义字段
-        FieldBuilder fbNumber1 = typeBuilder.DefineField("m_number1", typeof(int), FieldAttributes.Private);
-        FieldBuilder fbNumber2 = typeBuilder.DefineField("m_number2", typeof(string), FieldAttributes.Private);
-
-        // 定义构造函数
-        ConstructorBuilder ctor1 = DefineCtor_1();
-        ConstructorBuilder ctor2 = DefineCtor_2();
-        ConstructorBuilder ctor3 = DefineCtor_3();
-
+        _field_num = _type_HelloWorld.DefineField("_num", typeof(int), FieldAttributes.Private);
+        _field_text = _type_HelloWorld.DefineField("_text", typeof(string), FieldAttributes.Private);
         // 定义属性
-        DefineProperty_Number();
-
-        // 定义方法
-        DefineMethod_Main();
+        _prop_Txt = DefineAutoProp(typeof(string), "Txt");
+        // 定义构造函数
+        _ctor_2arg = DefineCtor_2Arg();
+        _ctor_1arg = DefineCtor_1Arg();
+        _ctor_0arg = DefineCtor_0Arg();
+        // WriteHello 方法
+        DefineMethod_WriteHello();
+        // WriteTxt 方法
+        DefineMethod_WriteTxt();
+        // Mul 方法
         DefineMethod_Mul();
 
-        // 生成类型,并返回
-        return typeBuilder.CreateType();
+        //// 生成类型,并返回
+        return _type_HelloWorld.CreateType();
+    }
 
-        // 定义构造函数
-        ConstructorBuilder DefineCtor_1()
+    /// <summary>
+    /// 定义两个参数的构造函数
+    /// </summary>
+    private static ConstructorBuilder DefineCtor_2Arg()
+    {
+        // 定义一个 公开，两个参的构造函数
+        ConstructorBuilder ctor = _type_HelloWorld.DefineConstructor(MethodAttributes.Public | MethodAttributes.HideBySig, CallingConventions.Standard, [typeof(int), typeof(string)]);
+        ILGenerator il = ctor.GetILGenerator();
+
+        // object.ctor
+        il.Emit(OpCodes.Ldarg_0);
+        il.Emit(OpCodes.Call, typeof(object).GetConstructor(Type.EmptyTypes));
+        // this._num = arg1;
+        il.LoadArg(0);
+        il.LoadArg(1);
+        il.SetField(_field_num);
+        // this._text = arg2;
+        il.LoadArg(0);
+        il.LoadArg(2);
+        il.SetField(_field_text);
+        // this.Txt = arg2 + " - " + arg1;
+        il.LoadArg(0);
+        il.LoadArg(2);
+        il.LoadString(" - ");
+        il.LoadArgAddr(1);
+        il.Call(typeof(int).GetMethod("ToString", Type.EmptyTypes));
+        il.Call(typeof(string).GetMethod("Concat", [typeof(string), typeof(string), typeof(string)]));
+        il.Call(_prop_Txt.GetSetMethod());
+        // return;
+        il.Return();
+
+        return ctor;
+    }
+    /// <summary>
+    /// 定义一个参数的构造函数,直接去调用另一个构造函数
+    /// </summary>
+    private static ConstructorBuilder DefineCtor_1Arg()
+    {
+        ConstructorBuilder ctor = _type_HelloWorld.DefineConstructor(MethodAttributes.Public, CallingConventions.Standard, [typeof(int)]);
+        ILGenerator il = ctor.GetILGenerator();
+
+        // this(arg1,"aa");
+        il.LoadArg(0);
+        il.LoadArg(1);
+        il.LoadString("aa");
+        il.Call(_ctor_2arg);
+        il.Return();
+
+        return ctor;
+    }
+    /// <summary>
+    /// 定义无参数的构造函数,直接去调用另一个构造函数
+    /// </summary>
+    private static ConstructorBuilder DefineCtor_0Arg()
+    {
+        ConstructorBuilder ctor = _type_HelloWorld.DefineConstructor(MethodAttributes.Public, CallingConventions.Standard, Type.EmptyTypes);
+        ILGenerator il = ctor.GetILGenerator();
+
+        // this(100);
+        il.LoadArg(0);
+        il.LoadInt(100);
+        il.Call(_ctor_1arg);
+        il.Return();
+
+        return ctor;
+    }
+
+    /// <summary>
+    /// 定义自动属性
+    /// </summary>
+    /// <param name="typeBuilder">类型构建器</param>
+    /// <param name="type">属性类型</param>
+    /// <param name="propName">属性名称</param>
+    /// <returns>属性使用的字段</returns>
+    private static PropertyBuilder DefineAutoProp(Type type, string propName)
+    {
+        // 定义属性
+        PropertyBuilder p1 = _type_HelloWorld.DefineProperty(propName, PropertyAttributes.HasDefault, type, Type.EmptyTypes);
+        // 定义属性字段
+        FieldBuilder p_f1 = _type_HelloWorld.DefineField($"<{propName}>k__BackingField", type, FieldAttributes.Private);
+
+        // get
+        MethodBuilder m_Get = _type_HelloWorld.DefineMethod($"get_{propName}", MethodAttributes.Public | MethodAttributes.SpecialName | MethodAttributes.HideBySig, type, Type.EmptyTypes);
+        ILGenerator il_Get = m_Get.GetILGenerator();
+        il_Get.LoadArg(0);
+        il_Get.LoadField(p_f1);
+        il_Get.Return();
+        p1.SetGetMethod(m_Get);
+
+        // set
+        MethodBuilder m_Set = _type_HelloWorld.DefineMethod($"set_{propName}", MethodAttributes.Public | MethodAttributes.SpecialName | MethodAttributes.HideBySig, null, [type]);
+        ILGenerator il_Set = m_Set.GetILGenerator();
+        il_Set.LoadArg(0);
+        il_Set.LoadArg(1);
+        il_Set.SetField(p_f1);
+        il_Set.Return();
+        p1.SetSetMethod(m_Set);
+
+        return p1;
+    }
+
+    /// <summary>
+    /// 定义一个名为 WriteHello 的方法
+    /// </summary>
+    private static MethodBuilder DefineMethod_WriteHello()
+    {
+        MethodBuilder method = _type_HelloWorld.DefineMethod("WriteHello", MethodAttributes.Public | MethodAttributes.Static, typeof(void), Type.EmptyTypes);
+        ILGenerator il = method.GetILGenerator();
+
+        // Console.WriteLine("Hello World!");
+        il.LoadString("Hello World!");
+        il.Call(typeof(Console).GetMethod("WriteLine", [typeof(string)]));
+        il.Return();
+
+        return method;
+    }
+    /// <summary>
+    /// 定义一个名为 WriteTxt 的方法
+    /// </summary>
+    private static MethodBuilder DefineMethod_WriteTxt()
+    {
+        MethodBuilder method = _type_HelloWorld.DefineMethod("WriteTxt", MethodAttributes.Public, typeof(void), Type.EmptyTypes);
+        ILGenerator il = method.GetILGenerator();
+
+        // Console.WriteLine(Txt);
+        il.LoadArg(0);
+        il.Call(_prop_Txt.GetGetMethod());
+        il.Call(typeof(Console).GetMethod("WriteLine", [typeof(string)]));
+        il.Return();
+
+        return method;
+    }
+    /// <summary>
+    /// 定义一个名为 Mul 的方法
+    /// </summary>
+    private static MethodBuilder DefineMethod_Mul()
+    {
+        MethodBuilder methodBuilder = _type_HelloWorld.DefineMethod("Mul", MethodAttributes.Public, typeof(int), [typeof(int)]);
+        ILGenerator il = methodBuilder.GetILGenerator();
+
+        // return _field_num * arg1;
+        il.LoadArg(0);
+        il.LoadField(_field_num);
+        il.LoadArg(1);
+        il.MathMul();
+        il.Return();
+
+        return methodBuilder;
+    }
+}
+
+
+/// <summary>
+/// 以上代码生成的 HelloWorld 类
+/// </summary>
+public class HelloWorld
+{
+    private int _num;
+
+    private string _text;
+
+    private string Txtk__BackingField;
+
+    public string Txt
+    {
+        get
         {
-            // 定义一个 公开，一个参数的构造函数
-            ConstructorBuilder ctor = typeBuilder.DefineConstructor(MethodAttributes.Public, CallingConventions.Standard, new Type[] { typeof(int) });
-            ILGenerator il = ctor.GetILGenerator();
-            // 将 this 推送到堆栈上
-            il.Emit(OpCodes.Ldarg_0);
-            // 调用基类(object)构造方法
-            il.Emit(OpCodes.Call, typeof(object).GetConstructor(Type.EmptyTypes)!);
-            // 加载实例
-            il.Emit(OpCodes.Ldarg_0);
-            // 加载第一个参数
-            il.Emit(OpCodes.Ldarg_1);
-            // 向 fbNumber 字段赋值
-            il.Emit(OpCodes.Stfld, fbNumber1);
-            // 方法结束
-            il.Emit(OpCodes.Ret);
-
-            return ctor;
+            return Txtk__BackingField;
         }
-
-        // 定义构造函数
-        ConstructorBuilder DefineCtor_2()
+        set
         {
-            // 定义一个 公开，无参的构造函数
-            ConstructorBuilder ctor = typeBuilder.DefineConstructor(MethodAttributes.Public, CallingConventions.Standard, Type.EmptyTypes);
-            ILGenerator il = ctor.GetILGenerator();
-            il.Emit(OpCodes.Ldarg_0);
-            il.Emit(OpCodes.Ldc_I4_S, 42);
-            il.Emit(OpCodes.Call, ctor1);
-            il.Emit(OpCodes.Ret);
-            return ctor;
+            Txtk__BackingField = value;
         }
+    }
 
-        // 定义构造函数
-        ConstructorBuilder DefineCtor_3()
-        {
-            // 定义一个 公开，两个参的构造函数
-            ConstructorBuilder ctor = typeBuilder.DefineConstructor(MethodAttributes.Public, CallingConventions.Standard, new Type[] { typeof(int), typeof(string) });
-            ILGenerator il = ctor.GetILGenerator();
-            il.Emit(OpCodes.Ldarg_0);
-            il.Emit(OpCodes.Ldarg_1);
-            il.Emit(OpCodes.Call, ctor1);
-            //il.DebugBreakPoint();
-            il.Emit(OpCodes.Ldarg_0);
-            il.Emit(OpCodes.Ldarg_2);
-            il.Emit(OpCodes.Stfld, fbNumber2);
-            il.Emit(OpCodes.Ret);
-            return ctor;
-        }
+    public HelloWorld(int P_0, string P_1)
+    {
+        _num = P_0;
+        _text = P_1;
+        Txt = P_1 + " - " + P_0;
+    }
 
-        // 定义 Number 属性
-        PropertyBuilder DefineProperty_Number()
-        {
-            // 定义一个 Number 属性
-            PropertyBuilder property = typeBuilder.DefineProperty("Number", PropertyAttributes.HasDefault, typeof(int), null);
+    public HelloWorld(int P_0) : this(P_0, "aa") { }
 
-            // 属性“set”和属性“get”方法需要一组特殊的属性
-            MethodAttributes getSetAttr = MethodAttributes.Public | MethodAttributes.SpecialName | MethodAttributes.HideBySig;
 
-            // 定义 get 方法
-            MethodBuilder getMethod = typeBuilder.DefineMethod("get_Number", getSetAttr, typeof(int), Type.EmptyTypes);
-            ILGenerator getIl = getMethod.GetILGenerator();
-            getIl.Emit(OpCodes.Ldarg_0);
-            getIl.Emit(OpCodes.Ldfld, fbNumber1);
-            getIl.Emit(OpCodes.Ret);
+    public HelloWorld() : this(100) { }
 
-            // 定义 set 方法
-            MethodBuilder setMethod = typeBuilder.DefineMethod("set_Number", getSetAttr, null, new Type[] { typeof(int) });
-            ILGenerator setIl = setMethod.GetILGenerator();
-            setIl.Emit(OpCodes.Ldarg_0);
-            setIl.Emit(OpCodes.Ldarg_1);
-            setIl.Emit(OpCodes.Stfld, fbNumber1);
-            setIl.Emit(OpCodes.Ret);
 
-            // 将 get 方法和 set 方法加入到属性中
-            property.SetGetMethod(getMethod);
-            property.SetSetMethod(setMethod);
+    public static void WriteHello()
+    {
+        Console.WriteLine("Hello World!");
+    }
 
-            return property;
-        }
+    public void WriteTxt()
+    {
+        Console.WriteLine(Txt);
+    }
 
-        // 定义 Main 方法
-        MethodBuilder DefineMethod_Main()
-        {
-            // 定义一个 公开,无参数的静态方法
-            MethodBuilder methodBuilder = typeBuilder.DefineMethod("Main", MethodAttributes.Public | MethodAttributes.Static, typeof(void), new Type[] { });
-            // 获取中间语言指令生成器
-            ILGenerator il = methodBuilder.GetILGenerator();
-            // 推送一个字符串到堆栈
-            il.Emit(OpCodes.Ldstr, "Hello World!");
-            // 调用Console.WriteLine方法
-            il.Emit(OpCodes.Call, typeof(Console).GetMethod("WriteLine", new Type[] { typeof(string) }));
-            // 方法结束
-            il.Emit(OpCodes.Ret);
-            return methodBuilder;
-        }
-
-        // 定义 Mul 方法
-        MethodBuilder DefineMethod_Mul()
-        {
-            MethodBuilder methodBuilder = typeBuilder.DefineMethod("Mul", MethodAttributes.Public, typeof(int), new Type[] { typeof(int) });
-            ILGenerator il = methodBuilder.GetILGenerator();
-            il.Emit(OpCodes.Ldarg_0);
-            il.Emit(OpCodes.Ldfld, fbNumber1);
-            il.Emit(OpCodes.Ldarg_1);
-            il.Emit(OpCodes.Mul);
-            il.Emit(OpCodes.Ret);
-            return methodBuilder;
-        }
+    public int Mul(int P_0)
+    {
+        return _num * P_0;
     }
 }
