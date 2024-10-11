@@ -921,37 +921,29 @@ public static class EmitOpCodesVerifyCreator
     }
     #endregion
 
-    #region Div
-    /// <summary>
-    /// 定义 Div1 方法
-    /// </summary>
-    /// <returns></returns>
+    #region /
+    // /
     public static MethodBuilder DefineMethod_Div1()
     {
-        MethodBuilder methodBuilder = _typeBuilder.DefineMethod("Div1", MethodAttributes.Public | MethodAttributes.Static, typeof(int[]), new Type[] { typeof(int), typeof(int) });
-        ILGenerator il = methodBuilder.GetILGenerator();
-        // 声明本地变量数组
-        LocalBuilder arr = il.DeclareLocal(typeof(int[]));
-        il.LoadInt(2);
-        il.NewArray(typeof(int));
-        il.SetLocal(arr);
+        (MethodBuilder methodBuilder, ILGenerator il) = CreateMethod_PublicStatic("Div1", typeof(int), [typeof(int), typeof(int)]);
 
-        // 正常添加
-        il.LoadLocal(arr);
-        il.LoadInt(0);
-        il.LoadArg();
+        // return arg1 / arg2;
+        il.LoadArg(0);
         il.LoadArg(1);
         il.MathDiv();
-        il.SetArray(typeof(int));
-        // 检查溢出无符号添加
-        il.LoadLocal(arr);
-        il.LoadInt(1);
-        il.LoadArg();
+        il.Return();
+
+        return methodBuilder;
+    }
+    // 无符号 /
+    public static MethodBuilder DefineMethod_Div2()
+    {
+        (MethodBuilder methodBuilder, ILGenerator il) = CreateMethod_PublicStatic("Div2", typeof(int), [typeof(int), typeof(int)]);
+
+        // return (int)((uint)P_0 / (uint)P_1);
+        il.LoadArg(0);
         il.LoadArg(1);
         il.MathDiv(isUnsigned: true);
-        il.SetArray(typeof(int));
-
-        il.LoadLocal(arr);
         il.Return();
 
         return methodBuilder;

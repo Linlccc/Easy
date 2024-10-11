@@ -127,6 +127,13 @@ public class CreateDynameicAssemlys
         Assert.Throws<OverflowException>(ThrowReal(() => Invoke("Mul3", out int _, int.MaxValue, 3)));
         Invoke("Mul3", out int mul3, int.MaxValue, 2);
         Assert.Equal(-2, mul3);
+
+        // /
+        Invoke("Div1", out int div1, 100, 2);
+        Assert.Equal(50, div1);
+        // 无符号 /
+        Invoke("Div2", out int div2, -1, int.MaxValue);
+        Assert.Equal(2, div2);
         #endregion
 
         // ** 数学
@@ -134,8 +141,6 @@ public class CreateDynameicAssemlys
         // -
         // *
         // /
-        int[] div1 = (int[])type.InvokeMember("Div1", BindingFlags.InvokeMethod, null, null, new object[] { 123, 2 });
-        Assert.Equal(61, div1[0]);
         // %
         int[] rem1 = (int[])type.InvokeMember("Rem1", BindingFlags.InvokeMethod, null, null, new object[] { 123, 2 });
         Assert.Equal(1, rem1[0]);
