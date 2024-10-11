@@ -995,20 +995,16 @@ public static class EmitOpCodesVerifyCreator
     #endregion
     #endregion
 
-    #region 计算
+    #region 位运算
     // &
     public static MethodBuilder DefineMethod_And1()
     {
-        MethodBuilder methodBuilder = _typeBuilder.DefineMethod("And1", MethodAttributes.Public | MethodAttributes.Static, typeof(int), new Type[] { typeof(int), typeof(int) });
-        ILGenerator il = methodBuilder.GetILGenerator();
+        (MethodBuilder methodBuilder, ILGenerator il) = CreateMethod_PublicStatic("And1", typeof(int), [typeof(int), typeof(int)]);
 
-        LocalBuilder l1 = il.DeclareLocal(typeof(int));
-
-        il.LoadArg();
+        // return arg1 & arg2;
+        il.LoadArg(0);
         il.LoadArg(1);
         il.BitwiseAnd();
-        il.SetLocal(l1);
-        il.LoadLocal(l1);
         il.Return();
 
         return methodBuilder;
@@ -1017,16 +1013,12 @@ public static class EmitOpCodesVerifyCreator
     // |
     public static MethodBuilder DefineMethod_Or1()
     {
-        MethodBuilder methodBuilder = _typeBuilder.DefineMethod("Or1", MethodAttributes.Public | MethodAttributes.Static, typeof(int), new Type[] { typeof(int), typeof(int) });
-        ILGenerator il = methodBuilder.GetILGenerator();
+        (MethodBuilder methodBuilder, ILGenerator il) = CreateMethod_PublicStatic("Or1", typeof(int), [typeof(int), typeof(int)]);
 
-        LocalBuilder l1 = il.DeclareLocal(typeof(int));
-
-        il.LoadArg();
+        // return arg1 | arg2;
+        il.LoadArg(0);
         il.LoadArg(1);
         il.BitwiseOr();
-        il.SetLocal(l1);
-        il.LoadLocal(l1);
         il.Return();
 
         return methodBuilder;
@@ -1035,33 +1027,25 @@ public static class EmitOpCodesVerifyCreator
     // ^
     public static MethodBuilder DefineMethod_Xor1()
     {
-        MethodBuilder methodBuilder = _typeBuilder.DefineMethod("Xor1", MethodAttributes.Public | MethodAttributes.Static, typeof(int), new Type[] { typeof(int), typeof(int) });
-        ILGenerator il = methodBuilder.GetILGenerator();
+        (MethodBuilder methodBuilder, ILGenerator il) = CreateMethod_PublicStatic("Xor1", typeof(int), [typeof(int), typeof(int)]);
 
-        LocalBuilder l1 = il.DeclareLocal(typeof(int));
-
-        il.LoadArg();
+        // return arg1 ^ arg2;
+        il.LoadArg(0);
         il.LoadArg(1);
         il.BitwiseXor();
-        il.SetLocal(l1);
-        il.LoadLocal(l1);
         il.Return();
 
         return methodBuilder;
     }
 
-    // ~arg
+    // ~
     public static MethodBuilder DefineMethod_Not1()
     {
-        MethodBuilder methodBuilder = _typeBuilder.DefineMethod("Not1", MethodAttributes.Public | MethodAttributes.Static, typeof(int), new Type[] { typeof(int) });
-        ILGenerator il = methodBuilder.GetILGenerator();
+        (MethodBuilder methodBuilder, ILGenerator il) = CreateMethod_PublicStatic("Not1", typeof(int), [typeof(int)]);
 
-        LocalBuilder l1 = il.DeclareLocal(typeof(int));
-
-        il.LoadArg();
+        // return ~arg1;
+        il.LoadArg(0);
         il.BitwiseNot();
-        il.SetLocal(l1);
-        il.LoadLocal(l1);
         il.Return();
 
         return methodBuilder;
@@ -1070,16 +1054,12 @@ public static class EmitOpCodesVerifyCreator
     // <<
     public static MethodBuilder DefineMethod_ShiftLeft1()
     {
-        MethodBuilder methodBuilder = _typeBuilder.DefineMethod("ShiftLeft1", MethodAttributes.Public | MethodAttributes.Static, typeof(int), new Type[] { typeof(int), typeof(int) });
-        ILGenerator il = methodBuilder.GetILGenerator();
+        (MethodBuilder methodBuilder, ILGenerator il) = CreateMethod_PublicStatic("ShiftLeft1", typeof(int), [typeof(int), typeof(int)]);
 
-        LocalBuilder l1 = il.DeclareLocal(typeof(int));
-
-        il.LoadArg();
+        // return arg1 << arg2;
+        il.LoadArg(0);
         il.LoadArg(1);
         il.BitwiseShiftLeft();
-        il.SetLocal(l1);
-        il.LoadLocal(l1);
         il.Return();
 
         return methodBuilder;
@@ -1088,36 +1068,31 @@ public static class EmitOpCodesVerifyCreator
     // >>
     public static MethodBuilder DefineMethod_ShiftRight1()
     {
-        MethodBuilder methodBuilder = _typeBuilder.DefineMethod("ShiftRight1", MethodAttributes.Public | MethodAttributes.Static, typeof(int[]), new Type[] { typeof(int), typeof(int) });
-        ILGenerator il = methodBuilder.GetILGenerator();
+        (MethodBuilder methodBuilder, ILGenerator il) = CreateMethod_PublicStatic("ShiftRight1", typeof(int), [typeof(int), typeof(int)]);
 
-        LocalBuilder l1 = il.DeclareLocal(typeof(int[]));
-        il.LoadInt(2);
-        il.NewArray(typeof(int));
-        il.SetLocal(l1);
-
-        // 正常右移位
-        il.LoadLocal(l1);
-        il.LoadInt(0);
-        il.LoadArg();
+        // return arg1 >> arg2;
+        il.LoadArg(0);
         il.LoadArg(1);
         il.BitwiseShiftRight();
-        il.SetArray(typeof(int));
+        il.Return();
 
-        // 无符号右移位
-        il.LoadLocal(l1);
-        il.LoadInt(1);
-        il.LoadArg();
+        return methodBuilder;
+    }
+    // 无符号 >>
+    public static MethodBuilder DefineMethod_ShiftRight2()
+    {
+        (MethodBuilder methodBuilder, ILGenerator il) = CreateMethod_PublicStatic("ShiftRight2", typeof(int), [typeof(int), typeof(int)]);
+
+        // return arg1 >> arg2;
+        il.LoadArg(0);
         il.LoadArg(1);
         il.BitwiseShiftRight(true);
-        il.SetArray(typeof(int));
-
-        il.LoadLocal(l1);
         il.Return();
 
         return methodBuilder;
     }
     #endregion
+
 
     #region 比较
     // ==

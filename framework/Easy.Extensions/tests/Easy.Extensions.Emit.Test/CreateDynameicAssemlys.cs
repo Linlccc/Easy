@@ -90,6 +90,7 @@ public class CreateDynameicAssemlys
                 }
             };
         }
+
         #region 数学
         // +
         Invoke("Add1", out int add1, int.MaxValue, 1);
@@ -142,40 +143,42 @@ public class CreateDynameicAssemlys
         Invoke("Rem2", out int rem2, -1, int.MaxValue);
         Assert.Equal(1, rem2);
 
-        // -arg
+        // 求反 -arg
         Invoke("Neg1", out int neg1, int.MaxValue);
         Assert.Equal(-2147483647, neg1);
         Invoke("Neg1", out int neg2, -2147483647);
         Assert.Equal(2147483647, neg2);
         #endregion
 
-        // ** 数学
-        // +
-        // -
-        // *
-        // /
-        // %
-        // -arg
-
-        // ** 按位计算
+        #region 位运算
         // &
-        int and1 = (int)type.InvokeMember("And1", BindingFlags.InvokeMethod, null, null, new object[] { 123, 2 });
-        Assert.Equal(123 & 2, and1);
+        Invoke("And1", out int and1, int.MaxValue, 3);
+        Assert.Equal(3, and1);
+
         // |
-        int or1 = (int)type.InvokeMember("Or1", BindingFlags.InvokeMethod, null, null, new object[] { 123, 2 });
-        Assert.Equal(123 | 2, or1);
+        Invoke("Or1", out int or1, 12, 7);
+        Assert.Equal(15, or1);
+
         // ^
-        int xor1 = (int)type.InvokeMember("Xor1", BindingFlags.InvokeMethod, null, null, new object[] { 123, 2 });
-        Assert.Equal(123 ^ 2, xor1);
-        // ~arg
-        int not1 = (int)type.InvokeMember("Not1", BindingFlags.InvokeMethod, null, null, new object[] { 123 });
-        Assert.Equal(~123, not1);
+        Invoke("Xor1", out int xor1, 12, 7);
+        Assert.Equal(11, xor1);
+
+        // ~
+        Invoke("Not1", out int not1, 0);
+        Assert.Equal(-1, not1);
+
         // <<
-        int shiftLeft1 = (int)type.InvokeMember("ShiftLeft1", BindingFlags.InvokeMethod, null, null, new object[] { 123, 2 });
-        Assert.Equal(123 << 2, shiftLeft1);
+        Invoke("ShiftLeft1", out int shiftLeft1, 1, 2);
+        Assert.Equal(4, shiftLeft1);
+
         // >>
-        int[] shiftRight1 = (int[])type.InvokeMember("ShiftRight1", BindingFlags.InvokeMethod, null, null, new object[] { 123, 2 });
-        Assert.Equal(123 >> 2, shiftRight1[0]);
+        Invoke("ShiftRight1", out int shiftRight1, 8, 2);
+        Assert.Equal(2, shiftRight1);
+        // >> 无符号
+        Invoke("ShiftRight2", out int shiftRight2, -1, 1);
+        Assert.Equal(int.MaxValue, shiftRight2);
+        #endregion
+
 
         // ** 比较
         // ==
