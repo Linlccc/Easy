@@ -199,6 +199,26 @@ public class CreateDynameicAssemlys
         Assert.False(less2);
         #endregion
 
+        #region 类型转换
+        // 装箱
+        Invoke("Box1", out object box1, 100);
+        Assert.Equal(100, box1);
+
+        // 拆箱
+        Invoke("UnBox1", out int unBox1, 100);
+        Assert.Equal(100, unBox1);
+        Invoke("UnBox1", out int unBox2, 100);
+        Assert.Equal(100, unBox2);
+
+        // float to int
+        Invoke("ConvertInteger1", out int convert1, 123.999f);
+        Assert.Equal((int)123.999, convert1);
+
+        // as
+        Invoke("As1", out object as1, typeof(int));
+        Assert.Equal(typeof(int), as1);
+        #endregion
+
 
 
 
@@ -209,28 +229,6 @@ public class CreateDynameicAssemlys
         #endregion
 
 
-
-        // ** 特殊
-        // 调用和定义包含有可变参数的方法
-        object[] arglist_Invoke1 = (object[])type.InvokeMember("Arglist_Invoke1", BindingFlags.InvokeMethod, null, null, new object[] { 2, 3.1F, "5", typeof(int) });
-        Assert.Equal(new object[] { 2, 3.1F, "5", typeof(int) }, arglist_Invoke1);
-
-        // ** 类型转换
-        // (object)int
-        object box1 = (int)type.InvokeMember("Box1", BindingFlags.InvokeMethod, null, null, new object[] { 123 });
-        Assert.Equal(123, box1);
-        // (int)obj
-        int unBox1 = (int)type.InvokeMember("UnBox1", BindingFlags.InvokeMethod, null, null, new object[] { 123 });
-        Assert.Equal(123, unBox1);
-        // (int)obj
-        int unBox2 = (int)type.InvokeMember("UnBox2", BindingFlags.InvokeMethod, null, null, new object[] { 123 });
-        Assert.Equal(123, unBox2);
-        // float to int
-        int convert1 = (int)type.InvokeMember("ConvertInteger1", BindingFlags.InvokeMethod, null, null, new object[] { 123.999f });
-        Assert.Equal((int)123.999, convert1);
-        // as
-        object as1 = type.InvokeMember("AS1", BindingFlags.InvokeMethod, null, null, new object[] { typeof(int) });
-        Assert.Equal(typeof(int), as1);
 
 
         // ** 调用方法

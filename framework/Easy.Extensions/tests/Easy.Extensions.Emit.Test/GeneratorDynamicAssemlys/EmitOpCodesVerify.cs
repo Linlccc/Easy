@@ -1162,6 +1162,73 @@ public static class EmitOpCodesVerifyCreator
     }
     #endregion
 
+    #region 类型转换
+    // 装箱
+    public static MethodBuilder DefineMethod_Box1()
+    {
+        (MethodBuilder methodBuilder, ILGenerator il) = CreateMethod_PublicStatic("Box1", typeof(object), [typeof(int)]);
+
+        // return (object)arg1;
+        il.LoadArg(0);
+        il.Box(typeof(int));
+        il.Return();
+
+        return methodBuilder;
+    }
+
+    // 拆箱
+    public static MethodBuilder DefineMethod_UnBox1()
+    {
+        (MethodBuilder methodBuilder, ILGenerator il) = CreateMethod_PublicStatic("UnBox1", typeof(int), [typeof(object)]);
+
+        // return (int)arg1;
+        il.LoadArg(0);
+        il.UnBox(typeof(int));
+        il.Return();
+
+        return methodBuilder;
+    }
+    // 拆箱后推送指针再从指针加载数据
+    public static MethodBuilder DefineMethod_UnBox2()
+    {
+        (MethodBuilder methodBuilder, ILGenerator il) = CreateMethod_PublicStatic("UnBox2", typeof(int), [typeof(object)]);
+
+        // return (int)arg1;
+        il.LoadArg(0);
+        il.UnBoxThenLoadPointer(typeof(int));
+        il.LoadAddrValue(typeof(int));
+        il.Return();
+
+        return methodBuilder;
+    }
+
+    // float to int
+    public static MethodBuilder DefineMethod_ConvertInteger1()
+    {
+        (MethodBuilder methodBuilder, ILGenerator il) = CreateMethod_PublicStatic("ConvertInteger1", typeof(int), [typeof(float)]);
+
+        // return (int)arg1;
+        il.LoadArg(0);
+        il.ConvertInteger(typeof(int));
+        il.Return();
+
+        return methodBuilder;
+    }
+
+    // as
+    public static MethodBuilder DefineMethod_As1()
+    {
+        (MethodBuilder methodBuilder, ILGenerator il) = CreateMethod_PublicStatic("As1", typeof(Type), [typeof(object)]);
+
+        // return (Type)arg1;
+        il.LoadArg(0);
+        il.As(typeof(Type));
+        il.Return();
+
+        return methodBuilder;
+    }
+    #endregion
+
 
 
 
@@ -1274,82 +1341,6 @@ public static class EmitOpCodesVerifyCreator
 
         return methodBuilder;
 
-    }
-    #endregion
-
-    #region 类型转换
-    // box
-    public static MethodBuilder DefineMethod_Box1()
-    {
-        MethodBuilder methodBuilder = _typeBuilder.DefineMethod("Box1", MethodAttributes.Public | MethodAttributes.Static, typeof(object), new Type[] { typeof(int) });
-        ILGenerator il = methodBuilder.GetILGenerator();
-
-        // 声明本地变量
-        LocalBuilder i1 = il.DeclareLocal(typeof(object));
-
-        il.LoadArg(0);
-        il.Box(typeof(int));
-        il.SetLocal(i1);
-        il.LoadLocal(i1);
-        il.Return();
-
-        return methodBuilder;
-    }
-    //unbox_any
-    public static MethodBuilder DefineMethod_UnBox1()
-    {
-        MethodBuilder methodBuilder = _typeBuilder.DefineMethod("UnBox1", MethodAttributes.Public | MethodAttributes.Static, typeof(int), new Type[] { typeof(object) });
-        ILGenerator il = methodBuilder.GetILGenerator();
-
-        il.LoadArg(0);
-        il.UnBox(typeof(int));
-        il.Return();
-
-        return methodBuilder;
-    }
-    //unbox
-    public static MethodBuilder DefineMethod_UnBox2()
-    {
-        MethodBuilder methodBuilder = _typeBuilder.DefineMethod("UnBox2", MethodAttributes.Public | MethodAttributes.Static, typeof(int), new Type[] { typeof(object) });
-        ILGenerator il = methodBuilder.GetILGenerator();
-
-        il.LoadArg(0);
-        il.UnBoxThenLoadPointer(typeof(int));
-        il.LoadAddrValue(typeof(int));
-        il.Return();
-
-        return methodBuilder;
-    }
-
-    //float to int
-    public static MethodBuilder DefineMethod_ConvertInteger1()
-    {
-        MethodBuilder methodBuilder = _typeBuilder.DefineMethod("ConvertInteger1", MethodAttributes.Public | MethodAttributes.Static, typeof(int), new Type[] { typeof(float) });
-        ILGenerator il = methodBuilder.GetILGenerator();
-
-        il.LoadArg(0);
-        il.ConvertInteger(typeof(int));
-        il.Return();
-
-        return methodBuilder;
-    }
-
-    // as
-    public static MethodBuilder DefineMethod_As1()
-    {
-        MethodBuilder methodBuilder = _typeBuilder.DefineMethod("AS1", MethodAttributes.Public | MethodAttributes.Static, typeof(Type), new Type[] { typeof(object) });
-        ILGenerator il = methodBuilder.GetILGenerator();
-
-        LocalBuilder l1 = il.DeclareLocal(typeof(Type));
-
-        //il.BreakPoint();
-        il.LoadArg(0);
-        il.As(typeof(Type));
-        il.SetLocal(l1);
-        il.LoadLocal(l1);
-        il.Return();
-
-        return methodBuilder;
     }
     #endregion
 
