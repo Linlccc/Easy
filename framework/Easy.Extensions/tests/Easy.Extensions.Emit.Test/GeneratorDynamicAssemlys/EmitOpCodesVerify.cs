@@ -1163,29 +1163,28 @@ public static class EmitOpCodesVerifyCreator
     #endregion
 
 
+
+
+
+
     #region 字符串相加
-    /// <summary>
-    /// 定义 StringAdd1(字符串相加) 方法
-    /// </summary>
-    /// <returns></returns>
+    // string1 + string2
     public static MethodBuilder DefineMethod_StringAdd1()
     {
-        MethodBuilder methodBuilder = _typeBuilder.DefineMethod("StringAdd1", MethodAttributes.Public | MethodAttributes.Static, typeof(string), new Type[] { typeof(string), typeof(string) });
-        ILGenerator il = methodBuilder.GetILGenerator();
+        (MethodBuilder methodBuilder, ILGenerator il) = CreateMethod_PublicStatic("Add1", typeof(string), [typeof(string), typeof(string)]);
 
-        LocalBuilder l1 = il.DeclareLocal(typeof(string));
-
-        il.LoadArg();
+        il.LoadArg(0);
         il.LoadArg(1);
-        il.Call(typeof(string).GetMethod("Concat", new Type[] { typeof(string), typeof(string) }));
-        il.SetLocal(0);
-
-        il.LoadLocal(0);
+        il.Call(typeof(string).GetMethod("Concat", [typeof(string), typeof(string)]));
         il.Return();
 
         return methodBuilder;
     }
     #endregion
+
+
+
+
 
     #region 特殊
     // 使用 Arglist 示例

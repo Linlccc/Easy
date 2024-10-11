@@ -201,6 +201,15 @@ public class CreateDynameicAssemlys
 
 
 
+
+        #region 字符串相加
+        // string1 + string2
+        Invoke("Add1", out string concat1, "abc", "def");
+        Assert.Equal("abcdef", concat1);
+        #endregion
+
+
+
         // ** 特殊
         // 调用和定义包含有可变参数的方法
         object[] arglist_Invoke1 = (object[])type.InvokeMember("Arglist_Invoke1", BindingFlags.InvokeMethod, null, null, new object[] { 2, 3.1F, "5", typeof(int) });
