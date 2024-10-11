@@ -100,16 +100,26 @@ public class CreateDynameicAssemlys
         Assert.Equal(2147483646, add2);
         // 检查溢出无符号 +
         // unchecked((uint)-1) == 4294967295
-        Assert.Throws<OverflowException>(ThrowReal(() => Invoke("Add3", out uint _, -1, -1)));
+        Assert.Throws<OverflowException>(ThrowReal(() => Invoke("Add3", out int _, -1, -1)));
         Invoke("Add3", out int add3, int.MaxValue, int.MaxValue);
         Assert.Equal(-2, add3);
+
+        // -
+        Invoke("Sub1", out int sub1, int.MinValue, 1);
+        Assert.Equal(2147483647, sub1);
+        // 检查溢出 -
+        Assert.Throws<OverflowException>(ThrowReal(() => Invoke("Sub2", out int _, int.MinValue, 1)));
+        Invoke("Sub2", out int sub2, int.MinValue, -1);
+        Assert.Equal(-2147483647, sub2);
+        // 检查溢出无符号 -
+        Assert.Throws<OverflowException>(ThrowReal(() => Invoke("Sub3", out int _, 1, 2)));
+        Invoke("Sub3", out int sub3, 10, 2);
+        Assert.Equal(8, sub3);
         #endregion
 
         // ** 数学
         // +
         // -
-        int[] sub1 = (int[])type.InvokeMember("Sub1", BindingFlags.InvokeMethod, null, null, new object[] { 123, 2 });
-        Assert.Equal(121, sub1[0]);
         // *
         int[] mul1 = (int[])type.InvokeMember("Mul1", BindingFlags.InvokeMethod, null, null, new object[] { 123, 2 });
         Assert.Equal(246, mul1[0]);

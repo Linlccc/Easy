@@ -796,7 +796,7 @@ public static class EmitOpCodesVerifyCreator
 
     #region 数学
     #region +
-    // 正常 +
+    // +
     public static MethodBuilder DefineMethod_Add1()
     {
         (MethodBuilder methodBuilder, ILGenerator il) = CreateMethod_PublicStatic("Add1", typeof(int), [typeof(int), typeof(int)]);
@@ -837,44 +837,42 @@ public static class EmitOpCodesVerifyCreator
     }
     #endregion
 
-    #region Sub
-    /// <summary>
-    /// 定义 Sub1 方法
-    /// </summary>
-    /// <returns></returns>
+    #region -
+    // -
     public static MethodBuilder DefineMethod_Sub1()
     {
-        MethodBuilder methodBuilder = _typeBuilder.DefineMethod("Sub1", MethodAttributes.Public | MethodAttributes.Static, typeof(int[]), new Type[] { typeof(int), typeof(int) });
-        ILGenerator il = methodBuilder.GetILGenerator();
-        // 声明本地变量数组
-        LocalBuilder arr = il.DeclareLocal(typeof(int[]));
-        il.LoadInt(3);
-        il.NewArray(typeof(int));
-        il.SetLocal(arr);
+        (MethodBuilder methodBuilder, ILGenerator il) = CreateMethod_PublicStatic("Sub1", typeof(int), [typeof(int), typeof(int)]);
 
-        // 正常添加
-        il.LoadLocal(arr);
-        il.LoadInt(0);
-        il.LoadArg();
+        // return arg1 - arg2;
+        il.LoadArg(0);
         il.LoadArg(1);
         il.MathSub();
-        il.SetArray(typeof(int));
-        // 检查溢出添加
-        il.LoadLocal(arr);
-        il.LoadInt(1);
-        il.LoadArg();
+        il.Return();
+
+        return methodBuilder;
+    }
+    // 检查溢出 -
+    public static MethodBuilder DefineMethod_Sub2()
+    {
+        (MethodBuilder methodBuilder, ILGenerator il) = CreateMethod_PublicStatic("Sub2", typeof(int), [typeof(int), typeof(int)]);
+
+        // return checked(arg1 - arg2);
+        il.LoadArg(0);
         il.LoadArg(1);
-        il.MathSub(true);
-        il.SetArray(typeof(int));
-        // 检查溢出无符号添加
-        il.LoadLocal(arr);
-        il.LoadInt(2);
-        il.LoadArg();
+        il.MathSub(isOverflowCheck: true);
+        il.Return();
+
+        return methodBuilder;
+    }
+    // 检查溢出无符号 -
+    public static MethodBuilder DefineMethod_Sub3()
+    {
+        (MethodBuilder methodBuilder, ILGenerator il) = CreateMethod_PublicStatic("Sub3", typeof(int), [typeof(int), typeof(int)]);
+
+        // return (int)checked(unchecked((uint)P_0) - unchecked((uint)P_1));
+        il.LoadArg(0);
         il.LoadArg(1);
         il.MathSub(isUnsigned: true);
-        il.SetArray(typeof(int));
-
-        il.LoadLocal(arr);
         il.Return();
 
         return methodBuilder;
