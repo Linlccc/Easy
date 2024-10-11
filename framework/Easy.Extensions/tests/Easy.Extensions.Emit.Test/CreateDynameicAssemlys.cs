@@ -134,6 +134,13 @@ public class CreateDynameicAssemlys
         // 无符号 /
         Invoke("Div2", out int div2, -1, int.MaxValue);
         Assert.Equal(2, div2);
+
+        // %
+        Invoke("Rem1", out int rem1, 100, 3);
+        Assert.Equal(1, rem1);
+        // 无符号 % unchecked((uint)-1) == 4294967295
+        Invoke("Rem2", out int rem2, -1, int.MaxValue);
+        Assert.Equal(1, rem2);
         #endregion
 
         // ** 数学
@@ -142,8 +149,6 @@ public class CreateDynameicAssemlys
         // *
         // /
         // %
-        int[] rem1 = (int[])type.InvokeMember("Rem1", BindingFlags.InvokeMethod, null, null, new object[] { 123, 2 });
-        Assert.Equal(1, rem1[0]);
         // -arg
         int neg1 = (int)type.InvokeMember("Neg1", BindingFlags.InvokeMethod, null, null, new object[] { 123 });
         Assert.Equal(-123, neg1);
