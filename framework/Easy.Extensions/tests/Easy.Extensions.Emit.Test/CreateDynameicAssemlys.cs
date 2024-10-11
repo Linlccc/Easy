@@ -1,4 +1,5 @@
-﻿using System.Drawing.Drawing2D;
+﻿using System.Drawing;
+using System.Drawing.Drawing2D;
 
 namespace Easy.Extensions.Emit.Test;
 
@@ -219,6 +220,32 @@ public class CreateDynameicAssemlys
         Assert.Equal(typeof(int), as1);
         #endregion
 
+        #region 调用方法
+        // 调用普通指令调用虚方法
+        Invoke("Call1", out string call1, "a");
+        Assert.Equal("a##", call1);
+        // 调用普通指令调用普通方法
+        Invoke("Call2", out string call2, "a");
+        Assert.Equal("##a", call2);
+        // 最后的调用
+        Invoke("Call3", out string call3, "a");
+        Assert.Equal("##a", call3);
+
+        // 调用虚方法指令调用虚方法
+        Invoke("CallVirtual1", out string callVirtual1, "a");
+        Assert.Equal("a%%", callVirtual1);
+        // 调用虚方法指令调用普通方法
+        Invoke("CallVirtual2", out string callVirtual2, "a");
+        Assert.Equal("##a", callVirtual2);
+        // 调用虚方法指令调用虚方法，调用前进行约束
+        Invoke("CallVirtual3", out string callVirtual3, 123);
+        Assert.Equal("123", callVirtual3);
+        Invoke("CallVirtual3", out string callVirtual3_2, "aa");
+        Assert.Equal("aa", callVirtual3_2);
+        Invoke("CallVirtual3", out string callVirtual3_3, new Size(10, 10));
+        Assert.Equal("{Width=10, Height=10}", callVirtual3_3);
+        #endregion
+
 
 
 
@@ -227,26 +254,6 @@ public class CreateDynameicAssemlys
         Invoke("Add1", out string concat1, "abc", "def");
         Assert.Equal("abcdef", concat1);
         #endregion
-
-
-
-
-        // ** 调用方法
-        // 普通指令调用虚方法
-        string callVirtual1 = (string)type.InvokeMember("CallVirtual1", BindingFlags.InvokeMethod, null, null, new object[] { "a" });
-        Assert.Equal("a" + "###", callVirtual1);
-        // 普通指令调用虚方法
-        string callVirtual2 = (string)type.InvokeMember("CallVirtual2", BindingFlags.InvokeMethod, null, null, new object[] { "a" });
-        Assert.Equal("a" + "###", callVirtual2);
-        // 使用调用虚方法的指令调用虚方法
-        string callVirtual3 = (string)type.InvokeMember("CallVirtual3", BindingFlags.InvokeMethod, null, null, new object[] { "a" });
-        Assert.Equal("a" + "%%%", callVirtual3);
-        // 最后的方法指令
-        string callVirtual4 = (string)type.InvokeMember("CallVirtual4", BindingFlags.InvokeMethod, null, null, new object[] { "a" });
-        Assert.Equal("a" + "%%%", callVirtual4);
-        // 使用调用虚方法的指令调用虚方法 调用前进行约束
-        string callVirtual5 = (string)type.InvokeMember("CallVirtual5", BindingFlags.InvokeMethod, null, null, new object[] { "a" });
-        Assert.Equal("a" + "%%%", callVirtual5);
 
 
 

@@ -1,4 +1,5 @@
-﻿using System.Runtime.InteropServices;
+﻿using System.Reflection.Emit;
+using System.Runtime.InteropServices;
 
 namespace Easy.Extensions.Emit.Test.GeneratorDynamicAssemlys;
 
@@ -637,8 +638,6 @@ public static class EmitOpCodesVerifyCreator
         DefineMethod_CallVirtual2();
         // 使用调用虚方法的指令调用虚方法
         DefineMethod_CallVirtual3();
-        // 尾方法
-        DefineMethod_CallVirtual4();
         // 使用调用虚方法的指令调用虚方法 调用前进行约束
         DefineMethod_CallVirtual5();
 
@@ -1229,6 +1228,117 @@ public static class EmitOpCodesVerifyCreator
     }
     #endregion
 
+    #region 调用方法
+    // 普通指令调用虚方法
+    public static MethodBuilder DefineMethod_Call1()
+    {
+        (MethodBuilder methodBuilder, ILGenerator il) = CreateMethod_PublicStatic("Call1", typeof(string), [typeof(string)]);
+
+        // Test1 v_test;
+        LocalBuilder v_test = il.DeclareLocal(typeof(Test1));
+        // v_test = new Test2();
+        il.NewObject(typeof(Test2).GetConstructor(Type.EmptyTypes));
+        il.SetLocal(v_test);
+        // return v_test.AddSuffix(arg0);
+        il.LoadLocal(v_test);
+        il.LoadArg(0);
+        il.Call(typeof(Test1).GetMethod(nameof(Test1.AddSuffix), [typeof(string)]));
+        il.Return();
+
+        return methodBuilder;
+    }
+    // 普通指令调用普通方法
+    public static MethodBuilder DefineMethod_Call2()
+    {
+        (MethodBuilder methodBuilder, ILGenerator il) = CreateMethod_PublicStatic("Call2", typeof(string), [typeof(string)]);
+
+        // Test1 v_test;
+        LocalBuilder v_test = il.DeclareLocal(typeof(Test1));
+        // v_test = new Test2();
+        il.NewObject(typeof(Test2).GetConstructor(Type.EmptyTypes));
+        il.SetLocal(v_test);
+        // return v_test.AddSuffix(arg0);
+        il.LoadLocal(v_test);
+        il.LoadArg(0);
+        il.Call(typeof(Test1).GetMethod(nameof(Test1.AddPrefix), [typeof(string)]));
+        il.Return();
+
+        return methodBuilder;
+    }
+    // 将方法标记为最后的方法(被标记的方法执行后必须返回)
+    public static MethodBuilder DefineMethod_Call3()
+    {
+        (MethodBuilder methodBuilder, ILGenerator il) = CreateMethod_PublicStatic("Call3", typeof(string), [typeof(string)]);
+
+        // Test1 v_test;
+        LocalBuilder v_test = il.DeclareLocal(typeof(Test1));
+        // v_test = new Test2();
+        il.NewObject(typeof(Test2).GetConstructor(Type.EmptyTypes));
+        il.SetLocal(v_test);
+        // return v_test.AddSuffix(arg0);
+        il.LoadLocal(v_test);
+        il.LoadArg(0);
+        il.TailCall();
+        il.Call(typeof(Test1).GetMethod(nameof(Test1.AddPrefix), [typeof(string)]));
+        // 不能再执行其他指令
+        //il.Pop();
+        //il.LoadString("##a");
+        il.Return();
+
+        return methodBuilder;
+    }
+
+    // 调用虚方法指令调用虚方法
+    public static MethodBuilder DefineMethod_CallVirtual1()
+    {
+        (MethodBuilder methodBuilder, ILGenerator il) = CreateMethod_PublicStatic("CallVirtual1", typeof(string), [typeof(string)]);
+
+        // Test1 v_test;
+        LocalBuilder v_test = il.DeclareLocal(typeof(Test1));
+        // v_test = new Test2();
+        il.NewObject(typeof(Test2).GetConstructor(Type.EmptyTypes));
+        il.SetLocal(v_test);
+        // return v_test.AddSuffix(arg0);
+        il.LoadLocal(v_test);
+        il.LoadArg(0);
+        il.CallVirtual(typeof(Test1).GetMethod(nameof(Test1.AddSuffix), [typeof(string)]));
+        il.Return();
+
+        return methodBuilder;
+    }
+    // 调用虚方法指令调用普通方法
+    public static MethodBuilder DefineMethod_CallVirtual2()
+    {
+        (MethodBuilder methodBuilder, ILGenerator il) = CreateMethod_PublicStatic("CallVirtual2", typeof(string), [typeof(string)]);
+
+        // Test1 v_test;
+        LocalBuilder v_test = il.DeclareLocal(typeof(Test1));
+        // v_test = new Test2();
+        il.NewObject(typeof(Test2).GetConstructor(Type.EmptyTypes));
+        il.SetLocal(v_test);
+        // return v_test.AddPrefix(arg0);
+        il.LoadLocal(v_test);
+        il.LoadArg(0);
+        il.CallVirtual(typeof(Test1).GetMethod(nameof(Test1.AddPrefix), [typeof(string)]));
+        il.Return();
+
+        return methodBuilder;
+    }
+    // 调用虚方法指令调用虚方法，调用前进行约束
+    public static MethodBuilder DefineMethod_CallVirtual3()
+    {
+        (MethodBuilder methodBuilder, ILGenerator il) = CreateMethod_PublicStatic("CallVirtual3", typeof(string), [typeof(object)]);
+
+        // return arg0.ToString();
+        il.LoadArgAddr(0);
+        il.Constrained(typeof(object));
+        il.CallVirtual(typeof(object).GetMethod(nameof(object.ToString), Type.EmptyTypes));
+        il.Return();
+
+        return methodBuilder;
+    }
+    #endregion
+
 
 
 
@@ -1341,132 +1451,6 @@ public static class EmitOpCodesVerifyCreator
 
         return methodBuilder;
 
-    }
-    #endregion
-
-    #region 调用方法
-    // 使用调用普通方法的指令调用虚方法 编译时类型 EmitTest1 (调用定义的虚方法而不是类型重写的方法)
-    public static MethodBuilder DefineMethod_CallVirtual1()
-    {
-        MethodBuilder methodBuilder = _typeBuilder.DefineMethod("CallVirtual1", MethodAttributes.Public | MethodAttributes.Static, typeof(string), new Type[] { typeof(string) });
-        ILGenerator il = methodBuilder.GetILGenerator();
-
-        LocalBuilder l1 = il.DeclareLocal(typeof(EmitTest1));
-        LocalBuilder l2 = il.DeclareLocal(typeof(string));
-
-        // l1 = new EmitTest2();
-        il.NewObject(typeof(EmitTest2).GetConstructor(Type.EmptyTypes));
-        il.SetLocal(l1);
-
-        // l2 = l1.T1(arg1);
-        il.LoadLocal(l1);
-        il.LoadArg(0);
-        il.Call(typeof(EmitTest1).GetMethod(nameof(EmitTest1.T1), new Type[] { typeof(string) }));
-        il.SetLocal(l2);
-        // return l2;
-        il.LoadLocal(l2);
-        il.Return();
-
-        return methodBuilder;
-    }
-
-    // 使用调用普通方法的指令调用虚方法 编译时类型 EmitTest2(调用定义的虚方法而不是类型重写的方法)
-    public static MethodBuilder DefineMethod_CallVirtual2()
-    {
-        MethodBuilder methodBuilder = _typeBuilder.DefineMethod("CallVirtual2", MethodAttributes.Public | MethodAttributes.Static, typeof(string), new Type[] { typeof(string) });
-        ILGenerator il = methodBuilder.GetILGenerator();
-
-        LocalBuilder l1 = il.DeclareLocal(typeof(EmitTest2));
-        LocalBuilder l2 = il.DeclareLocal(typeof(string));
-
-        // l1 = new EmitTest2();
-        il.NewObject(typeof(EmitTest2).GetConstructor(Type.EmptyTypes));
-        il.SetLocal(l1);
-
-        // l2 = l1.T1(arg1);
-        il.LoadLocal(l1);
-        il.LoadArg(0);
-        il.Call(typeof(EmitTest1).GetMethod(nameof(EmitTest1.T1), new Type[] { typeof(string) }));
-        il.SetLocal(l2);
-        // return l2;
-        il.LoadLocal(l2);
-        il.Return();
-
-        return methodBuilder;
-    }
-
-    // 使用调用虚方法的指令调用虚方法 编译时类型 EmitTest1(调用类型重写的方法)
-    public static MethodBuilder DefineMethod_CallVirtual3()
-    {
-        MethodBuilder methodBuilder = _typeBuilder.DefineMethod("CallVirtual3", MethodAttributes.Public | MethodAttributes.Static, typeof(string), new Type[] { typeof(string) });
-        ILGenerator il = methodBuilder.GetILGenerator();
-
-        LocalBuilder l1 = il.DeclareLocal(typeof(EmitTest1));
-        LocalBuilder l2 = il.DeclareLocal(typeof(string));
-
-        // l1 = new EmitTest2();
-        il.NewObject(typeof(EmitTest2).GetConstructor(Type.EmptyTypes));
-        il.SetLocal(l1);
-
-        // l2 = l1.T1(arg1);
-        il.LoadLocal(l1);
-        il.LoadArg(0);
-        il.CallVirtual(typeof(EmitTest1).GetMethod(nameof(EmitTest1.T1), new Type[] { typeof(string) }));
-        il.SetLocal(l2);
-        // return l2;
-        il.LoadLocal(l2);
-        il.Return();
-
-        return methodBuilder;
-    }
-
-    // 将方法标记为最后的方法
-    public static MethodBuilder DefineMethod_CallVirtual4()
-    {
-        MethodBuilder methodBuilder = _typeBuilder.DefineMethod("CallVirtual4", MethodAttributes.Public | MethodAttributes.Static, typeof(string), new Type[] { typeof(string) });
-        ILGenerator il = methodBuilder.GetILGenerator();
-
-        LocalBuilder l1 = il.DeclareLocal(typeof(EmitTest1));
-
-        // l1 = new EmitTest2();
-        il.NewObject(typeof(EmitTest2).GetConstructor(Type.EmptyTypes));
-        il.SetLocal(l1);
-
-        // return l1.T1(arg1);
-        il.LoadLocal(l1);
-        il.LoadArg(0);
-        il.TailCall();
-        il.CallVirtual(typeof(EmitTest1).GetMethod(nameof(EmitTest1.T1), new Type[] { typeof(string) }));
-        il.Return();
-
-        return methodBuilder;
-    }
-
-    // 使用调用虚方法的指令调用虚方法 调用前进行约束
-    public static MethodBuilder DefineMethod_CallVirtual5()
-    {
-        MethodBuilder methodBuilder = _typeBuilder.DefineMethod("CallVirtual5", MethodAttributes.Public | MethodAttributes.Static, typeof(string), new Type[] { typeof(string) });
-        ILGenerator il = methodBuilder.GetILGenerator();
-
-        LocalBuilder l1 = il.DeclareLocal(typeof(EmitTest1));
-        LocalBuilder l2 = il.DeclareLocal(typeof(string));
-
-        // l1 = new EmitTest2();
-        il.NewObject(typeof(EmitTest2).GetConstructor(Type.EmptyTypes));
-        il.SetLocal(l1);
-
-        // l2 = l1.T1(arg1);
-        il.LoadLocalAddr((ushort)l1.LocalIndex);
-        il.LoadArg(0);
-        il.Constrained(typeof(EmitTest1));
-        il.CallVirtual(typeof(EmitTest1).GetMethod(nameof(EmitTest1.T1), new Type[] { typeof(string) }));
-        il.SetLocal(l2);
-
-        // return l2;
-        il.LoadLocal(l2);
-        il.Return();
-
-        return methodBuilder;
     }
     #endregion
 
@@ -2463,6 +2447,25 @@ public static class EmitOpCodesVerifyCreator
         il.Return();
         return methodBuilder;
     }
+}
+
+public class Test1
+{
+    /// <summary>
+    /// 添加前缀
+    /// </summary>
+    public string AddPrefix(string str) => $"##{str}";
+
+    /// <summary>
+    /// 添加后缀
+    /// </summary>
+    public virtual string AddSuffix(string str) => $"{str}##";
+}
+public class Test2 : Test1
+{
+    public new string AddPrefix(string str) => $"%%{str}";
+
+    public override string AddSuffix(string str) => $"{str}%%";
 }
 
 public class EmitTest1
