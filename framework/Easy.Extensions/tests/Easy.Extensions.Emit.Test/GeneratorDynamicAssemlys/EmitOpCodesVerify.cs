@@ -983,15 +983,11 @@ public static class EmitOpCodesVerifyCreator
     // -arg
     public static MethodBuilder DefineMethod_Neg1()
     {
-        MethodBuilder methodBuilder = _typeBuilder.DefineMethod("Neg1", MethodAttributes.Public | MethodAttributes.Static, typeof(int), new Type[] { typeof(int) });
-        ILGenerator il = methodBuilder.GetILGenerator();
+        (MethodBuilder methodBuilder, ILGenerator il) = CreateMethod_PublicStatic("Neg1", typeof(int), [typeof(int)]);
 
-        LocalBuilder l1 = il.DeclareLocal(typeof(int));
-
-        il.LoadArg();
+        // return -arg1;
+        il.LoadArg(0);
         il.MathNeg();
-        il.SetLocal(l1);
-        il.LoadLocal(l1);
         il.Return();
 
         return methodBuilder;
