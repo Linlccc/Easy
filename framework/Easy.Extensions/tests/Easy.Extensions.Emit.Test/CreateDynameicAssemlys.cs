@@ -115,14 +115,24 @@ public class CreateDynameicAssemlys
         Assert.Throws<OverflowException>(ThrowReal(() => Invoke("Sub3", out int _, 1, 2)));
         Invoke("Sub3", out int sub3, 10, 2);
         Assert.Equal(8, sub3);
+
+        // *
+        Invoke("Mul1", out int mul1, (int)(2147483648 / 2), 2);
+        Assert.Equal(-2147483648, mul1);
+        // 检查溢出 *
+        Assert.Throws<OverflowException>(ThrowReal(() => Invoke("Mul2", out int _, (int)(2147483648 / 2), 2)));
+        Invoke("Mul2", out int mul2, (int)(2147483648 / 2), 1);
+        Assert.Equal((int)(2147483648 / 2), mul2);
+        // 检查溢出无符号 *
+        Assert.Throws<OverflowException>(ThrowReal(() => Invoke("Mul3", out int _, int.MaxValue, 3)));
+        Invoke("Mul3", out int mul3, int.MaxValue, 2);
+        Assert.Equal(-2, mul3);
         #endregion
 
         // ** 数学
         // +
         // -
         // *
-        int[] mul1 = (int[])type.InvokeMember("Mul1", BindingFlags.InvokeMethod, null, null, new object[] { 123, 2 });
-        Assert.Equal(246, mul1[0]);
         // /
         int[] div1 = (int[])type.InvokeMember("Div1", BindingFlags.InvokeMethod, null, null, new object[] { 123, 2 });
         Assert.Equal(61, div1[0]);

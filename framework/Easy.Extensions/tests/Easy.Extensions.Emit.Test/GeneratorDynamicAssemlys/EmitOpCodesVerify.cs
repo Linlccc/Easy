@@ -879,44 +879,42 @@ public static class EmitOpCodesVerifyCreator
     }
     #endregion
 
-    #region Mul
-    /// <summary>
-    /// 定义 Mul1 方法
-    /// </summary>
-    /// <returns></returns>
+    #region *
+    // *
     public static MethodBuilder DefineMethod_Mul1()
     {
-        MethodBuilder methodBuilder = _typeBuilder.DefineMethod("Mul1", MethodAttributes.Public | MethodAttributes.Static, typeof(int[]), new Type[] { typeof(int), typeof(int) });
-        ILGenerator il = methodBuilder.GetILGenerator();
-        // 声明本地变量数组
-        LocalBuilder arr = il.DeclareLocal(typeof(int[]));
-        il.LoadInt(3);
-        il.NewArray(typeof(int));
-        il.SetLocal(arr);
+        (MethodBuilder methodBuilder, ILGenerator il) = CreateMethod_PublicStatic("Mul1", typeof(int), [typeof(int), typeof(int)]);
 
-        // 正常添加
-        il.LoadLocal(arr);
-        il.LoadInt(0);
-        il.LoadArg();
+        // return arg1 * arg2;
+        il.LoadArg(0);
         il.LoadArg(1);
         il.MathMul();
-        il.SetArray(typeof(int));
-        // 检查溢出添加
-        il.LoadLocal(arr);
-        il.LoadInt(1);
-        il.LoadArg();
+        il.Return();
+
+        return methodBuilder;
+    }
+    // 检查溢出 *
+    public static MethodBuilder DefineMethod_Mul2()
+    {
+        (MethodBuilder methodBuilder, ILGenerator il) = CreateMethod_PublicStatic("Mul2", typeof(int), [typeof(int), typeof(int)]);
+
+        // return checked(arg1 * arg2);
+        il.LoadArg(0);
         il.LoadArg(1);
-        il.MathMul(true);
-        il.SetArray(typeof(int));
-        // 检查溢出无符号添加
-        il.LoadLocal(arr);
-        il.LoadInt(2);
-        il.LoadArg();
+        il.MathMul(isOverflowCheck: true);
+        il.Return();
+
+        return methodBuilder;
+    }
+    // 检查溢出无符号 *
+    public static MethodBuilder DefineMethod_Mul3()
+    {
+        (MethodBuilder methodBuilder, ILGenerator il) = CreateMethod_PublicStatic("Mul3", typeof(int), [typeof(int), typeof(int)]);
+
+        // return (int)checked(unchecked((uint)P_0) * unchecked((uint)P_1));
+        il.LoadArg(0);
         il.LoadArg(1);
         il.MathMul(isUnsigned: true);
-        il.SetArray(typeof(int));
-
-        il.LoadLocal(arr);
         il.Return();
 
         return methodBuilder;
