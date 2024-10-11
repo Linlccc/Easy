@@ -638,8 +638,6 @@ public static class EmitOpCodesVerifyCreator
         DefineMethod_CallVirtual2();
         // 使用调用虚方法的指令调用虚方法
         DefineMethod_CallVirtual3();
-        // 使用调用虚方法的指令调用虚方法 调用前进行约束
-        DefineMethod_CallVirtual5();
 
 
         // ** 数组
