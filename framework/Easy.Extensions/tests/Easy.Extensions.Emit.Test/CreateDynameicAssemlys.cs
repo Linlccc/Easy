@@ -179,19 +179,27 @@ public class CreateDynameicAssemlys
         Assert.Equal(int.MaxValue, shiftRight2);
         #endregion
 
-
-        // ** 比较
+        #region 比较
         // ==
-        int equal1 = (int)type.InvokeMember("Equal1", BindingFlags.InvokeMethod, null, null, new object[] { 123, 123 });
-        Assert.Equal(123 == 123 ? 1 : 0, equal1);
-        bool equal2 = (bool)type.InvokeMember("Equal2", BindingFlags.InvokeMethod, null, null, new object[] { 123, 123 });
-        Assert.Equal(123 == 123, equal2);
+        Invoke("Equal1", out bool equal1, 100, 100);
+        Assert.True(equal1);
+
         // >
-        int greater1 = (int)type.InvokeMember("Greater1", BindingFlags.InvokeMethod, null, null, new object[] { 123, 123 });
-        Assert.Equal(123 > 123 ? 1 : 0, greater1);
-        // >
-        int less1 = (int)type.InvokeMember("Less1", BindingFlags.InvokeMethod, null, null, new object[] { 123, 123 });
-        Assert.Equal(123 < 123 ? 1 : 0, less1);
+        Invoke("Greater1", out bool greater1, int.MaxValue, -1);
+        Assert.True(greater1);
+        // 无符号 >
+        Invoke("Greater2", out bool greater2, int.MaxValue, -1);
+        Assert.False(greater2);
+
+        // <
+        Invoke("Less1", out bool less1, -1, int.MaxValue);
+        Assert.True(less1);
+        // 无符号 <
+        Invoke("Less2", out bool less2, -1, int.MaxValue);
+        Assert.False(less2);
+        #endregion
+
+
 
         // ** 特殊
         // 调用和定义包含有可变参数的方法

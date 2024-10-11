@@ -601,7 +601,6 @@ public static class EmitOpCodesVerifyCreator
 
         // ==
         DefineMethod_Equal1();
-        DefineMethod_Equal2();
         // >
         DefineMethod_Greater1();
         // <
@@ -1093,41 +1092,16 @@ public static class EmitOpCodesVerifyCreator
     }
     #endregion
 
-
     #region 比较
     // ==
     public static MethodBuilder DefineMethod_Equal1()
     {
-        MethodBuilder methodBuilder = _typeBuilder.DefineMethod("Equal1", MethodAttributes.Public | MethodAttributes.Static, typeof(int), new Type[] { typeof(int), typeof(int) });
-        ILGenerator il = methodBuilder.GetILGenerator();
+        (MethodBuilder methodBuilder, ILGenerator il) = CreateMethod_PublicStatic("Equal1", typeof(bool), [typeof(int), typeof(int)]);
 
-        LocalBuilder l1 = il.DeclareLocal(typeof(int));
-
-        il.LoadArg();
+        // return arg1 == arg2;
+        il.LoadArg(0);
         il.LoadArg(1);
         il.CompareEqual();
-        il.SetLocal(l1);
-
-        il.LoadLocal(l1);
-        il.Return();
-
-        return methodBuilder;
-    }
-
-    // ==
-    public static MethodBuilder DefineMethod_Equal2()
-    {
-        MethodBuilder methodBuilder = _typeBuilder.DefineMethod("Equal2", MethodAttributes.Public | MethodAttributes.Static, typeof(bool), new Type[] { typeof(int), typeof(int) });
-        ILGenerator il = methodBuilder.GetILGenerator();
-
-        LocalBuilder l1 = il.DeclareLocal(typeof(bool));
-
-        il.LoadArg();
-        il.LoadArg(1);
-        il.CompareEqual();
-        il.SetLocal(l1);
-
-        il.LoadLocal(l1);
         il.Return();
 
         return methodBuilder;
@@ -1136,17 +1110,25 @@ public static class EmitOpCodesVerifyCreator
     // >
     public static MethodBuilder DefineMethod_Greater1()
     {
-        MethodBuilder methodBuilder = _typeBuilder.DefineMethod("Greater1", MethodAttributes.Public | MethodAttributes.Static, typeof(int), new Type[] { typeof(int), typeof(int) });
-        ILGenerator il = methodBuilder.GetILGenerator();
+        (MethodBuilder methodBuilder, ILGenerator il) = CreateMethod_PublicStatic("Greater1", typeof(bool), [typeof(int), typeof(int)]);
 
-        LocalBuilder l1 = il.DeclareLocal(typeof(int));
-
-        il.LoadArg();
+        // return arg1 > arg2;
+        il.LoadArg(0);
         il.LoadArg(1);
         il.CompareGreater();
-        il.SetLocal(l1);
+        il.Return();
 
-        il.LoadLocal(l1);
+        return methodBuilder;
+    }
+    // 无符号 >
+    public static MethodBuilder DefineMethod_Greater2()
+    {
+        (MethodBuilder methodBuilder, ILGenerator il) = CreateMethod_PublicStatic("Greater2", typeof(bool), [typeof(int), typeof(int)]);
+
+        // return arg1 > arg2;
+        il.LoadArg(0);
+        il.LoadArg(1);
+        il.CompareGreater(true);
         il.Return();
 
         return methodBuilder;
@@ -1155,22 +1137,31 @@ public static class EmitOpCodesVerifyCreator
     // <
     public static MethodBuilder DefineMethod_Less1()
     {
-        MethodBuilder methodBuilder = _typeBuilder.DefineMethod("Less1", MethodAttributes.Public | MethodAttributes.Static, typeof(int), new Type[] { typeof(int), typeof(int) });
-        ILGenerator il = methodBuilder.GetILGenerator();
+        (MethodBuilder methodBuilder, ILGenerator il) = CreateMethod_PublicStatic("Less1", typeof(bool), [typeof(int), typeof(int)]);
 
-        LocalBuilder l1 = il.DeclareLocal(typeof(int));
-
-        il.LoadArg();
+        // return arg1 < arg2;
+        il.LoadArg(0);
         il.LoadArg(1);
         il.CompareLess();
-        il.SetLocal(l1);
+        il.Return();
 
-        il.LoadLocal(l1);
+        return methodBuilder;
+    }
+    // 无符号 <
+    public static MethodBuilder DefineMethod_Less2()
+    {
+        (MethodBuilder methodBuilder, ILGenerator il) = CreateMethod_PublicStatic("Less2", typeof(bool), [typeof(int), typeof(int)]);
+
+        // return arg1 < arg2;
+        il.LoadArg(0);
+        il.LoadArg(1);
+        il.CompareLess(true);
         il.Return();
 
         return methodBuilder;
     }
     #endregion
+
 
     #region 字符串相加
     /// <summary>
