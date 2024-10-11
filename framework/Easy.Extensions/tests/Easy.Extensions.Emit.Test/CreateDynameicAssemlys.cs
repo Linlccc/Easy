@@ -1,4 +1,6 @@
-﻿namespace Easy.Extensions.Emit.Test;
+﻿using System.Drawing.Drawing2D;
+
+namespace Easy.Extensions.Emit.Test;
 
 
 /// <summary>
@@ -65,15 +67,46 @@ public class CreateDynameicAssemlys
         AssemblyBuilder assembly = AssemblyBuilder.DefineDynamicAssembly(new AssemblyName(assemblyName), AssemblyBuilderAccess.RunAndSave);
         ModuleBuilder module = assembly.DefineDynamicModule(assemblyName, $"{assemblyName}.dll");
 
+
         // 定义类型
         Type type = module.DefineType_EmitOpCodesVerify();
 
+        // 调用方法
+        void Invoke<T>(string name, out T res, params object[] pars) => res = (T)type.InvokeMember(name, BindingFlags.InvokeMethod, null, null, pars);
+        // 返回一个抛出真实异常的方法
+        Action ThrowReal(Action action)
+        {
+            return () =>
+            {
+                try
+                {
+                    action();
+                }
+                catch (Exception ex)
+                {
+                    Exception realEx = ex;
+                    while (realEx.InnerException != null) realEx = realEx.InnerException;
+                    throw realEx;
+                }
+            };
+        }
+        #region 数学
+        // +
+        Invoke("Add1", out int add1, int.MaxValue, 1);
+        Assert.Equal(-2147483648, add1);
+        // 检查溢出 +
+        Assert.Throws<OverflowException>(ThrowReal(() => Invoke("Add2", out int _, int.MaxValue, 1)));
+        Invoke("Add2", out int add2, int.MaxValue, -1);
+        Assert.Equal(2147483646, add2);
+        // 检查溢出无符号 +
+        // unchecked((uint)-1) == 4294967295
+        Assert.Throws<OverflowException>(ThrowReal(() => Invoke("Add3", out uint _, -1, -1)));
+        Invoke("Add3", out int add3, int.MaxValue, int.MaxValue);
+        Assert.Equal(-2, add3);
+        #endregion
+
         // ** 数学
         // +
-        int[] add1 = (int[])type.InvokeMember("Add1", BindingFlags.InvokeMethod, null, null, new object[] { 10, 2 });
-        int[] add2 = (int[])type.InvokeMember("Add2", BindingFlags.InvokeMethod, null, null, new object[] { 123, 2 });
-        Assert.Equal(12, add1[0]);
-        Assert.Equal(125, add2[0]);
         // -
         int[] sub1 = (int[])type.InvokeMember("Sub1", BindingFlags.InvokeMethod, null, null, new object[] { 123, 2 });
         Assert.Equal(121, sub1[0]);
