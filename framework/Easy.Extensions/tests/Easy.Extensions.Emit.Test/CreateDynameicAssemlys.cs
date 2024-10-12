@@ -282,13 +282,13 @@ public class CreateDynameicAssemlys
         Invoke("Calli3", out int calli3, 5, 2);
         Assert.Equal(2, calli3);
 
-        // 外部方法
+        // 外部方法,因为每次调用都会弹出一个窗口，所以注释掉
         // 点击 确定返回1，取消返回2
-        Invoke("Calli4", out int calli4, "我是内容", "我是标题");
-        Assert.True(calli4 is 1 or 2);
+        //Invoke("Calli4", out int calli4, "我是内容", "我是标题");
+        //Assert.True(calli4 is 1 or 2);
         #endregion
 
-        #region 地址/指针
+        #region 地址/指针赋值
         // 设置值到地址
         Invoke("SetValueToAddr1", out int setValueToAddr1, 100);
         Assert.Equal(100, setValueToAddr1);
@@ -298,6 +298,28 @@ public class CreateDynameicAssemlys
         Assert.Equal(setValueToAddr2Expected, setValueToAddr2);
         #endregion
 
+        #region Try Catch Finally
+        // Try_Catch1
+        Assert.Throws<Exception>(ThrowReal(() => Invoke("Try_Catch1", out object _)));
+
+        // Try_Catch2
+        Invoke("Try_Catch2", out string try_Catch2, false);
+        Assert.Equal("没有异常", try_Catch2);
+        Invoke("Try_Catch2", out string try_Catch2_2, true);
+        Assert.Equal("Try_Catch2测试异常", try_Catch2_2);
+
+        // Try_Catch3 不判断类型的异常捕捉
+        Invoke("Try_Catch3", out string try_Catch3);
+        Assert.Equal("进入了一个不判断类型的异常捕捉", try_Catch3);
+
+        // Try_Catch4 有筛选的异常捕捉
+        Invoke("Try_Catch4", out string try_Catch4, 0);
+        Assert.Equal("没有异常", try_Catch4);
+        Invoke("Try_Catch4", out string try_Catch4_2, -1);
+        Assert.Equal("123", try_Catch4_2);
+        Invoke("Try_Catch4", out string try_Catch4_3, 1);
+        Assert.Equal("456----", try_Catch4_3);
+        #endregion
 
 
 
@@ -313,20 +335,6 @@ public class CreateDynameicAssemlys
 
 
 
-
-        // ** Try Catch Finally
-        // Try_Catch1
-        Assert.Throws<TargetInvocationException>(() => type.InvokeMember("Try_Catch1", BindingFlags.InvokeMethod, null, null, new object[] { }));
-        // Try_Catch2
-        object try_Catch2 = type.InvokeMember("Try_Catch2", BindingFlags.InvokeMethod, null, null, new object[] { });
-        Assert.Equal("Try_Catch2 测试 异常", try_Catch2);
-        // Try_Catch3
-        object try_Catch3 = type.InvokeMember("Try_Catch3", BindingFlags.InvokeMethod, null, null, new object[] { });
-        Assert.Equal("进入了一个不判断类型的异常捕捉", try_Catch3);
-
-        // Try_Catch4
-        object try_Catch4 = type.InvokeMember("Try_Catch4", BindingFlags.InvokeMethod, null, null, new object[] { });
-        Assert.Equal("123", try_Catch4);
 
         // Try_Catch_Finally1
         object Tty_Catch_Finally1 = type.InvokeMember("Try_Catch_Finally1", BindingFlags.InvokeMethod, null, null, new object[] { });
