@@ -1,5 +1,6 @@
 ﻿using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.Xml.Linq;
 
 namespace Easy.Extensions.Emit.Test;
 
@@ -264,6 +265,29 @@ public class CreateDynameicAssemlys
         Assert.Equal("{Width=10, Height=10}", callVirtual3_3);
         #endregion
 
+        #region 通过指针调用方法
+        // 实例方法
+        Invoke("Calli1", out string calli1, new Test1(), "a");
+        Assert.Equal("##a", calli1);
+        Invoke("Calli1", out string calli1_2, new Test2(), "a");
+        Assert.Equal("##a", calli1_2);
+
+        // 实例虚方法
+        Invoke("Calli2", out string calli2, new Test1(), "a");
+        Assert.Equal("a##", calli2);
+        Invoke("Calli2", out string calli2_2, new Test2(), "a");
+        Assert.Equal("a%%", calli2_2);
+
+        // 静态方法
+        Invoke("Calli3", out int calli3, 5, 2);
+        Assert.Equal(2, calli3);
+
+        // 外部方法
+        // 点击 确定返回1，取消返回2
+        Invoke("Calli4", out int calli4, "我是内容", "我是标题");
+        Assert.True(calli4 is 1 or 2);
+        #endregion
+
         #region 地址/指针
         // 设置值到地址
         Invoke("SetValueToAddr1", out int setValueToAddr1, 100);
@@ -287,21 +311,6 @@ public class CreateDynameicAssemlys
 
 
 
-
-
-        // ** 方法指针调用方法
-        // 方法指针调用方法1
-        int calli_Ldftn1 = (int)type.InvokeMember("Calli_Ldftn1", BindingFlags.InvokeMethod, null, null, new object[] { });
-        Assert.Equal(2, calli_Ldftn1);
-        // 方法指针调用方法2
-        int calli_Ldftn2 = (int)type.InvokeMember("Calli_Ldftn2", BindingFlags.InvokeMethod, null, null, new object[] { });
-        Assert.Equal(3, calli_Ldftn2);
-        // 方法指针调用方法3
-        int calli_Ldftn3 = (int)type.InvokeMember("Calli_Ldftn3", BindingFlags.InvokeMethod, null, null, new object[] { });
-        Assert.Equal(4, calli_Ldftn3);
-        // 方法指针调用方法4
-        int calli_Ldftn4 = (int)type.InvokeMember("Calli_Ldftn4", BindingFlags.InvokeMethod, null, null, new object[] { });
-        Assert.Equal(-4, calli_Ldftn4);
 
 
 

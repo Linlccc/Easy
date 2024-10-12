@@ -659,14 +659,6 @@ public static class EmitOpCodesVerifyCreator
 
 
         // ** 方法指针调用方法
-        // 方法指针调用方法1
-        DefineMethod_Calli_Ldftn1();
-        // 方法指针调用方法2
-        DefineMethod_Calli_Ldftn2();
-        // 方法指针调用方法3(虚方法)
-        DefineMethod_Calli_Ldftn3();
-        // 方法指针调用方法3(虚方法)
-        DefineMethod_Calli_Ldftn4();
 
 
 
@@ -1304,6 +1296,13 @@ public static class EmitOpCodesVerifyCreator
     #endregion
 
     #region 调用方法
+    // 执行的方法是普通方法
+    //  普通指令执行：从哪个类型获取的方法就执行哪个类型的方法
+    //  虚指令执行：从哪个类型获取的方法就执行哪个类型的方法
+    // 执行的方法是虚方法
+    //  普通指令执行：就像执行普通方法一样
+    //  虚指令执行：执行对象实例真实类型的方法
+
     // 普通指令调用虚方法
     public static MethodBuilder DefineMethod_Call1()
     {
@@ -1408,6 +1407,72 @@ public static class EmitOpCodesVerifyCreator
         il.LoadArgAddr(0);
         il.Constrained(typeof(object));
         il.CallVirtual(typeof(object).GetMethod(nameof(object.ToString), Type.EmptyTypes));
+        il.Return();
+
+        return methodBuilder;
+    }
+    #endregion
+
+    #region 通过指针调用方法
+    // 方法指针调用方法,实例方法
+    public static MethodBuilder DefineMethod_Calli1()
+    {
+        (MethodBuilder methodBuilder, ILGenerator il) = CreateMethod_PublicStatic("Calli1", typeof(string), [typeof(object), typeof(string)]);
+
+        // ((delegate*<object, string, string>)__ldftn(Test1.AddPrefix))(P_0, P_1);
+        il.LoadArg(0);
+        il.LoadArg(1);
+        il.LoadMethodPointer(typeof(Test1).GetMethod(nameof(Test1.AddPrefix)));
+        il.Calli(CallingConventions.Standard, typeof(string), [typeof(object), typeof(string)]);
+        il.Return();
+
+        return methodBuilder;
+    }
+
+
+    // 方法指针调用方法，实例虚方法
+    public static MethodBuilder DefineMethod_Calli2()
+    {
+        (MethodBuilder methodBuilder, ILGenerator il) = CreateMethod_PublicStatic("Calli2", typeof(string), [typeof(object), typeof(string)]);
+
+        // ((delegate*<object, string, string>)__ldvirtftn(Test1.AddSuffix))(P_0, P_1);
+        il.LoadArg(0);
+        il.LoadArg(1);
+        il.LoadArg(0);
+        il.LoadMethodPointer(typeof(Test1).GetMethod(nameof(Test1.AddSuffix)));
+        il.Calli(CallingConventions.Standard, typeof(string), [typeof(object), typeof(string)]);
+        il.Return();
+
+        return methodBuilder;
+    }
+
+    // 方法指针调用方法，静态方法
+    public static MethodBuilder DefineMethod_Calli3()
+    {
+        (MethodBuilder methodBuilder, ILGenerator il) = CreateMethod_PublicStatic("Calli3", typeof(int), [typeof(int), typeof(int)]);
+
+        // ((delegate*<int, int, int>)(&Test1.Div))(P_0, P_1);
+        il.LoadArg(0);
+        il.LoadArg(1);
+        il.LoadMethodPointer(typeof(Test1).GetMethod(nameof(Test1.Div)));
+        il.Calli(CallingConventions.Standard, typeof(int), [typeof(int), typeof(int)]);
+        il.Return();
+
+        return methodBuilder;
+    }
+
+    // 方法指针调用方法，外部方法
+    public static MethodBuilder DefineMethod_Calli4()
+    {
+        (MethodBuilder methodBuilder, ILGenerator il) = CreateMethod_PublicStatic("Calli4", typeof(int), [typeof(string), typeof(string)]);
+
+        // return ((delegate*<int, string, string, int, int>)(&Test1.MsgBox))(0, P_0, P_1, 1);
+        il.LoadInt(0);
+        il.LoadArg(0);
+        il.LoadArg(1);
+        il.LoadInt(1);
+        il.LoadMethodPointer(typeof(Test1).GetMethod(nameof(Test1.MsgBox)));
+        il.Calli(CallingConventions.Standard, typeof(int), [typeof(int), typeof(string), typeof(string), typeof(int)]);
         il.Return();
 
         return methodBuilder;
@@ -1562,89 +1627,6 @@ public static class EmitOpCodesVerifyCreator
 
         return methodBuilder;
 
-    }
-    #endregion
-
-    #region 方法指针调用方法(如果设置返回类型为string的话,没办法测试)
-    // 方法指针调用方法1
-    public static MethodBuilder DefineMethod_Calli_Ldftn1()
-    {
-        MethodBuilder methodBuilder = _typeBuilder.DefineMethod("Calli_Ldftn1", MethodAttributes.Public | MethodAttributes.Static, typeof(int), Type.EmptyTypes);
-        ILGenerator il = methodBuilder.GetILGenerator();
-
-        LocalBuilder l1 = il.DeclareLocal(typeof(int));
-
-        // l1 = EmitTest2.T2();
-        il.LoadMethodPointer(typeof(EmitTest2).GetMethod(nameof(EmitTest2.T2)));
-        il.Calli(System.Runtime.InteropServices.CallingConvention.StdCall, typeof(int));
-        il.SetLocal(l1);
-
-        il.LoadLocal(l1);
-        il.Return();
-
-        return methodBuilder;
-    }
-
-    // 方法指针调用方法2(实例方法)
-    public static MethodBuilder DefineMethod_Calli_Ldftn2()
-    {
-        MethodBuilder methodBuilder = _typeBuilder.DefineMethod("Calli_Ldftn2", MethodAttributes.Public | MethodAttributes.Static, typeof(int), Type.EmptyTypes);
-        ILGenerator il = methodBuilder.GetILGenerator();
-
-        LocalBuilder l1 = il.DeclareLocal(typeof(int));
-
-        // l1 = new EmitTest2().T3();
-        il.NewObject(typeof(EmitTest2).GetConstructor(Type.EmptyTypes));
-        il.LoadMethodPointer(typeof(EmitTest2).GetMethod(nameof(EmitTest2.T3)));
-        il.Calli(System.Runtime.InteropServices.CallingConvention.ThisCall, typeof(int), typeof(EmitTest2));
-        il.SetLocal(l1);
-
-        il.LoadLocal(l1);
-        il.Return();
-
-        return methodBuilder;
-    }
-
-    // 方法指针调用方法3(虚方法)
-    public static MethodBuilder DefineMethod_Calli_Ldftn3()
-    {
-        MethodBuilder methodBuilder = _typeBuilder.DefineMethod("Calli_Ldftn3", MethodAttributes.Public | MethodAttributes.Static, typeof(int), Type.EmptyTypes);
-        ILGenerator il = methodBuilder.GetILGenerator();
-
-        LocalBuilder l1 = il.DeclareLocal(typeof(int));
-
-        // l1 = new EmitTest2().T4();
-        il.NewObject(typeof(EmitTest2).GetConstructor(Type.EmptyTypes));
-        il.Copy();
-        il.LoadMethodPointer(typeof(EmitTest2).GetMethod(nameof(EmitTest2.T4)));
-        il.Calli(System.Runtime.InteropServices.CallingConvention.ThisCall, typeof(int), typeof(EmitTest2));
-        il.SetLocal(l1);
-
-        il.LoadLocal(l1);
-        il.Return();
-
-        return methodBuilder;
-    }
-
-    // 方法指针调用方法4(虚方法)
-    public static MethodBuilder DefineMethod_Calli_Ldftn4()
-    {
-        MethodBuilder methodBuilder = _typeBuilder.DefineMethod("Calli_Ldftn4", MethodAttributes.Public | MethodAttributes.Static, typeof(int), Type.EmptyTypes);
-        ILGenerator il = methodBuilder.GetILGenerator();
-
-        LocalBuilder l1 = il.DeclareLocal(typeof(int));
-
-        // l1 = ((EmitTest1)new EmitTest2()).T4();
-        il.NewObject(typeof(EmitTest2).GetConstructor(Type.EmptyTypes));
-        il.NewObject(typeof(EmitTest1).GetConstructor(Type.EmptyTypes));
-        il.LoadMethodPointer(typeof(EmitTest2).GetMethod(nameof(EmitTest2.T4)));
-        il.Calli(System.Runtime.InteropServices.CallingConvention.ThisCall, typeof(int), typeof(EmitTest2));
-        il.SetLocal(l1);
-
-        il.LoadLocal(l1);
-        il.Return();
-
-        return methodBuilder;
     }
     #endregion
 
@@ -2399,22 +2381,37 @@ public static class EmitOpCodesVerifyCreator
 
 public class Test1
 {
+    private readonly string _str = "##";
+
     /// <summary>
     /// 添加前缀
     /// </summary>
-    public string AddPrefix(string str) => $"##{str}";
+    public string AddPrefix(string str) => $"{_str}{str}";
 
     /// <summary>
     /// 添加后缀
     /// </summary>
-    public virtual string AddSuffix(string str) => $"{str}##";
+    public virtual string AddSuffix(string str) => $"{str}{_str}";
+
+    public static int Div(int a, int b) => a / b;
+
+    /// <summary>
+    /// 这是一个弹出消息框的外部方法
+    /// </summary>
+    [DllImport("user32.dll", EntryPoint = "MessageBoxA")]
+    public static extern int MsgBox(int hWnd, string msg, string caption, int type);
 }
 public class Test2 : Test1
 {
-    public new string AddPrefix(string str) => $"%%{str}";
+    private readonly string _str = "%%";
 
-    public override string AddSuffix(string str) => $"{str}%%";
+    public new string AddPrefix(string str) => $"{_str}{str}";
+
+    public override string AddSuffix(string str) => $"{str}{_str}";
 }
+
+
+
 
 public class EmitTest1
 {
