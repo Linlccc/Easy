@@ -1414,7 +1414,43 @@ public static class EmitOpCodesVerifyCreator
     }
     #endregion
 
+    #region 地址/指针
+    // 设置值到地址
+    public static MethodBuilder DefineMethod_SetValueToAddr1()
+    {
+        (MethodBuilder methodBuilder, ILGenerator il) = CreateMethod_PublicStatic("SetValueToAddr1", typeof(int), [typeof(int)]);
 
+        // int v1;
+        LocalBuilder v1 = il.DeclareLocal(typeof(int));
+        // v1 = 10;
+        il.LoadLocalAddr((ushort)v1.LocalIndex);
+        il.LoadArg(0);
+        il.SetValueToAddr(typeof(int));
+        // return v1;
+        il.LoadLocal(v1);
+        il.Return();
+
+        return methodBuilder;
+    }
+
+    // 设置值到地址
+    public static MethodBuilder DefineMethod_SetValueToAddr2()
+    {
+        (MethodBuilder methodBuilder, ILGenerator il) = CreateMethod_PublicStatic("SetValueToAddr2", typeof(object), [typeof(object)]);
+
+        // int v1;
+        LocalBuilder v1 = il.DeclareLocal(typeof(object));
+        // v1 = 10;
+        il.LoadLocalAddr((ushort)v1.LocalIndex);
+        il.LoadArg(0);
+        il.SetValueToAddr(typeof(object));
+        // return v1;
+        il.LoadLocal(v1);
+        il.Return();
+
+        return methodBuilder;
+    }
+    #endregion
 
 
 
@@ -1526,42 +1562,6 @@ public static class EmitOpCodesVerifyCreator
 
         return methodBuilder;
 
-    }
-    #endregion
-
-    #region 地址
-    // SetValueToAddr
-    public static MethodBuilder DefineMethod_SetValueToAddr1()
-    {
-        MethodBuilder methodBuilder = _typeBuilder.DefineMethod("SetValueToAddr1", MethodAttributes.Public | MethodAttributes.Static, typeof(int), Type.EmptyTypes);
-        ILGenerator il = methodBuilder.GetILGenerator();
-
-        LocalBuilder l1 = il.DeclareLocal(typeof(int));
-
-        il.LoadLocalAddr((ushort)l1.LocalIndex);
-        il.LoadInt(10);
-        il.SetValueToAddr(typeof(int));
-
-        il.LoadLocal(l1);
-        il.Return();
-        return methodBuilder;
-    }
-
-    // SetValueToAddr
-    public static MethodBuilder DefineMethod_SetValueToAddr2()
-    {
-        MethodBuilder methodBuilder = _typeBuilder.DefineMethod("SetValueToAddr2", MethodAttributes.Public | MethodAttributes.Static, typeof(object), Type.EmptyTypes);
-        ILGenerator il = methodBuilder.GetILGenerator();
-
-        LocalBuilder l1 = il.DeclareLocal(typeof(object));
-
-        il.LoadLocalAddr((ushort)l1.LocalIndex);
-        il.NewObject(typeof(object).GetConstructor(Type.EmptyTypes));
-        il.SetValueToAddr(typeof(object));
-
-        il.LoadLocal(l1);
-        il.Return();
-        return methodBuilder;
     }
     #endregion
 

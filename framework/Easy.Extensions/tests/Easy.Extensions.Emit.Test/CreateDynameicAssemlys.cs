@@ -264,6 +264,16 @@ public class CreateDynameicAssemlys
         Assert.Equal("{Width=10, Height=10}", callVirtual3_3);
         #endregion
 
+        #region 地址/指针
+        // 设置值到地址
+        Invoke("SetValueToAddr1", out int setValueToAddr1, 100);
+        Assert.Equal(100, setValueToAddr1);
+        // 设置值到地址
+        object setValueToAddr2Expected = new();
+        Invoke("SetValueToAddr2", out object setValueToAddr2, setValueToAddr2Expected);
+        Assert.Equal(setValueToAddr2Expected, setValueToAddr2);
+        #endregion
+
 
 
 
@@ -276,13 +286,6 @@ public class CreateDynameicAssemlys
 
 
 
-
-        // ** 地址
-        // SetValueToAddr
-        object setValueToAddr1 = type.InvokeMember("SetValueToAddr1", BindingFlags.InvokeMethod, null, null, new object[] { });
-        Assert.Equal(10, setValueToAddr1);
-        object setValueToAddr2 = type.InvokeMember("SetValueToAddr2", BindingFlags.InvokeMethod, null, null, new object[] { });
-        Assert.Equal(typeof(object), setValueToAddr2.GetType());
 
 
 
