@@ -680,18 +680,23 @@ public static partial class ILGeneratorExtensions
 
     #region 地址
     /// <summary>
-    /// 调用指针处的方法,并推送结果
+    /// 【用于托管调用】调用指针处的方法,并推送结果
+    /// <list type="bullet">
+    ///     <item>1.推送实例(静态方法忽略)</item>
+    ///     <item>2.推送参数</item>
+    ///     <item>2.推送方法指针</item>
+    /// </list>
     /// </summary>
     /// <param name="iLGenerator">中间语言指令生成器</param>
     /// <param name="callingConvention">方法调用约定</param>
     /// <param name="returnType">方法的返回类型</param>
     /// <param name="parameterTypes">方法的参数类型数组</param>
     /// <param name="optionalParameterTypes">可变参数类型数组</param>
-    public static void Calli(this ILGenerator iLGenerator, CallingConventions callingConvention, Type returnType, Type[] parameterTypes, params Type[] optionalParameterTypes) => iLGenerator.EmitCalli(OpCodes.Calli, callingConvention, returnType, parameterTypes, optionalParameterTypes);
+    public static void Calli(this ILGenerator iLGenerator, CallingConventions callingConvention, Type returnType, Type[] parameterTypes, Type[]? optionalParameterTypes = null) => iLGenerator.EmitCalli(OpCodes.Calli, callingConvention, returnType, parameterTypes, optionalParameterTypes);
 
 #if !NETSTANDARD2_0
     /// <summary>
-    /// 调用指针处的方法,并推送结果
+    /// 【用于非托管调用】调用指针处的方法,并推送结果
     /// <list type="bullet">
     ///     <item>1.推送实例(静态方法忽略)</item>
     ///     <item>2.推送参数</item>
