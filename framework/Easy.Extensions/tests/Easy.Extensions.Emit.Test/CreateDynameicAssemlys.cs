@@ -200,6 +200,24 @@ public class CreateDynameicAssemlys
         Assert.False(less2);
         #endregion
 
+        #region 数组
+        // 获取一个数组
+        Invoke("Array1", out int[] arrar1);
+        Assert.Equal([3, 4, 5], arrar1);
+
+        // 获取数组某一索引的值
+        Assert.Throws<IndexOutOfRangeException>(ThrowReal(() => Invoke("Array2", out int _, new string[] { "aa", "bb", "cc" }, 3)));
+        Invoke("Array2", out string array2, new string[] { "aa", "bb", "cc" }, 1);
+        Assert.Equal("bb", array2);
+        // 先获取地址，再从地址获取值
+        Invoke("Array3", out string array3, new string[] { "aa", "bb", "cc" }, 1);
+        Assert.Equal("bb", array2);
+
+        // 获取数组长度
+        Invoke("Array4", out int array4, [new string[] { "aa", "bb", "cc" }]);
+        Assert.Equal(3, array4);
+        #endregion
+
         #region 类型转换
         // 装箱
         Invoke("Box1", out object box1, 100);
@@ -256,19 +274,6 @@ public class CreateDynameicAssemlys
         #endregion
 
 
-
-        // 获取数组元素
-        object array1 = type.InvokeMember("Array1", BindingFlags.InvokeMethod, null, null, new object[] { });
-        Assert.Equal(8, array1);
-        // 获取数组元素
-        object array2 = type.InvokeMember("Array2", BindingFlags.InvokeMethod, null, null, new object[] { });
-        Assert.Equal("8", array2);
-        // 获取数组元素的地址的值
-        object array3 = type.InvokeMember("Array3", BindingFlags.InvokeMethod, null, null, new object[] { });
-        Assert.Equal("8", array3);
-        // 获取数组长度
-        object array4 = type.InvokeMember("Array4", BindingFlags.InvokeMethod, null, null, new object[] { });
-        Assert.Equal(99, array4);
 
 
 

@@ -1159,6 +1159,83 @@ public static class EmitOpCodesVerifyCreator
     }
     #endregion
 
+    #region 数组
+    // 获取一个数组
+    public static MethodBuilder DefineMethod_Array1()
+    {
+        (MethodBuilder methodBuilder, ILGenerator il) = CreateMethod_PublicStatic("Array1", typeof(int[]), Type.EmptyTypes);
+
+        // int[] v_array;
+        LocalBuilder v_array = il.DeclareLocal(typeof(int[]));
+        // v_array = new int[3];
+        il.LoadInt(3);
+        il.NewArray(typeof(int));
+        il.SetLocal(v_array);
+        // v_array[0] = 3;
+        il.LoadLocal(v_array);
+        il.LoadInt(0);
+        il.LoadInt(3);
+        il.SetArray(typeof(int));
+        // v_array[1] = 4;
+        il.LoadLocal(v_array);
+        il.LoadInt(1);
+        il.LoadInt(4);
+        il.SetArray(typeof(int));
+        // v_array[2] = 5;
+        il.LoadLocal(v_array);
+        il.LoadInt(2);
+        il.LoadInt(5);
+        il.SetArray(typeof(int));
+        // return v_array;
+        il.LoadLocal(v_array);
+        il.Return();
+
+        return methodBuilder;
+    }
+
+    // 获取数组元素
+    public static MethodBuilder DefineMethod_Array2()
+    {
+        (MethodBuilder methodBuilder, ILGenerator il) = CreateMethod_PublicStatic("Array2", typeof(string), [typeof(string[]), typeof(int)]);
+
+        // return arg1[arg2];
+        il.LoadArg(0);
+        il.LoadArg(1);
+        il.LoadArrayIndexValue(typeof(string));
+        il.Return();
+
+        return methodBuilder;
+    }
+
+    // 获取数组中某个索引的地址的值
+    public static MethodBuilder DefineMethod_Array3()
+    {
+        (MethodBuilder methodBuilder, ILGenerator il) = CreateMethod_PublicStatic("Array3", typeof(string), [typeof(string[]), typeof(int)]);
+
+        // return arg1[arg2];
+        il.LoadArg(0);
+        il.LoadArg(1);
+        il.LoadArrayIndexAddr(typeof(string));
+        il.LoadAddrValue(typeof(string));
+        il.Return();
+
+        return methodBuilder;
+    }
+
+    // 获取数组长度
+    public static MethodBuilder DefineMethod_Array4()
+    {
+        (MethodBuilder methodBuilder, ILGenerator il) = CreateMethod_PublicStatic("Array4", typeof(int), [typeof(string[])]);
+
+        // return arg1.Length;
+        il.LoadArg(0);
+        il.LoadLength();
+        il.Return();
+
+        return methodBuilder;
+    }
+    #endregion
+
     #region 类型转换
     // 装箱
     public static MethodBuilder DefineMethod_Box1()
@@ -1449,133 +1526,6 @@ public static class EmitOpCodesVerifyCreator
 
         return methodBuilder;
 
-    }
-    #endregion
-
-    #region 数组
-    // 返回数组中某个索引的值
-    public static MethodBuilder DefineMethod_Array1()
-    {
-        MethodBuilder methodBuilder = _typeBuilder.DefineMethod("Array1", MethodAttributes.Public | MethodAttributes.Static, typeof(object), Type.EmptyTypes);
-        ILGenerator il = methodBuilder.GetILGenerator();
-
-        LocalBuilder l1 = il.DeclareLocal(typeof(int[]));
-
-        // ** l1 = new int[3];
-        // new int[3]
-        il.LoadInt(3);
-        il.NewArray(typeof(int));
-        // int[0] = 3
-        il.Copy();//拷贝一个值是为了让堆栈上一直存在一个数组
-        il.LoadInt(0);
-        il.LoadInt(3);
-        il.SetArray(typeof(int));
-        // int[1] = 5
-        il.Copy();
-        il.LoadInt(1);
-        il.LoadInt(5);
-        il.SetArray(typeof(int));
-        // int[2] = 8
-        il.Copy();
-        il.LoadInt(2);
-        il.LoadInt(8);
-        il.SetArray(typeof(int));
-        // l1 = 赋值了的数组
-        il.SetLocal(l1);
-
-        // return l1[2];
-        il.LoadLocal(l1);
-        il.LoadInt(2);
-        il.LoadArrayIndexValue(typeof(int));
-        il.Box(typeof(int));
-        il.Return();
-        return methodBuilder;
-    }
-
-    // 返回数组中某个索引的值
-    public static MethodBuilder DefineMethod_Array2()
-    {
-        MethodBuilder methodBuilder = _typeBuilder.DefineMethod("Array2", MethodAttributes.Public | MethodAttributes.Static, typeof(object), Type.EmptyTypes);
-        ILGenerator il = methodBuilder.GetILGenerator();
-
-        LocalBuilder l1 = il.DeclareLocal(typeof(string[]));
-
-        // ** l1 = new string[3];
-        il.LoadInt(3);
-        il.NewArray(typeof(string));
-        il.Copy();//拷贝一个值是为了让堆栈上一直存在一个数组
-        il.LoadInt(0);
-        il.LoadString("3");
-        il.SetArray();
-        il.Copy();
-        il.LoadInt(1);
-        il.LoadString("5");
-        il.SetArray();
-        il.Copy();
-        il.LoadInt(2);
-        il.LoadString("8");
-        il.SetArray();
-        il.SetLocal(l1);
-
-        // return l1[2];
-        il.LoadLocal(l1);
-        il.LoadInt(2);
-        il.LoadArrayIndexValue();
-        il.Return();
-        return methodBuilder;
-    }
-
-    // 返回数组中某个索引的值的地址的值
-    public static MethodBuilder DefineMethod_Array3()
-    {
-        MethodBuilder methodBuilder = _typeBuilder.DefineMethod("Array3", MethodAttributes.Public | MethodAttributes.Static, typeof(object), Type.EmptyTypes);
-        ILGenerator il = methodBuilder.GetILGenerator();
-
-        LocalBuilder l1 = il.DeclareLocal(typeof(string[]));
-
-        // ** l1 = new string[3];
-        il.LoadInt(3);
-        il.NewArray(typeof(string));
-        il.Copy();//拷贝一个值是为了让堆栈上一直存在一个数组
-        il.LoadInt(0);
-        il.LoadString("3");
-        il.SetArray();
-        il.Copy();
-        il.LoadInt(1);
-        il.LoadString("5");
-        il.SetArray();
-        il.Copy();
-        il.LoadInt(2);
-        il.LoadString("8");
-        il.SetArray();
-        il.SetLocal(l1);
-
-        // return l1[2];
-        il.LoadLocal(l1);
-        il.LoadInt(2);
-        il.LoadArrayIndexAddr(typeof(string));//得到地址
-        il.LoadAddrValue(typeof(string));//从地址得到值
-        il.Return();
-        return methodBuilder;
-    }
-
-    // 返回数组长度
-    public static MethodBuilder DefineMethod_Array4()
-    {
-        MethodBuilder methodBuilder = _typeBuilder.DefineMethod("Array4", MethodAttributes.Public | MethodAttributes.Static, typeof(object), Type.EmptyTypes);
-        ILGenerator il = methodBuilder.GetILGenerator();
-
-        LocalBuilder l1 = il.DeclareLocal(typeof(string[]));
-
-        il.LoadInt(99);
-        il.NewArray(typeof(string));
-        il.SetLocal(l1);
-
-        il.LoadLocal(l1);
-        il.LoadLength();
-        il.Box(typeof(int));
-        il.Return();
-        return methodBuilder;
     }
     #endregion
 
