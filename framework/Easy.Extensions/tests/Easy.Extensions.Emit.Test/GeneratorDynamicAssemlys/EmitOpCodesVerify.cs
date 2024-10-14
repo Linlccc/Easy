@@ -683,8 +683,6 @@ public static class EmitOpCodesVerifyCreator
         DefineMethod_SetField1();
 
 
-        // typeof
-        DefineMethod_Typeof1();
 
 
 
@@ -1712,6 +1710,86 @@ public static class EmitOpCodesVerifyCreator
     }
     #endregion
 
+    #region 关键字
+    // szieof
+    public static MethodBuilder DefineMethod_SizeOf1()
+    {
+        (MethodBuilder methodBuilder, ILGenerator il) = CreateMethod_PublicStatic("SizeOf1", typeof(int[]), Type.EmptyTypes);
+
+        // int[] v_res;
+        LocalBuilder v_res = il.DeclareLocal(typeof(int[]));
+        // v_res = new int[8];
+        il.LoadInt(8);
+        il.NewArray(typeof(int));
+        il.SetLocal(v_res);
+        // v_res[0] = sizeof(byte);
+        il.LoadLocal(v_res);
+        il.LoadInt(0);
+        il.SizeOf(typeof(byte));
+        il.SetArray(typeof(int));
+        // v_res[1] = sizeof(short);
+        il.LoadLocal(v_res);
+        il.LoadInt(1);
+        il.SizeOf(typeof(short));
+        il.SetArray(typeof(int));
+        // v_res[2] = sizeof(int);
+        il.LoadLocal(v_res);
+        il.LoadInt(2);
+        il.SizeOf(typeof(int));
+        il.SetArray(typeof(int));
+        // v_res[3] = sizeof(long);
+        il.LoadLocal(v_res);
+        il.LoadInt(3);
+        il.SizeOf(typeof(long));
+        il.SetArray(typeof(int));
+        // v_res[4] = sizeof(double);
+        il.LoadLocal(v_res);
+        il.LoadInt(4);
+        il.SizeOf(typeof(double));
+        il.SetArray(typeof(int));
+        // v_res[5] = sizeof(decimal);
+        il.LoadLocal(v_res);
+        il.LoadInt(5);
+        il.SizeOf(typeof(decimal));
+        il.SetArray(typeof(int));
+        // v_res[6] = sizeof(string);
+        il.LoadLocal(v_res);
+        il.LoadInt(6);
+        il.SizeOf(typeof(string));
+        il.SetArray(typeof(int));
+        // v_res[7] = sizeof(object);
+        il.LoadLocal(v_res);
+        il.LoadInt(7);
+        il.SizeOf(typeof(object));
+        il.SetArray(typeof(int));
+        // return v_res;
+        il.LoadLocal(v_res);
+        il.Return();
+
+        return methodBuilder;
+    }
+
+    // typeof
+    public static MethodBuilder DefineMethod_TypeOf1()
+    {
+        (MethodBuilder methodBuilder, ILGenerator il) = CreateMethod_PublicStatic("TypeOf1", typeof(Type), Type.EmptyTypes);
+
+        // Type v_res;
+        LocalBuilder v_res = il.DeclareLocal(typeof(Type));
+        // v_res = typeof(string);
+        il.LoadRuntimeHandle(typeof(string));
+        il.Call(typeof(Type).GetMethod(nameof(Type.GetTypeFromHandle), [typeof(RuntimeTypeHandle)]));
+        il.SetLocal(v_res);
+        // return v_res;
+        il.LoadLocal(v_res);
+        il.Return();
+
+        return methodBuilder;
+    }
+    #endregion
+
+
+
 
     #region 字符串相加
     // string1 + string2
@@ -1823,63 +1901,6 @@ public static class EmitOpCodesVerifyCreator
     }
     #endregion
 
-    // sizeof
-    public static MethodBuilder DefineMethod_SizeOf1()
-    {
-        MethodBuilder methodBuilder = _typeBuilder.DefineMethod("SizeOf1", MethodAttributes.Public | MethodAttributes.Static, typeof(int[]), Type.EmptyTypes);
-        ILGenerator il = methodBuilder.GetILGenerator();
-
-        LocalBuilder l1 = il.DeclareLocal(typeof(int[]));
-
-        il.LoadInt(8);
-        il.NewArray(typeof(int));
-        il.SetLocal(l1);
-
-        il.LoadLocal(l1);
-        il.LoadInt(0);
-        il.SizeOf(typeof(byte));
-        il.SetArray(typeof(int));
-
-        il.LoadLocal(l1);
-        il.LoadInt(1);
-        il.SizeOf(typeof(short));
-        il.SetArray(typeof(int));
-
-        il.LoadLocal(l1);
-        il.LoadInt(2);
-        il.SizeOf(typeof(int));
-        il.SetArray(typeof(int));
-
-        il.LoadLocal(l1);
-        il.LoadInt(3);
-        il.SizeOf(typeof(long));
-        il.SetArray(typeof(int));
-
-        il.LoadLocal(l1);
-        il.LoadInt(4);
-        il.SizeOf(typeof(double));
-        il.SetArray(typeof(int));
-
-        il.LoadLocal(l1);
-        il.LoadInt(5);
-        il.SizeOf(typeof(decimal));
-        il.SetArray(typeof(int));
-
-        il.LoadLocal(l1);
-        il.LoadInt(6);
-        il.SizeOf(typeof(string));
-        il.SetArray(typeof(int));
-
-        il.LoadLocal(l1);
-        il.LoadInt(7);
-        il.SizeOf(typeof(object));
-        il.SetArray(typeof(int));
-
-        il.LoadLocal(l1);
-        il.Return();
-        return methodBuilder;
-    }
-
     // set Field
     public static MethodBuilder DefineMethod_SetField1()
     {
@@ -1898,22 +1919,6 @@ public static class EmitOpCodesVerifyCreator
         return methodBuilder;
     }
 
-    // typeof
-    public static MethodBuilder DefineMethod_Typeof1()
-    {
-        MethodBuilder methodBuilder = _typeBuilder.DefineMethod("Typeof1", MethodAttributes.Public | MethodAttributes.Static, typeof(object), Type.EmptyTypes);
-        ILGenerator il = methodBuilder.GetILGenerator();
-
-        LocalBuilder l1 = il.DeclareLocal(typeof(Type));
-
-        il.LoadRuntimeHandle(typeof(string));
-        il.Call(typeof(Type).GetMethod("GetTypeFromHandle", new Type[] { typeof(RuntimeTypeHandle) }));
-        il.SetLocal(l1);
-
-        il.LoadLocal(l1);
-        il.Return();
-        return methodBuilder;
-    }
 
     // copyAddrValueToAddr
     public static MethodBuilder DefineMethod_CopyAddrValueToAddr1()

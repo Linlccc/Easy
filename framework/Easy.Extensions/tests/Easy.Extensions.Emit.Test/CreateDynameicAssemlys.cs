@@ -325,6 +325,16 @@ public class CreateDynameicAssemlys
         Assert.Equal("进入Try 进入Catch 进入Finally", try_Catch_Finally1);
         #endregion
 
+        #region 关键字
+        // sizeof
+        Invoke("SizeOf1", out int[] sizeof1);
+        Assert.Equal([1, 2, 4, 8, 8, 16, 8, 8], sizeof1);
+
+        // typeof
+        Invoke("TypeOf1", out Type typeof1);
+        Assert.Equal(typeof(string), typeof1);
+        #endregion
+
 
 
         #region 字符串相加
@@ -334,19 +344,10 @@ public class CreateDynameicAssemlys
         #endregion
 
 
-        // sizeof
-        object sizeof1 = type.InvokeMember("SizeOf1", BindingFlags.InvokeMethod, null, null, new object[] { });
-        Assert.Equal(new int[] { 1, 2, 4, 8, 8, 16, 8, 8 }, sizeof1);
-
-
         // set field
         object field1 = type.InvokeMember("SetField1", BindingFlags.InvokeMethod, null, null, new object[] { });
         Assert.Equal(3, field1);
 
-
-        // typeof
-        object typeof1 = type.InvokeMember("Typeof1", BindingFlags.InvokeMethod, null, null, new object[] { });
-        Assert.Equal(typeof(string), typeof1);
 
 
         // CopyAddrValueToAddr1
