@@ -1827,6 +1827,24 @@ public static class EmitOpCodesVerifyCreator
 
         return methodBuilder;
     }
+
+    // 将对象地址的值复制到目标对象地址
+    public static MethodBuilder DefineMethod_Cpobj1()
+    {
+        (MethodBuilder methodBuilder, ILGenerator il) = CreateMethod_PublicStatic("Cpobj1", typeof(Test2), [typeof(Test2)]);
+
+        // Test2 v_res;
+        LocalBuilder v_res = il.DeclareLocal(typeof(Test2));
+        // v_res = arg0;
+        il.LoadLocalAddr((ushort)v_res.LocalIndex);
+        il.LoadArgAddr(0);
+        il.Cpobj(typeof(Test2));
+        // return v_res;
+        il.LoadLocal(v_res);
+        il.Return();
+
+        return methodBuilder;
+    }
     #endregion
 
 
@@ -1942,49 +1960,6 @@ public static class EmitOpCodesVerifyCreator
     }
     #endregion
 
-
-    // copyAddrValueToAddr
-    public static MethodBuilder DefineMethod_CopyAddrValueToAddr11()
-    {
-        // 测试方法
-
-        MethodBuilder methodBuilder = _typeBuilder.DefineMethod("CopyAddrValueToAddr11", MethodAttributes.Public | MethodAttributes.Static, typeof(object), new Type[] { typeof(EmitTest2) });
-        ILGenerator il = methodBuilder.GetILGenerator();
-
-        LocalBuilder l1 = il.DeclareLocal(typeof(EmitTest2));
-
-        // l1 = arg1;
-        il.LoadLocalAddr((ushort)l1.LocalIndex);
-        il.LoadArgAddr(0);
-        il.SizeOf(typeof(EmitTest2));
-        il.CopyAddrValueToAddr();
-
-        // return l1; 
-        il.LoadLocal(l1);
-        il.Return();
-        return methodBuilder;
-    }
-
-    // Cpobj
-    public static MethodBuilder DefineMethod_Cpobj1()
-    {
-        // 测试方法
-
-        MethodBuilder methodBuilder = _typeBuilder.DefineMethod("Cpobj1", MethodAttributes.Public | MethodAttributes.Static, typeof(object), new Type[] { typeof(EmitTest2) });
-        ILGenerator il = methodBuilder.GetILGenerator();
-
-        LocalBuilder l1 = il.DeclareLocal(typeof(EmitTest2));
-
-        // l1 = arg1;
-        il.LoadLocalAddr((ushort)l1.LocalIndex);
-        il.LoadArgAddr(0);
-        il.Cpobj(typeof(EmitTest2));
-
-        // return l1; 
-        il.LoadLocal(l1);
-        il.Return();
-        return methodBuilder;
-    }
 
 
     // Localloc_Initblk

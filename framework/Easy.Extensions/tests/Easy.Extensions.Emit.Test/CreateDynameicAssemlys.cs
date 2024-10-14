@@ -351,6 +351,14 @@ public class CreateDynameicAssemlys
         Assert.Equal(2, copyAddrValueToAddr1_org.Num);
         Assert.Equal("Test11", copyAddrValueToAddr1_org.Txt);
 
+        // 将对象地址的值复制到目标对象地址
+        Test2 cpobj1_org = new();
+        Invoke("Cpobj1", out Test2 cpobj1, cpobj1_org);
+        Assert.Equal(cpobj1_org, cpobj1);
+        cpobj1.Num++;
+        cpobj1.Txt += "1";
+        Assert.Equal(2, cpobj1_org.Num);
+        Assert.Equal("Test11", cpobj1_org.Txt);
         #endregion
 
 
@@ -360,23 +368,6 @@ public class CreateDynameicAssemlys
         Invoke("Add1", out string concat1, "abc", "def");
         Assert.Equal("abcdef", concat1);
         #endregion
-
-
-
-
-        // CopyAddrValueToAddr1
-        //EmitTest2 copyAddrValueToAddr1 = new() { MyProperty = 9 };
-        //EmitTest2 copyAddrValueToAddr2 = (EmitTest2)type.InvokeMember("CopyAddrValueToAddr1", BindingFlags.InvokeMethod, null, null, new object[] { copyAddrValueToAddr1 });
-        //Assert.Equal(copyAddrValueToAddr1, copyAddrValueToAddr2);
-        //copyAddrValueToAddr1.MyProperty = 99;
-        //Assert.Equal(99, copyAddrValueToAddr2.MyProperty);
-
-        // Cpobj1
-        EmitTest2 cpobj1 = new() { MyProperty = 9 };
-        EmitTest2 cpobj2 = (EmitTest2)type.InvokeMember("Cpobj1", BindingFlags.InvokeMethod, null, null, new object[] { cpobj1 });
-        Assert.Equal(cpobj1, cpobj2);
-        cpobj1.MyProperty = 99;
-        Assert.Equal(99, cpobj2.MyProperty);
 
 
         // Localloc_Initblk
