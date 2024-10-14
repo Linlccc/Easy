@@ -1808,6 +1808,27 @@ public static class EmitOpCodesVerifyCreator
     }
     #endregion
 
+    #region 其他
+    // 从地址复制值到地址
+    public static MethodBuilder DefineMethod_CopyAddrValueToAddr1()
+    {
+        (MethodBuilder methodBuilder, ILGenerator il) = CreateMethod_PublicStatic("CopyAddrValueToAddr1", typeof(Test2), [typeof(Test2)]);
+
+        // Test2 v_res;
+        LocalBuilder v_res = il.DeclareLocal(typeof(Test2));
+        // v_res = arg0;
+        il.LoadLocalAddr((ushort)v_res.LocalIndex);
+        il.LoadArgAddr(0);
+        il.SizeOf(typeof(Test2));
+        il.CopyAddrValueToAddr();
+        // return v_res;
+        il.LoadLocal(v_res);
+        il.Return();
+
+        return methodBuilder;
+    }
+    #endregion
+
 
 
 
@@ -1923,11 +1944,11 @@ public static class EmitOpCodesVerifyCreator
 
 
     // copyAddrValueToAddr
-    public static MethodBuilder DefineMethod_CopyAddrValueToAddr1()
+    public static MethodBuilder DefineMethod_CopyAddrValueToAddr11()
     {
         // 测试方法
 
-        MethodBuilder methodBuilder = _typeBuilder.DefineMethod("CopyAddrValueToAddr1", MethodAttributes.Public | MethodAttributes.Static, typeof(object), new Type[] { typeof(EmitTest2) });
+        MethodBuilder methodBuilder = _typeBuilder.DefineMethod("CopyAddrValueToAddr11", MethodAttributes.Public | MethodAttributes.Static, typeof(object), new Type[] { typeof(EmitTest2) });
         ILGenerator il = methodBuilder.GetILGenerator();
 
         LocalBuilder l1 = il.DeclareLocal(typeof(EmitTest2));
@@ -2303,6 +2324,10 @@ public static class EmitOpCodesVerifyCreator
 public class Test1
 {
     private readonly string _str = "##";
+
+    public int Num { get; set; } = 1;
+
+    public string Txt { get; set; } = "Test1";
 
     /// <summary>
     /// 添加前缀

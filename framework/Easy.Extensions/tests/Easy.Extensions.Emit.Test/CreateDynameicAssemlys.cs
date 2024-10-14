@@ -341,6 +341,18 @@ public class CreateDynameicAssemlys
         Assert.Equal(3, filed1);
         #endregion
 
+        #region 其他
+        // 从地址复制值到地址
+        Test2 copyAddrValueToAddr1_org = new();
+        Invoke("CopyAddrValueToAddr1", out Test2 copyAddrValueToAddr1, copyAddrValueToAddr1_org);
+        Assert.Equal(copyAddrValueToAddr1_org, copyAddrValueToAddr1);
+        copyAddrValueToAddr1.Num++;
+        copyAddrValueToAddr1.Txt += "1";
+        Assert.Equal(2, copyAddrValueToAddr1_org.Num);
+        Assert.Equal("Test11", copyAddrValueToAddr1_org.Txt);
+
+        #endregion
+
 
 
         #region 字符串相加
@@ -350,18 +362,14 @@ public class CreateDynameicAssemlys
         #endregion
 
 
-        // set field
-        object field1 = type.InvokeMember("SetField1", BindingFlags.InvokeMethod, null, null, new object[] { });
-        Assert.Equal(3, field1);
-
 
 
         // CopyAddrValueToAddr1
-        EmitTest2 copyAddrValueToAddr1 = new() { MyProperty = 9 };
-        EmitTest2 copyAddrValueToAddr2 = (EmitTest2)type.InvokeMember("CopyAddrValueToAddr1", BindingFlags.InvokeMethod, null, null, new object[] { copyAddrValueToAddr1 });
-        Assert.Equal(copyAddrValueToAddr1, copyAddrValueToAddr2);
-        copyAddrValueToAddr1.MyProperty = 99;
-        Assert.Equal(99, copyAddrValueToAddr2.MyProperty);
+        //EmitTest2 copyAddrValueToAddr1 = new() { MyProperty = 9 };
+        //EmitTest2 copyAddrValueToAddr2 = (EmitTest2)type.InvokeMember("CopyAddrValueToAddr1", BindingFlags.InvokeMethod, null, null, new object[] { copyAddrValueToAddr1 });
+        //Assert.Equal(copyAddrValueToAddr1, copyAddrValueToAddr2);
+        //copyAddrValueToAddr1.MyProperty = 99;
+        //Assert.Equal(99, copyAddrValueToAddr2.MyProperty);
 
         // Cpobj1
         EmitTest2 cpobj1 = new() { MyProperty = 9 };
