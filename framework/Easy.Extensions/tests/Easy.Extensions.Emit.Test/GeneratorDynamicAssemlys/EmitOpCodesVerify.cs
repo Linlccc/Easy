@@ -1822,6 +1822,23 @@ public static class EmitOpCodesVerifyCreator
     }
     #endregion
 
+    #region 参数
+    // SetArg1
+    public static MethodBuilder DefineMethod_SetArg1()
+    {
+        (MethodBuilder methodBuilder, ILGenerator il) = CreateMethod_PublicStatic("SetArg1", typeof(int), [typeof(int)]);
+
+        // arg0 = 10;
+        il.LoadInt(10);
+        il.SetArg(0);
+        // return arg0;
+        il.LoadArg(0);
+        il.Return();
+
+        return methodBuilder;
+    }
+    #endregion
+
     #region 其他
     // 从地址复制值到地址
     public static MethodBuilder DefineMethod_CopyAddrValueToAddr1()
@@ -2151,20 +2168,6 @@ public static class EmitOpCodesVerifyCreator
         il.Refanyval(typeof(MyStruct));
         il.LoadAddrValue(typeof(MyStruct));
         il.Return();
-        return methodBuilder;
-    }
-
-    // 参数赋值
-    public static MethodBuilder DefineMethod_SetArg1()
-    {
-        MethodBuilder methodBuilder = _typeBuilder.DefineMethod("SetArg1", MethodAttributes.Public | MethodAttributes.Static, typeof(int), new Type[] { typeof(int), typeof(int) });
-        ILGenerator il = methodBuilder.GetILGenerator();
-
-        il.LoadInt(999);
-        il.SetArg();
-        il.LoadArg();
-        il.Return();
-
         return methodBuilder;
     }
 

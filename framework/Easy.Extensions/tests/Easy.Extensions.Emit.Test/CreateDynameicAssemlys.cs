@@ -345,6 +345,12 @@ public class CreateDynameicAssemlys
         Assert.Equal(3, filed1);
         #endregion
 
+        #region 参数
+        // SetArg1
+        Invoke("SetArg1", out int setArg1, 1);
+        Assert.Equal(10, setArg1);
+        #endregion
+
         #region 其他
         // 从地址复制值到地址
         Test2 copyAddrValueToAddr1_org = new();
@@ -394,11 +400,6 @@ public class CreateDynameicAssemlys
         // Refanytype1 （获取嵌套在引用化类型中的值的类型）
         object refanyval1 = type.InvokeMember("Refanyval1", BindingFlags.InvokeMethod, null, null, new object[] { });
         Assert.Equal(new MyStruct("1"), refanyval1);
-
-
-        // 参数赋值
-        object setArg1 = type.InvokeMember("SetArg1", BindingFlags.InvokeMethod, null, null, new object[] { 1, 2 });
-        Assert.Equal(999, setArg1);
 
 
         // 使用对其操作
