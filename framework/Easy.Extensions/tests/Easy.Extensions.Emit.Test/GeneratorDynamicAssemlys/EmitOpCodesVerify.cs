@@ -1,4 +1,5 @@
-﻿using System.Reflection.Emit;
+﻿using System;
+using System.Reflection.Emit;
 using System.Runtime.InteropServices;
 
 namespace Easy.Extensions.Emit.Test.GeneratorDynamicAssemlys;
@@ -694,10 +695,6 @@ public static class EmitOpCodesVerifyCreator
 
         // Localloc_Initblk
         DefineMethod_Localloc_Initblk1();
-
-
-        // Initobj
-        DefineMethod_Initobj1();
 
 
         // Mkrefany1（值类型引用化）
@@ -1783,6 +1780,23 @@ public static class EmitOpCodesVerifyCreator
 
         return methodBuilder;
     }
+
+    // default
+    public static MethodBuilder DefineMethod_Default1()
+    {
+        (MethodBuilder methodBuilder, ILGenerator il) = CreateMethod_PublicStatic("Default1", typeof(int), Type.EmptyTypes);
+
+        // int v_res;
+        LocalBuilder v_res = il.DeclareLocal(typeof(int));
+        // v_res = default(int);
+        il.LoadLocalAddr((ushort)v_res.LocalIndex);
+        il.Initobj(typeof(int));
+        // return v_res;
+        il.LoadLocal(v_res);
+        il.Return();
+
+        return methodBuilder;
+    }
     #endregion
 
     #region 字段
@@ -1841,6 +1855,33 @@ public static class EmitOpCodesVerifyCreator
         il.Cpobj(typeof(Test2));
         // return v_res;
         il.LoadLocal(v_res);
+        il.Return();
+
+        return methodBuilder;
+    }
+
+    // 动态分配空间，设置默认值
+    public static MethodBuilder DefineMethod_Localloc_Initblk1()
+    {
+        (MethodBuilder methodBuilder, ILGenerator il) = CreateMethod_PublicStatic("Localloc_Initblk1", typeof(uint), Type.EmptyTypes);
+
+        // byte* v_res;
+        LocalBuilder v_res = il.DeclareLocal(typeof(byte*));
+        // intPtr = stackalloc byte[sizeof(uint)]; // 分配4个字节的空间
+        il.SizeOf(typeof(uint));
+        il.Localloc();
+        il.SetLocal(v_res);
+        // 设置3个字节的默认值
+        // System.Runtime.CompilerServices.Unsafe.InitBlock(v_res, 255, sizeof(uint) - sizeof(byte)); // 初始化后为 00000000 11111111 11111111 11111111
+        il.LoadLocal(v_res);
+        il.LoadInt(byte.MaxValue);
+        il.SizeOf(typeof(uint));
+        il.SizeOf(typeof(byte));
+        il.MathSub();
+        il.Initblk();
+        // return *(uint*)v_res;
+        il.LoadLocal(v_res);
+        il.LoadAddrValue(typeof(uint));
         il.Return();
 
         return methodBuilder;
@@ -1961,50 +2002,6 @@ public static class EmitOpCodesVerifyCreator
     #endregion
 
 
-
-    // Localloc_Initblk
-    public static MethodBuilder DefineMethod_Localloc_Initblk1()
-    {
-        // 测试方法
-
-        MethodBuilder methodBuilder = _typeBuilder.DefineMethod("Localloc_Initblk1", MethodAttributes.Public | MethodAttributes.Static, typeof(uint), Type.EmptyTypes);
-        ILGenerator il = methodBuilder.GetILGenerator();
-
-        // 开辟一个 4 字节的空间
-        il.SizeOf(typeof(uint));
-        il.Localloc();
-        il.Copy();// 复制一个地址待会直接取值
-
-        // 为刚刚开辟的空间设置初始值(将4个字节的值都初始化为255，也是11111111)
-        il.LoadInt(byte.MaxValue);
-        il.SizeOf(typeof(uint));
-        il.Initblk();
-
-        // 从地址取值,返回
-        il.LoadAddrValue(typeof(uint));
-        il.Return();
-        return methodBuilder;
-    }
-
-
-    // Initobj
-    public static MethodBuilder DefineMethod_Initobj1()
-    {
-        // 测试方法
-
-        MethodBuilder methodBuilder = _typeBuilder.DefineMethod("Initobj1", MethodAttributes.Public | MethodAttributes.Static, typeof(int), Type.EmptyTypes);
-        ILGenerator il = methodBuilder.GetILGenerator();
-
-        LocalBuilder l1 = il.DeclareLocal(typeof(int));
-
-        il.LoadLocalAddr((ushort)l1.LocalIndex);
-        il.Emit(OpCodes.Initobj, typeof(int));
-
-        il.LoadLocal(l1);
-
-        il.Return();
-        return methodBuilder;
-    }
 
 
     // Mkrefany1（值类型引用化）

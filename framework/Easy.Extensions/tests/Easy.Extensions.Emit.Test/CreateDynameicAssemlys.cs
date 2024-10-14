@@ -333,6 +333,10 @@ public class CreateDynameicAssemlys
         // typeof
         Invoke("TypeOf1", out Type typeof1);
         Assert.Equal(typeof(string), typeof1);
+
+        // default
+        Invoke("Default1", out int default1);
+        Assert.Equal(default, default1);
         #endregion
 
         #region 字段
@@ -359,6 +363,10 @@ public class CreateDynameicAssemlys
         cpobj1.Txt += "1";
         Assert.Equal(2, cpobj1_org.Num);
         Assert.Equal("Test11", cpobj1_org.Txt);
+
+        // 动态分配空间，设置默认值
+        Invoke("Localloc_Initblk1", out uint localloc_Initblk1);
+        Assert.Equal(uint.MaxValue >> 8, localloc_Initblk1);
         #endregion
 
 
@@ -369,15 +377,6 @@ public class CreateDynameicAssemlys
         Assert.Equal("abcdef", concat1);
         #endregion
 
-
-        // Localloc_Initblk
-        uint localloc_Initblk1 = (uint)type.InvokeMember("Localloc_Initblk1", BindingFlags.InvokeMethod, null, null, new object[] { });
-        Assert.Equal(uint.MaxValue, localloc_Initblk1);
-
-
-        // Initobj1
-        int initobj1 = (int)type.InvokeMember("Initobj1", BindingFlags.InvokeMethod, null, null, new object[] { });
-        Assert.Equal(default, initobj1);
 
         // Mkrefany1（值类型引用化）
         object mkrefany1 = type.InvokeMember("Mkrefany1", BindingFlags.InvokeMethod, null, null, new object[] { });
