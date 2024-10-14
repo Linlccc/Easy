@@ -335,6 +335,12 @@ public class CreateDynameicAssemlys
         Assert.Equal(typeof(string), typeof1);
         #endregion
 
+        #region 字段
+        // 声明设置字段
+        Invoke("Field1", out int filed1);
+        Assert.Equal(3, filed1);
+        #endregion
+
 
 
         #region 字符串相加

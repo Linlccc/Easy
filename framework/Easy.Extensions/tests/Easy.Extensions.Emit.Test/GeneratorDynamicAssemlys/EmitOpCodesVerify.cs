@@ -565,7 +565,8 @@ public static class EmitOpCodesVerifyCreator
 {
     // 类型构建器
     private static TypeBuilder _typeBuilder;
-
+    // 字段
+    private static FieldBuilder _field_num;
 
     public static Type DefineType_EmitOpCodesVerify1(this ModuleBuilder moduleBuilder)
     {
@@ -677,10 +678,6 @@ public static class EmitOpCodesVerifyCreator
 
         // sizeof
         DefineMethod_SizeOf1();
-
-
-        // set field
-        DefineMethod_SetField1();
 
 
 
@@ -1788,6 +1785,29 @@ public static class EmitOpCodesVerifyCreator
     }
     #endregion
 
+    #region 字段
+    // 声明设置字段
+    public static MethodBuilder DefineMethod_Field1()
+    {
+        (MethodBuilder methodBuilder, ILGenerator il) = CreateMethod_PublicStatic("Field1", typeof(int), Type.EmptyTypes);
+
+        // private static int _num;
+        _field_num = _typeBuilder.DefineField("_num", typeof(int), FieldAttributes.Private | FieldAttributes.Static);
+
+        // _num = (int)(10.0 / 3.0);
+        il.LoadFloat(10);
+        il.LoadFloat(3);
+        il.MathDiv();
+        il.ConvertInteger(typeof(int));
+        il.SetField(_field_num);
+        // return _num;
+        il.LoadField(_field_num);
+        il.Return();
+
+        return methodBuilder;
+    }
+    #endregion
+
 
 
 
@@ -1900,24 +1920,6 @@ public static class EmitOpCodesVerifyCreator
 
     }
     #endregion
-
-    // set Field
-    public static MethodBuilder DefineMethod_SetField1()
-    {
-        FieldBuilder fb = _typeBuilder.DefineField("field1", typeof(int), FieldAttributes.Public | FieldAttributes.Static);
-        MethodBuilder methodBuilder = _typeBuilder.DefineMethod("SetField1", MethodAttributes.Public | MethodAttributes.Static, typeof(int), Type.EmptyTypes);
-        ILGenerator il = methodBuilder.GetILGenerator();
-
-        il.LoadDouble(10.0);
-        il.LoadDouble(3.0);
-        il.MathDiv();
-        il.ConvertInteger(typeof(int));
-        il.SetField(fb);
-
-        il.LoadField(fb);
-        il.Return();
-        return methodBuilder;
-    }
 
 
     // copyAddrValueToAddr
