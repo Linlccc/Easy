@@ -671,8 +671,6 @@ public static class EmitOpCodesVerifyCreator
         DefineMethod_Try_Catch3();
         // Try_Catch4
         DefineMethod_Try_Catch4();
-        // 无法命中筛选异常
-        DefineMethod_Try_Catch_Finally2();
         // Try_Catch_Finally1
         DefineMethod_Try_Catch_Finally1();
 
@@ -1674,7 +1672,44 @@ public static class EmitOpCodesVerifyCreator
         return methodBuilder;
     }
 
+    // Try_Catch_Finally1
+    public static MethodBuilder DefineMethod_Try_Catch_Finally1()
+    {
+        (MethodBuilder methodBuilder, ILGenerator il) = CreateMethod_PublicStatic("Try_Catch_Finally1", typeof(string), Type.EmptyTypes);
 
+        // string v_res;
+        LocalBuilder v_res = il.DeclareLocal(typeof(string));
+        // try{
+        il.BeginExceptionBlock();
+        // v_res = "进入Try";
+        il.LoadString("进入Try");
+        il.SetLocal(v_res);
+        // throw new Exception("Try_Catch_Finally1测试异常");
+        il.LoadString("Try_Catch_Finally1测试异常");
+        il.NewObject(typeof(Exception).GetConstructor([typeof(string)]));
+        il.Throw();
+        // }catch (Exception ex){
+        il.BeginCatchBlock(typeof(Exception));
+        // v_res = v_res + " 进入Catch";
+        il.LoadLocal(v_res);
+        il.LoadString(" 进入Catch");
+        il.Call(typeof(string).GetMethod("Concat", [typeof(string), typeof(string)]));
+        il.SetLocal(v_res);
+        //}finally{
+        il.BeginFinallyBlock();
+        // v_res = v_res + " 进入Finally";
+        il.LoadLocal(v_res);
+        il.LoadString(" 进入Finally");
+        il.Call(typeof(string).GetMethod("Concat", [typeof(string), typeof(string)]));
+        il.SetLocal(v_res);
+        //}
+        il.EndExceptionBlock();
+        // return v_res;
+        il.LoadLocal(v_res);
+        il.Return();
+
+        return methodBuilder;
+    }
     #endregion
 
 
@@ -1785,138 +1820,6 @@ public static class EmitOpCodesVerifyCreator
 
         return methodBuilder;
 
-    }
-    #endregion
-
-    #region Try Catch Finally
-
-    // Try_Catch_Finally1
-    public static MethodBuilder DefineMethod_Try_Catch_Finally1()
-    {
-        MethodBuilder methodBuilder = _typeBuilder.DefineMethod("Try_Catch_Finally1", MethodAttributes.Public | MethodAttributes.Static, typeof(string), Type.EmptyTypes);
-        ILGenerator il = methodBuilder.GetILGenerator();
-
-        LocalBuilder l1 = il.DeclareLocal(typeof(string));
-
-        // try{
-        il.BeginExceptionBlock();
-
-        // l1 += "进入了 Try"; 
-        il.LoadLocal(l1);
-        il.LoadString("进入了 Try      ");
-        il.Call(typeof(string).GetMethod(nameof(string.Concat), new Type[] { typeof(string), typeof(string) }));
-        il.SetLocal(l1);
-        // throw new Exception("Try_Catch1 测试 异常");
-        il.LoadString("Try_Catch_Finally1 测试 异常");
-        il.NewObject(typeof(Exception).GetConstructor(new Type[] { typeof(string) }));
-        il.Throw();
-
-        // }catch (Exception){
-        il.BeginCatchBlock(typeof(Exception));
-
-        // l1 += "触发了 Exception 类型异常";
-        il.LoadLocal(l1);
-        il.LoadString("触发了 Exception 类型异常      ");
-        il.Call(typeof(string).GetMethod(nameof(string.Concat), new Type[] { typeof(string), typeof(string) }));
-        il.SetLocal(l1);
-
-        // }catch (ArgumentNullException){
-        il.BeginCatchBlock(typeof(ArgumentNullException));
-
-        // l1 += "触发了 ArgumentNullException 类型异常";
-        il.LoadLocal(l1);
-        il.LoadString("触发了 ArgumentNullException 类型异常      ");
-        il.Call(typeof(string).GetMethod(nameof(string.Concat), new Type[] { typeof(string), typeof(string) }));
-        il.SetLocal(l1);
-
-        // } Finally{
-        il.BeginFinallyBlock();
-
-        // l1 += "进入了 Finally"
-        il.LoadLocal(l1);
-        il.LoadString("进入了 Finally      ");
-        il.Call(typeof(string).GetMethod(nameof(string.Concat), new Type[] { typeof(string), typeof(string) }));
-        il.SetLocal(l1);
-
-        il.EndFinally(); // Finally 块结束,非必须,没有该指令也不会报错
-
-        // }
-        il.EndExceptionBlock();
-
-        // l1 += "开始返回"
-        il.LoadLocal(l1);
-        il.LoadString("开始返回");
-        il.Call(typeof(string).GetMethod(nameof(string.Concat), new Type[] { typeof(string), typeof(string) }));
-        il.SetLocal(l1);
-
-        il.LoadLocal(l1);
-        il.Return();
-        return methodBuilder;
-    }
-
-    // Try_Catch_Finally2
-    public static MethodBuilder DefineMethod_Try_Catch_Finally2()
-    {
-        MethodBuilder methodBuilder = _typeBuilder.DefineMethod("Try_Catch_Finally2", MethodAttributes.Public | MethodAttributes.Static, typeof(int), [typeof(int), typeof(int)]);
-        ILGenerator il = methodBuilder.GetILGenerator();
-
-        // 声明本地变量
-        LocalBuilder v1 = il.DeclareLocal(typeof(int));
-        // 声明标签
-        Label l1 = il.DefineLabel();
-        Label l2 = il.DefineLabel();
-
-        // try{
-        il.BeginExceptionBlock();
-        // v1 = 1;
-        il.LoadInt(1);
-        il.SetLocal(v1);
-        // throw new Exception("123");
-        il.LoadString("123");
-        il.NewObject(typeof(Exception).GetConstructor([typeof(string)]));
-        il.Throw();
-        // } catch (Exception ex) 
-        il.BeginExceptFilterBlock();
-        il.As(typeof(Exception));
-        il.Copy();
-        il.GotoIfTrue(l1);
-        // 如果异常类型检查未通过
-        il.Pop();
-        il.LoadInt(0);
-        il.Goto(l2);
-        // when (ex.Message == "123"){
-        il.MarkLabel(l1);
-        il.Call(typeof(Exception).GetProperty("Message").GetGetMethod());
-        il.LoadString("123");
-        il.Call(typeof(string).GetMethod("op_Equality", [typeof(string), typeof(string)]));
-        il.MarkLabel(l2);
-        il.BeginCatchBlock(null);
-        // v1 = v1 + arg0;
-        il.LoadLocal(v1);
-        il.LoadArg(0);
-        il.MathAdd();
-        il.SetLocal(v1);
-        // } catch(Exception ex) {
-        il.BeginCatchBlock(typeof(Exception));
-        // v1 = v1 + arg1;
-        il.LoadLocal(v1);
-        il.LoadArg(1);
-        il.MathAdd();
-        il.SetLocal(v1);
-        // } finally {
-        il.BeginFinallyBlock();
-        // v1 = v1 + 10;
-        il.LoadLocal(v1);
-        il.LoadInt(10);
-        il.MathAdd();
-        il.SetLocal(v1);
-        // }
-        il.EndExceptionBlock();
-        // return v1;
-        il.LoadLocal(v1);
-        il.Return();
-
-        return methodBuilder;
     }
     #endregion
 

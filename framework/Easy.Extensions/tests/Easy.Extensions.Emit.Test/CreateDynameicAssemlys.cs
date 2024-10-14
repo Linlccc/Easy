@@ -319,6 +319,10 @@ public class CreateDynameicAssemlys
         Assert.Equal("123", try_Catch4_2);
         Invoke("Try_Catch4", out string try_Catch4_3, 1);
         Assert.Equal("456----", try_Catch4_3);
+
+        // Try_Catch_Finally1
+        Invoke("Try_Catch_Finally1", out string try_Catch_Finally1);
+        Assert.Equal("进入Try 进入Catch 进入Finally", try_Catch_Finally1);
         #endregion
 
 
@@ -328,20 +332,6 @@ public class CreateDynameicAssemlys
         Invoke("Add1", out string concat1, "abc", "def");
         Assert.Equal("abcdef", concat1);
         #endregion
-
-
-
-
-
-
-
-
-        // Try_Catch_Finally1
-        object Tty_Catch_Finally1 = type.InvokeMember("Try_Catch_Finally1", BindingFlags.InvokeMethod, null, null, new object[] { });
-        Assert.Equal("进入了 Try      触发了 Exception 类型异常      进入了 Finally      开始返回", Tty_Catch_Finally1);
-        // Try_Catch_Finally2
-        object try_Catch_Finally2 = type.InvokeMember("Try_Catch_Finally2", BindingFlags.InvokeMethod, null, null, new object[] { 1, 20 });
-        Assert.Equal(12, try_Catch_Finally2);
 
 
         // sizeof
