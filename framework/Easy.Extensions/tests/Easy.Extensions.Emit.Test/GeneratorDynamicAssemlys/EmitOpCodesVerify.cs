@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Reflection.Emit;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 namespace Easy.Extensions.Emit.Test.GeneratorDynamicAssemlys;
@@ -568,6 +569,8 @@ public static class EmitOpCodesVerifyCreator
     private static TypeBuilder _typeBuilder;
     // 字段
     private static FieldBuilder _field_num;
+    // 易失字段
+    private static FieldBuilder _field_num2;
 
     public static Type DefineType_EmitOpCodesVerify1(this ModuleBuilder moduleBuilder)
     {
@@ -1820,6 +1823,26 @@ public static class EmitOpCodesVerifyCreator
 
         return methodBuilder;
     }
+
+    // 易失字段，表示指定地址是易失的,当多线程修改同时操作值时不会排列对该值的读取和写入
+    public static MethodBuilder DefineMethod_Volatile1()
+    {
+        (MethodBuilder methodBuilder, ILGenerator il) = CreateMethod_PublicStatic("Volatile1", typeof(int), Type.EmptyTypes);
+
+        // private static volatile int _num2;
+        _field_num2 = _typeBuilder.DefineField("_num2", typeof(int), [typeof(IsVolatile)], [], FieldAttributes.Private | FieldAttributes.Static);
+
+        // _num2 = 10;
+        il.LoadInt(10);
+        il.Volatile();
+        il.SetField(_field_num);
+        // return _num;
+        il.Volatile();
+        il.LoadField(_field_num);
+        il.Return();
+
+        return methodBuilder;
+    }
     #endregion
 
     #region 参数
@@ -2178,33 +2201,6 @@ public static class EmitOpCodesVerifyCreator
         return methodBuilder;
     }
 
-    // Volatile1
-    // 表示指定地址是易失的,当多线程修改同时操作值时不会排列对该值的读取和写入
-    public static MethodBuilder DefineMethod_Volatile1()
-    {
-        // 声明一个易失的字段
-        FieldBuilder _volatile1 = _typeBuilder.DefineField("_volatile1", typeof(int), new Type[] { typeof(System.Runtime.CompilerServices.IsVolatile) }, new Type[] { }, FieldAttributes.Static);
-
-        // 声明方法
-        MethodBuilder methodBuilder = _typeBuilder.DefineMethod("Volatile1", MethodAttributes.Public | MethodAttributes.Static, typeof(int), new Type[] { });
-        ILGenerator il = methodBuilder.GetILGenerator();
-
-        LocalBuilder l1 = il.DeclareLocal(typeof(int));
-
-        // 为易失字段赋值
-        il.LoadInt(1);
-        il.Volatile();
-        il.SetField(_volatile1);
-
-        // 获取易失字段值
-        il.Volatile();
-        il.LoadField(_volatile1);
-        il.SetLocal(l1);
-
-        il.LoadLocal(l1);
-        il.Return();
-        return methodBuilder;
-    }
 
     // Readonly1
     // 该方法用于测试只读，不过只读没有用，设置了只读,还是可以设置值和修改值

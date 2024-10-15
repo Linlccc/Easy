@@ -343,6 +343,10 @@ public class CreateDynameicAssemlys
         // 声明设置字段
         Invoke("Field1", out int filed1);
         Assert.Equal(3, filed1);
+
+        // 易失性字段
+        Invoke("Volatile1", out int volatile1);
+        Assert.Equal(10, volatile1);
         #endregion
 
         #region 参数
@@ -410,10 +414,6 @@ public class CreateDynameicAssemlys
         unaligned1(ref bytes1[1], ref bytes2[2], 3);
         Assert.Equal(new byte[] { 0, 0, 2, 3, 4, 0, 0 }, bytes2);
 
-
-        // Volatile1
-        int volatile1 = (int)type.InvokeMember("Volatile1", BindingFlags.InvokeMethod, null, null, new object[] { });
-        Assert.Equal(1, volatile1);
 
 
         // Readonly1
