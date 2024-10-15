@@ -1894,6 +1894,23 @@ public static class EmitOpCodesVerifyCreator
 
         return methodBuilder;
     }
+
+    // ref 参数
+    public static MethodBuilder DefineMethod_RefArg0()
+    {
+        (MethodBuilder methodBuilder, ILGenerator il) = CreateMethod_PublicStatic("RefArg1", typeof(int), [typeof(int).MakeByRefType()]);
+
+        // arg0 = 10;
+        il.LoadArg(0);
+        il.LoadInt(10);
+        il.SetValueToAddr(typeof(int));
+        // return agr0;
+        il.LoadArg(0);
+        il.LoadAddrValue(typeof(int));
+        il.Return();
+
+        return methodBuilder;
+    }
     #endregion
 
     #region 值类型引用化

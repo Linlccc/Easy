@@ -10,23 +10,11 @@ namespace Easy.Extensions.Emit.Test;
 /// </summary>
 public class CreateDynameicAssemlys
 {
-    /// <summary>
-    /// 创建程序集
-    /// </summary>
-    [Fact]
-    public void CreateAssemlys()
-    {
-        string assemblyName = nameof(CreateDynameicAssemlys);
-        AssemblyBuilder assembly = AssemblyBuilder.DefineDynamicAssembly(new AssemblyName(assemblyName), AssemblyBuilderAccess.RunAndSave);
-        ModuleBuilder module = assembly.DefineDynamicModule(assemblyName, $"{assemblyName}.dll");
+    // 使用对其操作 代理类型声明
+    private delegate void Unaligned1(ref byte bs1, ref byte bs2, int length);
 
-        // 定义类型
-        module.DefineType_HelloWorld();
-        module.DefineType_EmitOpCodesVerify();
-
-        // 保存程序集
-        assembly.Save($"{assemblyName}.dll");
-    }
+    // ref 参数代理类型
+    private delegate int RefArg1(ref int i);
 
     /// <summary>
     /// 创建类型 HelloWorld
@@ -68,7 +56,6 @@ public class CreateDynameicAssemlys
         string assemblyName = nameof(CreateDynameicAssemlys);
         AssemblyBuilder assembly = AssemblyBuilder.DefineDynamicAssembly(new AssemblyName(assemblyName), AssemblyBuilderAccess.RunAndSave);
         ModuleBuilder module = assembly.DefineDynamicModule(assemblyName, $"{assemblyName}.dll");
-
 
         // 定义类型
         Type type = module.DefineType_EmitOpCodesVerify();
@@ -367,6 +354,21 @@ public class CreateDynameicAssemlys
         // SetArg1
         Invoke("SetArg1", out int setArg1, 1);
         Assert.Equal(10, setArg1);
+
+
+        // RefArg1,有两种执行方法
+        // 方法1：通过类型调用
+        // 定义要传递的参数（注意 ref 参数在数组中作为对象传递）
+        object[] pars = [1];
+        Invoke("RefArg1", out int refArg1, pars);
+        Assert.Equal(10, refArg1);
+        Assert.Equal(refArg1, pars[0]);
+        // 方法2：通过委托调用
+        RefArg1 delegateRefArg1 = (RefArg1)type.GetMethod("RefArg1").CreateDelegate(typeof(RefArg1));
+        int refArg1_2_org = 1;
+        int refArg1_2 = delegateRefArg1(ref refArg1_2_org);
+        Assert.Equal(10, refArg1_2);
+        Assert.Equal(refArg1_2, refArg1_2_org);
         #endregion
 
         #region 值类型引用化
@@ -425,10 +427,6 @@ public class CreateDynameicAssemlys
         #endregion
 
 
-
-
-
-
         // 使用对其操作
         byte[] bytes1 = { 1, 2, 3, 4, 5, 6 };
         byte[] bytes2 = new byte[7];
@@ -438,6 +436,21 @@ public class CreateDynameicAssemlys
 
     }
 
-    // 使用对其操作 代理类型声明
-    private delegate void Unaligned1(ref byte bs1, ref byte bs2, int length);
+    /// <summary>
+    /// 创建程序集
+    /// </summary>
+    [Fact]
+    public void CreateAssemlys()
+    {
+        string assemblyName = nameof(CreateDynameicAssemlys);
+        AssemblyBuilder assembly = AssemblyBuilder.DefineDynamicAssembly(new AssemblyName(assemblyName), AssemblyBuilderAccess.RunAndSave);
+        ModuleBuilder module = assembly.DefineDynamicModule(assemblyName, $"{assemblyName}.dll");
+
+        // 定义类型
+        module.DefineType_HelloWorld();
+        module.DefineType_EmitOpCodesVerify();
+
+        // 保存程序集
+        assembly.Save($"{assemblyName}.dll");
+    }
 }
