@@ -619,7 +619,7 @@ public static class EmitOpCodesVerifyCreator
         // ** 特殊
         // 定义一个执行可变参数的方法，里面包含定义一个有可变参数的方法
         // Arglist 个数不定，类型不定参数
-        DefineMethod_Arglist_Invoke1();
+        //DefineMethod_Arglist_Invoke1();
 
 
         // ** 类型转换
@@ -2133,6 +2133,92 @@ public static class EmitOpCodesVerifyCreator
     }
     #endregion
 
+    #region __arglist 参数
+    // 当前块创建的方法都不能通过反射调用，因为 __arglist 参数无法通过反射调用，所以写不了测试
+    // 如需测试，1.引用生成的程序集  2.调用 EmitOpCodesVerify.Arglist1(__arglist(1, 2, "aa", "d", 4.6, new { A = 1 }));
+
+    // __arglist 参数
+    public static MethodBuilder DefineMethodArglist1()
+    {
+        MethodBuilder methodBuilder = _typeBuilder.DefineMethod("Arglist1", MethodAttributes.Public | MethodAttributes.Static, CallingConventions.VarArgs, typeof(object[]), Type.EmptyTypes);
+        ILGenerator il = methodBuilder.GetILGenerator();
+
+        // 声明标签
+        Label l_calCount = il.DefineLabel();
+        Label l_end = il.DefineLabel();
+
+        // ArgIterator v_args;
+        LocalBuilder v_args = il.DeclareLocal(typeof(ArgIterator));
+        // v_args = new ArgIterator(__arglist);
+        il.LoadVarArgs();
+        il.NewObject(typeof(ArgIterator).GetConstructor([typeof(RuntimeArgumentHandle)]));
+        il.SetLocal(v_args);
+
+        // object[] v_res;
+        LocalBuilder v_res = il.DeclareLocal(typeof(object[]));
+        // v_res = new object[v_args.GetRemainingCount()];
+        il.LoadLocalAddr((ushort)v_args.LocalIndex);
+        il.Call(typeof(ArgIterator).GetMethod(nameof(ArgIterator.GetRemainingCount)));
+        il.NewArray(typeof(object));
+        il.SetLocal(v_res);
+
+        // int i;
+        LocalBuilder v_i = il.DeclareLocal(typeof(int));
+        // i = 0;
+        il.LoadInt(0);
+        il.SetLocal(v_i);
+
+        // calCount:
+        il.MarkLabel(l_calCount);
+        // if(v_args.GetRemainingCount() == 0) goto end;
+        il.LoadLocalAddr((ushort)v_args.LocalIndex);
+        il.Call(typeof(ArgIterator).GetMethod(nameof(ArgIterator.GetRemainingCount)));
+        il.LoadInt(0);
+        il.GotoIfEqual(l_end);
+
+        // v_res[i] = TypedReference.ToObject(argIterator.GetNextArg());
+        il.LoadLocal(localBuilder: v_res);
+        il.LoadLocal(v_i);
+        il.LoadLocalAddr((ushort)v_args.LocalIndex);
+        il.Call(typeof(ArgIterator).GetMethod(nameof(ArgIterator.GetNextArg), Type.EmptyTypes));
+        il.Call(typeof(TypedReference).GetMethod(nameof(TypedReference.ToObject)));
+        il.SetArray(typeof(object));
+        // v_i++;
+        il.LoadLocal(v_i);
+        il.LoadInt(1);
+        il.MathAdd();
+        il.SetLocal(v_i);
+        // goto CalCount;
+        il.Goto(l_calCount);
+
+        // end:
+        il.MarkLabel(l_end);
+        // return v_res;
+        il.LoadLocal(v_res);
+        il.Return();
+
+        return methodBuilder;
+    }
+
+    // 调用 __arglist 参数 方法
+    public static MethodBuilder DefineMethod_ArglistInvoke1()
+    {
+        // 声明带有__arglist 参数的方法
+        MethodBuilder varargMethod = DefineMethodArglist1();
+
+        (MethodBuilder methodBuilder, ILGenerator il) = CreateMethod_PublicStatic("ArglistInvoke1", typeof(object[]), [typeof(object), typeof(object), typeof(object), typeof(object)]);
+
+        il.LoadArg(0);
+        il.LoadArg(1);
+        il.LoadArg(2);
+        il.LoadArg(3);
+        il.Call(varargMethod, typeof(object), typeof(object), typeof(object), typeof(object));
+        il.Return();
+
+        return methodBuilder;
+    }
+    #endregion
+
     #region 没搞懂具体用法的指令
     // 检查值是否是正常数字，(这个不知道什么原因，抛出的异常和文档不一致)
     public static MethodBuilder DefineMethod_Ckfinite1()
@@ -2174,99 +2260,6 @@ public static class EmitOpCodesVerifyCreator
         il.Return();
 
         return methodBuilder;
-    }
-    #endregion
-
-
-
-    #region 特殊
-    // 使用 Arglist 示例
-    public static MethodBuilder DefineMethod_Arglist1()
-    {
-        // 需要定义 CallingConventions.VarArgs 就会在方法参数默认添加一个 __arglist 参数
-        // 该方法不能使用反射调用所以写不了测试,如需测试引用生成的程序集然后调用 EmitOpCodesVerify.Arglist1(__arglist(1, 2, "aa", "d", 4.6, new { A = 1 }));
-
-        MethodBuilder methodBuilder = _typeBuilder.DefineMethod("Arglist1", MethodAttributes.Public | MethodAttributes.Static, CallingConventions.VarArgs, typeof(object[]), Type.EmptyTypes);
-        ILGenerator il = methodBuilder.GetILGenerator();
-
-        // 局部变量
-        LocalBuilder lb_result = il.DeclareLocal(typeof(object[]));//结果
-        LocalBuilder lb_currentIndex = il.DeclareLocal(typeof(int));//结果的当前索引
-        LocalBuilder lb_varargs = il.DeclareLocal(typeof(ArgIterator));//可变参数
-
-        // 结束
-        Label returnL = il.DefineLabel();
-        // 判断是否有可变参数
-        Label haveValueL = il.DefineLabel();
-
-        // lb_currentIndex = 0;
-        il.LoadInt(0);
-        il.SetLocal(lb_currentIndex);
-
-        // lb_varargs = new ArgIterator(__arglist);
-        il.LoadLocalAddr((ushort)lb_varargs.LocalIndex); // 因为构造 ArgIterator 类型返回的是地址，所以加载地址去接收
-        il.LoadVarArgs();
-        il.Call(typeof(ArgIterator).GetConstructor(new Type[] { typeof(RuntimeArgumentHandle) }));
-
-        // lb_result = new object[lb_varargs.GetRemainingCount()];
-        il.LoadLocalAddr((ushort)lb_varargs.LocalIndex);
-        il.Call(typeof(ArgIterator).GetMethod("GetRemainingCount"));
-        il.NewArray(typeof(object));
-        il.SetLocal(lb_result);
-
-        // if(lb_havearg = lb_varargs.GetRemainingCount() < 0) return lb_result;
-        il.MarkLabel(haveValueL);
-        il.LoadLocalAddr((ushort)lb_varargs.LocalIndex);
-        il.Call(typeof(ArgIterator).GetMethod("GetRemainingCount"));
-        il.LoadInt(0);
-        il.CompareGreater();
-        il.GotoIfFalse(returnL);
-
-        // lb_result[lb_currentIndex] = lb_varargs.GetNextArg();
-        il.Nop();
-        il.LoadLocal(lb_result);
-        il.LoadLocal(lb_currentIndex);
-        il.LoadLocalAddr((ushort)lb_varargs.LocalIndex);
-        il.Call(typeof(ArgIterator).GetMethod("GetNextArg", Type.EmptyTypes));
-        il.Call(typeof(TypedReference).GetMethod("ToObject"));
-        il.SetArray(typeof(object));
-        // lb_currentIndex++;
-        il.LoadLocal(lb_currentIndex);
-        il.LoadInt(1);
-        il.MathAdd();
-        il.SetLocal(lb_currentIndex);
-        il.Nop();
-        il.Goto(haveValueL);
-
-        // 结束
-        il.MarkLabel(returnL);
-        il.LoadLocal(lb_result);
-        il.Return();
-        return methodBuilder;
-    }
-
-    // 调用有可变参数的方法
-    public static MethodBuilder DefineMethod_Arglist_Invoke1()
-    {
-        // 有可变参数的方法
-        MethodBuilder varargMethod = DefineMethod_Arglist1();
-
-        MethodBuilder methodBuilder = _typeBuilder.DefineMethod("Arglist_Invoke1", MethodAttributes.Public | MethodAttributes.Static, typeof(object[]), new Type[] { typeof(object), typeof(object), typeof(object), typeof(object) });
-        ILGenerator il = methodBuilder.GetILGenerator();
-
-        LocalBuilder l1 = il.DeclareLocal(typeof(object[]));
-
-        il.LoadArg(0);
-        il.LoadArg(1);
-        il.LoadArg(2);
-        il.LoadArg(3);
-        il.Call(varargMethod, typeof(object), typeof(object), typeof(object), typeof(object));
-        il.SetLocal(l1);
-        il.LoadLocal(l1);
-        il.Return();
-
-        return methodBuilder;
-
     }
     #endregion
 }

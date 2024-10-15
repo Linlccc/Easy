@@ -1,5 +1,6 @@
 ﻿using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.Reflection;
 using System.Xml.Linq;
 
 namespace Easy.Extensions.Emit.Test;
@@ -58,26 +59,6 @@ public class CreateDynameicAssemlys
 
         // 定义类型
         Type type = module.DefineType_EmitOpCodesVerify();
-
-        // 调用方法
-        void Invoke<T>(string name, out T res, params object[] pars) => res = (T)type.InvokeMember(name, BindingFlags.InvokeMethod, null, null, pars);
-        // 返回一个抛出真实异常的方法
-        Action ThrowReal(Action action)
-        {
-            return () =>
-            {
-                try
-                {
-                    action();
-                }
-                catch (Exception ex)
-                {
-                    Exception realEx = ex;
-                    while (realEx.InnerException != null) realEx = realEx.InnerException;
-                    throw realEx;
-                }
-            };
-        }
 
         #region 数学
         // +
@@ -419,6 +400,12 @@ public class CreateDynameicAssemlys
         Assert.Equal([0, 0, 2, 3, 4, 0, 0], unaligned1Bytes2);
         #endregion
 
+        #region __arglist 参数
+        // 执行 __arglist 参数
+        Invoke("ArglistInvoke1", out object[] arglistInvoke1, 2, "aa", 4.6, new { A = 1 });
+        Assert.Equal([2, "aa", 4.6, new { A = 1 }], arglistInvoke1);
+        #endregion
+
         #region 没搞懂具体用法的指令
         // 检查值是否是正常数字(这个不知道什么原因，抛出的异常和文档不一致)
         Assert.Throws<OverflowException>(ThrowReal(() => Invoke("Ckfinite1", out double ckfinite1, double.PositiveInfinity)));
@@ -430,6 +417,29 @@ public class CreateDynameicAssemlys
         // 按我所理解的下一句应该正确，但是实际上是错误的
         //Assert.Equal(typeof(Test1), readonly1[0].GetType());
         Assert.Equal(typeof(Test2), readonly1[0].GetType());
+        #endregion
+
+
+        #region 帮助方法
+        // 调用方法
+        void Invoke<T>(string name, out T res, params object[] pars) => res = (T)type.InvokeMember(name, BindingFlags.InvokeMethod, null, null, pars);
+        // 返回一个抛出真实异常的方法
+        Action ThrowReal(Action action)
+        {
+            return () =>
+            {
+                try
+                {
+                    action();
+                }
+                catch (Exception ex)
+                {
+                    Exception realEx = ex;
+                    while (realEx.InnerException != null) realEx = realEx.InnerException;
+                    throw realEx;
+                }
+            };
+        }
         #endregion
     }
 
