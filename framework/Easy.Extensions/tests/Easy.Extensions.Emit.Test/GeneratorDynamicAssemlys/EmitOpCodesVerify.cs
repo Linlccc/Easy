@@ -1839,6 +1839,142 @@ public static class EmitOpCodesVerifyCreator
     }
     #endregion
 
+    #region 值类型引用化
+    // 值类型引用化
+    public static MethodBuilder DefineMethod_Mkrefany1()
+    {
+        (MethodBuilder methodBuilder, ILGenerator il) = CreateMethod_PublicStatic("Mkrefany1", typeof(User), Type.EmptyTypes);
+
+        // User v_user;
+        LocalBuilder v_user = il.DeclareLocal(typeof(User));
+        // v_user = new User("A");
+        il.LoadString("A");
+        il.NewObject(typeof(User).GetConstructor([typeof(string)]));
+        il.SetLocal(v_user);
+
+        // TypedReference v_refUser;
+        LocalBuilder v_refUser = il.DeclareLocal(typeof(TypedReference));
+        // v_refUser = __makeref(v_user);
+        il.LoadLocalAddr((ushort)v_user.LocalIndex);
+        il.Mkrefany(typeof(User));
+        il.SetLocal(v_refUser);
+
+        // FieldInfo v_fieldInfo;
+        LocalBuilder v_fieldInfo = il.DeclareLocal(typeof(FieldInfo));
+        // v_fieldInfo = typeof(User).GetField("_name",BindingFlags.NonPublic | BindingFlags.Instance);
+        il.LoadRuntimeHandle(typeof(User));
+        il.Call(typeof(Type).GetMethod(nameof(Type.GetTypeFromHandle), [typeof(RuntimeTypeHandle)]));
+        il.LoadString("_name");
+        il.LoadInt((int)(BindingFlags.NonPublic | BindingFlags.Instance));
+        il.CallVirtual(typeof(Type).GetMethod(nameof(Type.GetField), [typeof(string), typeof(BindingFlags)]));
+        il.SetLocal(v_fieldInfo);
+
+        // v_fieldInfo.SetValueDirect(v_refUser, "B");
+        il.LoadLocal(v_fieldInfo);
+        il.LoadLocal(v_refUser);
+        il.LoadString("B");
+        il.CallVirtual(typeof(FieldInfo).GetMethod(nameof(FieldInfo.SetValueDirect), [typeof(TypedReference), typeof(object)]));
+
+        // return v_user;
+        il.LoadLocal(v_user);
+        il.Return();
+
+        return methodBuilder;
+    }
+
+    // 值类型不引用化修改值
+    public static MethodBuilder DefineMethod_Mkrefany2()
+    {
+        (MethodBuilder methodBuilder, ILGenerator il) = CreateMethod_PublicStatic("Mkrefany2", typeof(User), Type.EmptyTypes);
+
+        // User v_user;
+        LocalBuilder v_user = il.DeclareLocal(typeof(User));
+        // v_user = new User("A");
+        il.LoadString("A");
+        il.NewObject(typeof(User).GetConstructor([typeof(string)]));
+        il.SetLocal(v_user);
+
+        // FieldInfo v_fieldInfo;
+        LocalBuilder v_fieldInfo = il.DeclareLocal(typeof(FieldInfo));
+        // v_fieldInfo = typeof(User).GetField("_name",BindingFlags.NonPublic | BindingFlags.Instance);
+        il.LoadRuntimeHandle(typeof(User));
+        il.Call(typeof(Type).GetMethod(nameof(Type.GetTypeFromHandle), [typeof(RuntimeTypeHandle)]));
+        il.LoadString("_name");
+        il.LoadInt((int)(BindingFlags.NonPublic | BindingFlags.Instance));
+        il.CallVirtual(typeof(Type).GetMethod(nameof(Type.GetField), [typeof(string), typeof(BindingFlags)]));
+        il.SetLocal(v_fieldInfo);
+
+        // v_fieldInfo.SetValue(v_refUser, "B");
+        il.LoadLocal(v_fieldInfo);
+        il.LoadLocal(v_user);
+        il.Box(typeof(User));
+        il.LoadString("B");
+        il.CallVirtual(typeof(FieldInfo).GetMethod(nameof(FieldInfo.SetValue), [typeof(object), typeof(object)]));
+
+        // return v_user;
+        il.LoadLocal(v_user);
+        il.Return();
+
+        return methodBuilder;
+    }
+
+    // 获取嵌套在引用化类型中的值的类型
+    public static MethodBuilder DefineMethod_Refanytype1()
+    {
+        (MethodBuilder methodBuilder, ILGenerator il) = CreateMethod_PublicStatic("Refanytype1", typeof(Type), Type.EmptyTypes);
+
+        // User v_user;
+        LocalBuilder v_user = il.DeclareLocal(typeof(User));
+        // v_user = new User("A");
+        il.LoadString("A");
+        il.NewObject(typeof(User).GetConstructor([typeof(string)]));
+        il.SetLocal(v_user);
+
+        // TypedReference v_refUser;
+        LocalBuilder v_refUser = il.DeclareLocal(typeof(TypedReference));
+        // v_refUser = __makeref(v_user);
+        il.LoadLocalAddr((ushort)v_user.LocalIndex);
+        il.Mkrefany(typeof(User));
+        il.SetLocal(v_refUser);
+
+        // return __reftype(v_refUser);
+        il.LoadLocal(v_refUser);
+        il.Refanytype();
+        il.Call(typeof(Type).GetMethod(nameof(Type.GetTypeFromHandle), [typeof(RuntimeTypeHandle)]));
+        il.Return();
+
+        return methodBuilder;
+    }
+
+    // 获取嵌套在引用化类型中的值的地址
+    public static MethodBuilder DefineMethod_Refanyval1()
+    {
+        (MethodBuilder methodBuilder, ILGenerator il) = CreateMethod_PublicStatic("Refanyval1", typeof(User), Type.EmptyTypes);
+
+        // User v_user;
+        LocalBuilder v_user = il.DeclareLocal(typeof(User));
+        // v_user = new User("A");
+        il.LoadString("A");
+        il.NewObject(typeof(User).GetConstructor([typeof(string)]));
+        il.SetLocal(v_user);
+
+        // TypedReference v_refUser;
+        LocalBuilder v_refUser = il.DeclareLocal(typeof(TypedReference));
+        // v_refUser = __makeref(v_user);
+        il.LoadLocalAddr((ushort)v_user.LocalIndex);
+        il.Mkrefany(typeof(User));
+        il.SetLocal(v_refUser);
+
+        // return __refvalue(v_refUser, typeof(User));
+        il.LoadLocal(v_refUser);
+        il.Refanyval(typeof(User));
+        il.LoadAddrValue(typeof(User));
+        il.Return();
+
+        return methodBuilder;
+    }
+    #endregion
+
     #region 其他
     // 从地址复制值到地址
     public static MethodBuilder DefineMethod_CopyAddrValueToAddr1()
@@ -2019,159 +2155,6 @@ public static class EmitOpCodesVerifyCreator
     #endregion
 
 
-
-
-    // Mkrefany1（值类型引用化）
-    public static MethodBuilder DefineMethod_Mkrefany1()
-    {
-        // 测试方法
-
-        MethodBuilder methodBuilder = _typeBuilder.DefineMethod("Mkrefany1", MethodAttributes.Public | MethodAttributes.Static, typeof(MyStruct), new Type[] { });
-        ILGenerator il = methodBuilder.GetILGenerator();
-
-        LocalBuilder l1 = il.DeclareLocal(typeof(MyStruct));
-        LocalBuilder l2 = il.DeclareLocal(typeof(TypedReference));
-        LocalBuilder l3 = il.DeclareLocal(typeof(FieldInfo));
-
-        // l1 = new MyStruct("1");
-        // 初始化结构
-        il.LoadString("1");
-        il.NewObject(typeof(MyStruct).GetConstructor(new Type[] { typeof(string) }));
-        il.SetLocal(l1);
-
-        // l2 = __makeref(l1)
-        // 将结构引用化
-        il.LoadLocalAddr((ushort)l1.LocalIndex);
-        il.Mkrefany(typeof(MyStruct));
-        il.SetLocal(l2);
-
-        // l3 = typeof(MyStruct).GetField("_name",BindingFlags.NonPublic | BindingFlags.Instance);
-        // 获取结构的_name字段
-        il.LoadRuntimeHandle(typeof(MyStruct));
-        il.Call(typeof(Type).GetMethod(nameof(Type.GetTypeFromHandle), new Type[] { typeof(RuntimeTypeHandle) }));
-        il.LoadString("_name");
-        il.LoadInt(32 | 4);
-        il.CallVirtual(typeof(Type).GetMethod(nameof(Type.GetField), new Type[] { typeof(string), typeof(BindingFlags) }));
-        il.SetLocal(l3);
-
-        // l3.SetValueDirect(l2,"2");
-        // 设置结构的_name字段值
-        il.LoadLocal(l3);
-        il.LoadLocal(l2);
-        il.LoadString("2");
-        il.CallVirtual(typeof(FieldInfo).GetMethod(nameof(FieldInfo.SetValueDirect), new Type[] { typeof(TypedReference), typeof(object) }));
-
-        // return l1;
-        // 返回结构
-        il.LoadLocal(l1);
-        il.Return();
-        return methodBuilder;
-    }
-
-    // Mkrefany2（值类型没有引用化）
-    public static MethodBuilder DefineMethod_Mkrefany2()
-    {
-        // 测试方法
-
-        MethodBuilder methodBuilder = _typeBuilder.DefineMethod("Mkrefany2", MethodAttributes.Public | MethodAttributes.Static, typeof(MyStruct), new Type[] { });
-        ILGenerator il = methodBuilder.GetILGenerator();
-
-        LocalBuilder l1 = il.DeclareLocal(typeof(MyStruct));
-        LocalBuilder l2 = il.DeclareLocal(typeof(FieldInfo));
-
-        // l1 = new MyStruct("1");
-        // 初始化结构
-        il.LoadString("1");
-        il.NewObject(typeof(MyStruct).GetConstructor(new Type[] { typeof(string) }));
-        il.SetLocal(l1);
-
-        // l2 = typeof(MyStruct).GetField("_name",BindingFlags.NonPublic | BindingFlags.Instance);
-        // 获取结构的_name字段
-        il.LoadRuntimeHandle(typeof(MyStruct));
-        il.Call(typeof(Type).GetMethod(nameof(Type.GetTypeFromHandle), new Type[] { typeof(RuntimeTypeHandle) }));
-        il.LoadString("_name");
-        il.LoadInt(32 | 4);
-        il.CallVirtual(typeof(Type).GetMethod(nameof(Type.GetField), new Type[] { typeof(string), typeof(BindingFlags) }));
-        il.SetLocal(l2);
-
-        // l2.SetValueDirect(l1,"2");
-        // 设置结构的_name字段值
-        il.LoadLocal(l2);
-        il.LoadLocal(l1);
-        il.Box(typeof(MyStruct));
-        il.LoadString("2");
-        il.CallVirtual(typeof(FieldInfo).GetMethod(nameof(FieldInfo.SetValue), new Type[] { typeof(object), typeof(object) }));
-
-        // return l1;
-        // 返回结构
-        il.LoadLocal(l1);
-        il.Return();
-        return methodBuilder;
-    }
-
-    // Refanytype1 （获取嵌套在引用化类型中的值的类型）
-    public static MethodBuilder DefineMethod_Refanytype1()
-    {
-        // 测试方法
-
-        MethodBuilder methodBuilder = _typeBuilder.DefineMethod("Refanytype1", MethodAttributes.Public | MethodAttributes.Static, typeof(Type), new Type[] { });
-        ILGenerator il = methodBuilder.GetILGenerator();
-
-        LocalBuilder l1 = il.DeclareLocal(typeof(MyStruct));
-        LocalBuilder l2 = il.DeclareLocal(typeof(TypedReference));
-
-        // l1 = new MyStruct("1");
-        // 初始化结构
-        il.LoadString("1");
-        il.NewObject(typeof(MyStruct).GetConstructor(new Type[] { typeof(string) }));
-        il.SetLocal(l1);
-
-        // l2 = __makeref(l1)
-        // 将结构引用化
-        il.LoadLocalAddr((ushort)l1.LocalIndex);
-        il.Mkrefany(typeof(MyStruct));
-        il.SetLocal(l2);
-
-        // __reftype(l2);
-        il.LoadLocal(l2);
-        il.Refanytype();
-        il.Call(typeof(Type).GetMethod(nameof(Type.GetTypeFromHandle), new Type[] { typeof(RuntimeTypeHandle) }));
-        il.Return();
-        return methodBuilder;
-    }
-
-    // Refanyval1 （获取嵌套在引用化类型中的值的地址）
-    public static MethodBuilder DefineMethod_Refanyval1()
-    {
-        // 测试方法
-
-        MethodBuilder methodBuilder = _typeBuilder.DefineMethod("Refanyval1", MethodAttributes.Public | MethodAttributes.Static, typeof(MyStruct), new Type[] { });
-        ILGenerator il = methodBuilder.GetILGenerator();
-
-        LocalBuilder l1 = il.DeclareLocal(typeof(MyStruct));
-        LocalBuilder l2 = il.DeclareLocal(typeof(TypedReference));
-
-        // l1 = new MyStruct("1");
-        // 初始化结构
-        il.LoadString("1");
-        il.NewObject(typeof(MyStruct).GetConstructor(new Type[] { typeof(string) }));
-        il.SetLocal(l1);
-
-        // l2 = __makeref(l1)
-        // 将结构引用化
-        il.LoadLocalAddr((ushort)l1.LocalIndex);
-        il.Mkrefany(typeof(MyStruct));
-        il.SetLocal(l2);
-
-        // 获取值类型的地址，再从地址获取值
-        il.LoadLocal(l2);
-        il.Refanyval(typeof(MyStruct));
-        il.LoadAddrValue(typeof(MyStruct));
-        il.Return();
-        return methodBuilder;
-    }
-
-
     // 使用对其操作
     // 该方法创建的方法 可以用来复制byte数组
     public static MethodBuilder DefineMethod_Unaligned1()
@@ -2330,6 +2313,15 @@ public class Test2 : Test1
 
     public override string AddSuffix(string str) => $"{str}{_str}";
 }
+
+
+public struct User(string user)
+{
+    private string _name = user;
+
+    public readonly string Name => _name;
+}
+
 
 
 

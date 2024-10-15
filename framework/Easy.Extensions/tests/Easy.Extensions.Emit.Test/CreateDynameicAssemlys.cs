@@ -351,6 +351,24 @@ public class CreateDynameicAssemlys
         Assert.Equal(10, setArg1);
         #endregion
 
+        #region 值类型引用化
+        // 值类型引用化
+        Invoke("Mkrefany1", out User mkrefany1);
+        Assert.Equal("B", mkrefany1.Name);
+
+        // 值类型没有引用化,修改值
+        Invoke("Mkrefany2", out User mkrefany2);
+        Assert.Equal("A", mkrefany2.Name);
+
+        // 获取嵌套在引用化类型中的值的类型
+        Invoke("Refanytype1", out Type refanytype1);
+        Assert.Equal(typeof(User), refanytype1);
+
+        // 获取嵌套在引用化类型中的值的地址
+        Invoke("Refanyval1", out User refanyval1);
+        Assert.Equal("A", refanyval1.Name);
+        #endregion
+
         #region 其他
         // 从地址复制值到地址
         Test2 copyAddrValueToAddr1_org = new();
@@ -383,23 +401,6 @@ public class CreateDynameicAssemlys
         Assert.Equal("abcdef", concat1);
         #endregion
 
-
-        // Mkrefany1（值类型引用化）
-        object mkrefany1 = type.InvokeMember("Mkrefany1", BindingFlags.InvokeMethod, null, null, new object[] { });
-        Assert.Equal(new MyStruct("2"), mkrefany1);
-        // Mkrefany2（值类型没有引用化）
-        object mkrefany2 = type.InvokeMember("Mkrefany2", BindingFlags.InvokeMethod, null, null, new object[] { });
-        Assert.Equal(new MyStruct("1"), mkrefany2);
-
-
-        // Refanytype1 （获取嵌套在引用化类型中的值的类型）
-        object refanytype1 = type.InvokeMember("Refanytype1", BindingFlags.InvokeMethod, null, null, new object[] { });
-        Assert.Equal(typeof(MyStruct), refanytype1);
-
-
-        // Refanytype1 （获取嵌套在引用化类型中的值的类型）
-        object refanyval1 = type.InvokeMember("Refanyval1", BindingFlags.InvokeMethod, null, null, new object[] { });
-        Assert.Equal(new MyStruct("1"), refanyval1);
 
 
         // 使用对其操作
