@@ -219,6 +219,12 @@ public class CreateDynameicAssemlys
         Assert.Equal(3, array4);
         #endregion
 
+        #region 字符串相加
+        // string1 + string2
+        Invoke("Add1", out string concat1, "abc", "def");
+        Assert.Equal("abcdef", concat1);
+        #endregion
+
         #region 类型转换
         // 装箱
         Invoke("Box1", out object box1, 100);
@@ -403,20 +409,23 @@ public class CreateDynameicAssemlys
         // 动态分配空间，设置默认值
         Invoke("Localloc_Initblk1", out uint localloc_Initblk1);
         Assert.Equal(uint.MaxValue >> 8, localloc_Initblk1);
+        #endregion
 
+        #region 没搞懂具体用法的指令
         // 检查值是否是正常数字(这个不知道什么原因，抛出的异常和文档不一致)
         Assert.Throws<OverflowException>(ThrowReal(() => Invoke("Ckfinite1", out double ckfinite1, double.PositiveInfinity)));
         Invoke("Ckfinite1", out double ckfinite1, 10 / 3.33);
         Assert.Equal(10 / 3.33, ckfinite1);
+
+        // 只读
+        Invoke("ReadOnly1", out Test1[] readonly1, [new Test1[] { new() }]);
+        // 按我所理解的下一句应该正确，但是实际上是错误的
+        //Assert.Equal(typeof(Test1), readonly1[0].GetType());
+        Assert.Equal(typeof(Test2), readonly1[0].GetType());
         #endregion
 
 
 
-        #region 字符串相加
-        // string1 + string2
-        Invoke("Add1", out string concat1, "abc", "def");
-        Assert.Equal("abcdef", concat1);
-        #endregion
 
 
 
@@ -427,11 +436,6 @@ public class CreateDynameicAssemlys
         unaligned1(ref bytes1[1], ref bytes2[2], 3);
         Assert.Equal(new byte[] { 0, 0, 2, 3, 4, 0, 0 }, bytes2);
 
-
-
-        // Readonly1
-        EmitTest2[] readonly1 = (EmitTest2[])type.InvokeMember("Readonly1", BindingFlags.InvokeMethod, null, null, new object[] { });
-        Assert.Equal(5, readonly1[1].MyInt1);
     }
 
     // 使用对其操作 代理类型声明

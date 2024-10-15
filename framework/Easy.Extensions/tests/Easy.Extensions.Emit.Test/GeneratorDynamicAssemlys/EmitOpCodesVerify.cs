@@ -729,7 +729,7 @@ public static class EmitOpCodesVerifyCreator
 
         // Readonly1
         // 该方法用于测试只读，不过只读没有用，设置了只读,还是可以设置值和修改值
-        DefineMethod_Readonly1();
+        //DefineMethod_Readonly1();
 
 
         // Jmp1
@@ -1282,6 +1282,21 @@ public static class EmitOpCodesVerifyCreator
         // return (Type)arg1;
         il.LoadArg(0);
         il.As(typeof(Type));
+        il.Return();
+
+        return methodBuilder;
+    }
+    #endregion
+
+    #region 字符串相加
+    // string1 + string2
+    public static MethodBuilder DefineMethod_StringAdd1()
+    {
+        (MethodBuilder methodBuilder, ILGenerator il) = CreateMethod_PublicStatic("Add1", typeof(string), [typeof(string), typeof(string)]);
+
+        il.LoadArg(0);
+        il.LoadArg(1);
+        il.Call(typeof(string).GetMethod("Concat", [typeof(string), typeof(string)]));
         il.Return();
 
         return methodBuilder;
@@ -2081,7 +2096,9 @@ public static class EmitOpCodesVerifyCreator
 
         return methodBuilder;
     }
+    #endregion
 
+    #region 没搞懂具体用法的指令
     // 检查值是否是正常数字，(这个不知道什么原因，抛出的异常和文档不一致)
     public static MethodBuilder DefineMethod_Ckfinite1()
     {
@@ -2093,27 +2110,37 @@ public static class EmitOpCodesVerifyCreator
 
         return methodBuilder;
     }
-    #endregion
 
-
-
-
-    #region 字符串相加
-    // string1 + string2
-    public static MethodBuilder DefineMethod_StringAdd1()
+    // 只读
+    public static MethodBuilder DefineMethod_ReadOnly1()
     {
-        (MethodBuilder methodBuilder, ILGenerator il) = CreateMethod_PublicStatic("Add1", typeof(string), [typeof(string), typeof(string)]);
+        (MethodBuilder methodBuilder, ILGenerator il) = CreateMethod_PublicStatic("ReadOnly1", typeof(Test1[]), [typeof(Test1[])]);
 
+        // 这里我理解的是只读的数组，不能修改数组的值，但是这里可以修改数组的值，不知道是不是我理解错了
+        // 使用了两种方式去修改使用 Readonly 的值都成功了
+
+        // arg0[0] = new Test2();
         il.LoadArg(0);
-        il.LoadArg(1);
-        il.Call(typeof(string).GetMethod("Concat", [typeof(string), typeof(string)]));
+        il.LoadInt(0);
+        il.Readonly();
+        il.LoadArrayIndexAddr(typeof(Test1));
+        il.NewObject(typeof(Test2).GetConstructor(Type.EmptyTypes));
+        il.SetValueToAddr(typeof(Test1));
+        // arg0[0].str = "aa";
+        il.LoadArg(0);
+        il.LoadInt(0);
+        il.Readonly();
+        il.LoadArrayIndexAddr(typeof(Test1));
+        il.LoadAddrValue(typeof(Test1));
+        il.LoadString("aa");
+        il.SetField(typeof(Test1).GetField("str"));
+        // return arg0;
+        il.LoadArg(0);
         il.Return();
 
         return methodBuilder;
     }
     #endregion
-
-
 
 
 
@@ -2231,50 +2258,13 @@ public static class EmitOpCodesVerifyCreator
         il.Return();
         return methodBuilder;
     }
-
-
-    // Readonly1
-    // 该方法用于测试只读，不过只读没有用，设置了只读,还是可以设置值和修改值
-    public static MethodBuilder DefineMethod_Readonly1()
-    {
-        MethodBuilder methodBuilder = _typeBuilder.DefineMethod("Readonly1", MethodAttributes.Public | MethodAttributes.Static, typeof(object), new Type[] { });
-        ILGenerator il = methodBuilder.GetILGenerator();
-
-        LocalBuilder l1 = il.DeclareLocal(typeof(EmitTest2[]));
-
-        // l1 = new EmitTest2[10];
-        il.LoadInt(10);
-        il.NewArray(typeof(EmitTest2));
-        il.SetLocal(l1);
-
-        // l1[1] = new EmitTest2();
-        il.LoadLocal(l1);
-        il.LoadInt(1);
-        il.Readonly();
-        il.LoadArrayIndexAddr(typeof(EmitTest2));
-        il.NewObject(typeof(EmitTest2).GetConstructor(Type.EmptyTypes));
-        il.SetValueToAddr();
-
-        // l1[1].MyInt1 = 5;
-        il.LoadLocal(l1);
-        il.LoadInt(1);
-        il.Readonly();
-        il.LoadArrayIndexAddr(typeof(EmitTest2));
-        il.LoadAddrValue(typeof(EmitTest2));
-        il.LoadInt(5);
-        il.Unaligned(sizeof(int));
-        il.SetField(typeof(EmitTest2).GetField("MyInt1"));
-
-
-        il.LoadLocal(l1);
-        il.Return();
-        return methodBuilder;
-    }
 }
 
 public class Test1
 {
     private readonly string _str = "##";
+
+    public string str = "##";
 
     public int Num { get; set; } = 1;
 
@@ -2301,6 +2291,8 @@ public class Test1
 public class Test2 : Test1
 {
     private readonly string _str = "%%";
+
+    public new string str = "%%";
 
     public new string AddPrefix(string str) => $"{_str}{str}";
 
