@@ -403,6 +403,11 @@ public class CreateDynameicAssemlys
         // 动态分配空间，设置默认值
         Invoke("Localloc_Initblk1", out uint localloc_Initblk1);
         Assert.Equal(uint.MaxValue >> 8, localloc_Initblk1);
+
+        // 检查值是否是正常数字(这个不知道什么原因，抛出的异常和文档不一致)
+        Assert.Throws<OverflowException>(ThrowReal(() => Invoke("Ckfinite1", out double ckfinite1, double.PositiveInfinity)));
+        Invoke("Ckfinite1", out double ckfinite1, 10 / 3.33);
+        Assert.Equal(10 / 3.33, ckfinite1);
         #endregion
 
 
@@ -427,10 +432,6 @@ public class CreateDynameicAssemlys
         // Readonly1
         EmitTest2[] readonly1 = (EmitTest2[])type.InvokeMember("Readonly1", BindingFlags.InvokeMethod, null, null, new object[] { });
         Assert.Equal(5, readonly1[1].MyInt1);
-
-
-        object ckfinite1 = type.InvokeMember("Ckfinite1", BindingFlags.InvokeMethod, null, null, new object[] { });
-        Assert.Equal(10.0 / 3.0, ckfinite1);
     }
 
     // 使用对其操作 代理类型声明

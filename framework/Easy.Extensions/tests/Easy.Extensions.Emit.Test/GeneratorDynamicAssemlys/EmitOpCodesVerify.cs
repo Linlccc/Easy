@@ -2081,6 +2081,18 @@ public static class EmitOpCodesVerifyCreator
 
         return methodBuilder;
     }
+
+    // 检查值是否是正常数字，(这个不知道什么原因，抛出的异常和文档不一致)
+    public static MethodBuilder DefineMethod_Ckfinite1()
+    {
+        (MethodBuilder methodBuilder, ILGenerator il) = CreateMethod_PublicStatic("Ckfinite1", typeof(double), [typeof(double)]);
+
+        il.LoadArg(0);
+        il.Ckfinite();
+        il.Return();
+
+        return methodBuilder;
+    }
     #endregion
 
 
@@ -2255,21 +2267,6 @@ public static class EmitOpCodesVerifyCreator
 
 
         il.LoadLocal(l1);
-        il.Return();
-        return methodBuilder;
-    }
-
-
-    // Ckfinite1
-    public static MethodBuilder DefineMethod_Ckfinite1()
-    {
-        MethodBuilder methodBuilder = _typeBuilder.DefineMethod("Ckfinite1", MethodAttributes.Public | MethodAttributes.Static, typeof(double), new Type[] { });
-        ILGenerator il = methodBuilder.GetILGenerator();
-
-        il.LoadDouble(10.0);
-        il.LoadDouble(3.0);
-        il.MathDiv();
-        il.Ckfinite();
         il.Return();
         return methodBuilder;
     }
