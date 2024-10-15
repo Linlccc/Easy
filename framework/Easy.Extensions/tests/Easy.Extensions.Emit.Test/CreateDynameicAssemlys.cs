@@ -1,7 +1,4 @@
 ﻿using System.Drawing;
-using System.Drawing.Drawing2D;
-using System.Reflection;
-using System.Xml.Linq;
 
 namespace Easy.Extensions.Emit.Test;
 
