@@ -1091,7 +1091,7 @@ public static partial class ILGeneratorExtensions
     public static void Return(this ILGenerator iLGenerator) => iLGenerator.Emit(OpCodes.Ret);
 
     /// <summary>
-    /// 推出当前方法并跳至指定方法
+    /// 退出当前方法并跳至指定方法
     /// <br>直接转移到指定方法,要求跳转的方法和当前方法有相同的签名</br>
     /// </summary>
     /// <param name="iLGenerator">中间语言指令生成器</param>

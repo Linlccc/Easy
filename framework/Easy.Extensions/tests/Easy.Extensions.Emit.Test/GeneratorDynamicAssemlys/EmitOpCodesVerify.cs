@@ -1404,6 +1404,25 @@ public static class EmitOpCodesVerifyCreator
 
         return methodBuilder;
     }
+
+    // 跳转到其他方法
+    public static MethodBuilder DefineMethod_Jmp1()
+    {
+        (MethodBuilder methodBuilder, ILGenerator il) = CreateMethod_PublicStatic("Jmp1", typeof(int), [typeof(int), typeof(int)]);
+
+        il.Jmp(typeof(Test1).GetMethod(nameof(Test1.Div)));
+
+        return methodBuilder;
+    }
+    // 跳转到外部方法
+    public static MethodBuilder DefineMethod_Jmp2()
+    {
+        (MethodBuilder methodBuilder, ILGenerator il) = CreateMethod_PublicStatic("Jmp2", typeof(int), [typeof(int), typeof(string), typeof(string), typeof(int)]);
+
+        il.Jmp(typeof(Test1).GetMethod(nameof(Test1.MsgBox)));
+
+        return methodBuilder;
+    }
     #endregion
 
     #region 通过指针调用方法
@@ -2240,25 +2259,6 @@ public static class EmitOpCodesVerifyCreator
         return methodBuilder;
     }
 
-    // Jmp1
-    public static MethodBuilder DefineMethod_Jmp1()
-    {
-        MethodBuilder methodBuilder = _typeBuilder.DefineMethod("Jmp1", MethodAttributes.Public | MethodAttributes.Static, typeof(string), new Type[] { typeof(int) });
-        ILGenerator il = methodBuilder.GetILGenerator();
-
-        il.Jmp(typeof(EmitTest2).GetMethod(nameof(EmitTest2.T5)));
-        return methodBuilder;
-    }
-
-    // Jmp2 外部方法
-    public static MethodBuilder DefineMethod_Jmp2()
-    {
-        MethodBuilder methodBuilder = _typeBuilder.DefineMethod("Jmp2", MethodAttributes.Public | MethodAttributes.Static, typeof(int), new Type[] { typeof(int), typeof(string), typeof(string), typeof(int) });
-        ILGenerator il = methodBuilder.GetILGenerator();
-
-        il.Jmp(typeof(EmitTest1).GetMethod(nameof(EmitTest1.MsgBox)));
-        return methodBuilder;
-    }
 
     // Ckfinite1
     public static MethodBuilder DefineMethod_Ckfinite1()

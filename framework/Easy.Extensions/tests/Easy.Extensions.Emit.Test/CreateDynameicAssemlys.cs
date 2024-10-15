@@ -263,6 +263,14 @@ public class CreateDynameicAssemlys
         Assert.Equal("aa", callVirtual3_2);
         Invoke("CallVirtual3", out string callVirtual3_3, new Size(10, 10));
         Assert.Equal("{Width=10, Height=10}", callVirtual3_3);
+
+        // 跳转到其他方法
+        Invoke("Jmp1", out int jmp1, 10, 3);
+        Assert.Equal(3, jmp1);
+        // 跳转到外部方法,因为每次调用都会弹出一个窗口，所以注释掉
+        // 点击 确定返回1，取消返回2
+        //Invoke("Jmp2", out int jmp2, 0, "我是内容", "我是标题", 1);
+        //Assert.True(jmp2 is 1 or 2);
         #endregion
 
         #region 通过指针调用方法
@@ -420,12 +428,6 @@ public class CreateDynameicAssemlys
         EmitTest2[] readonly1 = (EmitTest2[])type.InvokeMember("Readonly1", BindingFlags.InvokeMethod, null, null, new object[] { });
         Assert.Equal(5, readonly1[1].MyInt1);
 
-        // Jmp1
-        object jmp1 = type.InvokeMember("Jmp1", BindingFlags.InvokeMethod, null, null, new object[] { 9999 });
-        Assert.Equal("9999", jmp1);
-        // Jmp2 以下方法会显示一个弹窗
-        //object jmp2 = type.InvokeMember("Jmp2", BindingFlags.InvokeMethod, null, null, new object[] { 0, "这是一个消息", "这个一个titil", 1 });
-        //Assert.Equal(1, jmp2);
 
         object ckfinite1 = type.InvokeMember("Ckfinite1", BindingFlags.InvokeMethod, null, null, new object[] { });
         Assert.Equal(10.0 / 3.0, ckfinite1);
