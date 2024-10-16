@@ -12,7 +12,7 @@
 *  4.3. 可以用于表示指针或句柄
 *  4.4. 在 C# 中，可以使用 IntPtr/nint 类型来表示 native int
 * 
-* see https://docs.microsoft.com/zh-cn/dotnet/api/system.reflection.emit.opcodes
+* see https://learn.microsoft.com/zh-cn/dotnet/api/system.reflection.emit
 */
 
 /// <summary>
