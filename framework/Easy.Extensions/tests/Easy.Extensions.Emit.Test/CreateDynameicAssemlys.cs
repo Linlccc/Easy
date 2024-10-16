@@ -441,6 +441,9 @@ public class CreateDynameicAssemlys
 
     /// <summary>
     /// 创建程序集
+    /// 该方法暂时只能在 .netframework 中使用
+    /// 等现有项目整理完成以后，可以在.net 9中使用 PersistedAssemblyBuilder 
+    /// https://github.com/dotnet/runtime/issues/97015
     /// </summary>
     [Fact]
     public void CreateAssemlys()
