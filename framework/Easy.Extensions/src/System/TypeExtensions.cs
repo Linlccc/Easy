@@ -36,33 +36,6 @@ public static class TypeExtensions
 
         return interfaceType.IsInterface && type.GetInterfaces().Any(t => t == interfaceType);
     }
-
-    /// <summary>
-    /// 判断 <paramref name="type"/> 类型是否继承自 <paramref name="baseType"/> 类型
-    /// <br>如果是泛型则只判断类型定义</br>
-    /// </summary>
-    /// <param name="type">当前类型</param>
-    /// <param name="baseType">判断是否是基类的类型</param>
-    /// <returns></returns>
-    public static bool IsInheritFrom(this Type type, Type baseType)
-    {
-        _ = type ?? throw new ArgumentNullException(nameof(type));
-        _ = baseType ?? throw new ArgumentNullException(nameof(baseType));
-
-        baseType = baseType.GetTypeDefinition();
-
-        // 如果有已实现的接口直接返回结果
-        if (type.GetInterfaces().Any(t => t.GetTypeDefinition() == baseType)) return true;
-
-        // 判断基类
-        while (type != null && type != typeof(object))
-        {
-            if (type.GetTypeDefinition() == baseType) return true;
-            type = type.BaseType!;
-        }
-
-        return false;
-    }
     #endregion
 
     #region 检查
