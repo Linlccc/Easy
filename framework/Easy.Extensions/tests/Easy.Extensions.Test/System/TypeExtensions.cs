@@ -1,6 +1,6 @@
 ﻿using Xunit;
 
-namespace Easy.Extensions.Test;
+namespace Easy.Extensions.Test.System;
 
 public class TypeExtensions
 {

@@ -1,7 +1,7 @@
 ﻿using System.Reflection;
 using Xunit;
 
-namespace Easy.Extensions.Test;
+namespace Easy.Extensions.Test.System.Reflection;
 
 public class ICustomAttributeProviderExtensions
 {
@@ -24,16 +24,16 @@ public class ICustomAttributeProviderExtensions
         void MyMethod();
     }
     public class MyAttribute : Attribute, IMyInterface
-{
+    {
         public void MyMethod()
         {
             throw new NotImplementedException();
         }
     }
 
-    [MyAttribute]
+    [My]
     public class MyClass
     {
-        
+
     }
 }
