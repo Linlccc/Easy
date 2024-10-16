@@ -3,7 +3,7 @@
 namespace System.Reflection;
 
 /// <summary>
-/// <see cref="MethodInfo"/> 拓展
+/// <see cref="MethodInfo"/> 扩展
 /// </summary>
 public static class MethodInfoExtensions
 {
@@ -31,8 +31,8 @@ public static class MethodInfoExtensions
         _ = method ?? throw new ArgumentNullException(nameof(method));
 
         // 不是特殊名称 || 不是以get_/set_开头
-        if (!method.IsSpecialName || !(method.Name.StartsWith("get_") || method.Name.StartsWith("set_"))) return null;
-
-        return method.DeclaringType?.GetProperty(method.Name.Substring(4));
+        return !method.IsSpecialName || !(method.Name.StartsWith("get_") || method.Name.StartsWith("set_"))
+            ? null
+            : (method.DeclaringType?.GetProperty(method.Name[4..]));
     }
 }

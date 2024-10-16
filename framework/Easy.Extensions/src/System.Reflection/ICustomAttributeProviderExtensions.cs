@@ -3,8 +3,8 @@
 namespace System.Reflection;
 
 /// <summary>
-/// <see cref="ICustomAttributeProvider"/>(为支持反射对象的对象提供自定义属性接口) 拓展
-/// <list type="bullet">人话：该拓展具备提供从对象中获取<see cref="Attribute"/>(特性)的服务</list>
+/// <see cref="ICustomAttributeProvider"/>(为支持反射对象的对象提供自定义属性接口) 扩展
+/// <list type="bullet">人话：该扩展具备提供从对象中获取<see cref="Attribute"/>(特性)的服务</list>
 /// </summary>
 public static class ICustomAttributeProviderExtensions
 {
@@ -53,7 +53,7 @@ public static class ICustomAttributeProviderExtensions
 #endif
     {
         _ = customAttributeProvider ?? throw new ArgumentNullException(nameof(customAttributeProvider));
-        
+
         attribute = (TAttribute?)customAttributeProvider.GetCustomAttributes(typeof(TAttribute), inherit).FirstOrDefault();
         return attribute is not null;
     }

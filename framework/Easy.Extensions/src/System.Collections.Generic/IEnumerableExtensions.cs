@@ -3,7 +3,7 @@
 namespace System.Collections.Generic;
 
 /// <summary>
-/// <see cref="IEnumerable{T}"/> 拓展
+/// <see cref="IEnumerable{T}"/> 扩展
 /// </summary>
 public static class IEnumerableExtensions
 {

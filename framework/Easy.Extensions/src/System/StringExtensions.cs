@@ -3,7 +3,7 @@
 namespace System;
 
 /// <summary>
-/// <see cref="string"/> 拓展
+/// <see cref="string"/> 扩展
 /// </summary>
 public static class StringExtensions
 {

@@ -1,4 +1,4 @@
-# 系统类型拓展
+# 系统类型扩展
 
 - [x] String
 
@@ -57,7 +57,7 @@
 ### 1.0.1
 
 ~~~text
-1.修改 Type 拓展 IsOpenGeneric 为 IsAllOpenGeneric
+1.修改 Type 扩展 IsOpenGeneric 为 IsAllOpenGeneric
   a.判断是否为完全开放泛型
   b.如果只是判断是否有没有指定特定类型的类型参数使用 ContainsGenericParameters 属性
 

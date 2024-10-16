@@ -1,11 +1,11 @@
 ﻿namespace System;
 
 /// <summary>
-/// <see cref="Type"/> 拓展
+/// <see cref="Type"/> 扩展
 /// </summary>
 public static class TypeExtensions
 {
-    #region 继承类型拓展
+    #region 继承类型扩展
     /// <summary>
     /// 判断 <paramref name="type"/> 的接口定义是否包含 <paramref name="baseType"/> 的定义
     /// <br>如果还要判断父类的话请使用 <see cref="IsInheritFrom"/> 方法</br>

@@ -16,7 +16,7 @@
 */
 
 /// <summary>
-/// <see cref="ILGenerator"/>(Microsoft 中间语言指令生成器) 拓展
+/// <see cref="ILGenerator"/>(Microsoft 中间语言指令生成器) 扩展
 /// </summary>
 public static partial class ILGeneratorExtensions
 {
