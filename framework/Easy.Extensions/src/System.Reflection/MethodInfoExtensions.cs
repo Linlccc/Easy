@@ -31,8 +31,12 @@ public static class MethodInfoExtensions
         _ = method ?? throw new ArgumentNullException(nameof(method));
 
         // 不是特殊名称 || 不是以get_/set_开头
-        return !method.IsSpecialName || !(method.Name.StartsWith("get_") || method.Name.StartsWith("set_"))
-            ? null
-            : (method.DeclaringType?.GetProperty(method.Name[4..]));
+        if (!method.IsSpecialName || !(method.Name.StartsWith("get_") || method.Name.StartsWith("set_"))) return null;
+
+#if NETSTANDARD2_0 || NET462
+        return method.DeclaringType?.GetProperty(method.Name.Substring(4));
+#else
+        return method.DeclaringType?.GetProperty(method.Name[4..]);
+#endif
     }
 }
