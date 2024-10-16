@@ -6,19 +6,35 @@
 public static class TypeExtensions
 {
     #region 继承类型扩展
+
     /// <summary>
-    /// 判断 <paramref name="type"/> 的接口定义是否包含 <paramref name="baseType"/> 的定义
-    /// <br>如果还要判断父类的话请使用 <see cref="IsInheritFrom"/> 方法</br>
+    /// 检查指定类型是否实现了指定的接口类型定义。
     /// </summary>
-    /// <param name="type">要判断的类型</param>
-    /// <param name="baseType">是否实现的接口</param>
-    /// <returns>实现返回true，否者false</returns>
-    public static bool IsInterfaceDefinitionInclude(this Type type, Type baseType)
+    /// <param name="type">要检查的类型。不能为 <c>null</c>。</param>
+    /// <param name="interfaceType">要匹配的接口类型定义。不能为 <c>null</c>。</param>
+    /// <returns>如果指定类型实现了接口类型定义，则返回 <c>true</c>；否则返回 <c>false</c>。</returns>
+    /// <exception cref="ArgumentNullException">如果 <paramref name="type"/> 或 <paramref name="interfaceType"/> 为 <c>null</c>。</exception>
+    public static bool IsImplementsInterfaceDefinition(this Type type, Type interfaceType)
     {
         _ = type ?? throw new ArgumentNullException(nameof(type));
-        _ = baseType ?? throw new ArgumentNullException(nameof(baseType));
+        _ = interfaceType ?? throw new ArgumentNullException(nameof(interfaceType));
 
-        return type.GetInterfaces().Any(t => t.GetTypeDefinition() == baseType.GetTypeDefinition());
+        return interfaceType.IsInterface && type.GetInterfaces().Any(t => t.GetTypeDefinition() == interfaceType.GetTypeDefinition());
+    }
+
+    /// <summary>
+    /// 检查指定类型是否实现了指定的接口。
+    /// </summary>
+    /// <param name="type">要检查的类型。不能为 <c>null</c>。</param>
+    /// <param name="interfaceType">要匹配的接口类型。必须是接口类型且不能为 <c>null</c>。</param>
+    /// <returns>如果指定类型实现了接口，则返回 <c>true</c>；否则返回 <c>false</c>。</returns>
+    /// <exception cref="ArgumentNullException">如果 <paramref name="type"/> 或 <paramref name="interfaceType"/> 为 <c>null</c>。</exception>
+    public static bool IsImplementsInterface(this Type type, Type interfaceType)
+    {
+        _ = type ?? throw new ArgumentNullException(nameof(type));
+        _ = interfaceType ?? throw new ArgumentNullException(nameof(interfaceType));
+
+        return interfaceType.IsInterface && type.GetInterfaces().Any(t => t == interfaceType);
     }
 
     /// <summary>
