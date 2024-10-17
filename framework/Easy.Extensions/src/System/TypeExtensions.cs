@@ -5,8 +5,7 @@
 /// </summary>
 public static class TypeExtensions
 {
-    #region 继承类型扩展
-
+    #region 检查扩展
     /// <summary>
     /// 检查指定类型是否实现了指定的接口类型定义。
     /// </summary>
@@ -36,14 +35,13 @@ public static class TypeExtensions
 
         return interfaceType.IsInterface && type.GetInterfaces().Any(t => t == interfaceType);
     }
-    #endregion
 
-    #region 检查
     /// <summary>
-    /// 判断 <paramref name="type"/> 是否为泛型,并且所有的类型参数都未指定特定类型
+    /// 检查指定类型是否是完全开放的泛型类型（其所有的泛型参数都未被具体类型替换）。
     /// </summary>
-    /// <param name="type">要判断的类型</param>
-    /// <returns>是开放完全泛型返回true，否者false</returns>
+    /// <param name="type">要检查的类型。不能为 <c>null</c>。</param>
+    /// <returns>如果类型是是完全开放的泛型类型，则返回 <c>true</c>；否则返回 <c>false</c>。</returns>
+    /// <exception cref="ArgumentNullException">如果 <paramref name="type"/> 为 <c>null</c>。</exception>
     public static bool IsAllOpenGeneric(this Type type)
     {
         _ = type ?? throw new ArgumentNullException(nameof(type));
@@ -52,11 +50,11 @@ public static class TypeExtensions
     }
 
     /// <summary>
-    /// 判断 <paramref name="type"/> 是否是可空类型
-    /// <br>Nullable[T] 类型</br>
+    /// 检查指定类型是否为可空类型（Nullable[T]）。
     /// </summary>
-    /// <param name="type">判断的类型</param>
-    /// <returns>如果是可空类型返回true,否者返回false</returns>
+    /// <param name="type">要检查的类型。不能为 <c>null</c>。</param>
+    /// <returns>如果类型是 <c>Nullable[T]</c> 的可空类型，则返回 <c>true</c>；否则返回 <c>false</c>。</returns>
+    /// <exception cref="ArgumentNullException">如果 <paramref name="type"/> 为 <c>null</c>。</exception>
     public static bool IsNullableType(this Type type)
     {
         _ = type ?? throw new ArgumentNullException(nameof(type));
@@ -65,11 +63,15 @@ public static class TypeExtensions
     }
     #endregion
 
+    #region 获取扩展
     /// <summary>
-    /// 获取类型的名称
+    /// 获取类型的名称。
     /// </summary>
-    /// <param name="type">类型</param>
-    /// <returns></returns>
+    /// <param name="type">要获取名称的类型。不能为 <c>null</c>。</param>
+    /// <returns>
+    /// 如果类型是泛型类型，则返回包含泛型参数的名称（如 <c>List&lt;T&gt;</c>）；否则返回类型的名称。
+    /// </returns>
+    /// <exception cref="ArgumentNullException">如果 <paramref name="type"/> 为 <c>null</c>。</exception>
     public static string Name(this Type type)
     {
         _ = type ?? throw new ArgumentNullException(nameof(type));
@@ -83,45 +85,48 @@ public static class TypeExtensions
     }
 
     /// <summary>
-    /// 获取类型的完全限定名
+    /// 获取类型的完整名称。
     /// </summary>
-    /// <param name="type">类型</param>
-    /// <returns></returns>
-    public static string FullName(this Type type)
+    /// <param name="type">要获取完整名称的类型。不能为 <c>null</c>。</param>
+    /// <returns>如果类型是泛型类型，则返回包含泛型参数的完整名称（如 <c>System.Collections.Generic.List&lt;System.Int32&gt;</c>）；否则返回类型的完整名称。</returns>
+    /// <exception cref="ArgumentNullException">如果 <paramref name="type"/> 为 <c>null</c>。</exception>
+    public static string? FullName(this Type type)
     {
         _ = type ?? throw new ArgumentNullException(nameof(type));
 
-        if (!type.IsGenericType) return type.FullName ?? type.Name;
+        if (!type.IsGenericType) return type.FullName;
 
-        string argumentNames = string.Join(",", type.GetGenericArguments().Select(t => t.FullName()));
-        string fullName = type.FullName ?? type.GetTypeDefinition().FullName!;
+        if (type.FullName is not string fullName) return null;
         string typeName = fullName.Remove(fullName.IndexOf('`'));
+        string argumentNames = string.Join(",", type.GetGenericArguments().Select(t => t.FullName()));
         string result = $"{typeName}<{argumentNames}>";
         return result;
     }
 
     /// <summary>
-    /// 获取类型定义
+    /// 获取指定类型的类型定义。
     /// </summary>
-    /// <param name="type"></param>
-    /// <returns></returns>
+    /// <param name="type">要获取泛型类型定义的类型。不能为 <c>null</c>。</param>
+    /// <returns>如果 <paramref name="type"/> 是泛型类型，则返回其泛型类型定义；否则返回类型本身。</returns>
+    /// <exception cref="ArgumentNullException">如果 <paramref name="type"/> 为 <c>null</c>。</exception>
     public static Type GetTypeDefinition(this Type type)
     {
         _ = type ?? throw new ArgumentNullException(nameof(type));
 
-        return type.IsGenericType && !type.IsGenericTypeDefinition ? type.GetGenericTypeDefinition() : type;
+        return type.IsGenericType ? type.GetGenericTypeDefinition() : type;
     }
 
     /// <summary>
-    /// 从指定类型中获取不可空类型
+    /// 获取 <c>Nullable&lt;&gt;</c> 类型中的基础类型
     /// </summary>
-    /// <param name="type">获取不可空类型的类型</param>
-    /// <returns>不可空的类型</returns>
-    public static Type GetNonNullableType(this Type type)
+    /// <param name="type">要检查的类型。不能为 <c>null</c>。</param>
+    /// <returns>如果 <paramref name="type"/> 是 <c>Nullable&lt;&gt;</c> 类型，则返回其基础类型；否则返回类型本身。</returns>
+    /// <exception cref="ArgumentNullException">如果 <paramref name="type"/> 为 <c>null</c>。</exception>
+    public static Type GetTypeFromNullable(this Type type)
     {
         _ = type ?? throw new ArgumentNullException(nameof(type));
 
         return type.IsNullableType() ? type.GetGenericArguments()[0] : type;
     }
-
+    #endregion
 }
