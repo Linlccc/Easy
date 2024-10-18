@@ -1,6 +1,4 @@
-﻿using System.Runtime.CompilerServices;
-
-namespace System.Reflection;
+﻿namespace System.Reflection;
 
 /// <summary>
 /// <see cref="MethodInfo"/> 扩展
@@ -8,24 +6,11 @@ namespace System.Reflection;
 public static class MethodInfoExtensions
 {
     /// <summary>
-    /// 判断 <paramref name="method"/> 是否与某个属性绑定
+    /// 获取与指定方法相关联的属性信息（PropertyInfo）。
     /// </summary>
-    /// <param name="method">方法</param>
-    /// <returns>如果 <paramref name="method"/> 是某个属性的get/set方法返回true,否者false</returns>
-    /// <exception cref="ArgumentNullException"></exception>
-    public static bool IsBindProperty(this MethodInfo method)
-    {
-        _ = method ?? throw new ArgumentNullException(nameof(method));
-
-        return method.GetBindProperty() != null;
-    }
-
-    /// <summary>
-    /// 获取 <paramref name="method"/> 绑定的属性
-    /// </summary>
-    /// <param name="method">方法</param>
-    /// <returns>如果是某个属性的get/set方法返回属性，如果不是返回null</returns>
-    /// <exception cref="ArgumentNullException"></exception>
+    /// <param name="method">要获取属性的方法信息。</param>
+    /// <returns>与指定方法关联的属性信息；如果不是属性访问器，则返回 <c>null</c>。</returns>
+    /// <exception cref="ArgumentNullException">如果 <paramref name="method"/> 为 <c>null</c>。</exception>
     public static PropertyInfo? GetBindProperty(this MethodInfo method)
     {
         _ = method ?? throw new ArgumentNullException(nameof(method));
@@ -39,4 +24,11 @@ public static class MethodInfoExtensions
         return method.DeclaringType?.GetProperty(method.Name[4..]);
 #endif
     }
+
+    /// <summary>
+    /// 检查指定的方法是否与一个属性相关联。
+    /// </summary>
+    /// <param name="method">要检查的方法信息。</param>
+    /// <returns>如果方法是属性访问器，则返回 <c>true</c>；否则返回 <c>false</c>。</returns>
+    public static bool IsBindProperty(this MethodInfo method) => method.GetBindProperty() is not null;
 }
