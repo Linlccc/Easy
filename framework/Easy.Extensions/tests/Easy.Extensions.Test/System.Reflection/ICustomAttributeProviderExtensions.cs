@@ -7,7 +7,7 @@ public class ICustomAttributeProviderExtensions
     [Fact]
     public void GetAttributes()
     {
-        Type type = typeof(TestClass);
+        Type type = typeof(AttributeTest1);
 
         IEnumerable<Test1Attribute?> atts1 = type.GetAttributes<Test1Attribute>(false);
         Assert.Single(atts1);
@@ -22,7 +22,7 @@ public class ICustomAttributeProviderExtensions
     [Fact]
     public void GetAttribute()
     {
-        Type type = typeof(TestClass);
+        Type type = typeof(AttributeTest1);
 
         Test1Attribute? atts1 = type.GetAttribute<Test1Attribute>(false);
         Assert.NotNull(atts1);
@@ -37,7 +37,7 @@ public class ICustomAttributeProviderExtensions
     [Fact]
     public void IsExistAttribute()
     {
-        Type type = typeof(TestClass);
+        Type type = typeof(AttributeTest1);
 
         Assert.True(type.IsExistAttribute(false, out Test1Attribute? att1));
         Assert.NotNull(att1);
@@ -60,4 +60,4 @@ public class Test1Attribute : Attribute, IAttribute { }
 public class Test2Attribute : Attribute, IAttribute { }
 
 [Test1]
-public class TestClass { }
+public class AttributeTest1 { }
