@@ -8,11 +8,11 @@ namespace System.Collections.Generic;
 public static class IEnumerableExtensions
 {
     /// <summary>
-    /// 是空
+    /// 检查集合是否为 <c>null</c> 或为空。
     /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <param name="collection">集合</param>
-    /// <returns>null or 空集合 返回true,否者false</returns>
+    /// <typeparam name="T">集合中元素的类型。</typeparam>
+    /// <param name="collection">要检查的集合。</param>
+    /// <returns>如果集合为 <c>null</c> 或没有元素，则返回 <c>true</c>； 否则返回 <c>false</c>。 </returns>
 #if NET462 || NETSTANDARD2_0
     public static bool IsNullOrEmpty<T>(this IEnumerable<T>? collection) => collection is null || !collection.Any();
 #else
