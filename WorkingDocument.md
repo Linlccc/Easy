@@ -383,3 +383,4 @@ https://github.com/microsoft/Microsoft.IO.RecyclableMemoryStream
 - [ ] 修改 props/targets 文件，让包只支持 .net462 / netstandard2.0 即可
       仔细了解一下 netstandard2.0/2.1 规范
 - [ ] 添加 Easy.Console 项目
+- [ ] .net 9 发布后处理项目 Easy.Extensions.Emit.Test ，使用 PersistedAssemblyBuilder 将 emit 生成的代码保存成 dll
