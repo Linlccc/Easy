@@ -1,39 +1,63 @@
 ﻿using System.Reflection;
-using Xunit;
 
 namespace Easy.Extensions.Test.System.Reflection;
 
 public class ICustomAttributeProviderExtensions
 {
     [Fact]
-    public void GetCustomAttributes()
+    public void GetAttributes()
     {
-        Type type = typeof(MyClass);
+        Type type = typeof(TestClass);
 
-        // 根据特性类型获取特性
-        var a1 = type.GetAttribute<MyAttribute>(false);
-        Assert.NotNull(a1);
-        // 根据特性的接口类型获取特性
-        var a2 = type.GetAttribute<IMyInterface>(false);
-        Assert.NotNull(a2);
+        IEnumerable<Test1Attribute?> atts1 = type.GetAttributes<Test1Attribute>(false);
+        Assert.Single(atts1);
+
+        IEnumerable<Test2Attribute?> atts2 = type.GetAttributes<Test2Attribute>(false);
+        Assert.Empty(atts2);
+
+        IEnumerable<IAttribute?> atts3 = type.GetAttributes<IAttribute>(false);
+        Assert.Single(atts3);
     }
 
-
-    public interface IMyInterface
+    [Fact]
+    public void GetAttribute()
     {
-        void MyMethod();
+        Type type = typeof(TestClass);
+
+        Test1Attribute? atts1 = type.GetAttribute<Test1Attribute>(false);
+        Assert.NotNull(atts1);
+
+        Test2Attribute? atts2 = type.GetAttribute<Test2Attribute>(false);
+        Assert.Null(atts2);
+
+        IAttribute? atts3 = type.GetAttribute<IAttribute>(false);
+        Assert.NotNull(atts3);
     }
-    public class MyAttribute : Attribute, IMyInterface
-    {
-        public void MyMethod()
-        {
-            throw new NotImplementedException();
-        }
-    }
 
-    [My]
-    public class MyClass
+    [Fact]
+    public void IsExistAttribute()
     {
+        Type type = typeof(TestClass);
 
+        Assert.True(type.IsExistAttribute(false, out Test1Attribute? att1));
+        Assert.NotNull(att1);
+
+        Assert.False(type.IsExistAttribute(false, out Test2Attribute? att2));
+        Assert.Null(att2);
+
+        Assert.True(type.IsExistAttribute(false, out IAttribute? att3));
+        Assert.NotNull(att3);
     }
 }
+
+// 特性接口
+public interface IAttribute { }
+// 测试自定义特性
+
+[AttributeUsage(AttributeTargets.All)]
+public class Test1Attribute : Attribute, IAttribute { }
+[AttributeUsage(AttributeTargets.All)]
+public class Test2Attribute : Attribute, IAttribute { }
+
+[Test1]
+public class TestClass { }

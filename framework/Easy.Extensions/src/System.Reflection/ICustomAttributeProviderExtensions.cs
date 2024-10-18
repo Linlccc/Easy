@@ -8,29 +8,15 @@ namespace System.Reflection;
 /// </summary>
 public static class ICustomAttributeProviderExtensions
 {
-    #region Attribute
     /// <summary>
-    /// 获取 <typeparamref name="TAttribute"/> 类型特性
+    /// 获取指定类型的自定义特性（Attributes）。
     /// </summary>
-    /// <typeparam name="TAttribute">特性类型</typeparam>
-    /// <param name="customAttributeProvider">特性提供者</param>
-    /// <param name="inherit">是否从继承链上获取</param>
-    /// <returns><typeparamref name="TAttribute"/> 类型的第一个特性,不存在则为 null</returns>
-    public static TAttribute? GetAttribute<TAttribute>(this ICustomAttributeProvider customAttributeProvider, bool inherit)
-    {
-        _ = customAttributeProvider ?? throw new ArgumentNullException(nameof(customAttributeProvider));
-
-        return (TAttribute?)customAttributeProvider.GetCustomAttributes(typeof(TAttribute), inherit).FirstOrDefault();
-    }
-
-    /// <summary>
-    /// 获取 <typeparamref name="TAttribute"/> 类型特性集合
-    /// </summary>
-    /// <typeparam name="TAttribute">特性类型</typeparam>
-    /// <param name="customAttributeProvider">特性提供者</param>
-    /// <param name="inherit">是否从继承链上获取</param>
-    /// <returns><typeparamref name="TAttribute"/> 类型的特性集合</returns>
-    public static IEnumerable<TAttribute?> GetAttributes<TAttribute>(this ICustomAttributeProvider customAttributeProvider, bool inherit) where TAttribute : class
+    /// <typeparam name="TAttribute">要获取的特性类型。</typeparam>
+    /// <param name="customAttributeProvider">提供自定义特性的对象。</param>
+    /// <param name="inherit">指示是否在基类型中查找特性。</param>
+    /// <returns>包含指定类型的自定义特性的可枚举集合。</returns>
+    /// <exception cref="ArgumentNullException">如果 <paramref name="customAttributeProvider"/> 为 <c>null</c>。</exception>
+    public static IEnumerable<TAttribute?> GetAttributes<TAttribute>(this ICustomAttributeProvider customAttributeProvider, bool inherit)
     {
         _ = customAttributeProvider ?? throw new ArgumentNullException(nameof(customAttributeProvider));
 
@@ -38,41 +24,30 @@ public static class ICustomAttributeProviderExtensions
     }
 
     /// <summary>
-    /// 检查是否存在 <typeparamref name="TAttribute"/> 类型特性，如果存在过获取该特性
+    /// 获取指定类型的自定义特性（Attribute）。
+    /// </summary>
+    /// <typeparam name="TAttribute">要获取的特性类型。</typeparam>
+    /// <param name="customAttributeProvider">提供自定义特性的对象。</param>
+    /// <param name="inherit">指示是否在基类型中查找特性。</param>
+    /// <returns>如果存在指定类型的特性，则返回该特性；否则返回 <c>null</c>。</returns>
+    public static TAttribute? GetAttribute<TAttribute>(this ICustomAttributeProvider customAttributeProvider, bool inherit) => customAttributeProvider.GetAttributes<TAttribute>(inherit).FirstOrDefault();
+
+    /// <summary>
+    /// 检查指定类型的自定义特性是否存在。
     /// <list type="bullet">如果只检查是否存在建议使用 <see cref="ICustomAttributeProvider.IsDefined"/> 方法</list>
     /// </summary>
-    /// <typeparam name="TAttribute">特性类型</typeparam>
-    /// <param name="customAttributeProvider">特性提供者</param>
-    /// <param name="inherit">是否从继承链上获取</param>
-    /// <param name="attribute">如果特性存在，获取一个该特性对象</param>
-    /// <returns>如果存在 <typeparamref name="TAttribute"/> 类型特性返回 true，否者 false</returns>
+    /// <typeparam name="TAttribute">要检查的特性类型。</typeparam>
+    /// <param name="customAttributeProvider">提供自定义特性的对象。</param>
+    /// <param name="inherit">指示是否在基类型中查找特性。</param>
+    /// <param name="attribute">输出参数，返回找到的特性，如果不存在则为 <c>null</c>。</param>
+    /// <returns>如果存在指定类型的特性，则返回 <c>true</c>；否则返回 <c>false</c>。</returns>
 #if NET462 || NETSTANDARD2_0
     public static bool IsExistAttribute<TAttribute>(this ICustomAttributeProvider customAttributeProvider, bool inherit, out TAttribute? attribute)
 #else
     public static bool IsExistAttribute<TAttribute>(this ICustomAttributeProvider customAttributeProvider, bool inherit, [NotNullWhen(true)] out TAttribute? attribute)
 #endif
     {
-        _ = customAttributeProvider ?? throw new ArgumentNullException(nameof(customAttributeProvider));
-
-        attribute = (TAttribute?)customAttributeProvider.GetCustomAttributes(typeof(TAttribute), inherit).FirstOrDefault();
+        attribute = customAttributeProvider.GetAttribute<TAttribute>(inherit);
         return attribute is not null;
-    }
-    #endregion
-
-
-    /// <summary>
-    /// 设置属性值
-    /// </summary>
-    /// <param name="propertyInfo">属性信息</param>
-    /// <param name="obj">设置值得实例</param>
-    /// <param name="value">要设置的值</param>
-    public static void SetPropertyValue(this PropertyInfo propertyInfo, object? obj, object? value)
-    {
-        _ = propertyInfo ?? throw new ArgumentNullException(nameof(propertyInfo));
-        _ = obj ?? throw new ArgumentNullException(nameof(obj));
-
-        // 如果没有 Set 方法，获取到该属性的字段赋值
-        if (propertyInfo.SetMethod is null) obj.GetType().GetField($"<{propertyInfo.Name}>k__BackingField", BindingFlags.Instance | BindingFlags.NonPublic)?.SetValue(obj, value);
-        else propertyInfo.SetValue(obj, value);
     }
 }
