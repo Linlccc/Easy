@@ -8,10 +8,10 @@ namespace System;
 public static class StringExtensions
 {
     /// <summary>
-    /// 判断字符串是否为空
+    /// 检查指定的字符串是否为 <c>null</c> 或空字符串.
     /// </summary>
-    /// <param name="value">要判断的字符串</param>
-    /// <returns></returns>
+    /// <param name="value">要检查的字符串，可以为 <c>null</c>。</param>
+    /// <returns>如果字符串为 <c>null</c> 或空字符串，则返回 <c>true</c>；否则返回 <c>false</c>。</returns>
 #if NET462 || NETSTANDARD2_0
     public static bool IsNullOrEmpty(this string? value) => string.IsNullOrEmpty(value);
 #else
