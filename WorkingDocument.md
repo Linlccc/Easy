@@ -380,7 +380,11 @@ https://github.com/microsoft/Microsoft.IO.RecyclableMemoryStream
 ## 24/09/30 计划
 
 - [ ] 将 Easy 项目的文档都整理一下，梳理一下思路
-- [ ] 修改 props/targets 文件，让包只支持 .net462 / netstandard2.0 即可
+- [x] 修改 props/targets 文件，让包只支持 .net462 / netstandard2.0 即可
       仔细了解一下 netstandard2.0/2.1 规范
+      netstandard2.0 : 在 .NET Framework 和所有其他平台之间共享代码
+      netstandard2.1 : 在 Mono、Xamarin 和 .NET Core 3.x 之间共享代码
+      net5.0 : 之后的共享代码，可以将 .NET 5 视为 .NET Standard vNext
+      支持版本 net462,netstandard2.0,netstandard2.1 ,net5+
 - [ ] 添加 Easy.Console 项目
 - [ ] .net 9 发布后处理项目 Easy.Extensions.Emit.Test ，使用 PersistedAssemblyBuilder 将 emit 生成的代码保存成 dll
