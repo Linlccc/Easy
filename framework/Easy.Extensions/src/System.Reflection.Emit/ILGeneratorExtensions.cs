@@ -1,4 +1,6 @@
-﻿namespace System.Reflection.Emit;
+﻿// ReSharper disable InconsistentNaming
+
+namespace System.Reflection.Emit;
 
 /* ** 概念
 * 1. Label:     (标签) 类似于代码中的 goto
@@ -6,7 +8,7 @@
 * 3. 指针:      (pointer)
 *  3.1. 指针类型,是一种数据类型 比如:int*(int指针类型)
 *  3.2. 指针变量,是一个变量,指针变量的值是一个地址,指针变量也有自己的地址
-* 4. nativa int : 表示一个与平台相关的整数类型
+* 4. native int : 表示一个与平台相关的整数类型
 *  4.1. 32位系统上,是4字节。64位系统上,是8字节
 *  4.2. 主要用于与本机代码交互或进行低级操作，比如 P/Invoke（平台调用）
 *  4.3. 可以用于表示指针或句柄
@@ -18,7 +20,7 @@
 /// <summary>
 /// <see cref="ILGenerator"/>(Microsoft 中间语言指令生成器) 扩展
 /// </summary>
-public static partial class ILGeneratorExtensions
+public static class ILGeneratorExtensions
 {
     #region 加载/推送(将指定的值推送到计算堆栈)
     #region 变量
@@ -265,12 +267,6 @@ public static partial class ILGeneratorExtensions
     /// <param name="value">要推送的数字常量</param>
     public static void LoadInt(this ILGenerator iLGenerator, int value)
     {
-        if (value is >= sbyte.MinValue and <= sbyte.MaxValue)
-        {
-            iLGenerator.Emit(OpCodes.Ldc_I4_S, (sbyte)value);
-            return;
-        }
-
         switch (value)
         {
             case -1: iLGenerator.Emit(OpCodes.Ldc_I4_M1); return;
@@ -283,6 +279,7 @@ public static partial class ILGeneratorExtensions
             case 6: iLGenerator.Emit(OpCodes.Ldc_I4_6); return;
             case 7: iLGenerator.Emit(OpCodes.Ldc_I4_7); return;
             case 8: iLGenerator.Emit(OpCodes.Ldc_I4_8); return;
+            case >= sbyte.MinValue and <= sbyte.MaxValue : iLGenerator.Emit(OpCodes.Ldc_I4_S, value); return;
             default: iLGenerator.Emit(OpCodes.Ldc_I4, value); return;
         }
     }
@@ -787,7 +784,7 @@ public static partial class ILGeneratorExtensions
     /// <param name="isUnsigned">是否是无符号整数值或未经排序的浮点值</param>
     public static void GotoIfGreater(this ILGenerator iLGenerator, Label label, bool isShort = true, bool isUnsigned = false)
     {
-        if (isShort == isUnsigned == true) iLGenerator.Emit(OpCodes.Bgt_Un_S, label);
+        if (isShort && isUnsigned) iLGenerator.Emit(OpCodes.Bgt_Un_S, label);
         else if (isUnsigned) iLGenerator.Emit(OpCodes.Bgt_Un, label);
         else if (isShort) iLGenerator.Emit(OpCodes.Bgt_S, label);
         else iLGenerator.Emit(OpCodes.Bgt, label);
@@ -805,7 +802,7 @@ public static partial class ILGeneratorExtensions
     /// <param name="isUnsigned">是否是无符号整数值或未经排序的浮点值</param>
     public static void GotoIfGreaterOrEqual(this ILGenerator iLGenerator, Label label, bool isShort = true, bool isUnsigned = false)
     {
-        if (isShort == isUnsigned == true) iLGenerator.Emit(OpCodes.Bge_Un_S, label);
+        if (isShort && isUnsigned) iLGenerator.Emit(OpCodes.Bge_Un_S, label);
         else if (isUnsigned) iLGenerator.Emit(OpCodes.Bge_Un, label);
         else if (isShort) iLGenerator.Emit(OpCodes.Bge_S, label);
         else iLGenerator.Emit(OpCodes.Bge, label);
@@ -823,7 +820,7 @@ public static partial class ILGeneratorExtensions
     /// <param name="isUnsigned">是否是无符号整数值或未经排序的浮点值</param>
     public static void GotoIfLess(this ILGenerator iLGenerator, Label label, bool isShort = true, bool isUnsigned = false)
     {
-        if (isShort == isUnsigned == true) iLGenerator.Emit(OpCodes.Blt_Un_S, label);
+        if (isShort && isUnsigned) iLGenerator.Emit(OpCodes.Blt_Un_S, label);
         else if (isUnsigned) iLGenerator.Emit(OpCodes.Blt_Un, label);
         else if (isShort) iLGenerator.Emit(OpCodes.Blt_S, label);
         else iLGenerator.Emit(OpCodes.Blt, label);
@@ -841,7 +838,7 @@ public static partial class ILGeneratorExtensions
     /// <param name="isUnsigned">是否是无符号整数值或未经排序的浮点值</param>
     public static void GotoIfLessOrEqual(this ILGenerator iLGenerator, Label label, bool isShort = true, bool isUnsigned = false)
     {
-        if (isShort == isUnsigned == true) iLGenerator.Emit(OpCodes.Ble_Un_S, label);
+        if (isShort && isUnsigned) iLGenerator.Emit(OpCodes.Ble_Un_S, label);
         else if (isUnsigned) iLGenerator.Emit(OpCodes.Ble_Un, label);
         else if (isShort) iLGenerator.Emit(OpCodes.Ble_S, label);
         else iLGenerator.Emit(OpCodes.Ble, label);
