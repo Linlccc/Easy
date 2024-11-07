@@ -46,7 +46,7 @@ public static class TypeExtensions
     {
         _ = type ?? throw new ArgumentNullException(nameof(type));
 
-        return type.IsGenericType && !type.GenericTypeArguments.Any(a => a.GUID != Guid.Empty);
+        return type.IsGenericType && type.GenericTypeArguments.All(a => a.GUID == Guid.Empty);
     }
 
     /// <summary>

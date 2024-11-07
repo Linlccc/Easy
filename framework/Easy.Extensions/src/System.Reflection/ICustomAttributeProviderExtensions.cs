@@ -1,4 +1,8 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿// ReSharper disable InconsistentNaming
+
+#if !(NET462 || NETSTANDARD2_0)
+using System.Diagnostics.CodeAnalysis;
+#endif
 
 namespace System.Reflection;
 
