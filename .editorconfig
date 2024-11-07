@@ -276,3 +276,5 @@ dotnet_diagnostic.ca2252.severity = none
 end_of_line = lf
 [*.{cmd, bat}]
 end_of_line = crlf
+[*.md]
+insert_final_newline = true
