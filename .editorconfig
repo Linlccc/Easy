@@ -1,4 +1,3 @@
-# 如果要从更高级别的目录继承 .editorconfig 设置，请删除以下行
 root = true
 
 [*.{appxmanifest,asax,ascx,aspx,axaml,blockshader,build,c,c++,c++m,cc,ccm,cginc,compute,cp,cpp,cppm,cs,cshtml,cu,cuh,cxx,cxxm,dtd,fs,fsi,fsscript,fsx,fx,fxh,h,h++,hh,hlsl,hlsli,hlslinc,hp,hpp,hxx,icc,inc,inl,ino,ipp,ixx,master,ml,mli,mpp,mq4,mq5,mqh,mxx,nuspec,paml,razor,resw,resx,shader,shaderFoundry,skin,tcc,tpp,urtshader,usf,ush,uxml,vb,xaml,xamlx,xoml,xsd}]
@@ -60,7 +59,7 @@ dotnet_style_predefined_type_for_member_access = true:silent
 
 [*.cs]
 # 文件头
-file_header_template = 
+file_header_template =
 
 # using 导入
 csharp_using_directive_placement = outside_namespace:suggestion
@@ -177,46 +176,46 @@ csharp_style_allow_embedded_statements_on_same_line_experimental = true:silent
 dotnet_remove_unnecessary_suppression_exclusions = none
 
 # 命名样式
-dotnet_naming_style.pascal_case.required_prefix = 
-dotnet_naming_style.pascal_case.required_suffix = 
-dotnet_naming_style.pascal_case.word_separator = 
+dotnet_naming_style.pascal_case.required_prefix =
+dotnet_naming_style.pascal_case.required_suffix =
+dotnet_naming_style.pascal_case.word_separator =
 dotnet_naming_style.pascal_case.capitalization = pascal_case
 
 dotnet_naming_style.begins_with_i.required_prefix = I
-dotnet_naming_style.begins_with_i.required_suffix = 
-dotnet_naming_style.begins_with_i.word_separator = 
+dotnet_naming_style.begins_with_i.required_suffix =
+dotnet_naming_style.begins_with_i.word_separator =
 dotnet_naming_style.begins_with_i.capitalization = pascal_case
 
 dotnet_naming_style.begins_with__.required_prefix = _
-dotnet_naming_style.begins_with__.required_suffix = 
-dotnet_naming_style.begins_with__.word_separator = 
+dotnet_naming_style.begins_with__.required_suffix =
+dotnet_naming_style.begins_with__.word_separator =
 dotnet_naming_style.begins_with__.capitalization = camel_case
 
 dotnet_naming_style.begins_with_on.required_prefix = On
-dotnet_naming_style.begins_with_on.required_suffix = 
-dotnet_naming_style.begins_with_on.word_separator = 
+dotnet_naming_style.begins_with_on.required_suffix =
+dotnet_naming_style.begins_with_on.word_separator =
 dotnet_naming_style.begins_with_on.capitalization = pascal_case
 
 # 符号规范
 dotnet_naming_symbols.interface.applicable_kinds = interface
 dotnet_naming_symbols.interface.applicable_accessibilities = public, internal, private, protected, protected_internal, private_protected
-dotnet_naming_symbols.interface.required_modifiers = 
+dotnet_naming_symbols.interface.required_modifiers =
 
 dotnet_naming_symbols.event.applicable_kinds = event
 dotnet_naming_symbols.event.applicable_accessibilities = public, internal, private, protected, protected_internal, private_protected
-dotnet_naming_symbols.event.required_modifiers = 
+dotnet_naming_symbols.event.required_modifiers =
 
 dotnet_naming_symbols.types.applicable_kinds = class, struct, interface, enum
 dotnet_naming_symbols.types.applicable_accessibilities = public, internal, private, protected, protected_internal, private_protected
-dotnet_naming_symbols.types.required_modifiers = 
+dotnet_naming_symbols.types.required_modifiers =
 
 dotnet_naming_symbols.non_field_members.applicable_kinds = property, event, method
 dotnet_naming_symbols.non_field_members.applicable_accessibilities = public, internal, private, protected, protected_internal, private_protected
-dotnet_naming_symbols.non_field_members.required_modifiers = 
+dotnet_naming_symbols.non_field_members.required_modifiers =
 
 dotnet_naming_symbols.private_field.applicable_kinds = field
 dotnet_naming_symbols.private_field.applicable_accessibilities = private
-dotnet_naming_symbols.private_field.required_modifiers = 
+dotnet_naming_symbols.private_field.required_modifiers =
 
 # 命名规则
 dotnet_naming_rule.interface_should_be_begins_with_i.severity = suggestion
@@ -244,6 +243,7 @@ resharper_csharp_wrap_before_ternary_opsigns = false
 resharper_enforce_line_ending_style = true
 resharper_keep_existing_enum_arrangement = true
 resharper_use_indent_from_vs = false
+resharper_place_simple_case_statement_on_same_line = if_owner_is_single_line
 
 # ReSharper 高亮
 resharper_arrange_accessor_owner_body_highlighting = none
@@ -274,7 +274,9 @@ dotnet_diagnostic.ca2252.severity = none
 # Shell scripts
 [*.sh]
 end_of_line = lf
+
 [*.{cmd, bat}]
 end_of_line = crlf
+
 [*.md]
 insert_final_newline = true
