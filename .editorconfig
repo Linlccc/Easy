@@ -270,6 +270,10 @@ resharper_place_simple_embedded_statement_on_same_line = true
 resharper_csharp_wrap_lines = false
 resharper_keep_existing_single_line_statements_in_switch_cases = true
 resharper_single_line_statements_in_switch_cases = true
+resharper_use_heuristics_for_body_style = true
+resharper_keep_existing_line_breaks = true
+resharper_keep_existing_indents = true
+resharper_keep_single_line_statements_in_methods = true
 
 # ReSharper 高亮
 resharper_arrange_accessor_owner_body_highlighting = none
@@ -296,6 +300,7 @@ resharper_web_config_wrong_module_highlighting = warning
 
 # 编译器分析
 dotnet_diagnostic.ca2252.severity = none
+
 
 # Shell scripts
 [*.sh]
