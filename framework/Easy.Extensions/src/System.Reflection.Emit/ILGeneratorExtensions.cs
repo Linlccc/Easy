@@ -3,19 +3,19 @@
 namespace System.Reflection.Emit;
 
 /* ** 概念
-* 1. Label:     (标签) 类似于代码中的 goto
-* 2. 地址:      (address) 数据值存放的地址(获取p变量的地址 &p),一串数字
-* 3. 指针:      (pointer)
-*  3.1. 指针类型,是一种数据类型 比如:int*(int指针类型)
-*  3.2. 指针变量,是一个变量,指针变量的值是一个地址,指针变量也有自己的地址
-* 4. native int : 表示一个与平台相关的整数类型
-*  4.1. 32位系统上,是4个字节。64位系统上,是8个字节
-*  4.2. 主要用于与本机代码交互或进行低级操作，比如 P/Invoke（平台调用）
-*  4.3. 可以用于表示指针或句柄
-*  4.4. 在 C# 中，可以使用 IntPtr/nint 类型来表示 native int
-* 
-* see https://learn.microsoft.com/zh-cn/dotnet/api/system.reflection.emit
-*/
+ * 1. Label:     (标签) 类似于代码中的 goto
+ * 2. 地址:      (address) 数据值存放的地址(获取p变量的地址 &p),一串数字
+ * 3. 指针:      (pointer)
+ *  3.1. 指针类型,是一种数据类型 比如:int*(int指针类型)
+ *  3.2. 指针变量,是一个变量,指针变量的值是一个地址,指针变量也有自己的地址
+ * 4. native int : 表示一个与平台相关的整数类型
+ *  4.1. 32位系统上,是4个字节。64位系统上,是8个字节
+ *  4.2. 主要用于与本机代码交互或进行低级操作，比如 P/Invoke（平台调用）
+ *  4.3. 可以用于表示指针或句柄
+ *  4.4. 在 C# 中，可以使用 IntPtr/nint 类型来表示 native int
+ *
+ * see https://learn.microsoft.com/zh-cn/dotnet/api/system.reflection.emit
+ */
 
 /// <summary>
 /// <see cref="ILGenerator"/>(Microsoft 中间语言指令生成器) 扩展
@@ -44,12 +44,24 @@ public static class ILGeneratorExtensions
     {
         switch (index)
         {
-            case 0: iLGenerator.Emit(OpCodes.Ldarg_0); return;
-            case 1: iLGenerator.Emit(OpCodes.Ldarg_1); return;
-            case 2: iLGenerator.Emit(OpCodes.Ldarg_2); return;
-            case 3: iLGenerator.Emit(OpCodes.Ldarg_3); return;
-            case <= byte.MaxValue: iLGenerator.Emit(OpCodes.Ldarg_S, (byte)index); return;
-            default: iLGenerator.Emit(OpCodes.Ldarg, index); return;
+            case 0:
+                iLGenerator.Emit(OpCodes.Ldarg_0);
+                return;
+            case 1:
+                iLGenerator.Emit(OpCodes.Ldarg_1);
+                return;
+            case 2:
+                iLGenerator.Emit(OpCodes.Ldarg_2);
+                return;
+            case 3:
+                iLGenerator.Emit(OpCodes.Ldarg_3);
+                return;
+            case <= byte.MaxValue:
+                iLGenerator.Emit(OpCodes.Ldarg_S, (byte)index);
+                return;
+            default:
+                iLGenerator.Emit(OpCodes.Ldarg, index);
+                return;
         }
     }
 
@@ -69,12 +81,24 @@ public static class ILGeneratorExtensions
     {
         switch (localBuilder.LocalIndex)
         {
-            case 0: iLGenerator.Emit(OpCodes.Ldloc_0); return;
-            case 1: iLGenerator.Emit(OpCodes.Ldloc_1); return;
-            case 2: iLGenerator.Emit(OpCodes.Ldloc_2); return;
-            case 3: iLGenerator.Emit(OpCodes.Ldloc_3); return;
-            case <= byte.MaxValue: iLGenerator.Emit(OpCodes.Ldloc_S, localBuilder); return;
-            default: iLGenerator.Emit(OpCodes.Ldloc, localBuilder); return;
+            case 0:
+                iLGenerator.Emit(OpCodes.Ldloc_0);
+                return;
+            case 1:
+                iLGenerator.Emit(OpCodes.Ldloc_1);
+                return;
+            case 2:
+                iLGenerator.Emit(OpCodes.Ldloc_2);
+                return;
+            case 3:
+                iLGenerator.Emit(OpCodes.Ldloc_3);
+                return;
+            case <= byte.MaxValue:
+                iLGenerator.Emit(OpCodes.Ldloc_S, localBuilder);
+                return;
+            default:
+                iLGenerator.Emit(OpCodes.Ldloc, localBuilder);
+                return;
         }
     }
     /// <summary>
@@ -86,12 +110,24 @@ public static class ILGeneratorExtensions
     {
         switch (index)
         {
-            case 0: iLGenerator.Emit(OpCodes.Ldloc_0); return;
-            case 1: iLGenerator.Emit(OpCodes.Ldloc_1); return;
-            case 2: iLGenerator.Emit(OpCodes.Ldloc_2); return;
-            case 3: iLGenerator.Emit(OpCodes.Ldloc_3); return;
-            case <= byte.MaxValue: iLGenerator.Emit(OpCodes.Ldloc_S, (byte)index); return;
-            default: iLGenerator.Emit(OpCodes.Ldloc, index); return;
+            case 0:
+                iLGenerator.Emit(OpCodes.Ldloc_0);
+                return;
+            case 1:
+                iLGenerator.Emit(OpCodes.Ldloc_1);
+                return;
+            case 2:
+                iLGenerator.Emit(OpCodes.Ldloc_2);
+                return;
+            case 3:
+                iLGenerator.Emit(OpCodes.Ldloc_3);
+                return;
+            case <= byte.MaxValue:
+                iLGenerator.Emit(OpCodes.Ldloc_S, (byte)index);
+                return;
+            default:
+                iLGenerator.Emit(OpCodes.Ldloc, index);
+                return;
         }
     }
 
@@ -148,7 +184,6 @@ public static class ILGeneratorExtensions
         // 引用类型
         else if (type is null) iLGenerator.Emit(OpCodes.Ldelem_Ref);
         else iLGenerator.Emit(OpCodes.Ldelem, type);
-
     }
 
     /// <summary>
@@ -173,8 +208,12 @@ public static class ILGeneratorExtensions
     {
         switch (index)
         {
-            case <= byte.MaxValue: iLGenerator.Emit(OpCodes.Ldarga_S, (byte)index); return;
-            default: iLGenerator.Emit(OpCodes.Ldarga, index); return;
+            case <= byte.MaxValue:
+                iLGenerator.Emit(OpCodes.Ldarga_S, (byte)index);
+                return;
+            default:
+                iLGenerator.Emit(OpCodes.Ldarga, index);
+                return;
         }
     }
 
@@ -187,8 +226,12 @@ public static class ILGeneratorExtensions
     {
         switch (index)
         {
-            case <= byte.MaxValue: iLGenerator.Emit(OpCodes.Ldloca_S, (byte)index); return;
-            default: iLGenerator.Emit(OpCodes.Ldloca, index); return;
+            case <= byte.MaxValue:
+                iLGenerator.Emit(OpCodes.Ldloca_S, (byte)index);
+                return;
+            default:
+                iLGenerator.Emit(OpCodes.Ldloca, index);
+                return;
         }
     }
 
@@ -200,7 +243,7 @@ public static class ILGeneratorExtensions
     /// </summary>
     /// <param name="iLGenerator">中间语言指令生成器</param>
     /// <param name="fieldInfo">字段信息</param>
-    public static void LoadFieldAddr(this ILGenerator iLGenerator, FieldInfo fieldInfo)=>iLGenerator.Emit(fieldInfo.IsStatic ? OpCodes.Ldsflda : OpCodes.Ldflda, fieldInfo);
+    public static void LoadFieldAddr(this ILGenerator iLGenerator, FieldInfo fieldInfo) => iLGenerator.Emit(fieldInfo.IsStatic ? OpCodes.Ldsflda : OpCodes.Ldflda, fieldInfo);
     #endregion
 
     #region 地址To值
@@ -244,7 +287,7 @@ public static class ILGeneratorExtensions
     /// </summary>
     /// <param name="iLGenerator">中间语言指令生成器</param>
     /// <param name="methodInfo">方法信息</param>
-    public static void LoadMethodPointer(this ILGenerator iLGenerator, MethodInfo methodInfo)=>iLGenerator.Emit(methodInfo.IsVirtual ? OpCodes.Ldvirtftn : OpCodes.Ldftn, methodInfo);
+    public static void LoadMethodPointer(this ILGenerator iLGenerator, MethodInfo methodInfo) => iLGenerator.Emit(methodInfo.IsVirtual ? OpCodes.Ldvirtftn : OpCodes.Ldftn, methodInfo);
     #endregion
 
     #region 常量
@@ -257,18 +300,42 @@ public static class ILGeneratorExtensions
     {
         switch (value)
         {
-            case -1: iLGenerator.Emit(OpCodes.Ldc_I4_M1); return;
-            case 0: iLGenerator.Emit(OpCodes.Ldc_I4_0); return;
-            case 1: iLGenerator.Emit(OpCodes.Ldc_I4_1); return;
-            case 2: iLGenerator.Emit(OpCodes.Ldc_I4_2); return;
-            case 3: iLGenerator.Emit(OpCodes.Ldc_I4_3); return;
-            case 4: iLGenerator.Emit(OpCodes.Ldc_I4_4); return;
-            case 5: iLGenerator.Emit(OpCodes.Ldc_I4_5); return;
-            case 6: iLGenerator.Emit(OpCodes.Ldc_I4_6); return;
-            case 7: iLGenerator.Emit(OpCodes.Ldc_I4_7); return;
-            case 8: iLGenerator.Emit(OpCodes.Ldc_I4_8); return;
-            case >= sbyte.MinValue and <= sbyte.MaxValue: iLGenerator.Emit(OpCodes.Ldc_I4_S, value); return;
-            default: iLGenerator.Emit(OpCodes.Ldc_I4, value); return;
+            case -1:
+                iLGenerator.Emit(OpCodes.Ldc_I4_M1);
+                return;
+            case 0:
+                iLGenerator.Emit(OpCodes.Ldc_I4_0);
+                return;
+            case 1:
+                iLGenerator.Emit(OpCodes.Ldc_I4_1);
+                return;
+            case 2:
+                iLGenerator.Emit(OpCodes.Ldc_I4_2);
+                return;
+            case 3:
+                iLGenerator.Emit(OpCodes.Ldc_I4_3);
+                return;
+            case 4:
+                iLGenerator.Emit(OpCodes.Ldc_I4_4);
+                return;
+            case 5:
+                iLGenerator.Emit(OpCodes.Ldc_I4_5);
+                return;
+            case 6:
+                iLGenerator.Emit(OpCodes.Ldc_I4_6);
+                return;
+            case 7:
+                iLGenerator.Emit(OpCodes.Ldc_I4_7);
+                return;
+            case 8:
+                iLGenerator.Emit(OpCodes.Ldc_I4_8);
+                return;
+            case >= sbyte.MinValue and <= sbyte.MaxValue:
+                iLGenerator.Emit(OpCodes.Ldc_I4_S, value);
+                return;
+            default:
+                iLGenerator.Emit(OpCodes.Ldc_I4, value);
+                return;
         }
     }
 
@@ -340,8 +407,12 @@ public static class ILGeneratorExtensions
     {
         switch (index)
         {
-            case <= byte.MaxValue: iLGenerator.Emit(OpCodes.Starg_S, (byte)index); return;
-            default: iLGenerator.Emit(OpCodes.Starg, index); return;
+            case <= byte.MaxValue:
+                iLGenerator.Emit(OpCodes.Starg_S, (byte)index);
+                return;
+            default:
+                iLGenerator.Emit(OpCodes.Starg, index);
+                return;
         }
     }
 
@@ -354,12 +425,24 @@ public static class ILGeneratorExtensions
     {
         switch (localBuilder.LocalIndex)
         {
-            case 0: iLGenerator.Emit(OpCodes.Stloc_0); return;
-            case 1: iLGenerator.Emit(OpCodes.Stloc_1); return;
-            case 2: iLGenerator.Emit(OpCodes.Stloc_2); return;
-            case 3: iLGenerator.Emit(OpCodes.Stloc_3); return;
-            case <= byte.MaxValue: iLGenerator.Emit(OpCodes.Stloc_S, localBuilder); return;
-            default: iLGenerator.Emit(OpCodes.Stloc, localBuilder); return;
+            case 0:
+                iLGenerator.Emit(OpCodes.Stloc_0);
+                return;
+            case 1:
+                iLGenerator.Emit(OpCodes.Stloc_1);
+                return;
+            case 2:
+                iLGenerator.Emit(OpCodes.Stloc_2);
+                return;
+            case 3:
+                iLGenerator.Emit(OpCodes.Stloc_3);
+                return;
+            case <= byte.MaxValue:
+                iLGenerator.Emit(OpCodes.Stloc_S, localBuilder);
+                return;
+            default:
+                iLGenerator.Emit(OpCodes.Stloc, localBuilder);
+                return;
         }
     }
     /// <summary>
@@ -371,12 +454,24 @@ public static class ILGeneratorExtensions
     {
         switch (localIndex)
         {
-            case 0: iLGenerator.Emit(OpCodes.Stloc_0); return;
-            case 1: iLGenerator.Emit(OpCodes.Stloc_1); return;
-            case 2: iLGenerator.Emit(OpCodes.Stloc_2); return;
-            case 3: iLGenerator.Emit(OpCodes.Stloc_3); return;
-            case <= byte.MaxValue: iLGenerator.Emit(OpCodes.Stloc_S, (byte)localIndex); return;
-            default: iLGenerator.Emit(OpCodes.Stloc, localIndex); return;
+            case 0:
+                iLGenerator.Emit(OpCodes.Stloc_0);
+                return;
+            case 1:
+                iLGenerator.Emit(OpCodes.Stloc_1);
+                return;
+            case 2:
+                iLGenerator.Emit(OpCodes.Stloc_2);
+                return;
+            case 3:
+                iLGenerator.Emit(OpCodes.Stloc_3);
+                return;
+            case <= byte.MaxValue:
+                iLGenerator.Emit(OpCodes.Stloc_S, (byte)localIndex);
+                return;
+            default:
+                iLGenerator.Emit(OpCodes.Stloc, localIndex);
+                return;
         }
     }
 
@@ -389,7 +484,7 @@ public static class ILGeneratorExtensions
     /// </summary>
     /// <param name="iLGenerator">中间语言指令生成器</param>
     /// <param name="fieldInfo">字段信息</param>
-    public static void SetField(this ILGenerator iLGenerator, FieldInfo fieldInfo)=>iLGenerator.Emit(fieldInfo.IsStatic ? OpCodes.Stsfld : OpCodes.Stfld, fieldInfo);
+    public static void SetField(this ILGenerator iLGenerator, FieldInfo fieldInfo) => iLGenerator.Emit(fieldInfo.IsStatic ? OpCodes.Stsfld : OpCodes.Stfld, fieldInfo);
 
     /// <summary>
     /// 为数组指定索引处元素赋值
@@ -484,14 +579,14 @@ public static class ILGeneratorExtensions
     /// </summary>
     /// <param name="iLGenerator">中间语言指令生成器</param>
     /// <param name="isUnsigned">被除数和除数是否是无符号</param>
-    public static void MathDiv(this ILGenerator iLGenerator, bool isUnsigned = false)=>iLGenerator.Emit(isUnsigned ? OpCodes.Div_Un : OpCodes.Div);
+    public static void MathDiv(this ILGenerator iLGenerator, bool isUnsigned = false) => iLGenerator.Emit(isUnsigned ? OpCodes.Div_Un : OpCodes.Div);
 
     /// <summary>
     /// 将堆栈顶部两个值求余,并推送结果
     /// </summary>
     /// <param name="iLGenerator">中间语言指令生成器</param>
     /// <param name="isUnsigned">两个求余的值是否是无符号</param>
-    public static void MathRem(this ILGenerator iLGenerator, bool isUnsigned = false)=>iLGenerator.Emit(isUnsigned ? OpCodes.Rem_Un : OpCodes.Rem);
+    public static void MathRem(this ILGenerator iLGenerator, bool isUnsigned = false) => iLGenerator.Emit(isUnsigned ? OpCodes.Rem_Un : OpCodes.Rem);
 
     /// <summary>
     /// 将堆栈顶部的值执行"求反"操作,并推送结果
@@ -544,7 +639,7 @@ public static class ILGeneratorExtensions
     /// </summary>
     /// <param name="iLGenerator">中间语言指令生成器</param>
     /// <param name="isUnsigned">移位值是否是无符号值</param>
-    public static void BitwiseShiftRight(this ILGenerator iLGenerator, bool isUnsigned = false)=>iLGenerator.Emit(isUnsigned ? OpCodes.Shr_Un : OpCodes.Shr);
+    public static void BitwiseShiftRight(this ILGenerator iLGenerator, bool isUnsigned = false) => iLGenerator.Emit(isUnsigned ? OpCodes.Shr_Un : OpCodes.Shr);
     #endregion
 
     #region 比较
@@ -559,20 +654,14 @@ public static class ILGeneratorExtensions
     /// </summary>
     /// <param name="iLGenerator">中间语言指令生成器</param>
     /// <param name="isUnsigned">是否是无符号的或未经排序的值</param>
-    public static void CompareGreater(this ILGenerator iLGenerator, bool isUnsigned = false)
-    {
-        iLGenerator.Emit(isUnsigned ? OpCodes.Cgt_Un : OpCodes.Cgt);
-    }
+    public static void CompareGreater(this ILGenerator iLGenerator, bool isUnsigned = false) => iLGenerator.Emit(isUnsigned ? OpCodes.Cgt_Un : OpCodes.Cgt);
 
     /// <summary>
     /// 比较堆栈顶部两个值,如果<c>value1 &lt; value2</c>推送 1,否则推送 0
     /// </summary>
     /// <param name="iLGenerator">中间语言指令生成器</param>
     /// <param name="isUnsigned">是否是无符号的或未经排序的值</param>
-    public static void CompareLess(this ILGenerator iLGenerator, bool isUnsigned = false)
-    {
-        iLGenerator.Emit(isUnsigned ? OpCodes.Clt_Un : OpCodes.Clt);
-    }
+    public static void CompareLess(this ILGenerator iLGenerator, bool isUnsigned = false) => iLGenerator.Emit(isUnsigned ? OpCodes.Clt_Un : OpCodes.Clt);
     #endregion
 
     #region 调用方法
@@ -685,20 +774,14 @@ public static class ILGeneratorExtensions
     /// <param name="iLGenerator">中间语言指令生成器</param>
     /// <param name="label">跳转标签</param>
     /// <param name="isShort">是否短格式</param>
-    public static void Goto(this ILGenerator iLGenerator, Label label, bool isShort = true)
-    {
-        iLGenerator.Emit(isShort ? OpCodes.Br_S : OpCodes.Br, label);
-    }
+    public static void Goto(this ILGenerator iLGenerator, Label label, bool isShort = true) => iLGenerator.Emit(isShort ? OpCodes.Br_S : OpCodes.Br, label);
     /// <summary>
     /// 跳转(强制),可用于退出 try\filter\catch 块
     /// </summary>
     /// <param name="iLGenerator">中间语言指令生成器</param>
     /// <param name="label">跳转标签</param>
     /// <param name="isShort">是否短格式</param>
-    public static void GotoLeave(this ILGenerator iLGenerator, Label label, bool isShort = true)
-    {
-        iLGenerator.Emit(isShort ? OpCodes.Leave_S : OpCodes.Leave, label);
-    }
+    public static void GotoLeave(this ILGenerator iLGenerator, Label label, bool isShort = true) => iLGenerator.Emit(isShort ? OpCodes.Leave_S : OpCodes.Leave, label);
 
     /// <summary>
     /// 如果值为 true\非空\非零 则跳转
@@ -706,20 +789,14 @@ public static class ILGeneratorExtensions
     /// <param name="iLGenerator">中间语言指令生成器</param>
     /// <param name="label">跳转标签</param>
     /// <param name="isShort">是否短格式</param>
-    public static void GotoIfTrue(this ILGenerator iLGenerator, Label label, bool isShort = true)
-    {
-        iLGenerator.Emit(isShort ? OpCodes.Brtrue_S : OpCodes.Brtrue, label);
-    }
+    public static void GotoIfTrue(this ILGenerator iLGenerator, Label label, bool isShort = true) => iLGenerator.Emit(isShort ? OpCodes.Brtrue_S : OpCodes.Brtrue, label);
     /// <summary>
     /// 如果堆栈顶部的值为 false\空引用\零 则跳转
     /// </summary>
     /// <param name="iLGenerator">中间语言指令生成器</param>
     /// <param name="label">跳转标签</param>
     /// <param name="isShort">是否短格式</param>
-    public static void GotoIfFalse(this ILGenerator iLGenerator, Label label, bool isShort = true)
-    {
-        iLGenerator.Emit(isShort ? OpCodes.Brfalse_S : OpCodes.Brfalse, label);
-    }
+    public static void GotoIfFalse(this ILGenerator iLGenerator, Label label, bool isShort = true) => iLGenerator.Emit(isShort ? OpCodes.Brfalse_S : OpCodes.Brfalse, label);
 
     /// <summary>
     /// 如果 value1 == value2 则跳转
@@ -731,10 +808,7 @@ public static class ILGeneratorExtensions
     /// <param name="iLGenerator">中间语言指令生成器</param>
     /// <param name="label">跳转标签</param>
     /// <param name="isShort">是否短格式</param>
-    public static void GotoIfEqual(this ILGenerator iLGenerator, Label label, bool isShort = true)
-    {
-        iLGenerator.Emit(isShort ? OpCodes.Beq_S : OpCodes.Beq, label);
-    }
+    public static void GotoIfEqual(this ILGenerator iLGenerator, Label label, bool isShort = true) => iLGenerator.Emit(isShort ? OpCodes.Beq_S : OpCodes.Beq, label);
     /// <summary>
     /// 如果 value1 > value2 则跳转
     /// <list type="bullet">
@@ -818,10 +892,7 @@ public static class ILGeneratorExtensions
     /// <param name="iLGenerator">中间语言指令生成器</param>
     /// <param name="label">跳转标签</param>
     /// <param name="isShort">是否短格式</param>
-    public static void GotoIfUnsignedNotEqual(this ILGenerator iLGenerator, Label label, bool isShort = true)
-    {
-        iLGenerator.Emit(isShort ? OpCodes.Bne_Un_S : OpCodes.Bne_Un, label);
-    }
+    public static void GotoIfUnsignedNotEqual(this ILGenerator iLGenerator, Label label, bool isShort = true) => iLGenerator.Emit(isShort ? OpCodes.Bne_Un_S : OpCodes.Bne_Un, label);
 
     /// <summary>
     /// 跳转到指定索引处的标签
@@ -886,8 +957,8 @@ public static class ILGeneratorExtensions
     /// <param name="isOverflowCheck">是否检查溢出,如果 <paramref name="integerType"/> 是无符号类型,将自动启用溢出检查</param>
     public static void ConvertInteger(this ILGenerator iLGenerator, Type integerType, bool isOverflowCheck = false)
     {
-        if (integerType == typeof(IntPtr)) iLGenerator.Emit(!isOverflowCheck ? OpCodes.Conv_I : OpCodes.Conv_Ovf_I); // 有符号转有符号
-        else if (integerType == typeof(UIntPtr)) iLGenerator.Emit(OpCodes.Conv_Ovf_I_Un); //无符号转有符号
+        if (integerType == typeof(IntPtr)) iLGenerator.Emit(!isOverflowCheck ? OpCodes.Conv_I : OpCodes.Conv_Ovf_I);// 有符号转有符号
+        else if (integerType == typeof(UIntPtr)) iLGenerator.Emit(OpCodes.Conv_Ovf_I_Un);//无符号转有符号
 
         else if (integerType == typeof(sbyte)) iLGenerator.Emit(!isOverflowCheck ? OpCodes.Conv_I1 : OpCodes.Conv_Ovf_I1);
         else if (integerType == typeof(byte)) iLGenerator.Emit(OpCodes.Conv_Ovf_I1_Un);
@@ -912,16 +983,16 @@ public static class ILGeneratorExtensions
     /// <param name="isOverflowCheck">是否检查溢出,如果 <paramref name="integerType"/> 是无符号类型,将自动启用溢出检查</param>
     public static void ConvertUnsignedInteger(this ILGenerator iLGenerator, Type integerType, bool isOverflowCheck = false)
     {
-        if (integerType == typeof(IntPtr)) iLGenerator.Emit(!isOverflowCheck ? OpCodes.Conv_U : OpCodes.Conv_Ovf_U); // 有符号转无符号
-        else if (integerType == typeof(UIntPtr)) iLGenerator.Emit(OpCodes.Conv_Ovf_U_Un); //无符号转无符号
+        if (integerType == typeof(IntPtr)) iLGenerator.Emit(!isOverflowCheck ? OpCodes.Conv_U : OpCodes.Conv_Ovf_U);// 有符号转无符号
+        else if (integerType == typeof(UIntPtr)) iLGenerator.Emit(OpCodes.Conv_Ovf_U_Un);//无符号转无符号
 
-        else if (integerType == typeof(sbyte))iLGenerator.Emit(!isOverflowCheck ? OpCodes.Conv_U1 : OpCodes.Conv_Ovf_U1);
+        else if (integerType == typeof(sbyte)) iLGenerator.Emit(!isOverflowCheck ? OpCodes.Conv_U1 : OpCodes.Conv_Ovf_U1);
         else if (integerType == typeof(byte)) iLGenerator.Emit(OpCodes.Conv_Ovf_U1_Un);
 
-        else if (integerType == typeof(short))iLGenerator.Emit(!isOverflowCheck ? OpCodes.Conv_I2 : OpCodes.Conv_Ovf_U2);
+        else if (integerType == typeof(short)) iLGenerator.Emit(!isOverflowCheck ? OpCodes.Conv_I2 : OpCodes.Conv_Ovf_U2);
         else if (integerType == typeof(ulong)) iLGenerator.Emit(OpCodes.Conv_Ovf_U2_Un);
 
-        else if (integerType == typeof(int))iLGenerator.Emit(!isOverflowCheck ? OpCodes.Conv_I4 : OpCodes.Conv_Ovf_U4);
+        else if (integerType == typeof(int)) iLGenerator.Emit(!isOverflowCheck ? OpCodes.Conv_I4 : OpCodes.Conv_Ovf_U4);
         else if (integerType == typeof(uint)) iLGenerator.Emit(OpCodes.Conv_Ovf_U4_Un);
 
         else if (integerType == typeof(long)) iLGenerator.Emit(!isOverflowCheck ? OpCodes.Conv_I8 : OpCodes.Conv_Ovf_U8);
